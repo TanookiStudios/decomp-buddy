@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4f6bff"/><stop offset="1" stop-color="#2a3fb8"/>
+    </linearGradient>
+    <linearGradient id="cart" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff7e6"/><stop offset="1" stop-color="#e9dcc2"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <!-- macOS-style rounded square with margin -->
+  <rect x="100" y="100" width="824" height="824" rx="184" fill="url(#bg)"/>
+  <!-- cartridge -->
+  <g filter="url(#shadow)">
+    <path d="M292 258 h440 a28 28 0 0 1 28 28 v370 l-60 74 h-376 l-60 -74 v-370 a28 28 0 0 1 28 -28 z" fill="url(#cart)"/>
+    <!-- label window -->
+    <rect x="352" y="318" width="320" height="150" rx="18" fill="#1d2140"/>
+    <!-- face on the label -->
+    <circle cx="452" cy="380" r="18" fill="#fff7e6"/>
+    <circle cx="572" cy="380" r="18" fill="#fff7e6"/>
+    <path d="M462 424 q50 42 100 0" stroke="#fff7e6" stroke-width="16" stroke-linecap="round" fill="none"/>
+    <!-- grip ridges -->
+    <g fill="#c9b894">
+      <rect x="352" y="512" width="320" height="18" rx="9"/>
+      <rect x="352" y="552" width="320" height="18" rx="9"/>
+      <rect x="352" y="592" width="320" height="18" rx="9"/>
+    </g>
+  </g>
+</svg>

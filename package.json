@@ -1,0 +1,142 @@
+{
+  "name": "decomp-buddy",
+  "version": "0.29.6",
+  "description": "Point it at a decomp/recomp repo; it sets the PC build up so you only drop in your game.",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "cli": "node cli.js",
+    "test": "node --test",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux",
+    "lint": "node scripts/lint-renderer.mjs && npx eslint . .lint/renderer.js"
+  },
+  "build": {
+    "appId": "com.tanookistudios.decompbuddy",
+    "productName": "Decomp Buddy",
+    "files": [
+      "main.js",
+      "preload.cjs",
+      "src/**",
+      "renderer/**",
+      "package.json",
+      "finds.json",
+      "sources.json",
+      "plans.json"
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "category": "public.app-category.utilities",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "notarize": true,
+      "artifactName": "${productName}-${version}-${arch}-mac.${ext}"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/win-icon.png"
+    },
+    "asarUnpack": [
+      "node_modules/7zip-bin/**"
+    ],
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Game",
+      "desktop": {
+        "entry": {
+          "Name": "Decomp Buddy"
+        }
+      },
+      "icon": "build/win-icon.png"
+    },
+    "portable": {
+      "artifactName": "Decomp Buddy ${version} Portable.exe"
+    },
+    "deb": {
+      "artifactName": "decomp-buddy_${version}_amd64.deb",
+      "maintainer": "Tanooki Studios <hello@tanookistudios.com>"
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://tanookistudios.com/decomp-buddy/"
+      }
+    ],
+    "protocols": [
+      {
+        "name": "Decomp Buddy",
+        "schemes": [
+          "decompbuddy"
+        ]
+      }
+    ],
+    "dmg": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    }
+  },
+  "author": "Maddie",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "7zip-bin": "^5.2.0",
+    "adm-zip": "^0.6.1",
+    "electron-updater": "^6.8.9",
+    "marked": "^18.0.13",
+    "node-unrar-js": "^2.0.2",
+    "zod": "^4.6.4"
+  },
+  "devDependencies": {
+    "acorn": "^8.18.0",
+    "acorn-walk": "^8.3.5",
+    "electron": "^44.3.0",
+    "electron-builder": "^26.15.3"
+  },
+  "homepage": "https://decompbuddy.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanookiStudios/decomp-buddy.git"
+  }
+}

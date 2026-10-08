@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:">
+<title>Decomp Buddy</title>
+<style>
+/* The look of decompbuddy.com: a cream cartridge shell, navy ink and label window, gold highlights.
+   Fonts are bundled (renderer/fonts, SIL Open Font License) so the app looks the same offline. */
+@font-face { font-family:"Bricolage Grotesque"; src:url(fonts/bricolage-grotesque.woff2) format("woff2"); font-weight:200 800; font-display:swap }
+@font-face { font-family:"IBM Plex Mono"; src:url(fonts/ibm-plex-mono-400.woff2) format("woff2"); font-weight:400; font-display:swap }
+@font-face { font-family:"IBM Plex Mono"; src:url(fonts/ibm-plex-mono-500.woff2) format("woff2"); font-weight:500; font-display:swap }
+@font-face { font-family:"IBM Plex Mono"; src:url(fonts/ibm-plex-mono-600.woff2) format("woff2"); font-weight:600; font-display:swap }
+:root { --bg:#f3ead6; --bg2:#e9dcc2; --fg:#1d2140; --ink2:#3a3f63; --muted:#5a5e7a; --line:#cdbf9c; --card:#fff8e8; --accent:#1d2140; --accentfg:#fff7e6; --gold:#e0a53a; --window:#1d2140; --windowfg:#fff7e6; --focus:#1d2140; --ok:#2b7a3e; --bad:#b3261e; --log:#11142a; --logfg:#fff7e6; --code:#e9dcc2; --shadow:rgba(0,0,0,.28); --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#2b2b31; --bg2:#232328; --fg:#f3ead6; --ink2:#d9d0bb; --muted:#a4a7b8; --line:#4a4a54; --card:#34343b; --accent:#f3ead6; --accentfg:#1d2140; --window:#11142a; --focus:#e0a53a; --ok:#6fcf8a; --bad:#ff8a80; --log:#0d0f1f; --code:#232328; --shadow:rgba(0,0,0,.5) } }
+:root[data-theme="dark"] { --bg:#2b2b31; --bg2:#232328; --fg:#f3ead6; --ink2:#d9d0bb; --muted:#a4a7b8; --line:#4a4a54; --card:#34343b; --accent:#f3ead6; --accentfg:#1d2140; --window:#11142a; --focus:#e0a53a; --ok:#6fcf8a; --bad:#ff8a80; --log:#0d0f1f; --code:#232328; --shadow:rgba(0,0,0,.5) }
+/* #42 focus + motion */
+:focus-visible { outline:3px solid var(--focus); outline-offset:2px } button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--focus); outline-offset:2px }
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important } }
+.legal { background:var(--card); border:2px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13px; display:flex; gap:10px; align-items:center } .legal span { flex:1 }
+/* Library bookshelf */
+.shelf-wrap { display:flex; flex-direction:column; gap:26px }
+.shelf { position:relative; padding:0 8px 18px; border-bottom:14px solid #6b4a2b; box-shadow:0 8px 0 #4a3119, 0 12px 12px rgba(0,0,0,.35); background:linear-gradient(to bottom, transparent 0, transparent 80%, rgba(0,0,0,.12) 100%) }
+.shelf-title { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 10px }
+.books { display:flex; gap:18px; flex-wrap:wrap; align-items:flex-end }
+.book { width:150px; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative }
+.book .cover { width:150px; height:150px; display:flex; align-items:flex-end; justify-content:center }
+.book .cover img { max-width:150px; max-height:150px; box-shadow:2px 4px 10px rgba(0,0,0,.45); border-radius:3px; display:block }
+.book .cover .nocover { width:110px; height:150px; background:var(--window); border-radius:3px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; padding:8px; font-size:13px; color:var(--windowfg) }
+.book .title { font-size:13px; font-weight:600; text-align:center; line-height:1.25; max-height:2.5em; overflow:hidden }
+.book .chips { font-size:11px; color:var(--muted); text-align:center }
+.book .acts { display:none; position:absolute; inset:0 0 auto 0; top:0; background:rgba(0,0,0,.72); border-radius:6px; padding:8px; flex-direction:column; gap:6px; height:150px; justify-content:flex-start; overflow-y:auto }
+.book:hover .acts, .book:focus-within .acts { display:flex }
+.book .acts button { font-size:12px; padding:5px 8px; color:#fff; border-color:rgba(255,255,255,.5); background:rgba(0,0,0,.3) } .book .acts button.primary { background:var(--gold); border-color:var(--gold); color:#1d2140 }
+.book .acts button:disabled { opacity:.7 }
+/* Continue Playing hero */
+.hero { display:flex; gap:18px; align-items:center; background:var(--card); border:2px solid var(--fg); box-shadow:0 3px 0 var(--shadow); border-radius:12px; padding:14px 16px }
+.hero img { width:120px; height:120px; object-fit:contain; border-radius:6px } .hero .nocover { width:90px; height:120px; background:var(--window); border-radius:6px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; padding:6px; color:var(--windowfg); font-size:12px }
+.hero h2 { margin:0 0 4px; font-size:20px } .hero .row { margin-top:10px }
+.more-sec { border-top:1px solid var(--line); padding:12px 0 4px } .more-sec h4 { margin:0 0 6px }
+/* GameBanana list */
+.gbmod { display:grid; grid-template-columns:110px 1fr auto; gap:10px; align-items:center; background:var(--card); border:2px solid var(--line); border-radius:8px; padding:6px 10px } .gbmod img { width:110px; height:62px; object-fit:cover; border-radius:4px } .gbmod .noimg { width:110px; height:62px; background:var(--line); border-radius:4px }
+/* Couch Mode */
+#couch { position:fixed; inset:0; z-index:80; background:#0d0e12; color:#f2f2ee; overflow-y:auto; padding:18px 36px 60px; font-size:18px }
+#couch .cbar { display:flex; align-items:center; gap:12px; margin-bottom:10px } #couch .cbar img { width:36px; height:36px; border-radius:8px } #couch .grow { flex:1 }
+#couch .chint { color:#a9a9a2; font-size:15px } #couch button#couchExit { font-size:15px; color:#f2f2ee; background:transparent; border:1px solid #555 }
+#couch .crow h2 { font-size:22px; margin:22px 0 10px; font-weight:700 }
+#couch .ctiles { display:flex; flex-wrap:wrap; gap:22px }
+#couch .ctile { width:210px; background:#1b1d24; border:3px solid transparent; border-radius:0; padding:12px; display:flex; flex-direction:column; align-items:center; gap:10px; color:inherit; cursor:pointer; transition:transform .12s }
+#couch .ctile img { width:180px; height:180px; object-fit:contain; border-radius:8px } #couch .cnocover { width:140px; height:180px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:700; background:linear-gradient(160deg, #e0a53a, #1b1d24); border-radius:8px; padding:8px }
+#couch .ctitle { font-size:17px; font-weight:600; text-align:center; line-height:1.25 }
+#couch .ctile:focus, #couch .ctile:focus-visible { outline:none; border-color:#e0a53a; transform:scale(1.06); background:#252834 }
+#couch .ctile.dim { opacity:.55 }
+#couchDetail { position:fixed; right:36px; bottom:70px; width:min(520px, calc(100% - 72px)); background:#1b1d24; border:2px solid #e0a53a; border-radius:14px; padding:18px 22px } #couchDetail h2 { margin:0 0 6px }
+#couch .cstatus { position:fixed; left:36px; bottom:22px; font-size:17px; color:#cfd6ff }
+@media (prefers-reduced-motion: reduce) { #couch .ctile { transition:none } #couch .ctile:focus { transform:none } }
+/* New This Week shelf in Browse */
+/* Detail view */
+.detail { display:grid; grid-template-columns:260px minmax(0,1fr); gap:22px } .detail .cover img { width:260px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,.3) }
+.detail .readme { max-width:760px; line-height:1.55 } .detail .readme img { max-width:100%; border-radius:6px } .detail .readme pre { background:var(--code, var(--log)); color:var(--logfg); padding:10px; border-radius:6px; overflow:auto; font-size:12.5px } .detail .readme code { font-size:13px } .detail .readme table { border-collapse:collapse } .detail .readme td, .detail .readme th { border:2px solid var(--line); padding:4px 8px }
+.shots { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px } .shots img { height:140px; border-radius:6px }
+.banner { background:var(--card); border:2px solid var(--line); border-left:4px solid #b45309; border-radius:8px; padding:8px 12px; margin:0 0 12px; font-size:14px }
+.cfgrow { display:grid; grid-template-columns:140px 1fr; gap:8px; align-items:center; margin:6px 0 }
+.review { border:1px dashed var(--line); border-radius:8px; padding:10px 12px; margin:8px 0; display:grid; gap:6px } .review select, .review input { flex:1; min-width:0 }
+.file.drop { outline:2px dashed var(--accent); outline-offset:2px }
+dl.facts { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; margin:0 0 6px; font-size:14px } dl.facts dt { font-weight:600 } dl.facts dd { margin:0; color:var(--muted) }
+.relnotes { border:2px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:8px; background:var(--card) } .relnotes h4 { margin:0 0 6px; font-size:14px }
+* { box-sizing:border-box } [hidden] { display:none !important } a { color:inherit }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif; font-optical-sizing:auto; display:flex; height:100vh }
+/* the menu is the cartridge's label window */
+nav.side { min-width:200px; flex:0 0 auto; background:var(--window); color:var(--windowfg); display:flex; flex-direction:column; padding:16px 12px; gap:3px; --focus:#e0a53a }
+nav.side .brand { display:flex; align-items:center; gap:10px; font-weight:800; font-size:18px; letter-spacing:-.01em; padding:4px 10px 16px } nav.side .brand img { width:30px; height:30px; border-radius:7px }
+nav.side button { white-space:nowrap; text-align:left; background:none; border:0; box-shadow:none; padding:9px 12px; border-radius:8px; font-weight:600; color:var(--windowfg); opacity:.82 }
+nav.side button:hover { opacity:1; background:rgba(255,255,255,.08); transform:none } nav.side button.active { opacity:1; background:var(--gold); color:#1d2140 }
+nav.side hr { border:0; border-top:1px solid rgba(255,247,230,.16); margin:8px 6px }
+nav.side .spacer { flex:1 } nav.side .ver { font:600 11px var(--mono); letter-spacing:.08em; color:var(--windowfg); opacity:.6; padding:6px 12px }
+main { flex:1; min-width:0; display:flex; flex-direction:column; overflow:auto }
+.modal { position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:50 } .modal-box { background:var(--card); border:2px solid var(--line); border-radius:14px; padding:22px 24px; max-width:420px; width:calc(100% - 40px); text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.4) }
+#toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--fg); color:var(--bg); padding:8px 14px; border-radius:999px; font-size:13px; font-weight:600; opacity:0; transition:opacity .2s; pointer-events:none } #toast.show { opacity:1 }
+#updateBar { display:none; background:var(--gold); color:#1d2140; font-weight:600; padding:8px 22px; font-size:13px; align-items:center; gap:10px } #updateBar.show { display:flex } #updateBar button { padding:4px 10px; font-size:12px; color:#1d2140; border-color:#1d2140; background:transparent; box-shadow:none } #updateBar .grow { flex:1 }
+.srcList { display:flex; flex-direction:column; gap:6px } .srcRow { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; font-size:13px; background:var(--card); border:2px solid var(--line); border-radius:8px; padding:6px 10px }
+.srcRow > * { min-width:0 } .srcRow .lab { font-weight:600; overflow-wrap:anywhere }
+.srcRow .row-acts { display:flex; gap:6px; align-items:center; flex-shrink:0 } .srcRow .u.wrap { white-space:normal; overflow-wrap:anywhere; line-height:1.4 } .srcRow .row-state { font-size:12px; margin-top:2px } .srcRow .row-state:empty { display:none } .srcRow .u { color:var(--muted); font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.addGame { display:flex; flex-direction:column; gap:8px; background:var(--card); border:2px solid var(--line); border-radius:10px; padding:12px }
+.addSrc { display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center } .addSrc select { width:auto }
+main > section.view { display:none; flex-direction:column; gap:14px; padding:18px 22px; flex:1; min-height:0 } main > section.view.active { display:flex }
+.settings-body { display:flex; flex-direction:column; gap:14px; max-width:640px }
+.about { max-width:640px } .about .eyebrow { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 } .about h1 { margin:2px 0 12px }
+.about p { margin:0 0 12px; line-height:1.6 } .about .sig { color:var(--fg); margin-top:10px }
+.about .support { display:inline-block; margin-top:6px } .about a { color:var(--accent) }
+h1 { font-size:30px; line-height:1.05; margin:0; font-weight:800; letter-spacing:-.025em } h2, h3 { font-weight:800; letter-spacing:-.01em } .sub { color:var(--muted); margin:4px 0 0; font-size:13.5px }
+label { display:block; font-size:13px; font-weight:600; margin-bottom:4px }
+textarea, input[type=text], input[type=password], select { width:100%; font:inherit; color:inherit; background:var(--card); border:2px solid var(--line); border-radius:8px; padding:8px 11px }
+textarea:focus, input[type=text]:focus, input[type=password]:focus, select:focus { border-color:var(--fg) }
+textarea { min-height:110px; resize:vertical; font-family:var(--mono); font-size:13px }
+.row { display:flex; gap:8px; align-items:center } .row > * { flex:1 } .row > button { flex:0 0 auto }
+/* chunky cartridge buttons with a hard shadow, like the website's */
+button { font:inherit; font-weight:700; padding:8px 15px; border-radius:8px; border:2px solid var(--fg); background:var(--card); color:inherit; cursor:pointer; box-shadow:0 2px 0 var(--shadow); transition:transform .08s }
+button:hover:not(:disabled) { transform:translateY(-1px) } button:active:not(:disabled) { transform:translateY(2px); box-shadow:none }
+button.primary { background:var(--accent); border-color:var(--accent); color:var(--accentfg) }
+button.gold, button[aria-pressed="true"].pick { background:var(--gold); border-color:var(--gold); color:#1d2140 }
+button:disabled { opacity:.5; cursor:not-allowed; box-shadow:none }
+.actions { display:flex; gap:8px; flex-wrap:wrap }
+#log { flex:1; min-height:160px; margin:0; background:var(--log); color:var(--logfg); border-radius:10px; padding:12px 14px; font:12.5px/1.5 var(--mono); overflow:auto; white-space:pre-wrap }
+.status { font-size:13px; min-height:18px } #catalogStatus:empty { display:none } .ok { color:var(--ok) } .bad { color:var(--bad) }
+
+.check { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600 } .check input { width:16px; height:16px }
+#games:empty { display:none } #games.stale { opacity:.45 }
+.game { background:var(--card); border:2px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:10px }
+.game h2 { font-size:15px; margin:0 0 2px } .game .console { font-weight:400; color:var(--muted) }
+.game .method { font-size:12px; color:var(--muted); margin-bottom:8px } .game .err { color:var(--bad); font-size:13px }
+.file { display:grid; grid-template-columns:1fr auto; gap:4px 10px; align-items:center; padding:8px 0; border-top:1px solid var(--line) }
+.file .what { font-size:13px } .file .what strong { display:block } .file .hint { color:var(--muted); font-size:12px }
+.file .pick { display:flex; gap:6px; align-items:center } .file .chosen { font-size:12px; color:var(--ok); max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.file .chosen:empty::before { content:"Not chosen"; color:var(--muted) }
+button.small { padding:4px 10px; font-size:12.5px; border-width:2px }
+.verify { font-size:12px; margin-top:3px; font-weight:600 } .verify.muted { font-weight:400 }
+.game.skipped { opacity:.45 } .game .head { display:flex; justify-content:space-between; align-items:center; gap:8px }
+.cols { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px } .col h3 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 8px }
+.tile { border:2px solid; border-radius:8px; padding:8px 10px; margin-bottom:8px; font-weight:600; font-size:14px } .tile small { display:block; font-weight:400; font-size:12px; margin-top:2px }
+.tile.ok { color:var(--ok); border-color:var(--ok) } .tile.bad { color:var(--bad); border-color:var(--bad) } .tile.skip { color:var(--fg); border-color:var(--fg) }
+.col .none { color:var(--muted); font-size:13px }
+#browse, #newgames, #foryou { flex:1; min-height:0 }
+#browse .head, #newgames .head, #foryou .head { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap }
+#browse .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center } #browse .toolbar input[type=text] { flex:1; min-width:180px } #browse .toolbar select { width:auto }
+.filters { display:flex; gap:14px; flex-wrap:wrap; align-items:center; background:var(--card); border:2px dashed var(--line); border-radius:10px; padding:10px 14px } .filters select { width:auto }
+/* console picker: one press shows one console */
+.conbar { display:flex; gap:6px; flex-wrap:wrap } .conbar button { white-space:nowrap }
+.conbar button { font:600 11.5px var(--mono); letter-spacing:.06em; text-transform:uppercase; padding:5px 10px; border-width:2px; border-color:var(--line); box-shadow:none; background:transparent }
+.conbar button .n { color:var(--muted); margin-left:4px } .conbar button[aria-pressed="true"] { background:var(--fg); border-color:var(--fg); color:var(--bg) } .conbar button[aria-pressed="true"] .n { color:inherit; opacity:.7 }
+#catalogList, .cardList { flex:1; overflow:auto; min-height:200px; padding:2px 4px 8px 2px }
+.group-head { font:600 12.5px var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:22px 0 10px; display:flex; gap:10px; align-items:center } .group-head:first-child { margin-top:4px } .group-head .n { color:var(--gold) } .group-head::after { content:""; flex:1; border-top:2px solid var(--line) }
+/* game tiles: the box art, the title, one line about it, one button */
+.tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(168px, 1fr)); gap:16px }
+.gtile { display:flex; flex-direction:column; background:var(--card); border:2px solid var(--fg); border-radius:10px; overflow:hidden; box-shadow:0 3px 0 var(--shadow); min-width:0 }
+.gtile.picked { border-color:var(--gold); box-shadow:0 0 0 2px var(--gold), 0 3px 0 var(--shadow) }
+.gtile .cover { aspect-ratio:1; background:var(--bg2); position:relative; border-bottom:2px solid var(--fg); cursor:pointer } .gtile .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block }
+.gtile .nocover { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px; background:var(--window); color:var(--windowfg); font-weight:800; font-size:16px; line-height:1.15 }
+.gtile .tag { position:absolute; left:8px; top:8px; font:600 10.5px var(--mono); letter-spacing:.1em; text-transform:uppercase; padding:3px 7px; border-radius:4px; background:var(--gold); color:#1d2140 } .gtile .tag.inst { background:#2b7a3e; color:#fff }
+.gtile .t { padding:10px 12px 0; min-width:0 }
+.gtile h4 { margin:0; font-size:15px; font-weight:700; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere } .gtile h4 a { color:inherit; text-decoration:none } .gtile h4 a:hover { text-decoration:underline }
+.gtile .line { font:600 11px/1.45 var(--mono); letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-top:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap } .gtile .line.good { color:var(--ok) } .gtile .line + .line { margin-top:0; font-weight:500 }
+.gtile .acts { display:flex; gap:6px; align-items:center; padding:10px 12px 12px; margin-top:auto } .gtile .acts button.pick, .gtile .acts button.upd { flex:1 } .gtile .acts .state { flex:1; font:600 11px var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ok) } .gtile .acts .state.muted { color:var(--muted) }
+.star { background:none; border:2px solid transparent; box-shadow:none; font-size:19px; cursor:pointer; color:var(--muted); padding:2px 6px; line-height:1 } .star.on { color:var(--gold) } .star:hover { border-color:var(--line) }
+.badge { font:600 10.5px var(--mono); letter-spacing:.05em; text-transform:uppercase; padding:2px 6px; border-radius:4px; border:1.5px solid currentColor }
+.badge.unknown, .badge.src, .badge.none, .badge.ai { color:var(--muted) } .badge.latest, .badge.inst { color:var(--ok) } .badge.prerelease { color:#a15b00 } .badge.upd { color:var(--fg) }
+hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
+.view .foot { display:flex; gap:8px; align-items:center; flex-wrap:wrap; border-top:2px solid var(--line); padding-top:12px } .view .foot .n { flex:1; font:500 12.5px var(--mono); color:var(--muted) }
+</style>
+</head>
+<body>
+<nav class="side" aria-label="Sections" role="navigation">
+  <div class="brand"><img src="icon.png" alt="">Decomp Buddy</div>
+  <button type="button" data-nav="browse" class="active">Browse Games</button>
+  <button type="button" data-nav="new">New Games</button>
+  <button type="button" data-nav="foryou">Games You May Like</button>
+  <hr>
+  <button type="button" data-nav="library">Installed Games</button>
+  <hr>
+  <button type="button" data-nav="setup">Install From GitHub</button>
+  <hr>
+  <button type="button" data-nav="settings">Settings</button>
+  <button type="button" data-nav="about">About Maddie</button>
+  <hr id="adminSep" hidden>
+  <button type="button" data-nav="admin" id="adminNav" hidden>Admin <span id="adminBadge" class="badge upd" hidden></span></button>
+  <div class="spacer"></div>
+  <div class="ver" id="appVersion"></div>
+</nav>
+<main>
+  <div id="offlineBanner" class="banner" role="status" hidden>You're offline. Browse shows the last catalog it saw; Installed Games, Play, Saves and Roll Back all work. Setting a game up needs the internet to download it.</div>
+  <div id="updateBar" role="status"><span id="updateText"></span><span class="grow"></span><button id="updateGet" type="button">Download</button><button id="updateLater" type="button">Later</button></div>
+  <section id="setup-view" class="view" data-view="setup" aria-label="Install from GitHub">
+    <div>
+      <h1>Install From GitHub</h1>
+      <p class="sub">Paste decomp / recomp GitHub links, or pick them in <strong>Browse Games</strong>. <strong>Read Repos</strong> finds out what each game needs, you choose your own game files (archives are fine), <strong>Set Up Games</strong> builds a ready-to-go folder per game and writes <strong>install.html</strong>.</p>
+    </div>
+    <div class="legal" id="legal" hidden><span>Decomp Buddy never downloads games. You supply your own copies; verification checks they're the ones the project needs.</span><button id="legalOk" type="button">Got It</button></div>
+    <div>
+      <label for="urls">GitHub Links (One Per Line)</label>
+      <textarea id="urls" placeholder="https://github.com/mchughalex/skate3recomp&#10;https://github.com/new-coke/strikers" spellcheck="false"></textarea>
+    </div>
+    <div class="row">
+      <div style="flex:0 0 220px"><label for="target">Build For</label><select id="target"></select></div>
+      <div><label for="outDir">Goes Into</label><div class="row"><input id="outDir" type="text" readonly title="Change the folders in Settings"><button id="openFolder" type="button">Open</button></div><p class="sub" id="outDirWhy"></p></div>
+    </div>
+    <div class="actions">
+      <button id="analyze" class="primary" type="button">Read Repos</button>
+      <button id="setup" type="button" disabled>Set Up Games</button>
+      <button id="setupPause" type="button" hidden>Pause Downloads</button>
+      <button id="setupCancel" type="button" hidden>Cancel</button>
+      <button id="clean" type="button" title="Deletes .DS_Store and friends in the output folder">Clean Mac Junk</button>
+      <button id="openHtml" type="button">Open install.html</button>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+    <div id="games" aria-label="Games found"></div>
+    <pre id="log" aria-label="Log"></pre>
+  </section>
+
+  <section id="library" class="view" data-view="library" aria-label="Installed games">
+    <div><h1>Installed Games</h1><p class="sub" id="libMeta">Everything you've set up, ready to play.</p><p class="sub" id="padState" role="status" aria-live="polite" hidden></p></div>
+    <div class="actions"><button id="libUpdateAll" type="button" hidden>Update All</button><button id="libSend" type="button">Send To Another Computer…</button><button id="libReceive" type="button">Receive…</button><button id="libCouch" type="button" title="Full screen, big tiles, controller-friendly - for the TV or a Steam Deck">Couch Mode</button><button id="libAdopt" type="button">Adopt A Folder…</button><button id="libPack" type="button">Offline Pack…</button><button id="libPatch" type="button">Patch A ROM…</button><button id="libRefresh" type="button">Refresh</button></div>
+    <div id="syncBanner" class="addGame" hidden role="region" aria-label="Newer saves from another computer"></div>
+    <div id="digestPanel" class="addGame" hidden role="region" aria-label="What's new this week"></div>
+    <div id="packUpdates" class="addGame" hidden role="region" aria-label="Mod and texture pack updates"></div>
+    <div id="continueHero"></div>
+    <div id="txPanel" class="addGame" hidden>
+      <div id="txReceive" hidden><strong>Receiving</strong> <span class="sub">into the Install Folder. On the other computer choose "Send To Another Computer…" and enter:</span><div class="row" style="margin-top:6px"><code id="txAddr" style="font-size:16px"></code><span class="sub">code</span><code id="txCode" style="font-size:20px;font-weight:700"></code><span style="flex:1"></span><button id="txStopRx" type="button">Stop</button></div></div>
+      <div id="txSend" hidden><strong>Send</strong> <span class="sub">the selected games to a computer that's showing a receive code.</span>
+        <div class="row" style="margin-top:6px"><input id="txHost" type="text" placeholder="192.168.1.20:52111" aria-label="Address and port" style="flex:0 0 220px"><input id="txPin" type="text" placeholder="6-digit code" aria-label="Code" style="flex:0 0 130px"><span class="sub" id="txPick" style="flex:1"></span><button id="txGo" class="primary" type="button">Send</button><button id="txCancel" type="button">Cancel</button></div>
+        <div class="srcList" id="txList" style="margin-top:8px"></div></div>
+      <div class="status" id="txState" role="status" aria-live="polite"></div>
+    </div>
+    <div class="status" id="libStatus" role="status" aria-live="polite"></div>
+    <div id="buildPanel" class="addGame" hidden>
+      <div class="row"><strong id="buildTitle" style="flex:1">Build From Source</strong><button id="buildCancel" type="button">Cancel</button><button id="buildClose" type="button">Close</button></div>
+      <div class="sub" id="buildTools"></div>
+      <details><summary>The project's own build instructions</summary><ol id="buildSteps" class="sub"></ol></details>
+      <pre id="buildLog" aria-label="Build log" style="max-height:260px"></pre>
+      <div class="status" id="buildState" role="status" aria-live="polite"></div>
+    </div>
+    <div id="modsPanel" class="addGame" hidden>
+      <div class="row"><strong id="modsTitle" style="flex:1">Mods</strong><button id="modsAddBtn" type="button">Add Mod File…</button><button id="modsPackBtn" type="button" hidden>Get Texture Pack</button><button id="modsClose" type="button">Close</button></div>
+      <p class="sub" id="modsHow"></p>
+      <div id="modsPacks" class="srcList" hidden></div>
+      <div id="modsList" class="srcList"></div>
+      <div id="modsOrder"></div>
+      <div class="row" style="margin-top:8px"><button id="modsConflictBtn" type="button">Check For Conflicts</button><button id="modsGbBtn" type="button">Browse GameBanana</button><span style="flex:1"></span></div>
+      <div id="modsConflicts"></div>
+      <div id="modsGb" hidden></div>
+      <div class="status" id="modsState" role="status" aria-live="polite"></div>
+    </div>
+    <div id="gamePanel" class="addGame" hidden>
+      <div class="row"><strong id="gamePanelTitle" style="flex:1"></strong><button id="gamePanelClose" type="button">Close</button></div>
+      <div id="gamePanelBody"></div>
+      <div class="status" id="gamePanelState" role="status" aria-live="polite"></div>
+    </div>
+    <div id="savesPanel" class="addGame" hidden>
+      <div class="row"><strong id="savesTitle" style="flex:1">Saves</strong><button id="savesBackup" type="button">Back Up Now</button><button id="savesClose" type="button">Close</button></div>
+      <p class="sub" id="savesWhere"></p>
+      <div id="savesList" class="srcList"></div>
+      <div class="status" id="savesState" role="status" aria-live="polite"></div>
+    </div>
+    <div class="shelf-wrap" id="shelves"></div>
+  </section>
+
+  <section id="newgames" class="view" data-view="new" aria-label="New games">
+    <div class="head">
+      <div><h1>New Games</h1><p class="sub">The newest additions to the catalog, newest first.</p></div>
+    </div>
+    <div id="newList" class="cardList"></div>
+    <div class="foot"><span class="n pickCount"></span><button class="primary pickAdd" type="button" disabled>Add To Links</button></div>
+  </section>
+
+  <section id="foryou" class="view" data-view="foryou" aria-label="Games you may like">
+    <div class="head">
+      <div><h1>Games You May Like</h1><p class="sub" id="forYouMeta">Picked from the games you've set up and the ones on your wishlist: same makers, same consoles.</p></div>
+    </div>
+    <div id="forYouList" class="cardList"></div>
+    <div class="foot"><span class="n pickCount"></span><button class="primary pickAdd" type="button" disabled>Add To Links</button></div>
+  </section>
+
+  <section id="detail" class="view" data-view="detail" aria-label="Game details">
+    <div class="row" style="align-items:center"><button id="detailBack" type="button">← Back</button><div id="detailActions" class="actions" style="flex:1; justify-content:flex-end"></div></div>
+    <div class="detail">
+      <div class="cover" id="detailCover"></div>
+      <div>
+        <h1 id="detailTitle" style="margin:0" translate="no"></h1>
+        <p class="sub" id="detailMeta"></p>
+        <p class="sub" id="detailMore"></p>
+        <p class="sub" id="detailDesc"></p>
+        <div id="detailFacts"></div>
+        <div id="detailSince"></div>
+        <div id="detailPorts"></div>
+        <div id="detailFunding"></div>
+        <hr class="sep">
+        <div id="detailShots" class="shots"></div>
+        <h3 style="margin:16px 0 6px">Release Notes</h3>
+        <div id="detailReleases"></div>
+        <h3 style="margin:16px 0 6px">README</h3>
+        <div id="detailReadme" class="readme"><p class="sub">Loading…</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="browse" class="view active" data-view="browse" aria-label="Game browser">
+    <div class="head">
+      <div><h1>Browse Games</h1><p class="sub"><span id="catalogMeta"></span></p></div>
+      <div class="actions"><button id="addGameBtn" type="button">Suggest A Decomp</button><button id="updatesBtn" type="button" title="Compare what's installed with the catalogs">Check For Updates</button><button id="catalogRefresh" type="button">Refresh</button></div>
+    </div>
+    <div class="toolbar">
+      <input id="catSearch" type="text" placeholder="Search title or project" autocomplete="off" spellcheck="false" aria-label="Search">
+      <select id="catRunsOn" aria-label="Runs on"><option value="">Runs On: Any</option><option value="Windows">Runs On: Windows</option><option value="macOS">Runs On: macOS</option><option value="Linux">Runs On: Linux</option><option value="Steam Deck">Runs On: Steam Deck</option></select>
+      <select id="catSort" aria-label="Sort"><option value="console">Console, Then Title</option><option value="platforms">Runs On, Then Console</option><option value="updated">Recently Updated</option><option value="title">Title</option></select>
+      <button id="moreFiltersBtn" type="button" aria-expanded="false" aria-controls="moreFilters">More Filters</button>
+    </div>
+    <div id="moreFilters" class="filters" hidden>
+      <select id="catStatus" aria-label="Status"><option value="">All Statuses</option><option value="latest">Latest</option><option value="prerelease">Pre-release</option></select>
+      <select id="catSource" aria-label="Source"><option value="">All Sources</option><option value="portsdr">portsdr.com</option><option value="alexbeav">alexbeav.github.io</option><option value="finds">Individual Finds</option><option value="local-finds">Added By You</option></select>
+      <label class="check"><input id="catPlayable" type="checkbox"> Playable Only</label>
+      <label class="check"><input id="catInstalled" type="checkbox"> Installed Only</label>
+      <label class="check"><input id="catWish" type="checkbox"> Wishlist</label>
+      <button id="clearFilters" type="button" class="small">Clear</button>
+    </div>
+    <div id="conBar" class="conbar" role="group" aria-label="Console"></div>
+    <div class="status" id="catalogStatus" role="status" aria-live="polite"></div>
+    <div id="addGame" class="addGame" hidden>
+      <div class="row"><input id="agRepo" type="text" placeholder="https://github.com/owner/repo" autocomplete="off" spellcheck="false" aria-label="Repository"><input id="agTitle" type="text" placeholder="Game title (optional)" aria-label="Title" style="flex:0 0 220px"><input id="agConsole" type="text" placeholder="Console (optional)" aria-label="Console" style="flex:0 0 160px"></div>
+      <div class="row"><input id="agNotes" type="text" placeholder="Note (optional)" aria-label="Note"><button id="agSave" class="primary" type="button">Add</button><button id="agCancel" type="button">Cancel</button></div>
+      <p class="sub">Shows up right away under "Added By You" on this computer, and is sent to Maddie's list so everyone can get it once she's checked it. Nothing about you is sent - only the link and your note.</p>
+    </div>
+    <div id="catalogList"></div>
+    <div class="foot">
+      <span class="n" id="catCount"></span>
+      <button id="catUpdateAll" type="button" hidden>Update All</button>
+      <button id="catAdd" class="primary pickAdd" type="button" disabled>Add To Links</button>
+    </div>
+  </section>
+
+  <section id="settings" class="view" data-view="settings" aria-label="Settings">
+    <div><h1>Settings</h1><p class="sub">Your AI provider and how picked game files are handled.</p></div>
+    <div class="settings-body">
+      <div>
+        <label for="installDir">Install Folder (games built for this computer)</label>
+        <div class="row"><input id="installDir" type="text"><button id="chooseInstall" type="button">Choose…</button></div>
+      </div>
+      <div>
+        <label for="transferDir">Transfer Folder (games built for another OS)</label>
+        <div class="row"><input id="transferDir" type="text"><button id="chooseTransfer" type="button">Choose…</button></div>
+        <p class="sub">Which one a batch lands in follows the <strong>Build For</strong> choice on Set Up.</p>
+      </div>
+      <div>
+        <label for="provider">AI Provider</label>
+        <select id="provider"></select>
+        <p class="sub">Uses your own account. Decomp Buddy never sees or shares your key - it stays encrypted on this computer.</p>
+      </div>
+      <div id="baseUrlRow">
+        <label for="baseUrl">API Base URL</label>
+        <input id="baseUrl" type="text" placeholder="https://example.com/v1" autocomplete="off" spellcheck="false">
+      </div>
+      <div id="keyRow">
+        <label for="apiKey">API Key</label>
+        <div class="row"><input id="apiKey" type="password" placeholder="Paste your key" autocomplete="off"><button id="saveKey" type="button">Save</button></div>
+        <p class="sub" id="keyState"></p>
+      </div>
+      <div>
+        <label for="model">Model</label>
+        <div class="row">
+          <select id="modelSelect" hidden aria-label="Model"></select>
+          <input id="model" type="text" placeholder="Hit Load Models, or type a model id" autocomplete="off" spellcheck="false">
+          <button id="loadModels" type="button">Load Models</button>
+        </div>
+        <p class="sub" id="modelState"></p>
+      </div>
+      <div>
+        <label>Local Model (Optional)</label>
+        <p class="sub">For repos without a published plan when you have no AI key: a model running on this computer through <a href="#" data-ext="https://ollama.com/download">Ollama</a> (a separate free install). Slower than a key, free and offline. It has to plan a sample repo correctly before it can be switched on.</p>
+        <div class="row"><span class="sub" id="localState" style="flex:1" role="status" aria-live="polite">Checking for Ollama…</span><button id="localPull" type="button" hidden>Download Model</button><button id="localTest" type="button" hidden>Test It</button><label class="check" id="localEnableRow" hidden><input id="localEnable" type="checkbox"> Use When I Have No Key</label></div>
+      </div>
+      <div>
+        <label for="ghToken">GitHub Token</label>
+        <div class="row"><input id="ghToken" type="password" placeholder="Optional - paste a token" autocomplete="off"><button id="saveGhToken" type="button">Save</button><button id="clearGhToken" type="button">Remove</button></div>
+        <p class="sub" id="ghTokenState">Optional. Without one, GitHub allows 60 lookups an hour, which runs out fast when you add or update lots of games. A free token (github.com → Settings → Developer Settings → Fine-Grained Tokens, public repositories, read-only) raises that to 5,000 and unlocks nightly builds. Stored encrypted on this computer.</p>
+      </div>
+      <label class="check"><input id="moveFiles" type="checkbox" checked> Move picked game files into the game folder (untick to copy them instead)</label>
+      <div>
+        <label for="theme">Appearance</label>
+        <select id="theme" style="width:auto"><option value="system">Follow The System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+      </div>
+      <div>
+        <label class="check"><input id="preferBoxart" type="checkbox"> Show Game Box Art Instead Of Project Icons</label>
+        <p class="sub">Box art comes from the libretro thumbnail packs. A game with no box art match keeps its project's icon.</p>
+      </div>
+      <div>
+        <label for="lang">Language</label>
+        <select id="lang" style="width:auto" translate="no"></select>
+        <p class="sub">Other languages are machine translated - corrections are welcome on GitHub. Game names are never translated.</p>
+      </div>
+      <div>
+        <label>Library Folders</label>
+        <p class="sub">The Install and Transfer folders are always scanned. Add more here - on the PC, the folder you copied over from the Mac.</p>
+        <div class="srcList" id="libFolders"></div>
+        <div class="row" style="margin-top:8px"><span style="flex:1"></span><button id="libFolderAdd" type="button">Add Folder…</button></div>
+      </div>
+      <div>
+        <label class="check"><input id="startCouch" type="checkbox"> Start In Couch Mode</label>
+        <p class="sub">Opens straight into the full-screen, controller-friendly Installed Games - handy on a TV or a Steam Deck. Starting Decomp Buddy with --couch does the same, and on a Steam Deck in Gaming Mode it's automatic.</p>
+        <div class="row"><span class="sub" id="steamSelfState" style="flex:1" role="status" aria-live="polite">Put Decomp Buddy itself in Steam, opening in Couch Mode - on a Steam Deck it becomes a tile in Gaming Mode.</span><button id="steamSelf" type="button">Add Decomp Buddy To Steam</button></div>
+      </div>
+      <div id="wineSection" hidden>
+        <label>Windows Games On This Mac (Experimental)</label>
+        <p class="sub">Some games only come as a Windows version. Wine can run many of those on a Mac: DirectX 9, DirectX 11 and OpenGL games often work; games that need Vulkan or DirectX 12 (most Xbox 360 recomps) usually don't. Each game gets its own Wine setup, so one can't break another. Uses Gcenx's macOS Wine builds from GitHub, checked against their published checksum.</p>
+        <div class="row"><span class="sub" id="wineState" style="flex:1" role="status" aria-live="polite"></span><button id="wineInstall" type="button">Set Up Wine</button><button id="wineCancel" type="button" hidden>Cancel</button><button id="wineRemove" type="button" hidden>Remove Wine</button></div>
+      </div>
+      <div>
+        <label>Save Sync</label>
+        <p class="sub">Keep saves in step between your computers through a folder your cloud drive already syncs (iCloud Drive, OneDrive, Dropbox, Google Drive). When a game closes, its saves are backed up and copied there; when another computer has a newer one, Installed Games offers it. Nothing goes to Tanooki Studios or anyone else.</p>
+        <div class="row"><span class="sub" id="syncState" style="flex:1" role="status" aria-live="polite"></span><span id="syncPicks"></span><button id="syncChoose" type="button">Choose Folder…</button><button id="syncOff" type="button" hidden>Turn Off</button></div>
+      </div>
+      <div>
+        <label>System Files (BIOS Vault)</label>
+        <p class="sub">Verified console system files kept once and filled in automatically whenever a game needs one. Only files that pass verification are stored (PlayStation SCPH dumps by MD5, the GBA BIOS by checksum).</p>
+        <div class="srcList" id="vaultList"></div>
+        <div class="row" style="margin-top:8px"><span class="sub" id="vaultState" style="flex:1"></span><button id="vaultAdd" type="button">Add System File…</button></div>
+      </div>
+      <div>
+        <label>Game File Library</label>
+        <p class="sub">Folders where you keep your own dumps. Decomp Buddy fingerprints every file once (header, serial, hashes) and, after Read Repos, fills in any Choose… it can match with confidence - a published hash, the disc serial, or the exact file name. Files are copied out, never moved.</p>
+        <div class="srcList" id="romFolderList"></div>
+        <div class="row" style="margin-top:8px"><span class="sub" id="romState" style="flex:1" role="status" aria-live="polite"></span><button id="romAdd" type="button">Add Folder…</button><button id="romScan" type="button">Scan Now</button><button id="romCancel" type="button" hidden>Stop</button></div>
+      </div>
+      <div>
+        <label>DAT Files</label>
+        <p class="sub">Optional. Add No-Intro or Redump DAT files and every game file you pick is also checked byte-for-byte against them ("Matches Redump: Final Fantasy VII (USA) (Disc 1)"). Nothing is ever blocked - a mismatch is a warning.</p>
+        <div class="srcList" id="datList"></div>
+        <div class="row" style="margin-top:8px"><span class="sub" id="datState" style="flex:1" role="status" aria-live="polite"></span><button id="datAdd" type="button">Add DAT File…</button></div>
+      </div>
+      <div>
+        <label>Catalog Sources</label>
+        <p class="sub">Where Browse Games gets its list. Built-in sites are parsed directly; shared sources come from the maintained list and update live; you can add your own GitHub user/org or a page listing repositories. Merged by repository, so nothing shows twice.</p>
+        <div class="srcList" id="srcList"></div>
+        <div class="addSrc" style="margin-top:8px">
+          <select id="srcType" aria-label="Source type"><option value="github-user">GitHub user / org</option><option value="list">Page or file with repo links</option></select>
+          <input id="srcValue" type="text" placeholder="e.g. Alexbeav, or https://…" autocomplete="off" spellcheck="false" aria-label="Source">
+          <button id="srcAdd" type="button">Add Source</button>
+        </div>
+      </div>
+      <div>
+        <label>App Updates</label>
+        <div class="row"><span class="sub" id="updateState" style="flex:1">Checked on launch.</span><button id="updateCheck" type="button">Check Now</button></div>
+      </div>
+      <div>
+        <label>Your Setup</label>
+        <div class="row"><span class="sub" style="flex:1">One file with your settings, pending finds, wishlist and library list - to move to another computer, or keep as a backup. AI keys and tokens are never included.</span><button id="exportSetup" type="button">Export Setup</button><button id="importSetup" type="button">Import Setup</button></div>
+        <div class="status" id="setupFileState" role="status" aria-live="polite"></div>
+      </div>
+      <div>
+        <label>Log</label>
+        <div class="row"><span class="sub" style="flex:1">Everything the app does - reads, set-ups, bulk adds, deploys - is written to a log file.</span><button id="openLogBtn" type="button">Open Log</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="view" data-view="about" aria-label="About Maddie">
+    <article class="about">
+      <p class="eyebrow">The person behind it</p>
+      <h1>About Maddie</h1>
+      <p>Maddie is an autistic app developer who builds privacy-focused apps and websites for things she thinks should already exist. When the internet leaves an oddly specific hole in the world, she has a habit of falling into it and eventually climbing back out with a working product.</p>
+      <p>Decomp Buddy is one of those holes. The decomp and recomp scene is doing something remarkable - turning games that were locked to old consoles into real native PC programs - but every project ships with its own build, its own folder rules, its own idea of where your disc image goes. Maddie got tired of reading twenty READMEs to set up twenty games, so she built the thing that reads them for you, checks that the dump you picked is the one the project actually wants, and hands you a folder that just works.</p>
+      <p>Because autism and a few other life complications make traditional employment a particularly bad match, app development is Maddie's full-time job. It has been rewarding, unpredictable, occasionally ridiculous, and one heck of a ride.</p>
+      <p>Decomp Buddy is free. There is no paywall coming, no account to make, and no advertising. You bring your own AI key and your own legally owned games; nothing about you leaves this computer. If it saved you an evening of README archaeology, you can support Maddie's work, and that support is what keeps her building useful, privacy-respecting things the world forgot to make.</p>
+      <p><a class="support" href="#" id="supportLink">Support Maddie's Work</a></p>
+      <div class="sig" role="img" aria-label="Signed, Maddie">
+          <svg viewBox="0 0 330 116" style="width:clamp(190px,34vw,270px); height:auto; overflow:visible; display:block; color:currentColor" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <g transform="rotate(-4 160 66) skewX(-8)">
+              <path d="M2 72 C 12 69 22 69 32 68" opacity="0.85"/>
+              <path d="M50 92 C 46 66 48 34 56 30 C 62 27 62 46 63 62 C 64 74 63 84 68 90 C 74 64 84 40 92 46 C 97 58 95 80 102 90 C 106 94 114 92 118 84 C 122 72 108 68 106 80 C 105 90 118 94 121 84 C 122 76 122 82 126 90 C 130 94 138 92 141 84 C 144 72 130 68 128 80 C 127 90 140 94 143 84 C 145 60 149 26 152 27 C 154 26 153 42 152 54 C 151 68 149 82 155 90 C 159 94 167 92 170 84 C 173 72 159 68 157 80 C 156 90 169 94 172 84 C 174 60 178 26 181 27 C 183 26 182 42 181 54 C 180 68 178 82 184 90 C 188 94 193 82 194 74 C 195 80 194 88 199 90 C 205 86 214 82 216 74 C 218 66 205 64 202 72 C 199 82 210 90 222 84 C 242 96 278 96 306 74 C 316 67 320 62 323 63"/>
+              <circle cx="196" cy="48" r="2.4" fill="currentColor" stroke="none"/>
+            </g>
+          </svg>
+        </div>
+      <h2 style="font-size:15px;margin:28px 0 6px">Where The Games Come From</h2>
+      <p class="sub" id="aboutSources"></p>
+      <p class="sub">Box art comes from the <a href="#" data-ext="https://github.com/libretro-thumbnails">libretro-thumbnails</a> packs, with a project's GitHub image as the fallback. Add your own sources in Settings.</p>
+    </article>
+  </section>
+
+  <section id="admin" class="view" data-view="admin" aria-label="Admin">
+    <div><h1>Admin</h1><p class="sub">The shared <strong>Individual Finds</strong> list: repos found by hand that no catalog lists yet. Add one, Publish writes <code>finds.json</code> into the site, Deploy pushes the site live - everyone gets it on their next Browse refresh. Duplicates are impossible: the GitHub repo is the key.</p></div>
+    <div class="addGame">
+      <div class="row"><label style="flex:1;margin:0">Published Plans <span class="sub" id="plansMeta"></span></label><button id="plansGen" class="primary" type="button">Generate Missing</button><button id="plansCancel" type="button" hidden>Cancel</button></div>
+      <p class="sub">The AI's answer for each catalog entry, generated here with your key and published for everyone - so nobody else needs a key for anything in the catalog. Runs per platform the project builds for. Publish & Deploy pushes it live with finds and sources.</p>
+      <div class="status" id="plansState" role="status" aria-live="polite"></div>
+    </div>
+    <div class="addGame">
+      <div class="row"><label style="flex:1;margin:0">Suggestions <span class="sub" id="sugMeta"></span></label><button id="sugRefresh" type="button">Refresh</button></div>
+      <p class="sub">What people sent with Suggest A Decomp, most-requested first. Approve adds it to Individual Finds (and plans it); publish as usual.</p>
+      <div class="row" id="sugKeyRow"><input id="sugKey" type="password" placeholder="Queue key (the site's DECOMP_ADMIN_TOKEN)" autocomplete="off" aria-label="Suggestion queue key"><button id="sugKeySave" type="button">Save Key</button></div>
+      <div id="sugList" class="srcList"></div>
+      <div class="status" id="sugState" role="status" aria-live="polite"></div>
+    </div>
+    <div class="addGame">
+      <div class="row"><label style="flex:1;margin:0">Stats</label></div>
+      <p class="sub">Counted on this computer only. Nothing is sent anywhere.</p>
+      <div id="statsBody"></div>
+    </div>
+    <div class="addGame">
+      <div class="row"><label style="flex:1;margin:0">Hidden Repos <span class="sub" id="deadMeta"></span></label></div>
+      <p class="sub">Repos GitHub said were gone during plan generation. Hidden from Browse for a week, then checked again. Unhide one if it's back.</p>
+      <div id="deadList"></div>
+    </div>
+    <div class="addGame">
+      <div class="row"><label style="flex:1;margin:0">Donation Prompt</label><button id="nudgeTest" type="button">Preview Donation Prompt</button></div>
+      <p class="sub">Shown after the 3rd, 7th, 10th, 20th, 30th, 40th and 50th successful set-up, then every 25th. A different message each time; each one only once.</p>
+    </div>
+    <div class="addGame">
+      <div class="row"><label style="flex:1;margin:0">Discover <span class="sub" id="discoverMeta"></span></label><label class="check"><input id="discoverAll" type="checkbox"> Show everything</label><button id="discoverScan" type="button">Scan Now</button></div>
+      <p class="sub">Scans Reddit, Bluesky, GitHub topics and GitHub search (and YouTube channels if you list any) for repos not already on any catalog or in the finds. Social and topic finds always show; free-text GitHub search hits show at 10+ stars unless "Show everything" is on. Re-scans every hour while Admin is unlocked.</p>
+      <div class="row"><input id="discSubs" type="text" placeholder="subreddits, comma separated" aria-label="Subreddits" style="flex:1"><input id="discChannels" type="text" placeholder="YouTube channels (@handle) - RSS works for few channels now" aria-label="YouTube channels" style="flex:1"><button id="discSave" type="button">Save Feeds</button></div>
+      <div class="srcList" id="discoverList"></div>
+    </div>
+    <div class="addGame">
+      <label for="adBulk">Paste GitHub Links (any text - one per line, a list, a whole page)</label>
+      <textarea id="adBulk" placeholder="https://github.com/owner/repo&#10;https://github.com/owner/other-recomp/releases&#10;…" spellcheck="false" style="min-height:90px"></textarea>
+      <div class="row"><span class="sub" id="adBulkState" style="flex:1"></span><button id="adBulkAdd" class="primary" type="button">Add All</button></div>
+    </div>
+    <div class="addGame">
+      <div class="row"><input id="adRepo" type="text" placeholder="https://github.com/owner/repo" autocomplete="off" spellcheck="false" aria-label="Repository"><input id="adTitle" type="text" placeholder="Game or collection name" aria-label="Title" style="flex:0 0 240px"><input id="adConsole" type="text" placeholder="Console" aria-label="Console" style="flex:0 0 160px"></div>
+      <div class="row"><input id="adNotes" type="text" placeholder="Note (optional)" aria-label="Note"><button id="adAdd" class="primary" type="button">Add To List</button></div>
+    </div>
+    <div>
+      <label>Pending (on this computer, not published yet)</label>
+      <div class="srcList" id="adPending"></div>
+    </div>
+    <div>
+      <label>Shared Websites &amp; GitHub Users</label>
+      <p class="sub">Sources every copy of the app scans. A GitHub user/org (all their decomp/recomp repos) or a page/file that lists repo links. Published with the same Publish button, into <code>sources.json</code>.</p>
+      <div class="addSrc">
+        <select id="adSrcType" aria-label="Source type"><option value="github-user">GitHub user / org</option><option value="list">Page or file with repo links</option></select>
+        <input id="adSrcValue" type="text" placeholder="e.g. CrownParkComputing, or https://…" autocomplete="off" spellcheck="false" aria-label="Source">
+        <button id="adSrcAdd" type="button">Add Source</button>
+      </div>
+      <div class="srcList" id="adSrcPending" style="margin-top:8px"></div>
+      <label style="margin-top:10px">Published Sources</label>
+      <div class="srcList" id="adSrcPublished"></div>
+    </div>
+    <div>
+      <label>Published <span class="sub" id="adPublishedFrom"></span></label>
+      <div class="srcList" id="adPublished"></div>
+    </div>
+    <div class="row"><input id="findsFile" type="text" placeholder="Where finds.json lives (the site repo's public/decomp-buddy/finds.json)" spellcheck="false"><button id="findsChoose" type="button">Choose…</button></div>
+    <div class="actions"><button id="adPublish" class="primary" type="button">Publish</button><button id="adDeploy" type="button">Publish &amp; Deploy Site</button></div>
+    <div class="status" id="findsState" role="status" aria-live="polite"></div>
+    <pre id="adLog" aria-label="Deploy log" style="max-height:220px"></pre>
+  </section>
+
+  <section id="results" class="view" data-view="results" aria-label="Results">
+    <div>
+      <h1>Done</h1>
+      <p class="sub" id="resultsSummary"></p>
+    </div>
+    <div class="cols">
+      <div class="col"><h3>Set Up</h3><div id="colOk"></div></div>
+      <div class="col"><h3>Failed</h3><div id="colBad"></div></div>
+      <div class="col"><h3>Skipped</h3><div id="colSkip"></div></div>
+    </div>
+    <div class="actions">
+      <button id="resultsHtml" class="primary" type="button">Open install.html</button>
+      <button id="resultsFolder" type="button">Open Folder</button>
+      <button id="resultsBack" type="button">Back</button>
+    </div>
+  </section>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="couch" hidden role="dialog" aria-modal="true" aria-label="Couch Mode">
+  <div class="cbar"><img src="icon.png" alt=""><strong>Decomp Buddy</strong><span class="grow"></span><span class="chint">A Play · Y Details · B Back · LB/RB Rows · Start Exit</span><button id="couchExit" type="button">Exit Couch Mode</button></div>
+  <div id="couchRows"></div>
+  <div id="couchDetail" hidden role="region" aria-live="polite"></div>
+  <div id="couchStatus" class="cstatus" role="status" aria-live="polite"></div>
+</div>
+<div id="nudge" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="nudgeTitle">
+  <div class="modal-box">
+    <img src="icon.png" alt="" style="width:56px;height:56px;border-radius:14px">
+    <div id="nudgeCount" class="sub" style="font-size:12px;margin-top:8px;letter-spacing:.04em;text-transform:uppercase">3 set up</div>
+    <h2 id="nudgeTitle" style="margin:6px 0 6px;font-size:20px">Three games in.</h2>
+    <p id="nudgeBody" class="sub" style="font-size:14px;line-height:1.55"></p>
+    <div class="actions" style="margin-top:14px"><button id="nudgeTip" class="primary" type="button">Leave A Tip</button><button id="nudgeLater" type="button">Maybe Later</button></div>
+  </div>
+</div>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+<script src="more.js"></script>
+<script src="finding.js"></script>
+<script src="modsplus.js"></script>
+<script src="couch.js"></script>
+</body>
+</html>

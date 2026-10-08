@@ -1,0 +1,4731 @@
+{
+  "updatedAt": "2026-10-08T18:37:57.829Z",
+  "games": [
+    {
+      "repo": "thefixinhixon/SplosionManRecomp",
+      "title": "'Splosion Man",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-04T04:12:38Z",
+      "notes": "Native Linux & Windows ports of 'Splosion Man (Xbox 360 XBLA) — ReXGlue recomp with bespoke TP launchers. Bring your own game data.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "x86matthew/Playable3DMaze",
+      "title": "3D Maze",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": "release_v1.0",
+      "status": "latest",
+      "updatedAt": "2025-02-16T20:56:07Z",
+      "notes": "A playable version of Microsoft's old 3DMaze screensaver from Windows 9x",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "sal063/Ace-Combat-5-Static-recompilation",
+      "title": "Ace Combat 5 Static recompilation",
+      "console": "Unknown",
+      "platforms": [],
+      "version": "V2.0-Beta",
+      "status": "latest",
+      "updatedAt": "2026-09-18T20:11:35Z",
+      "notes": "A Static recompilation of Ace Combat 5 with native rendering",
+      "website": "",
+      "addedAt": "2026-09-19T05:48:12.427Z"
+    },
+    {
+      "repo": "kylofon/aces-of-the-pacific-sdl3",
+      "title": "aces of the pacific sdl3",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-29T17:46:01Z",
+      "notes": "Reverse engineering and SDL3 port of Aces of the Pacific (1992, DOS/VGA)",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:37.164Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "kylofon/acesofthepacific-enhanced",
+      "title": "acesofthepacific enhanced",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-29T17:46:06Z",
+      "notes": "Enhanced native SDL3 port of Aces of the Pacific (1992) - smooth high-resolution 3D view, longer view distance, distance haze, key bindings",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:39.049Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "elprogramadorloco-arch/agvg2-recomp",
+      "title": "agvg2 recomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": "v0.1",
+      "status": "latest",
+      "updatedAt": "2026-10-02T00:25:44Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T12:43:14.427Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "spacefarergames/AloneInTheDarkReHaunted",
+      "title": "AloneInTheDarkReHaunted",
+      "console": "Unknown",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "2.4.0.1008",
+      "status": "latest",
+      "updatedAt": "2026-08-10T11:12:34Z",
+      "notes": "A heavily enhanced port and dynamic recomp of Alone In The Dark 1, with Textured Models, HD-4K background replacements, QOL improvements, controller support and so much more.",
+      "website": "https://spacefarergames.com/aitdremaster/",
+      "addedAt": "2026-09-19T07:20:49.670Z"
+    },
+    {
+      "repo": "Pyrdacor/Ambermoon.net",
+      "title": "Ambermoon",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows",
+        "Android"
+      ],
+      "version": "v1.13.7",
+      "status": "latest",
+      "updatedAt": "2026-08-10T07:21:36Z",
+      "notes": "Ambermoon rewrite in C#",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "DerrickGold/ar-recomp",
+      "title": "ar recomp",
+      "console": "SNES",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0494",
+      "status": "prerelease",
+      "updatedAt": "2026-09-17T05:01:39Z",
+      "notes": "ActRaiser (SNES) Recompilation Project",
+      "website": "",
+      "addedAt": "2026-09-19T05:51:15.623Z"
+    },
+    {
+      "repo": "omegakatana92/Armored-Core-Recomp",
+      "title": "Armored Core",
+      "console": "PlayStation",
+      "platforms": [],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-09-13T19:59:58Z",
+      "notes": "A fan made port or recomp of armored core  for the psx or ps1 provide your own rom or iso.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "elprogramadorloco-arch/asuka100-recomp",
+      "title": "asuka100 recomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": "v0.1",
+      "status": "latest",
+      "updatedAt": "2026-10-02T00:01:00Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T11:36:49.275Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "Saffsanity/AuroraStrikers",
+      "title": "AuroraStrikers",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-14T04:48:00Z",
+      "notes": "Super Mario Strikers (G4QE01) recompilation project — Using Aurora to natively run the game via DirectX 12 —  Bring your own ROM",
+      "website": "",
+      "addedAt": "2026-09-19T07:18:15.923Z"
+    },
+    {
+      "repo": "some-scurvy-dog/banjo-tooie-scurvy-dog-port",
+      "title": "banjo tooie scurvy dog port",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-alpha.3",
+      "status": "prerelease",
+      "updatedAt": "2026-09-30T16:07:07Z",
+      "notes": "Banjo-Tooie Recompiled: a native Windows PC port with widescreen, resolution and FPS options, controller support, and speedrunning practice tools.",
+      "website": "",
+      "addedAt": "2026-10-04T12:43:26.834Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "cyxx/bermuda",
+      "title": "Bermuda Syndrome",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2020-05-29T13:17:00Z",
+      "notes": "Bermuda Syndrome engine reimplementation (Emscripten, libretro, SDL2)",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "droogie/bbhost",
+      "title": "Bloodborne",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.2.16",
+      "status": "latest",
+      "updatedAt": "2026-10-08T07:31:06Z",
+      "notes": "Definitive Bloodborne PC Experience",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "danielgomesvieira2000/body-harvest-recomp",
+      "title": "body harvest recomp",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-17T15:33:03Z",
+      "notes": "Body Harvest: Recompiled - a native PC port of Body Harvest (N64) built with N64Recomp, RT64 and RecompFrontend. Bring your own ROM.",
+      "website": "",
+      "addedAt": "2026-09-19T05:51:13.031Z"
+    },
+    {
+      "repo": "jeff-strutb/brally",
+      "title": "Boss Rally",
+      "console": "Nintendo 64",
+      "notes": "A decompilation project of the Boss Rally / Top Gear Rally video game.",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations → released",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.74",
+      "status": "latest",
+      "updatedAt": "2026-10-06T20:44:07Z"
+    },
+    {
+      "repo": "z3xox/BT3-Recomp",
+      "title": "BT3 Recomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-18T00:44:40Z",
+      "notes": "Dragon Ball Z: Budokai Tenkaichi 3 PC port via static recompilation (PS2Recomp fork) — bring your own disc image",
+      "website": "",
+      "addedAt": "2026-09-18T02:17:25.056Z"
+    },
+    {
+      "repo": "wootbeer/btgarecomp",
+      "title": "btgarecomp",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-03T01:36:36Z",
+      "notes": "battletanx global assault n64 recomp",
+      "website": "",
+      "addedAt": "2026-10-05T17:57:46.622Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "KaikoClanworth1/buffy-chaos-bleeds-pc",
+      "title": "buffy chaos bleeds pc",
+      "console": "Xbox",
+      "platforms": [],
+      "version": "v0.4.1",
+      "status": "latest",
+      "updatedAt": "2026-09-30T13:24:18Z",
+      "notes": "Unofficial native PC port of Buffy the Vampire Slayer: Chaos Bleeds (Xbox). Bring your own disc.",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:27.345Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "reburndev/reburn3",
+      "title": "Burnout 3: Takedown",
+      "console": "Xbox",
+      "platforms": [],
+      "version": "proof-of-concept",
+      "status": "latest",
+      "updatedAt": "2023-12-07T05:55:55Z",
+      "notes": "An open source reimplementation of Burnout 3: Takedown",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "sp00nznet/burnout3",
+      "title": "burnout3",
+      "console": "Xbox",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-30T09:53:20Z",
+      "notes": "A project to statically recompile the original Xbox version of Burnout 3: Takedown (2004, Criterion Games / EA) into a native Windows 11 x86-64 executable.",
+      "website": "",
+      "addedAt": "2026-10-01T13:42:00.170Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Darhkfox/BusterBustsLoose",
+      "title": "BusterBustsLoose",
+      "console": "SNES",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-28T18:19:09Z",
+      "notes": "Windows PC port of Tiny Toon Adventures: Buster Busts Loose! (SNES) with true widescreen, HUD re-anchoring, display options, cheats, level select and music player. Requires your own USA ROM.",
+      "website": "",
+      "addedAt": "2026-10-04T11:44:32.723Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "Darhkfox/busters-hidden-treasure-pc",
+      "title": "busters hidden treasure pc",
+      "console": "Mega Drive",
+      "platforms": [],
+      "version": "v1.1",
+      "status": "latest",
+      "updatedAt": "2026-09-16T17:56:23Z",
+      "notes": "A native PC port of Tiny Toon Adventures: Buster's Hidden Treasure (Sega Mega Drive / Genesis). Widescreen, save states, filters, and an in-game menu. Bring your own US ROM.",
+      "website": "",
+      "addedAt": "2026-09-19T06:47:32.514Z"
+    },
+    {
+      "repo": "bvschaik/julius",
+      "title": "Caesar III",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.8.0",
+      "status": "latest",
+      "updatedAt": "2025-07-31T17:46:57Z",
+      "notes": "An open source re-implementation of Caesar III",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "Keriew/augustus",
+      "title": "Caesar III",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v4.0.0",
+      "status": "latest",
+      "updatedAt": "2023-12-28T13:18:10Z",
+      "notes": "An open source re-implementation of Caesar III",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "dethrace-labs/dethrace",
+      "title": "Carmageddon",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.10.1",
+      "status": "latest",
+      "updatedAt": "2026-02-22T21:40:00Z",
+      "notes": "Reverse engineering the 1997 game \"Carmageddon\"",
+      "website": "https://twitter.com/dethrace_labs",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "gameblabla/CSE2",
+      "title": "Cave Story",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-03-12T18:10:29Z",
+      "notes": "Decompilation of Cave Story (v1.0.0.6)",
+      "website": "https://discord.gg/2KamtGD",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "doukutsu-rs/doukutsu-rs",
+      "title": "Cave Story",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-06-03T21:48:02Z",
+      "notes": "A faithful and open-source remake of Cave Story's engine written in Rust",
+      "website": "https://doukutsu.rs",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "sciaschi/CBFD-Recompiled",
+      "title": "CBFD Recompiled",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-26T18:33:00Z",
+      "notes": "Conker's Bad Fur Day Recompiled",
+      "website": "",
+      "addedAt": "2026-09-26T19:57:08.576Z",
+      "via": "Bulk paste"
+    },
+    {
+      "repo": "YuutaTsubasa/ChaotixRecompiled",
+      "title": "ChaotixRecompiled",
+      "console": "Unknown",
+      "platforms": [
+        "Android",
+        "Windows"
+      ],
+      "version": "v0.3.5",
+      "status": "latest",
+      "updatedAt": "2026-09-28T04:10:44Z",
+      "notes": "Static recompilation of the Sega 32X game Knuckles' Chaotix into native C++ (Windows/Linux/macOS/Android), with true widescreen. Bring your own ROM; no game data included.",
+      "website": "",
+      "addedAt": "2026-09-29T13:10:16.036Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "OpenLoco/OpenLoco",
+      "title": "Chris Sawyer's Locomotion",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v26.09",
+      "status": "latest",
+      "updatedAt": "2026-09-18T19:13:09Z",
+      "notes": "An open source re-implementation of Chris Sawyer's Locomotion",
+      "website": "https://openloco.io/",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "C7-Game/OpenCiv3",
+      "title": "Civilization III",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.3-dutch-preview-1",
+      "status": "latest",
+      "updatedAt": "2025-12-07T03:13:38Z",
+      "notes": "OpenCiv3 is an open-source, cross-platform, mod-oriented, modernized remake of Civilization III by the fan community built with the Godot Engine and C#, with capabilities inspired by the best of the 4X genre and lessons learned from modding Civ3.",
+      "website": "https://www.openciv3.org",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "FrankHUN88453/CoD3Recomp",
+      "title": "CoD3Recomp",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.3.0",
+      "status": "prerelease",
+      "updatedAt": "2026-09-30T00:05:29Z",
+      "notes": "Call of Duty 3 (Xbox 360) static recompilation: host runtime, tools and notes",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:08.293Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "DevZer0D4Y/COD4iOS-COD4NS",
+      "title": "COD4iOS COD4NS",
+      "console": "Unknown",
+      "platforms": [],
+      "version": "R1",
+      "status": "latest",
+      "updatedAt": "2026-10-03T06:49:12Z",
+      "notes": "Call of Duty 4 port for iOS and Nintendo Switch",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:56.315Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "OpenRA/OpenRA",
+      "title": "Command & Conquer: Red Alert",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows",
+        "macOS"
+      ],
+      "version": "playtest-20260222",
+      "status": "prerelease",
+      "updatedAt": "2026-02-22T19:06:45Z",
+      "notes": "Open Source real-time strategy game engine for early Westwood games such as Command & Conquer: Red Alert written in C# using SDL and OpenGL. Runs on Windows, Linux, *BSD and Mac OS X.",
+      "website": "https://www.openra.net",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "Conker64Recomp/conker64-recompiled",
+      "title": "conker64 recompiled",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-02T01:08:25Z",
+      "notes": "Native PC port of Conker's Bad Fur Day (N64) via Static MIPS Recompilation. SDL2 engine with 3D UV texturing, N64 audio, EEPROM save system, and ROM drag-and-drop launcher. No copyrighted assets included.",
+      "website": "https://github.com/Conker64Recomp/conker64-recompiled",
+      "addedAt": "2026-09-19T07:20:15.317Z"
+    },
+    {
+      "repo": "DahSidiAbdallah/ConkerBFDReloaded",
+      "title": "ConkerBFDReloaded",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-02T10:57:53Z",
+      "notes": "Conker's Bad Fur Day running natively on PC: an N64 recompilation with a Classic mode true to the N64 and a Modern mode (widescreen, smooth frame rate, free camera).",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:43.215Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "SkiddyToast/Crackdown",
+      "title": "Crackdown",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-03-04T03:51:35Z",
+      "notes": "Crackdown Recompilation using ReXGlue SDK",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "wurlyfox/c1",
+      "title": "Crash Bandicoot",
+      "console": "PlayStation",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2024-07-18T19:56:31Z",
+      "notes": "Port of Crash Bandicoot to C",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "ughman/c2c",
+      "title": "Crash Bandicoot 2: Cortex Strikes back",
+      "console": "PlayStation",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2020-09-30T20:19:05Z",
+      "notes": "Crash 2 in C",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "banteg/crimson",
+      "title": "Crimsonland",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": "v0.11.1",
+      "status": "latest",
+      "updatedAt": "2026-10-02T17:08:16Z",
+      "notes": "a faithful rewrite of crimsonland 1.9.93 from 2003",
+      "website": "https://crimson.banteg.xyz",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "bmbelo87/ddr-1st-recomp",
+      "title": "Dance Dance Revolution",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "ddr-1st-recomp-0.4.0",
+      "status": "latest",
+      "updatedAt": "2026-09-15T18:57:14Z",
+      "notes": "Static recompilation of Dance Dance Revolution 1st Mix (SLPM-86222), built on PSXRecomp. Configuration and tooling only — you supply your own legal disc dump.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "alphanu1/daytona-arcade-recomp",
+      "title": "daytona arcade recomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-01T12:29:01Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:03.560Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Subarasheese/daytona-xbla-recomp",
+      "title": "Daytona USA",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-07-26T06:03:15Z",
+      "notes": "A static recompilation of Daytona USA (Xbox 360 / XBLA, 2011)",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, resetera"
+    },
+    {
+      "repo": "iExplosiveRage/DBZ-Burst-Limit-Recompiled",
+      "title": "DBZ Burst Limit Recompiled",
+      "console": "Xbox",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "v0.3.4-alpha",
+      "status": "prerelease",
+      "updatedAt": "2026-10-05T11:30:34Z",
+      "notes": "Dragon Ball Z: Burst Limit Recompiled - native PC port via ReXGlue static recompilation",
+      "website": "",
+      "addedAt": "2026-10-05T17:54:40.719Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Megami-Decomps/dds-decomp",
+      "title": "dds decomp",
+      "console": "PlayStation 2",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-05T17:14:44Z",
+      "notes": "Matching decompilation of Shin Megami Tensei: Digital Devil Saga 1 & 2 (PS2)",
+      "website": "",
+      "addedAt": "2026-10-05T17:54:20.975Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "3dge7161/Jiggle-or-Physics",
+      "title": "Dead or Alive",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "prerelease",
+      "updatedAt": "2026-09-28T22:15:13Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:46.759Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "OverkillLabs/DeadCells-PS5-Native",
+      "title": "DeadCells PS5 Native",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-27T00:13:06Z",
+      "notes": "Dead Cells for PS5 as a fully native Windows program: relinked, not emulated. Built on AnyPS5.",
+      "website": "",
+      "addedAt": "2026-09-29T13:44:10.552Z",
+      "via": "Discover: r/emulation"
+    },
+    {
+      "repo": "diasurgical/devilution",
+      "title": "Diablo",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "0.10.0",
+      "status": "prerelease",
+      "updatedAt": "2019-07-21T22:46:18Z",
+      "notes": "Diablo devolved - magic behind the 1996 computer game",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "Boron853/Souls-of-the-Reaper",
+      "title": "Diablo III",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "beta-1.3",
+      "status": "latest",
+      "updatedAt": "2026-07-25T05:46:31Z",
+      "notes": "A port of Diablo 3 based on RexGlue using AI",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "gascarcella/dw2003recomp",
+      "title": "Digimon World 2003",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.4.0",
+      "status": "latest",
+      "updatedAt": "2026-10-08T15:35:33Z",
+      "notes": "Decompilation of Digimon World 2003 (PS1, EU) with reference tests; PC port in progress",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "NeverCookFirst/DimensionsRecomp",
+      "title": "DimensionsRecomp",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.15",
+      "status": "prerelease",
+      "updatedAt": "2026-09-17T08:44:46Z",
+      "notes": "Proof that a toys-to-life game can be recompiled. A native PC build of LEGO Dimensions, made by statically recompiling the Xbox 360 release: unlocked FPS, mod's, DLC's, SDL_GameControllerDB, multilingual support and a real or emulated Toy Pad. Public demo build, bring your own dump.",
+      "website": "https://discord.com/invite/PuXpBMFE4P",
+      "addedAt": "2026-09-19T05:50:58.669Z"
+    },
+    {
+      "repo": "micmea668/DisruptorRecomp",
+      "title": "Disruptor",
+      "console": "PlayStation",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-02T22:15:32Z",
+      "notes": "A static recompilation of Disruptor",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "NoRain211/doaxvb-re",
+      "title": "doaxvb re",
+      "console": "Xbox",
+      "platforms": [],
+      "version": "v0.5.3",
+      "status": "latest",
+      "updatedAt": "2026-09-30T15:23:40Z",
+      "notes": "Native Windows port of Dead or Alive Xtreme Beach Volleyball (Xbox), built by static recompilation with a hand-written runtime. Requires your own copy of the game.",
+      "website": "https://github.com/NoRain211/doaxbv-re/releases/latest",
+      "addedAt": "2026-10-04T11:36:03.671Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "eandis/SDOJ-Recomp",
+      "title": "DoDonPachi SaiDaiOuJou",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "prerelease6-hotfix",
+      "status": "prerelease",
+      "updatedAt": "2026-07-31T17:32:57Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, resetera, backloggd"
+    },
+    {
+      "repo": "BodbDearg/PsyDoom",
+      "title": "Doom",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "preview-builds/1.2.0-preview1",
+      "status": "prerelease",
+      "updatedAt": "2025-03-22T08:47:48Z",
+      "notes": "A backport of PSX Doom to PC",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, resetera"
+    },
+    {
+      "repo": "ZDoom/gzdoom",
+      "title": "Doom",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "macOS",
+        "Windows",
+        "Linux"
+      ],
+      "version": "g4.14.2",
+      "status": "latest",
+      "updatedAt": "2025-05-03T10:10:18Z",
+      "notes": "GZDoom is a feature centric port for all Doom engine games, based on ZDoom, adding an OpenGL renderer and powerful scripting capabilities",
+      "website": "http://zdoom.org",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "citrongames/Dora64",
+      "title": "Dora64",
+      "console": "Unknown",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.4",
+      "status": "latest",
+      "updatedAt": "2026-09-25T16:42:49Z",
+      "notes": "Dora64 native PC recompilation with ROM-based source generation",
+      "website": "",
+      "addedAt": "2026-09-29T13:11:31.129Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "LittleBitUA/DPRecomp",
+      "title": "DPRecomp",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.4.1",
+      "status": "latest",
+      "updatedAt": "2026-09-18T17:24:40Z",
+      "notes": "Deadly Premonition Recompilation 1.4.1 — native PC port of the Xbox 360 game (PAL + USA) via static recompilation: 60 FPS on whole ticks, mouse look and aim, skip intro, Director's Cut pad layout, keyboard / Xbox / PlayStation prompts, texture modding, FSR 3, DualSense, auto-updating launcher (Steam Deck too). By «Little Bit», made in Ukraine.",
+      "website": "https://github.com/LittleBitUA/DPRecomp/releases/latest",
+      "addedAt": "2026-09-19T05:49:08.039Z"
+    },
+    {
+      "repo": "mstan/DrMarioNesRecomp",
+      "title": "Dr. Mario",
+      "console": "NES",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v1.3.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T06:06:02Z",
+      "notes": "Dr. Mario recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "z3xox/Tenkaichi3Decomp",
+      "title": "Dragon Ball Z: Budokai Tenkaichi 3",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.13",
+      "status": "latest",
+      "updatedAt": "2026-10-08T09:40:54Z",
+      "notes": "PC port of Dragon Ball Z: Budokai Tenkaichi 3, built on the BT3-Decompiled project.",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "Sinan-Karakaya/DQ8-Recompiled",
+      "title": "Dragon Quest VIII",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "3614534",
+      "status": "latest",
+      "updatedAt": "2026-10-08T12:17:58Z",
+      "notes": "Recompilation of Dragon Quest VIII (PS2) to run natively on PC and Mac.",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "jlagedo/dreams-to-reality-re",
+      "title": "Dreams to Reality",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-03T18:41:20Z",
+      "notes": "Reverse-engineering and preservation research for Dreams to Reality (Cryo Interactive, 1997): engine notes, asset format catalogue, Ghidra scripts and a Python decoding toolkit. Notes and tools only, no game data.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "TheFlyingFoool/DuckGameRebuilt",
+      "title": "Duck Game",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": "v1.4.7",
+      "status": "latest",
+      "updatedAt": "2026-01-12T01:18:20Z",
+      "notes": "Duck Game decompiled & rebuilt with some added features, ",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "mstan/DuckHuntNESRecomp",
+      "title": "Duck Hunt",
+      "console": "NES",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T06:06:37Z",
+      "notes": "Duck Hunt recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "dkfans/keeperfx",
+      "title": "Dungeon Keeper",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [],
+      "version": "v1.4.0",
+      "status": "latest",
+      "updatedAt": "2026-07-04T20:55:01Z",
+      "notes": "Open source remake and Fan Expansion of Dungeon Keeper.",
+      "website": "https://keeperfx.net/",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "kevinfoley/Herculan",
+      "title": "Earthsiege 2",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.9.2",
+      "status": "latest",
+      "updatedAt": "2026-10-07T22:22:36Z",
+      "notes": "Reverse engineering Earthsiege 2; ported from herc-works-mdk.",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "TekRantGaming/earthworm-jim-hd-recompiled",
+      "title": "Earthworm Jim HD",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.9.5",
+      "status": "latest",
+      "updatedAt": "2026-10-07T15:17:59Z",
+      "notes": "Native PC port of Earthworm Jim HD (Xbox Live Arcade) via static recompilation, with the TRG launcher",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "spacefarergames/EcstaticaRecompiled",
+      "title": "Ecstatica 1 & 2",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "1.0_Staging",
+      "status": "prerelease",
+      "updatedAt": "2026-05-15T08:41:15Z",
+      "notes": "This is a recomplimation and modern port of Ecstatica 1 and Ecstatica 2 that runs on modern Windows 10 / 11 systems flawlessly. Provides full HD support, modern game controller support with enhanced music and artwork.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "goliathret/EdgeOfTimeRecomp",
+      "title": "EdgeOfTimeRecomp",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-08-14T04:47:09Z",
+      "notes": "An unofficial PC port of the Xbox 360 version of Spider-Man: Edge of Time created through the process of static recompilation.",
+      "website": "",
+      "addedAt": "2026-09-20T09:08:00.048Z"
+    },
+    {
+      "repo": "BeyondTomrrow/2K5Remade",
+      "title": "ESPN NFL 2K5",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-preview",
+      "status": "prerelease",
+      "updatedAt": "2026-10-05T04:56:04Z",
+      "notes": "NFL 2K5 Redump ",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "invinceble55-wq/Estacado",
+      "title": "Estacado",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-04T04:09:58Z",
+      "notes": "Estacado: a native PC recompilation of The Darkness (Xbox 360). Unofficial fan port; bring your own copy of the game.",
+      "website": "",
+      "addedAt": "2026-10-04T12:43:31.183Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Fable2Recomp/Fable2Recomp",
+      "title": "Fable II",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-12T02:09:57Z",
+      "notes": "A Fable 2 Recomp",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "alexbatalov/fallout2-re",
+      "title": "Fallout 2",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": "nightly",
+      "status": "prerelease",
+      "updatedAt": "2022-05-03T16:15:05Z",
+      "notes": "Reverse engineered Fallout 2",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "FatalDecomp/ROLLER",
+      "title": "Fatal Racing",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.1.1-dev.20261002",
+      "status": "prerelease",
+      "updatedAt": "2026-10-02T08:11:50Z",
+      "notes": "Reverse engineering and partially re-writing the 1995 game Whiplash/Fatal Racing",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "mstan/FaxanaduRecomp",
+      "title": "Faxanadu",
+      "console": "NES",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v2.3.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T06:06:47Z",
+      "notes": "Faxanadu recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "whompay/FNCReborn",
+      "title": "Fight Night Champion",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-07T00:54:34Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "SparkosTheWolf/FightersRecomp",
+      "title": "FightersRecomp",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "prerelease",
+      "updatedAt": "2026-09-23T21:31:11Z",
+      "notes": "A native Windows port of Sonic the Fighters (XBLA) built through recompilation — no Xbox 360 emulation or Xenia required.",
+      "website": "",
+      "addedAt": "2026-09-24T10:10:10.460Z"
+    },
+    {
+      "repo": "ficed/Braver",
+      "title": "Final Fantasy VII",
+      "console": "PlayStation",
+      "platforms": [],
+      "version": "CrossSlash_0.2.1",
+      "status": "latest",
+      "updatedAt": "2023-10-24T19:02:00Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "Lordingard/SacredStonesRecomp",
+      "title": "Fire Emblem: The Sacred Stones",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Android",
+        "Windows"
+      ],
+      "version": "v0.1.13",
+      "status": "latest",
+      "updatedAt": "2026-10-07T09:02:52Z",
+      "notes": "Playable Windows and Android ARM64 recompilation of Fire Emblem: The Sacred Stones (GBA), with saves, save states, rewind, and controller support. In active development.",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "cyxx/REminiscence",
+      "title": "Flashback",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-07-22T06:35:04Z",
+      "notes": "Flashback engine reimplementation (Android, SDL)",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "Alexbeav/fm4-recomp",
+      "title": "fm4 recomp",
+      "console": "Xbox",
+      "platforms": [],
+      "version": "v0.1.0-alpha.1",
+      "status": "latest",
+      "updatedAt": "2026-09-03T09:45:53Z",
+      "notes": "Experimental static recompilation of Forza Motorsport 4 using ReXGlue. No game files included.",
+      "website": "",
+      "addedAt": "2026-09-29T13:46:40.488Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "NerunSmarts/ForzaRecomp",
+      "title": "ForzaRecomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-05T17:46:02Z",
+      "notes": "An in-progress static recompilation of Forza Horizon 1 using ReXGlue.",
+      "website": "",
+      "addedAt": "2026-10-05T17:54:56.725Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "YuutaTsubasa/Free-Riders-Recompiled",
+      "title": "Free Riders Recompiled",
+      "console": "Unknown",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.2",
+      "status": "prerelease",
+      "updatedAt": "2026-09-22T18:51:06Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-09-26T19:57:07.880Z",
+      "via": "Bulk paste"
+    },
+    {
+      "repo": "danisandoval/fukami",
+      "title": "fukami",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "macOS"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-04T17:39:34Z",
+      "notes": "Fukami: native macOS / Steam Deck port of Ridge Racer V (USA) by static recompilation. No game data.",
+      "website": "",
+      "addedAt": "2026-10-05T17:55:15.598Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "craigshaw/FZeroRecomp",
+      "title": "FZeroRecomp",
+      "console": "Unknown",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.4.0",
+      "status": "latest",
+      "updatedAt": "2026-09-18T08:57:07Z",
+      "notes": "F-Zero recompiled",
+      "website": "",
+      "addedAt": "2026-09-18T11:06:22.201Z"
+    },
+    {
+      "repo": "JoppieToppie/Galaxy-on-Fire-2-Unity-Remake",
+      "title": "Galaxy on Fire 2",
+      "console": "Others",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "2026.10.05",
+      "status": "latest",
+      "updatedAt": "2026-10-05T04:05:53Z",
+      "notes": "A Galaxy on Fire 2 Decomp and Unity Remake",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "SamidyFR/Game-Decompilations",
+      "title": "Game Decompilations",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-30T21:01:37Z",
+      "notes": "List of Game Decompilations i could gather from around the internet.",
+      "website": "https://decomps.samidy.com",
+      "addedAt": "2026-10-04T12:44:38.218Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "UNDERdecoded/Gen2Recomped",
+      "title": "Gen2Recomped",
+      "console": "Unknown",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.7.72",
+      "status": "latest",
+      "updatedAt": "2026-09-19T05:12:02Z",
+      "notes": "Generation 2 Pokemon Recomp forked from Gen1Recomp and modified ",
+      "website": "",
+      "addedAt": "2026-09-19T14:05:01.701Z"
+    },
+    {
+      "repo": "ThatGuyMcd/Glover-R",
+      "title": "Glover",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.1",
+      "status": "latest",
+      "updatedAt": "2026-10-06T14:53:06Z",
+      "notes": "A Static Recompilation of Glover by ThatGuyMcd",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "OverkillLabs3/SoS-PS5",
+      "title": "God of War: Sons of Sparta",
+      "console": "Others",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "sos-v0.3.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T22:44:15Z",
+      "notes": "God of War Sons of Sparta Native on Windows",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "kholdfuzion/GoldenRecomp",
+      "title": "GoldenEye 007",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-07-11T19:55:05Z",
+      "notes": "WIP Recompilation of a game about a special agent who saves the world from a traitor.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: backloggd"
+    },
+    {
+      "repo": "andrebrumdev/gow2-recomp",
+      "title": "gow2 recomp",
+      "console": "PlayStation",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "kit-macos-20260930",
+      "status": "latest",
+      "updatedAt": "2026-09-30T19:28:53Z",
+      "notes": "God of War II HD static recompilation — curated work artifacts (lift boundaries, SPU lift sources, scripts, findings). Game data & build artifacts excluded.",
+      "website": "",
+      "addedAt": "2026-10-05T17:55:49.348Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "GTTeancum/OpenGTPS1",
+      "title": "Gran Turismo 2",
+      "console": "PlayStation",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-03T18:37:46Z",
+      "notes": "Windows x64 static-recompilation port of US Gran Turismo 2 Simulation and Arcade discs",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, quiver"
+    },
+    {
+      "repo": "dubrovskiy-yevhen-stakelogic/gt-2-pc",
+      "title": "Gran Turismo 2",
+      "console": "PlayStation",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v0.8.1",
+      "status": "latest",
+      "updatedAt": "2026-09-30T11:19:02Z",
+      "notes": "A native C++ port of Gran Turismo 2 for Web, Steam Deck, MacOS, Windows PC, PCVR and Quest 3 Standalone VR",
+      "website": "https://discord.gg/G5DdNQ9fD",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "CriminalRETeam/gta2_re",
+      "title": "Grand Theft Auto 2",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-04T08:43:14Z",
+      "notes": "Re-implementation of gta2 10.5 (pc version)",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "Cai1Hsu/re3",
+      "title": "Grand Theft Auto III / Grand Theft Auto: Vice City",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2022-07-29T09:18:31Z",
+      "notes": "Fuck you, Take Two",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "OZORDI/LibertyRecomp",
+      "title": "Grand Theft Auto IV",
+      "console": "Xbox 360",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v1.0.1",
+      "status": "latest",
+      "updatedAt": "2025-12-13T07:17:49Z",
+      "notes": "An unofficial PC port of the Xbox 360 version of Grand Theft Auto IV created through the process of static recompilation",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "official-kryo-to/ctw-native",
+      "title": "Grand Theft Auto: Chinatown Wars",
+      "console": "PlayStation Portable",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-02T19:34:18Z",
+      "notes": "Bringing GTA: Chinatown Wars to native PC with your own game files.",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "gta-reversed/gta-reversed",
+      "title": "Grand Theft Auto: San Andreas",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-04T22:47:38Z",
+      "notes": "Reimplementation of GTA:SA 1.0 US",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "jessicanataliagta/PSPRecomp",
+      "title": "Grand Theft Auto: Vice City Stories",
+      "console": "PlayStation Portable",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-08-28T04:48:01Z",
+      "notes": "A static recompilation framework for PSP software",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "YoshiCrystal9/re-gh2",
+      "title": "Guitar Hero 2",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-02-27T20:33:23Z",
+      "notes": "XBOX 360 Guitar Hero II Recompilation using Rexglue",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "mstan/GumshoeNESRecomp",
+      "title": "Gumshoe",
+      "console": "NES",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "version": "v1.4.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T06:06:42Z",
+      "notes": "Gumshoe recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "twist84/halo3_cache_release_recomp",
+      "title": "Halo 3 Delta",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-06-22T16:21:17Z",
+      "notes": "Halo 3 Delta Recomp (Release)",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "OMG-Guest/Halo-Mobile",
+      "title": "Halo Mobile",
+      "console": "Unknown",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "build-1",
+      "status": "latest",
+      "updatedAt": "2026-09-30T15:34:16Z",
+      "notes": "🔥 Halo CE in your browser: mobile touch controls, streamed maps, System Link, and WebAssembly absurdity.",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:09.632Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "OpenCommunityEdition/OpenCE",
+      "title": "Halo: Combat Evolved",
+      "console": "Xbox",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "build-125",
+      "status": "latest",
+      "updatedAt": "2026-10-05T13:18:27Z",
+      "notes": "Halo: Combat Evolved (for original Xbox) ported to Windows, Linux and Android",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: portsdr"
+    },
+    {
+      "repo": "harvestwhisperer/hm64-decomp",
+      "title": "Harvest Moon 64",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "sprite-editor-v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-05-26T23:25:25Z",
+      "notes": "Harvest Moon 64 Decompilation",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "vcmi/vcmi",
+      "title": "Heroes of Might and Magic III",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.7.5",
+      "status": "latest",
+      "updatedAt": "2026-08-15T12:02:44Z",
+      "notes": "Open-source engine for Heroes of Might and Magic III",
+      "website": "https://vcmi.eu/",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "danielgomesvieira2000/hybrid-heaven-recomp",
+      "title": "Hybrid Heaven",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-09-19T19:30:25Z",
+      "notes": "Hybrid Heaven: Recompiled - a native PC port of Hybrid Heaven (N64) via static recompilation. Bring your own ROM.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "nathanialf/ico-pc",
+      "title": "ICO",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.4.1",
+      "status": "latest",
+      "updatedAt": "2026-10-08T04:18:22Z",
+      "notes": "PC and Android port of the ICO (PS2) decompilation (nathanialf/ico): Windows, Linux, Steam Deck and Android (experimental). Contains no game data.",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "doc-haz/infinite-undiscovery-recomp",
+      "title": "Infinite Undiscovery",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-02T05:04:48Z",
+      "notes": "Infinite Undiscovery Recomp — native PC recompilation project.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "sergiomanzur/issd-native",
+      "title": "International Superstar Soccer Deluxe",
+      "console": "SNES",
+      "platforms": [
+        "Android",
+        "Windows"
+      ],
+      "version": "v0.4.0-beta.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-03T21:18:24Z",
+      "notes": "AI-driven native recompilation project for ISS Deluxe on SNES",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "DogParty/iPodClickWheelRecomps",
+      "title": "iPodClickWheelRecomps",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows",
+        "Android"
+      ],
+      "version": "v1.0.1",
+      "status": "latest",
+      "updatedAt": "2026-09-06T19:43:29Z",
+      "notes": "An assortment of iPod Classic games that have been recompiled to run on modern systems",
+      "website": "",
+      "addedAt": "2026-09-19T07:20:08.223Z"
+    },
+    {
+      "repo": "open-goal/jak-project",
+      "title": "Jak & Daxter",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.3.8",
+      "status": "latest",
+      "updatedAt": "2026-09-20T04:27:59Z",
+      "notes": "Reviving the language that brought us the Jak & Daxter Series",
+      "website": "https://opengoal.dev",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "AlisterT/openjazz",
+      "title": "Jazz Jackrabbit",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "continuous",
+      "status": "prerelease",
+      "updatedAt": "2026-09-01T10:44:47Z",
+      "notes": "OpenJazz",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "GTTeancum/Jet-Moto-Anthology",
+      "title": "Jet Moto",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-29T18:29:06Z",
+      "notes": "Jet Moto cumulative recompilation development and rendering improvements",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "andeecollard/jsrf-recomp",
+      "title": "Jet Set Radio Future",
+      "console": "Xbox",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-26T11:37:27Z",
+      "notes": "Static recompilation of Jet Set Radio Future (Xbox) to native macOS — playable into chapter 2 at 60 fps via a Direct3D 8 lift. Built on sp00nznet/xboxrecomp. No game data included.",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "elprogramadorloco-arch/jim2-recomp",
+      "title": "jim2 recomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": "v0.2",
+      "status": "latest",
+      "updatedAt": "2026-10-03T08:09:39Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T11:45:27.145Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "Yokimitsuro/khdays-port",
+      "title": "khdays port",
+      "console": "Nintendo DS",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-08T12:12:01Z",
+      "notes": "Experimental native PC runtime for Kingdom Hearts 358/2 Days, developed alongside the matching Nintendo DS decompilation. No copyrighted game data included.",
+      "website": "",
+      "addedAt": "2026-09-19T07:19:52.770Z"
+    },
+    {
+      "repo": "elprogramadorloco-arch/korokoro-recomp",
+      "title": "korokoro recomp",
+      "console": "Unknown",
+      "platforms": [
+        "Android"
+      ],
+      "version": "v0.1",
+      "status": "latest",
+      "updatedAt": "2026-10-01T23:48:53Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T11:36:55.294Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "elmasas/lcs-recomp",
+      "title": "lcs recomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-24T22:48:01Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-09-26T01:18:50.177Z"
+    },
+    {
+      "repo": "isledecomp/isle",
+      "title": "Lego Island",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "continuous",
+      "status": "latest",
+      "updatedAt": "2026-09-18T23:29:27Z",
+      "notes": "A decompilation of LEGO Island (1997)",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "isledecomp/isle-portable",
+      "title": "LEGO Island",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "version": "continuous",
+      "status": "latest",
+      "updatedAt": "2026-10-03T02:22:10Z",
+      "notes": "A portable version of LEGO Island (1997)",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "harrysof/LegoToypad",
+      "title": "LegoToypad",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.9.3",
+      "status": "latest",
+      "updatedAt": "2026-10-03T12:06:41Z",
+      "notes": "A controller-driven companion app for LEGO Dimensions in Cemu. Browse your tag library, pick a figure and a Toypad position, and send it straight to Cemu and rpcs3, no mouse needed.",
+      "website": "",
+      "addedAt": "2026-10-05T17:56:20.075Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "MaxDeadBear/Re-Cherry",
+      "title": "Lollipop Chainsaw",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "release",
+      "status": "latest",
+      "updatedAt": "2026-04-05T00:49:45Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, resetera"
+    },
+    {
+      "repo": "faligame/lost-odyssey-hd-remaster",
+      "title": "lost odyssey hd remaster",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-30T16:53:53Z",
+      "notes": "Lost Odyssey HD Remaster: a native PC build of Lost Odyssey (Xbox 360) via static recompilation. 720p to 4K with an exact interface, 60 fps, Direct3D 12 and Vulkan, texture replacement. Not an emulator. Work in progress.",
+      "website": "",
+      "addedAt": "2026-10-04T11:45:38.989Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Cellenseres/Lufia2SNESRecomp",
+      "title": "Lufia2SNESRecomp",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.9.2",
+      "status": "prerelease",
+      "updatedAt": "2026-09-17T14:06:36Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-09-19T06:43:06.328Z"
+    },
+    {
+      "repo": "sonicnext-dev/MarathonRecomp",
+      "title": "MarathonRecomp",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-12T14:26:51Z",
+      "notes": "An unofficial PC port of the Xbox 360 version of Sonic the Hedgehog (2006) created through the process of static recompilation",
+      "website": "",
+      "addedAt": "2026-09-19T06:45:21.438Z"
+    },
+    {
+      "repo": "MBU-Team/OpenMBU",
+      "title": "Marble Blast Ultra",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": "Beta-1.17.4",
+      "status": "prerelease",
+      "updatedAt": "2024-03-31T18:42:51Z",
+      "notes": "OpenMBU is a revival of Marble Blast Ultra, the 2006 Xbox 360 arcade classic.",
+      "website": "https://marbleblastultra.com",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: backloggd"
+    },
+    {
+      "repo": "alariq/mc2",
+      "title": "MechCommander 2",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.3",
+      "status": "latest",
+      "updatedAt": "2026-05-04T16:45:16Z",
+      "notes": "Mech Commander 2 open source engine + OpenGL Linux port",
+      "website": "https://alariq.github.io/mc2-website",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "BlackLabelHQ/MediEvilRecomp",
+      "title": "MediEvilRecomp",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.1b",
+      "status": "latest",
+      "updatedAt": "2026-10-01T07:44:58Z",
+      "notes": "Static Recomp of PSX USA MediEvil",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:23.993Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "mstan/Megaman3NESRecomp",
+      "title": "Mega Man 3",
+      "console": "NES",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T06:06:22Z",
+      "notes": "Mega Man 3 recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "mstan/MegaManZeroRecomp",
+      "title": "MegaManZeroRecomp",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.0.6",
+      "status": "latest",
+      "updatedAt": "2026-08-29T21:34:36Z",
+      "notes": "Mega Man Zero recompiled for the Game Boy Advance using gbarecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-09-29T13:44:17.482Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Hero88go/melee-unlocked",
+      "title": "melee unlocked",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.5.64",
+      "status": "latest",
+      "updatedAt": "2026-09-19T04:07:12Z",
+      "notes": "Super Smash Bros. Melee with unlocked FPS as a native Windows build with Slippi online play. Current release is in BETA. Bring your own NTSC 1.02 ISO.",
+      "website": "",
+      "addedAt": "2026-09-19T07:18:18.500Z"
+    },
+    {
+      "repo": "krystalgamer/memories-decomp",
+      "title": "memories decomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-04T12:43:20Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T12:44:40.702Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "KraftMacAndChee/Mercenaries-Recompiled",
+      "title": "Mercenaries Recompiled",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-30T15:11:49Z",
+      "notes": "A recompilation project for Mercenaries: Playground of Destruction",
+      "website": "",
+      "addedAt": "2026-10-01T13:41:43.054Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "FluffyQuack/rexglue-MetalSlugXX",
+      "title": "Metal Slug XX",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-11T19:42:23Z",
+      "notes": "Metal Slug XX Statically Recompiled using ReXGlue SDK",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "mstan/MetroidNESRecomp",
+      "title": "Metroid",
+      "console": "NES",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T06:06:52Z",
+      "notes": "Metroid recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "Odrannnn/MetroidPrimePort",
+      "title": "Metroid Prime",
+      "console": "GameCube",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.18.0",
+      "status": "latest",
+      "updatedAt": "2026-10-07T15:00:00Z",
+      "notes": "Native port of Metroid Prime (GameCube) for Linux, Windows and Android, built from the PrimeDecomp decompilation. No emulator, no game assets included: bring your own disc image.",
+      "website": "https://github.com/Odrannnn/MetroidPrimePort/releases/latest",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "NoneGiven/MphRead",
+      "title": "Metroid Prime Hunters",
+      "console": "Nintendo DS",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "0.35.0.0",
+      "status": "latest",
+      "updatedAt": "2026-06-07T23:55:09Z",
+      "notes": "MPH game port. Originally a model reader and viewer.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: backloggd"
+    },
+    {
+      "repo": "mstan/MinishCapRecomp",
+      "title": "MinishCapRecomp",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.0.5",
+      "status": "latest",
+      "updatedAt": "2026-08-29T19:02:21Z",
+      "notes": "The Legend of Zelda: The Minish Cap recompiled for the Game Boy Advance using gbarecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-09-29T13:44:19.298Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "arefdsg/MK64Recomp",
+      "title": "MK64Recomp",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "1.0.0",
+      "status": "latest",
+      "updatedAt": "2025-05-28T00:50:57Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-09-26T01:19:00.125Z"
+    },
+    {
+      "repo": "agray0425/Mother3Recomp",
+      "title": "Mother 3",
+      "console": "Game Boy Advance",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-24T19:37:59Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "coole42-pixel/PSPRecomp-MSAE",
+      "title": "MotorStorm: Arctic Edge",
+      "console": "PlayStation Portable",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-beta.1",
+      "status": "latest",
+      "updatedAt": "2026-10-05T01:44:41Z",
+      "notes": "A static recompilation framework for PSP software",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "scheeseman486/mightyweenie",
+      "title": "Mutant League Hockey",
+      "console": "Mega Drive",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1",
+      "status": "latest",
+      "updatedAt": "2026-10-08T04:07:21Z",
+      "notes": "A from-scratch Godot reimplementation of Mutant League Hockey (Sega Genesis), built by reverse engineering. Bring your own ROM.",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "PaulCombal/mw2-recompiled",
+      "title": "mw2 recompiled",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-09-30T15:04:05Z",
+      "notes": "Call of Duty: Modern Warfare 2 (2009) for Xbox 360 recompiled for Windows & Linux",
+      "website": "",
+      "addedAt": "2026-10-01T13:41:45.333Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "jorjbarbosa/naruto-rise-recomp",
+      "title": "Naruto: Rise of a Ninja",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-beta.1",
+      "status": "latest",
+      "updatedAt": "2026-10-05T19:38:35Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "OpenNFS/OpenNFS",
+      "title": "Need For Speed 1-6",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": "v0.3",
+      "status": "prerelease",
+      "updatedAt": "2020-07-14T17:04:03Z",
+      "notes": "An attempt to recreate the classic Need for Speed Games (1-6), unpacking their original data files into a modern, scratch built engine.",
+      "website": "http://opennfs.com",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "madelrandel-blip/NFSMW-Recompiled",
+      "title": "NFSMW Recompiled",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "NFSMW-Recompiled-0.0.2",
+      "status": "latest",
+      "updatedAt": "2026-09-18T02:03:06Z",
+      "notes": "A static native recompilation of Need for Speed: Most Wanted (2005) Xbox 360",
+      "website": "",
+      "addedAt": "2026-09-18T02:16:47.986Z"
+    },
+    {
+      "repo": "TheSaltTrader/Ninja-s-Dawn---A-Ninja-Gaiden-2-Recompilation-Project",
+      "title": "Ninja s Dawn A Ninja Gaiden 2 Recompilation Project",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.21",
+      "status": "latest",
+      "updatedAt": "2026-09-17T01:27:35Z",
+      "notes": "This is a recompilation for the Xbox 360 game Ninja Gaiden 2 - No game material included",
+      "website": "",
+      "addedAt": "2026-09-19T05:51:43.707Z"
+    },
+    {
+      "repo": "NearlyTRex/NocturneDecomp",
+      "title": "Nocturne",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.2",
+      "status": "latest",
+      "updatedAt": "2026-10-02T03:00:25Z",
+      "notes": "Nocturne Decompilation",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "AliveTeam/alive_reversing",
+      "title": "Oddworld 1-2",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "github-v1.0.9",
+      "status": "latest",
+      "updatedAt": "2025-03-21T21:05:57Z",
+      "notes": "Re-implementation of Oddworld: Abe's Exoddus and Oddworld: Abe's Oddysee",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "lfarroco/ogre-battle-64-recomp",
+      "title": "ogre battle 64 recomp",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.3.0",
+      "status": "latest",
+      "updatedAt": "2026-09-21T11:45:33Z",
+      "notes": "Recompilation project for the game \"Ogre Battle 64: Person of Lordly Caliber\"",
+      "website": "",
+      "addedAt": "2026-09-26T01:22:07.505Z"
+    },
+    {
+      "repo": "SHOEGAZEssb/ooa-godot",
+      "title": "ooa godot",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-26T19:39:04Z",
+      "notes": "A full reimplementation of the Zelda Oracle games based on the disassembly",
+      "website": "",
+      "addedAt": "2026-09-26T19:57:06.033Z",
+      "via": "Bulk paste"
+    },
+    {
+      "repo": "SSunnKing/Open-Nectar---Pikmin-Native-PC-Mobile-Port",
+      "title": "Open Nectar Pikmin Native PC Mobile Port",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "Windows",
+        "Android"
+      ],
+      "version": "0.6",
+      "status": "latest",
+      "updatedAt": "2026-09-15T22:34:38Z",
+      "notes": "Native Pikmin Windows/Linux/Android Port",
+      "website": "",
+      "addedAt": "2026-09-19T06:46:00.178Z"
+    },
+    {
+      "repo": "InfiniteC0re/OpenBarnyard",
+      "title": "OpenBarnyard",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "nightly",
+      "status": "prerelease",
+      "updatedAt": "2026-08-02T19:51:51Z",
+      "notes": "Decompilation of Barnyard the video game and TOSHI 2.0 game engine developed by Blue Tongue Entertainment.",
+      "website": "",
+      "addedAt": "2026-09-19T07:21:26.908Z"
+    },
+    {
+      "repo": "GTTeancum/OpenJam",
+      "title": "OpenJam",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-26T02:25:59Z",
+      "notes": "Native PC port of NBA JAM: On Fire Edition (Xbox 360 XBLA) via ReXGlue static recompilation",
+      "website": "",
+      "addedAt": "2026-09-28T11:33:59.972Z",
+      "via": "Bulk paste"
+    },
+    {
+      "repo": "OpenPhantom/OpenPhantom",
+      "title": "OpenPhantom",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.4.3",
+      "status": "prerelease",
+      "updatedAt": "2026-09-09T00:30:55Z",
+      "notes": "Star Wars Episode I: The Phantom Menace (1999) PC on Windows 10/11, Steam Deck and Proton. Modern installer, widescreen and ultrawide, uncapped FPS, FOV fix, upgraded controls, working music and video, engine decompilation and modding tools.",
+      "website": "https://swopenphantom.org",
+      "addedAt": "2026-09-19T05:51:26.670Z"
+    },
+    {
+      "repo": "opentestdriveunlimited/OpenTestDriveUnlimited",
+      "title": "OpenTestDriveUnlimited",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "nightly_776845b",
+      "status": "latest",
+      "updatedAt": "2026-09-18T05:36:17Z",
+      "notes": "Open source port of Test Drive Unlimited (2006)",
+      "website": "",
+      "addedAt": "2026-09-18T12:20:47.029Z"
+    },
+    {
+      "repo": "GiZcesi/OpenTricky",
+      "title": "OpenTricky",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-unstable",
+      "status": "prerelease",
+      "updatedAt": "2026-10-04T11:25:10Z",
+      "notes": "SSX Tricky (Xbox, 2001) recompiled to run natively on Windows: high frame rates, ultrawide, Xbox-accurate rendering fixes. Bring your own disc.",
+      "website": "",
+      "addedAt": "2026-10-05T17:54:59.868Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "elyosh/OpenXvT",
+      "title": "OpenXvT",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.0.1",
+      "status": "latest",
+      "updatedAt": "2026-09-12T17:17:14Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-09-19T07:18:33.842Z"
+    },
+    {
+      "repo": "elyosh/OpenXW",
+      "title": "OpenXW",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.0.3",
+      "status": "latest",
+      "updatedAt": "2026-09-29T12:50:06Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T11:44:29.674Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "TekRantGaming/outpost-kaloki-x-recompiled",
+      "title": "Outpost Kaloki X",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-04T10:57:01Z",
+      "notes": "Native PC port of the XBLA game Outpost Kaloki X via static recompilation (ReXGlue). Bring your own game files.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "djyt/cannonball",
+      "title": "OutRun",
+      "console": "Others",
+      "platforms": [],
+      "version": "v0.34",
+      "status": "latest",
+      "updatedAt": "2021-04-26T11:11:52Z",
+      "notes": "Cannonball: An Enhanced OutRun Engine",
+      "website": "http://reassembler.blogspot.com",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, backloggd"
+    },
+    {
+      "repo": "r4dius/outrun2-decomp",
+      "title": "OutRun 2006: Coast 2 Coast",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "test-1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-07T11:00:12Z",
+      "notes": "An OutRun 2006: Coast 2 Coast decomp ported to everything using AI",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "LoreanXavier/pt-pc",
+      "title": "P.T.",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.1",
+      "status": "latest",
+      "updatedAt": "2026-10-07T11:27:34Z",
+      "notes": "Native PC port of P.T. (runs from your own PS4 game files)",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "Mr-Shizzy/PacManRecomp",
+      "title": "Pac-Man",
+      "console": "NES",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-04T23:14:38Z",
+      "notes": "Windows-only native recompilation of Pac-Man for the NES (the 1993 Namco release) with a launcher, extras, cheats and beginner-friendly modding. Bring your own ROM.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "yaz0r/Azel",
+      "title": "Panzer Dragoon Saga",
+      "console": "Saturn",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-07T06:59:36Z",
+      "notes": "Reverse engineering of Panzer Dragoon Saga",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "HarbourMasters/PaperBoat",
+      "title": "Paper Mario 64",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-09-17T10:30:36.841Z"
+    },
+    {
+      "repo": "faligame/Parasite-Eve-HD-Remaster",
+      "title": "Parasite Eve HD Remaster",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-23T12:04:25Z",
+      "notes": "Native PC port of PARASITE EVE via static recompilation — true 4K rendering, 60 fps, HD Remaster Not an emulator. Work in progress.",
+      "website": "",
+      "addedAt": "2026-09-24T10:11:56.222Z"
+    },
+    {
+      "repo": "JosueMora918/peggle360-decomp",
+      "title": "peggle360 decomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": "release",
+      "status": "latest",
+      "updatedAt": "2026-10-04T19:32:02Z",
+      "notes": "Recompilación estática de Peggle (XBLA) via ReXGlue SDK v0.10.0",
+      "website": "",
+      "addedAt": "2026-10-05T17:54:42.694Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "nikolaygorb/PerfectDarkRemasterRecomp",
+      "title": "PerfectDarkRemasterRecomp",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "1.2",
+      "status": "latest",
+      "updatedAt": "2026-10-05T16:05:48Z",
+      "notes": "Perfect Dark Remaster 2010 [Xbox360] game static recompilation project based on RexGlue-SDK",
+      "website": "",
+      "addedAt": "2026-10-05T17:57:45.195Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "nikolaygorb/PerfectDarkZeroRecomp",
+      "title": "PerfectDarkZeroRecomp",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "1.2",
+      "status": "latest",
+      "updatedAt": "2026-10-02T06:39:36Z",
+      "notes": "Perfect Dark Zero [Xbox360] game recompilation project based on RexGlue-SDK",
+      "website": "",
+      "addedAt": "2026-10-04T11:35:32.819Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "TekRantGaming/king-kong-recompiled",
+      "title": "Peter Jackson's King Kong",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T17:19:05Z",
+      "notes": "Native PC port of Peter Jackson's King Kong (Xbox 360) via static recompilation",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "TheRunaway5/Phase-Distorter",
+      "title": "Phase Distorter",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-09-27T06:24:24Z",
+      "notes": "A Mother 2/EarthBound PC Port",
+      "website": "",
+      "addedAt": "2026-10-01T13:41:09.601Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "gcsmith/Pilotwings64Recomp",
+      "title": "Pilotwings 64",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-05-27T23:03:24Z",
+      "notes": "Static recompilation of Pilotwings 64 (WIP).",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: backloggd"
+    },
+    {
+      "repo": "danielgomesvieira2000/pilotwings-64-recomp",
+      "title": "pilotwings 64 recomp",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-09-17T17:14:55Z",
+      "notes": "An AI-coded PC port of the Nintendo 64 game 'Pilotwings 64', statically recompiled with N64Recomp. Widescreen and high frame rate.",
+      "website": "",
+      "addedAt": "2026-09-19T05:50:51.010Z"
+    },
+    {
+      "repo": "Patoke/re-plants-vs-zombies",
+      "title": "Plants vs Zombies GOTY",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-07-11T12:45:06Z",
+      "notes": "A project to rebuild all functionality via reverse engineering from the GOTY version of Plants VS Zombies (and expand upon it)",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "DanZC/suiCune",
+      "title": "Pokémon Crystal",
+      "console": "Game Boy Color",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-22T00:15:59Z",
+      "notes": "A C port of Pokemon Crystal",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, resetera, gdoc"
+    },
+    {
+      "repo": "gradenGnostic/pokeemerald-multiplatform",
+      "title": "Pokémon Emerald",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1",
+      "status": "latest",
+      "updatedAt": "2026-08-11T12:24:41Z",
+      "notes": "Pokemon Emerald ported to multiple platforms",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "NTx86/pokeemerald-sdl2pc",
+      "title": "Pokémon Emerald",
+      "console": "Game Boy Advance",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-15T21:09:16Z",
+      "notes": "disassembly of Pokémon Emerald",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "Asphaltian/pmd-green",
+      "title": "Pokémon Mystery Dungeon: Red Rescue Team",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-26T17:50:48Z",
+      "notes": "Static recompilation of Pokémon Mystery Dungeon: Red Rescue Team for PC",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "mstan/PokemonStadiumRecomp",
+      "title": "Pokémon Stadium",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.4.7-beta",
+      "status": "latest",
+      "updatedAt": "2026-08-15T21:40:43Z",
+      "notes": "Pokémon Stadium (US v1.0) recompiled for the Nintendo 64 using a fork of N64Recomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, quiver"
+    },
+    {
+      "repo": "Decryptu/pokerecomp",
+      "title": "pokerecomp",
+      "console": "Game Boy Color",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.1.36",
+      "status": "latest",
+      "updatedAt": "2026-09-17T15:03:40Z",
+      "notes": "A native Godot 4 reimplementation of the Gen 1 and 2 Game Boy Color games. Not an emulator, bring your own ROM.",
+      "website": "https://pokerecomp.com",
+      "addedAt": "2026-09-19T05:51:19.222Z"
+    },
+    {
+      "repo": "NagyD/SDLPoP",
+      "title": "Prince of Persia",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2025-12-24T11:24:48Z",
+      "notes": "An open-source port of Prince of Persia, based on the disassembly of the DOS version.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "GenryTheFox0/Project-2099",
+      "title": "Project 2099",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v2.0.0-beta.4",
+      "status": "prerelease",
+      "updatedAt": "2026-09-23T20:38:42Z",
+      "notes": "Unofficial Windows recompilation of Spider-Man: Edge of Time with PC controls, settings, localization, achievements and mod support.",
+      "website": "https://t.me/teamgenrythefox",
+      "addedAt": "2026-09-24T10:11:50.725Z"
+    },
+    {
+      "repo": "theclub654/ProjectCane",
+      "title": "ProjectCane",
+      "console": "PlayStation 2",
+      "platforms": [],
+      "version": "decompilation",
+      "status": "latest",
+      "updatedAt": "2026-09-16T09:09:24Z",
+      "notes": "A playable PC port of Sly Cooper and the Thievius Raccoonus, rebuilt through reverse engineering.",
+      "website": "https://discord.gg/2GSXcEzPJA",
+      "addedAt": "2026-09-19T05:52:44.694Z"
+    },
+    {
+      "repo": "Alexbeav/psxrecomp-ports",
+      "title": "psxrecomp ports",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.3.4",
+      "status": "latest",
+      "updatedAt": "2026-09-02T18:20:07Z",
+      "notes": "Unofficial noncommercial PlayStation recompilation releases",
+      "website": "",
+      "addedAt": "2026-09-19T07:18:06.119Z"
+    },
+    {
+      "repo": "Gzh0821/pvzge_web",
+      "title": "pvzge web",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-29T11:12:05Z",
+      "notes": "PvZ2 Gardendless | A rewritten Plants vs Zombies 2 PC port",
+      "website": "http://play.pvzge.com/",
+      "addedAt": "2026-10-04T12:43:57.313Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "boricuapab/quest64tale-recompiled",
+      "title": "quest64tale recompiled",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.7",
+      "status": "latest",
+      "updatedAt": "2026-10-04T05:39:44Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T12:39:18.476Z",
+      "via": "Bulk paste"
+    },
+    {
+      "repo": "omegakatana92/RidgeRacer4Recomp",
+      "title": "R4: Ridge Racer Type 4",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-09-03T12:51:02Z",
+      "notes": "Made with PSXrecomp, a Sony PlayStation game static recompiler ecosystem · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "DomazinUS/RaceWave46",
+      "title": "RaceWave46",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-09-16T19:07:29Z",
+      "notes": "An AI-assisted Wave Race 64 recompilation for Windows, with modern graphics and expanded local multiplayer.",
+      "website": "",
+      "addedAt": "2026-09-19T06:42:24.898Z"
+    },
+    {
+      "repo": "RayCarrot/Rayman3Readvanced",
+      "title": "Rayman 3",
+      "console": "Game Boy Advance",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-07-10T19:50:04Z",
+      "notes": "PC port of Rayman 3 GBA",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "BelmanteGu/RaymanOriginsRecomp",
+      "title": "RaymanOriginsRecomp",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": "v0.3.0",
+      "status": "latest",
+      "updatedAt": "2026-09-25T17:17:50Z",
+      "notes": "Unofficial static recompilation of Rayman Origins (Xbox 360) for PC and Android, using XenonRecomp. No game code or assets included.",
+      "website": "",
+      "addedAt": "2026-09-26T01:20:12.317Z"
+    },
+    {
+      "repo": "thefixinhixon/RealSteelRecomp",
+      "title": "Real Steel",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T05:06:17Z",
+      "notes": "Native Linux (and Windows-in-progress) recompilation of Real Steel (Yuke's, Xbox 360 XBLA, 584111E0) with the ReXGlue SDK. Home of the Factual Metal Launcher.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "JFryy/reshadowtower",
+      "title": "reshadowtower",
+      "console": "Unknown",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-27T20:18:42Z",
+      "notes": "Shadow Tower native port (recompiled) with modern PC controls, graphical improvements.",
+      "website": "",
+      "addedAt": "2026-10-04T11:35:38.505Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "OpenBiohazard2/OpenBiohazard2",
+      "title": "Resident Evil 2",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "OpenBiohazard-0.1.0",
+      "status": "prerelease",
+      "updatedAt": "2024-05-17T01:05:20Z",
+      "notes": "Open source re-implementation of the original Resident Evil 2 / Biohazard 2",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "ecruells/resident-evil-pc-decomp",
+      "title": "resident evil pc decomp",
+      "console": "Unknown",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "residentevil-v1.3.0",
+      "status": "latest",
+      "updatedAt": "2026-09-27T03:08:12Z",
+      "notes": "Resident Evil 1 PC Port Decomp",
+      "website": "",
+      "addedAt": "2026-09-29T13:44:06.314Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Sirhalo23/RidgeRacer6-Recompilation",
+      "title": "Ridge Racer 6",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "v0.1.4",
+      "status": "latest",
+      "updatedAt": "2026-10-08T02:18:40Z",
+      "notes": "A recompilation of the Xbox 360 release for Ridge Racer 6 on PC",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "jackpoison-prog/RingOut",
+      "title": "RingOut",
+      "console": "GameCube",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.6.2",
+      "status": "latest",
+      "updatedAt": "2026-09-17T22:23:47Z",
+      "notes": "Native PC port of a GameCube fighting game via static recompilation - PowerPC translated to C, run as native x86-64 on a Dolphin-derived runtime",
+      "website": "",
+      "addedAt": "2026-09-19T05:50:19.866Z"
+    },
+    {
+      "repo": "ihatecompvir/band3_recomp",
+      "title": "Rock Band 3 (Xbox 360)",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-02T16:53:10Z",
+      "notes": "band3 recomp",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "StraDaMa/PoN_PC",
+      "title": "Rockman EXE: Phantom of Network",
+      "console": "Others",
+      "platforms": [],
+      "version": "v1.0.1",
+      "status": "latest",
+      "updatedAt": "2026-02-21T16:00:30Z",
+      "notes": "PoN PC is a native Windows PC port of the previously mobile-exclusive game Rockman EXE Phantom of Network.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, resetera"
+    },
+    {
+      "repo": "OpenRCT2/OpenRCT2",
+      "title": "RollerCoaster Tycoon 2",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Android",
+        "Linux"
+      ],
+      "version": "v0.5.5",
+      "status": "latest",
+      "updatedAt": "2026-09-06T10:13:57Z",
+      "notes": "An open source re-implementation of RollerCoaster Tycoon 2 🎢",
+      "website": "https://openrct2.io",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "2003scape/rsc-c",
+      "title": "Runescape (2003)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "mudclient177-rev1",
+      "status": "latest",
+      "updatedAt": "2022-04-01T04:16:20Z",
+      "notes": "🍫 runescape classic client ported to C",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "ant0-blase/Saw2-X360-ReXGlue",
+      "title": "Saw II: Flesh & Blood",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-08-25T00:22:03Z",
+      "notes": "Saw II: Flesh & Blood — Xbox 360 ReXGlue Recompilation",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "mstan/SDGundamDimensionWarVirtualBoyRecomp",
+      "title": "SD Gundam Dimension War",
+      "console": "Virtual Boy",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "prerelease",
+      "updatedAt": "2026-09-12T21:02:17Z",
+      "notes": "Early prototype Virtual Boy recompilation with recomp-ui and opt-in English, color, and adaptive widescreen mods. Bugs expected. Requires the original Japanese ROM.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "xandoxan65/segarally95-recomp",
+      "title": "segarally95 recomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-26T11:44:53Z",
+      "notes": "Recomp of SEGA Rally Championship 96 for Model 2 arcade hardware",
+      "website": "",
+      "addedAt": "2026-09-26T19:57:07.474Z",
+      "via": "Bulk paste"
+    },
+    {
+      "repo": "Y0oshi/lain-psx-decompiled",
+      "title": "Serial Experiments Lain",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-01T07:09:10Z",
+      "notes": "Decompilation of Serial Experiments Lain (PlayStation) and a native Windows, macOS and Linux client",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "rlerrr/shandalar-sdl3-appimage",
+      "title": "shandalar sdl3 appimage",
+      "console": "Unknown",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "appimage-36738886402-1",
+      "status": "latest",
+      "updatedAt": "2026-09-30T15:49:03Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-01T13:41:47.889Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "SheepStealer2001/Sheep-Dog-n-Wolf-Rewooled",
+      "title": "Sheep Dog n Wolf Rewooled",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.0.5",
+      "status": "latest",
+      "updatedAt": "2026-10-05T14:54:18Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:50.951Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "konovalov-aleks/reSL",
+      "title": "Shortline railroad",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Android",
+        "Windows"
+      ],
+      "version": "release-1.1.3",
+      "status": "latest",
+      "updatedAt": "2026-08-08T10:52:57Z",
+      "notes": "The reversed source code for ShortLine v1.1 game",
+      "website": "https://konovalov-aleks.github.io/shortline-railroads.html",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "SlickAmogus/silent-hill-pc-nightly",
+      "title": "silent hill pc nightly",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v2026.06.24.1",
+      "status": "latest",
+      "updatedAt": "2026-06-24T06:36:07Z",
+      "notes": "Nightly builds of the AI-Assisted Silent Hill 1 PC port based on the PSX decompilation project. ",
+      "website": "",
+      "addedAt": "2026-10-04T11:46:14.622Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "takoshero96/Silly-ReEncounter",
+      "title": "Silly ReEncounter",
+      "console": "GameCube",
+      "platforms": [],
+      "version": "recomp",
+      "status": "latest",
+      "updatedAt": "2026-09-27T23:33:45Z",
+      "notes": "This is an Unofficial PC port of Serious Sam: Next Encounter (GameCube, 2004), made by recompiling the game's code to native x64. Your own legally acquired Rev 1 US rom is required; the game is built on your PC and no game code is distributed.",
+      "website": "",
+      "addedAt": "2026-10-04T11:44:44.413Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "spyrosadventure/cloud-patrol-decomp",
+      "title": "Skylanders Cloud Patrol",
+      "console": "Others",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "test",
+      "status": "prerelease",
+      "updatedAt": "2024-07-22T00:23:42Z",
+      "notes": "A slightly functional decompilation of Skylanders Cloud Patrol",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "NotAn127/SM64-PC-Port-WebGL",
+      "title": "SM64 PC Port WebGL",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": "Classic_and_pc_port",
+      "status": "latest",
+      "updatedAt": "2023-05-23T19:52:49Z",
+      "notes": "Here is the link ig, took a while to do this, believe me",
+      "website": "https://notan127.github.io/SM64-PC-Port-WebGL/",
+      "addedAt": "2026-09-19T07:22:02.151Z"
+    },
+    {
+      "repo": "nathsou/smb",
+      "title": "smb",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-27T17:43:40Z",
+      "notes": "Super Mario Bros. static recompilation in C",
+      "website": "https://nathsou.github.io/smb/",
+      "addedAt": "2026-09-29T13:10:57.035Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "chrissotraidis/snappad",
+      "title": "snappad",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-04T01:50:40Z",
+      "notes": "Pokémon Snap, statically recompiled for iPhone, iPad, and Apple Silicon Mac.",
+      "website": "",
+      "addedAt": "2026-10-05T17:56:11.690Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "cdlewis/snowboardkids-recomp",
+      "title": "Snowboard Kids",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.0.4",
+      "status": "latest",
+      "updatedAt": "2026-10-04T15:54:40Z",
+      "notes": "Snowboard Kids for PC (Windows/Linux/MacOS)",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "Scotho/socom-unzipped",
+      "title": "socom unzipped",
+      "console": "PlayStation 2",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-01T07:53:25Z",
+      "notes": "SOCOM II: U.S. Navy SEALs, statically recompiled for PC with self-hosted online play",
+      "website": "https://socomunzipped.com",
+      "addedAt": "2026-10-01T13:40:20.999Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "PranchaD/re-Sonic06Demo",
+      "title": "Sonic 06 Demo",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1",
+      "status": "latest",
+      "updatedAt": "2026-02-26T19:51:57Z",
+      "notes": "Sonic 06 Demo Recompilation using RexGlue",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "SAT-R/sa2",
+      "title": "Sonic Advance 2",
+      "console": "Game Boy Advance",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-08-01T08:53:14Z",
+      "notes": "A decompilation and port of Sonic Advance 1 & 2 - GameBoy Advance game's written in C",
+      "website": "https://sa2.dev",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "sonicfreak1337/SARecomp",
+      "title": "Sonic Adventure (Recompiled)",
+      "console": "Dreamcast",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.50.0-beta.1",
+      "status": "latest",
+      "updatedAt": "2026-09-18T17:37:29Z",
+      "notes": "A fully playable, work-in-progress native Sonic Adventure port for Windows, Linux and Steam Deck. Powered by KatanaRecomp.",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "RSDKModding/RSDKv3-Decompilation",
+      "title": "Sonic CD",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.3.3",
+      "status": "latest",
+      "updatedAt": "2025-11-02T00:12:09Z",
+      "notes": "A Full Decompilation of Sonic CD (2011) & Retro Engine (v3) ",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "RSDKModding/RSDKv5-Decompilation",
+      "title": "Sonic Mania (Retro Engine v5)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.1.1",
+      "status": "latest",
+      "updatedAt": "2025-11-01T23:53:16Z",
+      "notes": "A complete decompilation of Retro Engine (v5)",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gdoc"
+    },
+    {
+      "repo": "ThisKwasior/Sonic-Mania-25MB",
+      "title": "Sonic Mania 25MB",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-08-23T09:15:25Z",
+      "notes": "RSDKv5 and Sonic Mania decompilation with added VP9 video and OPUS audio capabilities to make the game 25MB",
+      "website": "",
+      "addedAt": "2026-09-19T07:20:37.998Z"
+    },
+    {
+      "repo": "RSDKModding/Sonic-Mania-Decompilation",
+      "title": "Sonic Mania Decompilation",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.1.1",
+      "status": "latest",
+      "updatedAt": "2025-11-01T23:53:19Z",
+      "notes": "A complete decompilation of Sonic Mania (2017)",
+      "website": "",
+      "addedAt": "2026-09-26T01:21:01.412Z"
+    },
+    {
+      "repo": "ElspethThePict/S1Forever",
+      "title": "Sonic the Hedgehog",
+      "console": "Mega Drive",
+      "platforms": [
+        "Android",
+        "Windows"
+      ],
+      "version": "1.5.1",
+      "status": "latest",
+      "updatedAt": "2024-10-16T14:38:52Z",
+      "notes": "A modification of the 2013 mobile port, based on the 2021 decompilation",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "RSDKModding/RSDKv4-Decompilation",
+      "title": "Sonic The Hedgehog 1 & 2",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "1.3.3",
+      "status": "latest",
+      "updatedAt": "2025-11-02T00:48:00Z",
+      "notes": "A complete decompilation of Sonic 1 & Sonic 2 (2013) & Retro Engine (v4)",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "mstan/Sonic3AndKnucklesRecomp",
+      "title": "Sonic3AndKnucklesRecomp",
+      "console": "Mega Drive",
+      "platforms": [
+        "Linux",
+        "Windows",
+        "macOS"
+      ],
+      "version": "v0.5.2",
+      "status": "latest",
+      "updatedAt": "2026-10-03T19:40:59Z",
+      "notes": "Sonic 3 & Knuckles recompiled for the Sega Genesis using segagenesisrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T17:58:54.305Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "mstan/SonicTheHedgehog2Recomp",
+      "title": "SonicTheHedgehog2Recomp",
+      "console": "Mega Drive",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v0.7.0",
+      "status": "latest",
+      "updatedAt": "2026-09-22T18:14:49Z",
+      "notes": "Sonic the Hedgehog 2 recompiled for the Sega Genesis using segagenesisrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-09-24T10:21:02.744Z"
+    },
+    {
+      "repo": "LightVelox/sotc-vibe-pc",
+      "title": "sotc vibe pc",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-02T00:31:55Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-05T17:57:50.252Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "k4zmu2a/SpaceCadetPinball",
+      "title": "Space Cadet Pinball",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "Release_2.1.0",
+      "status": "latest",
+      "updatedAt": "2023-10-16T06:31:47Z",
+      "notes": "Decompilation of 3D Pinball for Windows – Space Cadet",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "SirSymo/SM2-Recomp",
+      "title": "Spider-Man 2",
+      "console": "Xbox",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-05T14:49:29Z",
+      "notes": "An experimental native recompilation of Spider-Man 2 for the original Xbox, bringing the classic open-world adventure to modern Windows through an evolving native implementation.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "dyzz/srw64-recomp",
+      "title": "srw64 recomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-18T15:01:42Z",
+      "notes": "Experimental Super Robot Wars 64 native recompilation, with Japanese/Chinese text and optional HD presentation.",
+      "website": "",
+      "addedAt": "2026-09-19T14:05:10.662Z"
+    },
+    {
+      "repo": "kandowontu2/starfox-enhanced",
+      "title": "Star Fox",
+      "console": "SNES",
+      "platforms": [
+        "Windows",
+        "Android",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v0.0.8",
+      "status": "latest",
+      "updatedAt": "2026-09-29T00:26:36Z",
+      "notes": "Star Fox Enhanced source and portable platform builds (Assisted by Codex AI)",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "tim-tim707/SW_RACER_RE",
+      "title": "Star Wars Episode 1: Racer",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.17",
+      "status": "latest",
+      "updatedAt": "2026-08-28T21:57:22Z",
+      "notes": "Star Wars Episode 1 Racer Decompilation project",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "mstan/StarFoxSNESRecomp",
+      "title": "StarFoxSNESRecomp",
+      "console": "SNES",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.3.1",
+      "status": "latest",
+      "updatedAt": "2026-09-21T22:51:35Z",
+      "notes": "Star Fox recompiled for the Super Nintendo using snesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-09-26T01:20:41.741Z"
+    },
+    {
+      "repo": "updeshxp/SF3TSOEReborn",
+      "title": "Street Fighter III: 3rd Strike Online Edition",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-08-23T11:32:48Z",
+      "notes": "Static recompilation of SFIII 3rd Strike Online Edition (XBLA) for Windows and Linux, built on the ReXGlue SDK. ",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "kylofon/streetrod-enhanced",
+      "title": "streetrod enhanced",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-09-30T17:09:29Z",
+      "notes": "Street Rod (1989) on SDL3 with a smooth, high-resolution road view",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:08.626Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "RuiNelson/StreetsOfRageProject",
+      "title": "StreetsOfRageProject",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-04T23:09:02Z",
+      "notes": "Streets of Rage recompilation project",
+      "website": "",
+      "addedAt": "2026-10-05T17:55:27.153Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "BlackAndBlue95/Strikers-WiiCompiled",
+      "title": "Strikers WiiCompiled",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-01T01:50:24Z",
+      "notes": "Native PC port of Mario Strikers Charged via static recompilation (fork of WiiCompiled). No game data included.",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:50.204Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "elliotttate/BombermanRecomp",
+      "title": "Super Bomberman",
+      "console": "SNES",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-08-26T16:01:04Z",
+      "notes": "Native recompilation of Super Bomberman (USA) for Windows using snesrecomp",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium, quiver"
+    },
+    {
+      "repo": "MorsGames/sm64plus",
+      "title": "Super Mario 64",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": "LauncherMirror",
+      "status": "latest",
+      "updatedAt": "2021-11-30T12:58:55Z",
+      "notes": "A fork of sm64-port that focuses on QoL improvements and customizability.",
+      "website": "https://mfgg.net/index.php?act=resdb&param=02&c=2&id=38190",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera, gdoc"
+    },
+    {
+      "repo": "Render96/Render96ex",
+      "title": "Super Mario 64",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-07-16T09:16:02Z",
+      "notes": "Fork of https://github.com/sm64-port/sm64-port with additional features.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: backloggd"
+    },
+    {
+      "repo": "sm64-port/sm64-port",
+      "title": "Super Mario 64",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2024-11-15T00:58:50Z",
+      "notes": "A port of https://www.github.com/n64decomp/sm64 for modern devices.",
+      "website": "https://discord.gg/7bcNTPK",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gdoc, backloggd"
+    },
+    {
+      "repo": "sm64pc/sm64ex",
+      "title": "Super Mario 64",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2024-12-17T14:37:36Z",
+      "notes": "Fork of https://github.com/sm64-port/sm64-port with additional features.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera, backloggd"
+    },
+    {
+      "repo": "mstan/SuperMarioAdvance2Recomp",
+      "title": "Super Mario Advance 2: Super Mario World",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.0.3",
+      "status": "prerelease",
+      "updatedAt": "2026-09-25T16:10:13Z",
+      "notes": "Static recompilation of Super Mario Advance 2: Super Mario World · Part of the R.A.I.D. community",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "mstan/SuperMarioAdvance4Recomp",
+      "title": "Super Mario Advance 4: Super Mario Bros. 3",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.0.2",
+      "status": "prerelease",
+      "updatedAt": "2026-08-03T02:28:51Z",
+      "notes": "Static recompilation of Super Mario Advance 4: Super Mario Bros. 3 · Part of the R.A.I.D. community",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "nukep/SMB-Vanilla",
+      "title": "Super Mario Bros.",
+      "console": "NES",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-03T16:43:45Z",
+      "notes": "A C decompilation and port of the NES games \"Super Mario Bros\" and \"Super Mario Bros: The Lost Levels\"",
+      "website": "https://www.otterstack.com/smbvanilla/",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gdoc"
+    },
+    {
+      "repo": "TekRantGaming/sms-pc-port",
+      "title": "Super Mario Sunshine",
+      "console": "GameCube",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.3.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T00:18:38Z",
+      "notes": "Native PC port of Super Mario Sunshine with a launcher: up to 8x resolution, MSAA, fullscreen, HD texture installer, free camera and mouse look. Windows and Linux. Bring your own disc.",
+      "website": "https://github.com/TekRantGaming/sms-pc-port/releases/latest",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "snesrev/smw",
+      "title": "Super Mario World",
+      "console": "SNES",
+      "platforms": [],
+      "version": "v0.1",
+      "status": "latest",
+      "updatedAt": "2023-08-16T22:38:38Z",
+      "notes": "Smw",
+      "website": "https://discord.gg/AJJbJAzNNJ",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera, quiver, gdoc"
+    },
+    {
+      "repo": "snesrev/sm",
+      "title": "Super Metroid",
+      "console": "SNES",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2023-08-21T22:53:49Z",
+      "notes": "early version",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "TechnicallyComputers/BattleShip",
+      "title": "Super Smash Bros.",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "Netplay-Beta-1",
+      "status": "prerelease",
+      "updatedAt": "2026-07-10T17:12:32Z",
+      "notes": "A smashin' port for PC, Mac, and Linux!",
+      "website": "https://discord.gg/c4nJm6En",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "gcsmith/Superman64Recomp",
+      "title": "Superman 64",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-05-27T18:26:05Z",
+      "notes": "Static recompilation of Superman 64 (WIP).",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: backloggd"
+    },
+    {
+      "repo": "mstan/SuperMarioBrosNESRecomp",
+      "title": "SuperMarioBrosNESRecomp",
+      "console": "NES",
+      "platforms": [
+        "Linux",
+        "Windows",
+        "macOS"
+      ],
+      "version": "v1.11.0",
+      "status": "latest",
+      "updatedAt": "2026-09-25T19:57:22Z",
+      "notes": "Super Mario Bros. recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-09-26T01:18:01.881Z"
+    },
+    {
+      "repo": "shaneomac1337/SVR2011-Recomp",
+      "title": "SVR2011 Recomp",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": "v0.5.0",
+      "status": "latest",
+      "updatedAt": "2026-10-02T18:42:45Z",
+      "notes": "Unofficial Windows version of WWE SmackDown vs. Raw 2011 (Xbox 360), recompiled with ReXGlue. Bring your own disc image.",
+      "website": "",
+      "addedAt": "2026-10-04T12:43:54.632Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "jedijosh920/SWROTS-PC",
+      "title": "SWROTS PC",
+      "console": "Xbox",
+      "platforms": [],
+      "version": "v0.3.0",
+      "status": "prerelease",
+      "updatedAt": "2026-10-05T05:31:45Z",
+      "notes": "Unofficial native Windows port of Star Wars: Episode III - Revenge of the Sith (Xbox). Bring your own copy.",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:47.403Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "alexbeavs-ps1-ports/syphon-filter-2-recomp",
+      "title": "syphon filter 2 recomp",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.3-alpha",
+      "status": "prerelease",
+      "updatedAt": "2026-09-15T16:09:34Z",
+      "notes": "Experimental Syphon Filter 2 static recompilation for Windows using PSXRecomp",
+      "website": "",
+      "addedAt": "2026-09-22T22:44:02.478Z"
+    },
+    {
+      "repo": "asser4775-cyber/syphon-filter-2-recompiled",
+      "title": "syphon filter 2 recompiled",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-17T07:04:35Z",
+      "notes": "Play Syphon Filter 2 natively on PC with 16:9 widescreen, mouse camera control, and enhanced graphics via this experimental static recompilation.",
+      "website": "https://asser4775-cyber.github.io",
+      "addedAt": "2026-09-19T05:51:57.872Z"
+    },
+    {
+      "repo": "FishB0nes98/Tekken3Recompiled",
+      "title": "Tekken3Recompiled",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.2-easy-setup",
+      "status": "prerelease",
+      "updatedAt": "2026-09-13T16:51:51Z",
+      "notes": "Tekken 3 hybrid recompilation preview with Jun Kazama, widescreen, custom skins and local asset import tools.",
+      "website": "",
+      "addedAt": "2026-09-19T07:18:19.683Z"
+    },
+    {
+      "repo": "PPrism/TerrariaOGC",
+      "title": "Terraria",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": "1.03",
+      "status": "latest",
+      "updatedAt": "2026-04-30T09:16:31Z",
+      "notes": "A functional decompilation & PC port of the console version of Terraria released on the Xbox 360 & PS3 in 2013.",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "kylofon/test-drive-2-sdl3",
+      "title": "test drive 2 sdl3",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-17T10:23:12Z",
+      "notes": "Reverse engineering and SDL3 port of Test Drive II: The Duel (1989, DOS/EGA)",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:04.410Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "kylofon/test-drive-3-sdl3",
+      "title": "test drive 3 sdl3",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-24T11:02:54Z",
+      "notes": "Reverse engineering and SDL3 port of Test Drive III: The Passion (1990, DOS/VGA)",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:06.526Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "kylofon/test-drive-sdl3",
+      "title": "test drive sdl3",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.3.0",
+      "status": "latest",
+      "updatedAt": "2026-10-01T08:31:40Z",
+      "notes": "Reverse engineering and SDL3 port of Test Drive (1987, DOS/EGA)",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:01.822Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "kylofon/testdrive-enhanced",
+      "title": "testdrive enhanced",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.4",
+      "status": "latest",
+      "updatedAt": "2026-09-25T18:01:43Z",
+      "notes": "Test Drive (1987) on an SDL3 engine",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:03.058Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "kylofon/testdrive2-enhanced",
+      "title": "testdrive2 enhanced",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.3.0",
+      "status": "latest",
+      "updatedAt": "2026-09-24T11:02:28Z",
+      "notes": "Enhanced Test Drive II: The Duel (1989) on SDL3: the road view at 4x resolution, 60 fps and a 180-unit draw distance, from the original data",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:05.461Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "kylofon/testdrive3-enhanced",
+      "title": "testdrive3 enhanced",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-09-30T09:08:17Z",
+      "notes": "Enhanced native SDL3 port of Test Drive III: The Passion (1990) - smooth high-resolution 3D view, longer draw distance, smooth steering",
+      "website": "",
+      "addedAt": "2026-10-05T17:58:07.555Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "portingpete/The-Darkness-Recomp",
+      "title": "The Darkness Recomp",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.2",
+      "status": "prerelease",
+      "updatedAt": "2026-09-27T05:09:42Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-09-29T13:43:17.904Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Interkarma/daggerfall-unity",
+      "title": "The Elder Scrolls II: Daggerfall",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.1.1-cve-2025",
+      "status": "latest",
+      "updatedAt": "2025-10-05T01:34:39Z",
+      "notes": "Open source recreation of Daggerfall in the Unity engine",
+      "website": "http://www.dfworkshop.net",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "mstan/LegendOfZeldaNESRecomp",
+      "title": "The Legend of Zelda",
+      "console": "NES",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v1.9.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T06:07:02Z",
+      "notes": "The Legend of Zelda recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "snesrev/zelda3",
+      "title": "The Legend Of Zelda: A Link To The Past",
+      "console": "SNES",
+      "platforms": [],
+      "version": "v0.3",
+      "status": "latest",
+      "updatedAt": "2023-08-17T01:18:40Z",
+      "notes": "",
+      "website": "https://discord.gg/AJJbJAzNNJ",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "xander-haj/Z3R",
+      "title": "The Legend of Zelda: A Link to the Past (Zelda 3 Reborn)",
+      "console": "SNES",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.2.4",
+      "status": "latest",
+      "updatedAt": "2026-06-16T12:51:54Z",
+      "notes": "Zelda 3 Reborn",
+      "website": "",
+      "addedAt": "2026-10-08T18:37:13.781Z",
+      "via": "ResetEra Decompilation Projects OT, 8 Oct 2026"
+    },
+    {
+      "repo": "blawar/ooot",
+      "title": "The Legend of Zelda: Ocarina of Time",
+      "console": "Nintendo 64",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2025-08-07T07:26:37Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "kirby-letsgo/oracles-decomp",
+      "title": "The Legend of Zelda: Oracle of Ages & Oracle of Seasons",
+      "console": "Game Boy Color",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "nightly",
+      "status": "prerelease",
+      "updatedAt": "2026-10-08T17:27:51Z",
+      "notes": "Native app for the GBC zelda oracle games",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "MatheoVignaud/tmc",
+      "title": "The Legend of Zelda: The Minish Cap",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "0.2.0-pre",
+      "status": "latest",
+      "updatedAt": "2026-05-17T09:54:49Z",
+      "notes": "Decompilation of The Legend of Zelda: The Minish Cap (USA/JP/EU)",
+      "website": "https://zeldaret.github.io/tmc/html/index.html",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "ZeldaWWHDRecomp/ZeldaWWHDRecomp",
+      "title": "The Legend of Zelda: The Wind Waker HD",
+      "console": "Wii U",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.2.8",
+      "status": "latest",
+      "updatedAt": "2026-10-08T11:34:38Z",
+      "notes": "Zelda Wind Waker HD Recomp",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:17.948Z",
+      "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "freeserf/freeserf",
+      "title": "The Settlers I",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows",
+        "macOS"
+      ],
+      "version": "v0.3",
+      "status": "latest",
+      "updatedAt": "2019-01-23T12:16:53Z",
+      "notes": "Settlers 1 (Serf City) clone.",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "Pyrdacor/freeserf.net",
+      "title": "The Settlers I",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "macOS",
+        "Linux",
+        "Windows"
+      ],
+      "version": "v2.2.4",
+      "status": "latest",
+      "updatedAt": "2026-06-16T09:31:00Z",
+      "notes": "Settlers 1 clone written in C#",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "TekRantGaming/simpsons-wrestling-recompiled",
+      "title": "The Simpsons Wrestling",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-07T19:30:55Z",
+      "notes": "The Simpsons Wrestling (PS1, USA) recompiled for Windows and Linux with psxrecomp and the TRG Launcher: 16:9, HD, 60 FPS, skip intro, everything unlocked. Bring your own disc.",
+      "website": "",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "Vheissu/hit-and-run-web",
+      "title": "The Simpsons: Hit & Run (Web Port)",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-10T03:44:05Z",
+      "notes": "Playable browser reconstruction of The Simpsons: Hit & Run with converted assets and Blender remaster tools.",
+      "website": "https://vheissu.github.io/hit-and-run-web/",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "riseio/TWIPE_00Sheven",
+      "title": "The World Is Not Enough",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "IWouldHaveGivenYouTheWorld_0.1.74",
+      "status": "latest",
+      "updatedAt": "2026-10-05T02:58:52Z",
+      "notes": "A static recompilation project of the N64 game The World Is Not Enough",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "CorsixTH/CorsixTH",
+      "title": "Theme Hospital",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.70.1",
+      "status": "latest",
+      "updatedAt": "2026-08-28T13:33:08Z",
+      "notes": "Open source clone of Theme Hospital",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "teampopwork/Thunderball",
+      "title": "Thunderball",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "continuous",
+      "status": "latest",
+      "updatedAt": "2026-09-22T05:58:31Z",
+      "notes": "WIP Decompilation of Peggle Deluxe 1.01",
+      "website": "https://teampopwork.github.io/Thunderball/",
+      "addedAt": "2026-09-26T01:20:37.910Z"
+    },
+    {
+      "repo": "itskenny0/titanic-godot",
+      "title": "Titanic: Adventure Out of Time",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.5.0",
+      "status": "latest",
+      "updatedAt": "2026-09-16T01:49:10Z",
+      "notes": "Unofficial Godot engine for Titanic: Adventure Out of Time, port of dreamREfactory. Bring your own game files.",
+      "website": "https://archive.org/details/Titanic_Adventure_Out_of_Time",
+      "addedAt": "2026-10-08T18:20:24.836Z",
+      "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "XProger/OpenLara",
+      "title": "Tomb Raider 1-5",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Android",
+        "Windows"
+      ],
+      "version": "latest",
+      "status": "latest",
+      "updatedAt": "2019-01-11T07:42:30Z",
+      "notes": "Classic Tomb Raider open-source engine",
+      "website": "http://xproger.info/projects/OpenLara/",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "LostArtefacts/TRX",
+      "title": "Tomb Raider I & II",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "latest",
+      "status": "prerelease",
+      "updatedAt": "2024-03-26T21:10:06Z",
+      "notes": "Open source re-implementation of Tomb Raider I, Tomb Raider II and Tomb Raider III, along with additional enhancements and bugfixes",
+      "website": "https://lostartefacts.dev/",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "Trxyebeep/tomb3",
+      "title": "Tomb Raider III",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": "V2.0.2",
+      "status": "latest",
+      "updatedAt": "2023-05-10T06:43:00Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "Trxyebeep/TOMB5",
+      "title": "Tomb Raider: Chronicles",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": "V3.2.0",
+      "status": "latest",
+      "updatedAt": "2023-02-05T05:55:00Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "Trxyebeep/TOMB4",
+      "title": "Tomb Raider: The Last Revelation",
+      "console": "PC (Windows)",
+      "platforms": [],
+      "version": "V2.2.1",
+      "status": "latest",
+      "updatedAt": "2023-05-06T18:52:50Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: resetera"
+    },
+    {
+      "repo": "PeriBluGaming/ToyStory2Recomp",
+      "title": "Toy Story 2: Buzz Lightyear to the Rescue!",
+      "console": "PlayStation",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.1.0-alpha",
+      "status": "prerelease",
+      "updatedAt": "2026-08-07T21:01:01Z",
+      "notes": "Toy Story 2 - Buzz Lightyear so the Rescue (USA)! recompiled for the Sony PlayStation using psxrecomp · Part of the R.A.I.D. community",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "rep-stosw/tube64",
+      "title": "Tube",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2024-03-07T20:38:51Z",
+      "notes": "64-bit vesion of DOS game Tube (Bullfrog, 1994)",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "ArtfulRascal8/rage-wars-recompiled",
+      "title": "Turok: Rage Wars",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.0-beta.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-04T09:09:07Z",
+      "notes": "Rage Wars Recompiled by XR64 Studios. Windows PC and experimental PCVR; private release preparation.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "Kitrinx/Ultima7_Decomp",
+      "title": "Ultima7 Decomp",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-01T04:45:42Z",
+      "notes": "This is a decompiled and byte-verified rebuild of Ultima 7.",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:33.134Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "BelmanteGu/UltraStreetFighterIVRecomp",
+      "title": "UltraStreetFighterIVRecomp",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-28T01:05:13Z",
+      "notes": "Unofficial static recompilation of Ultra Street Fighter IV (Xbox 360) to native code for macOS and Android, with a native Vulkan renderer. No game code or assets included.",
+      "website": "",
+      "addedAt": "2026-09-29T13:10:25.773Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "abedegno/UW2Decomp",
+      "title": "UW2Decomp",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-04T15:04:42Z",
+      "notes": "Byte-matching decompilation of Ultima Underworld II (DOS), rebuilt with Borland Turbo C++ 1.01",
+      "website": "",
+      "addedAt": "2026-10-05T17:54:25.119Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Voicedrew11/verdite2",
+      "title": "verdite2",
+      "console": "Unknown",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.3.2",
+      "status": "latest",
+      "updatedAt": "2026-09-25T21:12:25Z",
+      "notes": "AI driven attempt at porting King's Field (SLUS-00158) to PC with a variety of improvements",
+      "website": "",
+      "addedAt": "2026-09-26T01:18:48.765Z"
+    },
+    {
+      "repo": "GTTeancum/Vigilante-8-recomp",
+      "title": "Vigilante 8 recomp",
+      "console": "Unknown",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-24T09:38:20Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-09-26T01:19:35.115Z"
+    },
+    {
+      "repo": "crabinacrabic/VivaPinataRecomp",
+      "title": "VivaPinataRecomp",
+      "console": "Xbox 360",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-10-03T09:38:58Z",
+      "notes": "Static recompilation of Viva Pinata (Xbox 360, 2006, 4D5307F2) with the ReXGlue SDK v0.10",
+      "website": "",
+      "addedAt": "2026-10-04T11:38:13.195Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Wargus/wargus",
+      "title": "Warcraft II: Tides of Darkness",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v3.3.2",
+      "status": "latest",
+      "updatedAt": "2022-08-10T18:47:27Z",
+      "notes": "Importer and scripts for Warcraft II: Tides of Darkness, the expansion Beyond the Dark Portal, and Aleonas Tales",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "Wargus/war1gus",
+      "title": "Warcraft: Orcs & Humans",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v3.3.2",
+      "status": "latest",
+      "updatedAt": "2022-08-10T19:06:45Z",
+      "notes": "Importer and scripts for Warcraft: Orcs and Humans",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "GABRIELNNK/Bigodao",
+      "title": "Wario Land: Super Mario Land 3",
+      "console": "Game Boy",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "0.0.1",
+      "status": "latest",
+      "updatedAt": "2026-10-05T04:41:05Z",
+      "notes": "personal study project for recompile Wario Land: Super Mario Land 3 - gb",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "mstan/WarioWareTwistedRecomp",
+      "title": "WarioWare: Twisted!",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Android",
+        "Windows"
+      ],
+      "version": "android-v0.0.1",
+      "status": "prerelease",
+      "updatedAt": "2026-08-02T20:41:19Z",
+      "notes": "Static recompilation of WarioWare: Twisted! with Windows and Android gyro support · Part of the R.A.I.D. community",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "elliotttate/wave-race-64-recomp",
+      "title": "Wave Race 64",
+      "console": "Nintendo 64",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.4.0-macos.3",
+      "status": "latest",
+      "updatedAt": "2026-09-07T22:39:26Z",
+      "notes": "An AI-coded PC port of the Nintendo 64 game 'Wave Race 64'. Currently in beta.",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "nikolaygorb/WetRecomp",
+      "title": "WetRecomp",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "1.2",
+      "status": "latest",
+      "updatedAt": "2026-10-05T16:31:36Z",
+      "notes": "Wet [Xbox360] game static recompilation project based on RexGlue-SDK",
+      "website": "",
+      "addedAt": "2026-10-05T17:57:40.846Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "phoboslab/wipeout-rewrite",
+      "title": "Wipeout",
+      "console": "PlayStation",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-27T13:52:26Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T12:50:30.459Z",
+      "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "jjmhalew/WoodyRE",
+      "title": "Woody Woodpecker: Escape from Buzz Buzzard Park",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Android"
+      ],
+      "version": "v1.0.3",
+      "status": "latest",
+      "updatedAt": "2026-10-05T14:50:34Z",
+      "notes": "Engine reimplementation of Woody Woodpecker: Escape from Buzz Buzzard Park (PC, 2001) - plays the original game from your own CD. Unofficial fan project, no game files included.",
+      "website": "",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "PromethenDev/wwe13-recomp",
+      "title": "wwe13 recomp",
+      "console": "Unknown",
+      "platforms": [],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-02T21:18:34Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-04T12:39:20.073Z",
+      "via": "Bulk paste"
+    },
+    {
+      "repo": "Gadge64/WWFNoMercyRecomp",
+      "title": "WWFNoMercyRecomp",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.1-60hz.1",
+      "status": "latest",
+      "updatedAt": "2026-10-02T12:50:28Z",
+      "notes": "Native PC port of WWF No Mercy (N64) via static recompilation. No game assets included — bring your own ROM.",
+      "website": "",
+      "addedAt": "2026-10-04T12:39:19.732Z",
+      "via": "Bulk paste"
+    },
+    {
+      "repo": "OpenApoc/OpenApoc",
+      "title": "X-COM: Apocalypse",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "20260916",
+      "status": "prerelease",
+      "updatedAt": "2026-09-16T16:46:38Z",
+      "notes": "Opensource rebuild of the XCOM Apocalypse Engine that requires the original files to run.",
+      "website": "http://openapoc.org",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: quiver"
+    },
+    {
+      "repo": "CrownParkComputing/Xbox360-Native-Ports",
+      "title": "Xbox 360 Native Ports (16-game collection)",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "notes": "Xbox 360 titles recompiled to native Linux - launchers only. You import your own copy of each game; releases carry no game data.",
+      "website": "",
+      "addedAt": "2026-09-17T10:52:52.676Z",
+      "version": "splitsecond-v1",
+      "status": "latest",
+      "updatedAt": "2026-09-16T13:54:37Z"
+    },
+    {
+      "repo": "OpokXeno/xenogears-recomp",
+      "title": "xenogears recomp",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.7.1",
+      "status": "prerelease",
+      "updatedAt": "2026-09-19T21:25:32Z",
+      "notes": "Static recompilation of Xenogears for PC",
+      "website": "",
+      "addedAt": "2026-09-20T09:07:39.480Z"
+    },
+    {
+      "repo": "shipa-2/Xerenge",
+      "title": "Xerenge",
+      "console": "Unknown",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-09-28T12:41:01Z",
+      "notes": "Burnout Revenge recompilation based on RexGlue + standalone Plume render",
+      "website": "",
+      "addedAt": "2026-10-01T13:40:29.756Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "canersaka/Yakuza-Dead-Souls-EX",
+      "title": "Yakuza Dead Souls EX",
+      "console": "Unknown",
+      "platforms": [],
+      "version": null,
+      "status": "none",
+      "updatedAt": "2026-09-30T12:43:28Z",
+      "notes": "A Yakuza Dead Souls recompilation effort",
+      "website": "",
+      "addedAt": "2026-10-01T13:41:52.647Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "mstan/YoshiNESRecomp",
+      "title": "Yoshi",
+      "console": "NES",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v1.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T06:06:08Z",
+      "notes": "Yoshi recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "mstan/YoshisCookieRecomp",
+      "title": "Yoshi's Cookie",
+      "console": "NES",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-05T06:06:13Z",
+      "notes": "Yoshi's Cookie recompiled for the NES using nesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-05T18:24:49.314Z",
+      "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "Unchiga/Yu-Gi-Oh-Forbidden-Memories-Recompiled",
+      "title": "Yu Gi Oh Forbidden Memories Recompiled",
+      "console": "Unknown",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.3-preview.1",
+      "status": "prerelease",
+      "updatedAt": "2026-09-28T18:36:31Z",
+      "notes": "Native decompilation and recompilation of Yu-Gi-Oh! Forbidden Memories",
+      "website": "",
+      "addedAt": "2026-09-29T13:10:08.682Z",
+      "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "mstan/ZeldaAlttPSNESRecomp",
+      "title": "ZeldaAlttPSNESRecomp",
+      "console": "SNES",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v0.6.4",
+      "status": "latest",
+      "updatedAt": "2026-09-22T03:10:55Z",
+      "notes": "The Legend of Zelda: A Link to the Past recompiled for the Super Nintendo using snesrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-09-26T01:20:49.692Z"
+    },
+    {
+      "repo": "GreenNaugahyde/ZeldaWWHDRecompAndroid",
+      "title": "ZeldaWWHDRecompAndroid",
+      "console": "Unknown",
+      "platforms": [
+        "Android"
+      ],
+      "version": "v0.4",
+      "status": "latest",
+      "updatedAt": "2026-10-05T15:02:39Z",
+      "notes": "TLoZ:TWW HD Recomp",
+      "website": "",
+      "addedAt": "2026-10-05T17:56:16.055Z",
+      "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "moshferatu/zombies-ate-my-neighbors-pc-port",
+      "title": "zombies ate my neighbors pc port",
+      "console": "Unknown",
+      "platforms": [],
+      "version": "20260929",
+      "status": "latest",
+      "updatedAt": "2026-09-30T06:53:40Z",
+      "notes": "",
+      "website": "https://moshferatu.dev/moshferatu/zombies-ate-my-neighbors",
+      "addedAt": "2026-10-04T11:37:37.503Z",
+      "via": "Discover: r/decomps"
+    }
+  ]
+}

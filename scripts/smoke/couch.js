@@ -1,0 +1,21 @@
+const out = {};
+await refresh(); showView("library"); await wait(1500);
+$("libCouch").click(); await wait(500);
+out.open = !$("couch").hidden; out.mainInert = document.querySelector("body > main").inert;
+out.rows = [...document.querySelectorAll("#couch .crow h2")].map((h) => h.textContent);
+const focused = () => document.activeElement?.querySelector?.(".ctitle")?.textContent;
+out.first = focused();
+const key = (k) => $("couch").dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true }));
+key("ArrowRight"); out.afterRight = focused();
+key("PageDown"); out.afterRowDown = focused() + " in " + document.activeElement.closest(".crow").querySelector("h2").textContent;
+key("i"); out.detail = $("couchDetail").hidden ? "hidden" : $("couchDetail").textContent.replace(/\s+/g, " ").trim();
+key("Escape"); out.detailClosed = $("couchDetail").hidden;
+key("Enter"); await wait(200); out.status = $("couchStatus").textContent;
+// A simulated controller: D-pad left, then A, then Start.
+let pad = { buttons: Array.from({ length: 17 }, () => ({ pressed: false })), axes: [0, 0, 0, 0] };
+Object.defineProperty(navigator, "getGamepads", { value: () => [pad], configurable: true });
+const press = async (i) => { pad.buttons[i] = { pressed: true }; await wait(120); pad.buttons[i] = { pressed: false }; await wait(120); };
+const before = focused(); await press(14); out.padLeft = `${before} -> ${focused()}`;
+await press(0); await wait(300); out.padPlayed = $("couchStatus").textContent;
+await press(9); await wait(200); out.closedByStart = $("couch").hidden && !document.querySelector("body > main").inert;
+return { ok: out.open && out.closedByStart && out.detail !== "hidden" && /Charlie is starting/.test(out.padPlayed), ...out };

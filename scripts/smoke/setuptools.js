@@ -1,0 +1,13 @@
+const out = {};
+await refresh();
+showView("library"); await wait(2000);
+out.item = library.map((g) => ({ title: g.title, target: g.target, runsHere: g.runsHere, canWine: g.canWine, wineReady: g.wineReady, exe: g.exe && g.exe.split("/").pop() }));
+out.playButtons = [...document.querySelectorAll('.book [data-lib="play"]')].map((b) => `${b.textContent}${b.disabled ? " (disabled)" : ""}`);
+showView("settings"); await renderWine(); await wait(300);
+out.wine = { hidden: $("wineSection").hidden, state: $("wineState").textContent, install: !$("wineInstall").hidden, remove: !$("wineRemove").hidden };
+showView("library"); $("libPack").click(); await wait(300);
+out.pack = [...$("gamePanelBody").querySelectorAll("[data-packg]")].length;
+const cb = $("gamePanelBody").querySelector("[data-packg]"); cb.checked = true; await cb.onchange(); await wait(300);
+out.packSize = $("packSize").textContent;
+out.patchBtn = !!$("libPatch");
+return { ok: out.playButtons[0] === "Play With Wine" && !out.wine.hidden && out.pack === 1, ...out };

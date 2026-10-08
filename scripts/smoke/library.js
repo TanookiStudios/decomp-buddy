@@ -1,0 +1,26 @@
+const out = {};
+const T = "__T__";
+await refresh();
+showView("library"); await wait(2500);
+out.hero = document.querySelector("#continueHero h2")?.textContent;
+const g = library[0]; await openMore(g); await wait(1500);
+$("moreArgs").value = "--fullscreen --scale 2"; await $("moreArgsSave").onclick();
+out.noNotes = !$("gamePanelBody").querySelector(".stars, #moreNote");
+out.usage = $("moreUsage").textContent.replace(/\s+/g, " ").trim().slice(0, 160);
+await runCheck(g); await wait(500); out.check = $("moreCheckOut").textContent.replace(/\s+/g, " ").trim(); out.checkState = $("gamePanelState").textContent;
+out.opts = await window.buddy.gameOptions(g.folder);
+// A newer save from "the PC" is waiting: the banner offers it, and pulling it lands in this game's folders.
+await renderSyncBanner(); out.banner = $("syncBanner").hidden ? "hidden" : $("syncBanner").textContent.replace(/\s+/g, " ").trim();
+const other = (await window.buddy.syncCheck())[0];
+out.pull = other ? await window.buddy.syncPull(other.folder, other.file).catch((e) => ({ error: e.message })) : "nothing from elsewhere";
+out.afterPull = (await window.buddy.syncCheck()).length;
+out.push = await window.buddy.syncPush(g.folder).catch((e) => ({ error: e.message }));
+out.cloud = (await window.buddy.syncList(g.folder)).map((c) => c.name);
+await renderLibrary(); await wait(500);
+out.chips = [...document.querySelectorAll(".book .chips")].map((c) => c.textContent);
+await loadCatalog({ refresh: false }).catch((e) => { out.catalogErr = e.message; });
+const ship = catalog.games.find((c) => /^shipwright$/i.test(c.repo || ""));
+out.adopt = ship ? await window.buddy.gameAdopt({ folder: T + "/lib/My Ship", gameId: ship.id, target: "windows" }).catch((e) => ({ error: e.message })) : "no Shipwright in catalog";
+await renderLibrary(); await wait(500);
+out.libTitles = library.map((x) => `${x.title} [${x.tag || (x.adopted ? "adopted" : "?")}] ${x.target}`);
+return { ok: out.afterPull === 0 && !!out.pull?.restored && !!out.hero && out.noNotes && out.opts.launchArgs === "--fullscreen --scale 2" && !!out.push?.file && out.libTitles.length === 2, ...out };

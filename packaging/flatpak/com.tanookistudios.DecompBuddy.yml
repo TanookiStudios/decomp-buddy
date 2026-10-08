@@ -1,0 +1,54 @@
+# Flatpak build of Decomp Buddy, wrapping the Linux build electron-builder makes (dist/linux-unpacked).
+# Build on Linux (Flatpak doesn't build on macOS) - see docs/STEAM-DECK-AND-FLATPAK.md.
+#   flatpak-builder --user --install --force-clean build-dir packaging/flatpak/com.tanookistudios.DecompBuddy.yml
+#   flatpak build-bundle ~/.local/share/flatpak/repo decomp-buddy.flatpak com.tanookistudios.DecompBuddy
+app-id: com.tanookistudios.DecompBuddy
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: '24.08'
+command: decomp-buddy
+separate-locales: false
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --device=all                 # controllers (Couch Mode) and the GPU
+  - --filesystem=home            # game folders, your game files, Steam's shortcuts file
+  - --filesystem=/run/media      # SD cards on a Steam Deck
+  - --talk-name=org.freedesktop.Notifications
+  - --env=DECOMP_FLATPAK=1       # the app updates through Flatpak, not its own updater
+modules:
+  - name: decomp-buddy
+    buildsystem: simple
+    sources:
+      - type: dir
+        path: ../../dist/linux-unpacked
+        dest: app
+      - type: file
+        path: ../../build/win-icon.png
+        dest-filename: icon.png
+      - type: inline
+        dest-filename: decomp-buddy.sh
+        contents: |
+          #!/bin/sh
+          exec zypak-wrapper /app/decomp-buddy/decomp-buddy --ozone-platform-hint=auto "$@"
+      - type: inline
+        dest-filename: com.tanookistudios.DecompBuddy.desktop
+        contents: |
+          [Desktop Entry]
+          Name=Decomp Buddy
+          Comment=Set up fan PC ports and decompilations of your games
+          Exec=decomp-buddy %U
+          Icon=com.tanookistudios.DecompBuddy
+          Type=Application
+          Categories=Game;
+          MimeType=x-scheme-handler/decompbuddy;
+    build-commands:
+      - cp -a app /app/decomp-buddy
+      - install -Dm755 decomp-buddy.sh /app/bin/decomp-buddy
+      - install -Dm644 icon.png /app/share/icons/hicolor/512x512/apps/com.tanookistudios.DecompBuddy.png
+      - install -Dm644 com.tanookistudios.DecompBuddy.desktop /app/share/applications/com.tanookistudios.DecompBuddy.desktop
