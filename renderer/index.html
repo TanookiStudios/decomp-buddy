@@ -135,7 +135,7 @@ button.small { padding:4px 10px; font-size:12.5px; border-width:2px }
 .gtile { display:flex; flex-direction:column; background:var(--card); border:2px solid var(--fg); border-radius:10px; overflow:hidden; box-shadow:0 3px 0 var(--shadow); min-width:0 }
 .gtile.picked { border-color:var(--gold); box-shadow:0 0 0 2px var(--gold), 0 3px 0 var(--shadow) }
 .gtile .cover { aspect-ratio:1; background:var(--bg2); position:relative; border-bottom:2px solid var(--fg); cursor:pointer } .gtile .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block }
-.gtile .nocover { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px; background:var(--window); color:var(--windowfg); font-weight:800; font-size:16px; line-height:1.15 }
+.gtile .nocover { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px; overflow-wrap:anywhere; background:var(--window); color:var(--windowfg); font-weight:800; font-size:16px; line-height:1.15 }
 .gtile .tag { position:absolute; left:8px; top:8px; font:600 10.5px var(--mono); letter-spacing:.1em; text-transform:uppercase; padding:3px 7px; border-radius:4px; background:var(--gold); color:#1d2140 } .gtile .tag.inst { background:#2b7a3e; color:#fff }
 .gtile .t { padding:10px 12px 0; min-width:0 }
 .gtile h4 { margin:0; font-size:15px; font-weight:700; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere } .gtile h4 a { color:inherit; text-decoration:none } .gtile h4 a:hover { text-decoration:underline }

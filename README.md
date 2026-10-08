@@ -1,10 +1,37 @@
 # Decomp Buddy
 
-Get it at **[decompbuddy.com](https://decompbuddy.com)** (Mac, Windows, Linux). Made by Maddie at [Tanooki Studios](https://tanookistudios.com). Free, and the source is here under the GPL.
+[![Games in the catalog](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Ftanookistudios.com%2Fdecomp-buddy%2Fcatalog.json&query=%24.count&label=games%20in%20the%20catalog&color=e0a53a)](https://decompbuddy.com/games)
+[![Latest release](https://img.shields.io/github/v/release/TanookiStudios/decomp-buddy?label=download&color=1d2140)](https://decompbuddy.com/download)
+[![License: GPL v3](https://img.shields.io/badge/license-GPL--3.0-1d2140)](LICENSE)
+![Mac · Windows · Linux](https://img.shields.io/badge/runs%20on-Mac%20%C2%B7%20Windows%20%C2%B7%20Linux-1d2140)
 
-Paste GitHub links for game decompilations / recompilations / native ports. Decomp Buddy reads each repo with Claude, downloads the Windows build, lays out a folder per game, and writes one `install.html` telling you exactly where your own game files go.
+**Every game decompilation, recompilation and native PC port in one place - and each one as close to a one-click install as we can make it.**
 
-On a Mac everything lands in `~/Downloads/Transfer to PC/<Game> - <Console>/`, ready to copy to the PC. On Windows it lands in `%USERPROFILE%\Games\Decomp Buddy\` and runs from there.
+Get it at **[decompbuddy.com](https://decompbuddy.com)**. Free, no account, no ads. Made by Maddie at [Tanooki Studios](https://tanookistudios.com).
+
+![Browse Games: tiles with box art for every Nintendo 64 port, a row of console buttons, search and filters](docs/screenshots/browse.png)
+
+## What we're trying to do
+
+The decomp scene is turning classic console games into real programs that run natively on a modern computer - Ship of Harkinian, Zelda 64: Recompiled, Unleashed Recompiled, Perfect Dark, Metroid Prime and hundreds more. But every project installs differently: its own release files, its own folder rules, its own idea of which disc image you need and where it goes. Most people give up at the README.
+
+Decomp Buddy wants to be **the definitive source for all of it**: one catalog of every decomp and port worth playing, and a setup that turns each one into a single click plus your own game file.
+
+- **One catalog.** 658 games today (the badge above is live), merged from portsdr.com, community lists and hand-found projects, checked by hand so only games you can actually play are listed. Decomps that only rebuild the original cartridge wait on a separate list and join the catalog on their own the day they ship a PC version.
+- **Generative AI reads the instructions so you don't have to.** For every project, an AI reads its GitHub page - README, docs, every release - and turns it into a precise install plan: which download fits your computer, which game file it needs (with the checksum the project publishes), the exact folder it goes in, and how to start it. Those plans are written ahead of time for every game in the catalog, so installing one needs no AI key at all - you just pick your game file.
+- **Any GitHub link works too.** Found a project that isn't in the catalog yet? Paste its link into **Install From GitHub**. With your own AI key (Claude, any OpenAI-compatible service, or a free local model through Ollama) Decomp Buddy reads that repository the same way and sets it up.
+- **Kept up to date for you.** Once a game is installed, Decomp Buddy watches its project for new releases. When one lands, the game is marked, you see what changed, and **Update** (or **Update All**) installs it with your game files carried over and your saves backed up first.
+- **Your games, your files.** Decomp Buddy never downloads a game. You bring a copy you own; it checks it's the one the project needs.
+
+## Screenshots
+
+| | |
+|---|---|
+| ![New Games: the newest additions to the catalog as box-art tiles, grouped by week](docs/screenshots/new-games.png) **New Games** - the newest additions, by week. | ![Games You May Like: suggestions grouped under "Because You Have Sonic Unleashed"](docs/screenshots/games-you-may-like.png) **Games You May Like** - picked from what you've installed. |
+| ![A game's page: box art, At A Glance facts read from the project's README, and the release notes since your version](docs/screenshots/game-page.png) **A game's page** - facts read from the project's own docs, and what changed since your version. | ![Installed Games: Continue Playing, then a bookshelf of installed games with their box art and update notes](docs/screenshots/installed-games.png) **Installed Games** - play, update, back up saves, add to Steam. |
+| ![Install From GitHub: two links pasted, each read into a plan that says which game file to choose](docs/screenshots/install-from-github.png) **Install From GitHub** - paste any link; catalog games use their published plan, no AI needed. | ![Browse Games filtered to Nintendo 64](docs/screenshots/browse.png) **Browse Games** - every console, one button each. |
+
+Screenshots are taken by `scripts/screenshots.sh` from the real app, hidden, on made-up demo data.
 
 ## Use
 
