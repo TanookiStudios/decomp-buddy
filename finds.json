@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-08T18:37:57.829Z",
+  "updatedAt": "2026-10-12T19:42:18.694Z",
   "games": [
     {
       "repo": "thefixinhixon/SplosionManRecomp",
@@ -601,6 +601,21 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "GetLostIn/CTR-NitroFueled-PC",
+      "title": "Crash Team Racing Nitro-Fueled",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-10-12T18:22:03Z",
+      "notes": "Crash Team Racing: Nitro-Fueled (PS4) running natively on Windows 10/11. Windows fork of SacredFire, built on bbport and shadPS4. No game files included.",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
       "repo": "banteg/crimson",
       "title": "Crimsonland",
       "console": "PC (Windows)",
@@ -711,6 +726,21 @@
       "website": "",
       "addedAt": "2026-09-29T13:44:10.552Z",
       "via": "Discover: r/emulation"
+    },
+    {
+      "repo": "comoria08/defjam_recomp",
+      "title": "Def Jam: Fight for NY",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.0-msvc-dlss",
+      "status": "latest",
+      "updatedAt": "2026-10-09T22:09:47Z",
+      "notes": "Def Jam: Fight for NY (Xbox) - recompilation statique pour Windows",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
       "repo": "diasurgical/devilution",
@@ -984,6 +1014,23 @@
       "website": "https://keeperfx.net/",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: quiver"
+    },
+    {
+      "repo": "rages4calm/earthbound-companion",
+      "title": "EarthBound",
+      "console": "SNES",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v0.5.0-redux-dev.37",
+      "status": "latest",
+      "updatedAt": "2026-10-12T17:48:53Z",
+      "notes": "Native EarthBound Companion for Windows: MaternalBound Redux, widescreen/4K, MSU music, controllers, Story Shuffle and 46 offline achievements. Linux, macOS and Android community previews. Bring your own clean USA ROM.",
+      "website": "https://youtu.be/RZ5UdAxyqdY",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
       "repo": "kevinfoley/Herculan",
@@ -1339,6 +1386,21 @@
       "website": "",
       "addedAt": "2026-10-08T18:20:24.836Z",
       "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "FelipePrado0/gow3_pc",
+      "title": "God of War III Remastered",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "windows-v2.1.5",
+      "status": "latest",
+      "updatedAt": "2026-10-12T18:26:54Z",
+      "notes": "Windows port of God of War III Remastered (PS4). Original x86-64 code runs directly on the CPU with a custom runtime; graphics on shadPS4's video core (Vulkan) with cuesta4's GoW3 fixes. Playable start to finish, 240 FPS patch, launcher, in-game menu. Bring your own dump (CUSA01623 v1.02).",
+      "website": "https://github.com/FelipePrado0/gow3_pc/releases/latest",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
       "repo": "OverkillLabs3/SoS-PS5",
@@ -1772,6 +1834,22 @@
       "addedAt": "2026-09-19T07:19:52.770Z"
     },
     {
+      "repo": "Voicedrew11/verdite3",
+      "title": "King's Field II",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.1.2",
+      "status": "latest",
+      "updatedAt": "2026-10-10T22:05:05Z",
+      "notes": "AI driven attempt at porting King's Field II (SLUS-00255) to PC with a variety of improvements ",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
       "repo": "elprogramadorloco-arch/korokoro-recomp",
       "title": "korokoro recomp",
       "console": "Unknown",
@@ -1913,6 +1991,23 @@
       "website": "https://marbleblastultra.com",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: backloggd"
+    },
+    {
+      "repo": "yannicksuter/mscharged-port",
+      "title": "Mario Strikers Charged",
+      "console": "Wii",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.0.7",
+      "status": "latest",
+      "updatedAt": "2026-10-11T22:07:49Z",
+      "notes": "Mario Strikers Charged for PC, Mac & Linux. Ported from decompiled code. Not a recompilation.",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
       "repo": "alariq/mc2",
@@ -2125,6 +2220,23 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "josiahg2502-glitch/Mother3Recomp",
+      "title": "Mother 3",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Android",
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.3",
+      "status": "latest",
+      "updatedAt": "2026-10-12T02:53:48Z",
+      "notes": "Native PC Port of MOTHER 3 (English Fan Translation v1.3)",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
       "repo": "coole42-pixel/PSPRecomp-MSAE",
       "title": "MotorStorm: Arctic Edge",
       "console": "PlayStation Portable",
@@ -2198,6 +2310,21 @@
       "website": "http://opennfs.com",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "SpeedBreakerProject/speedbreaker",
+      "title": "Need for Speed: Most Wanted (SpeedBreaker)",
+      "console": "Xbox 360",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v0.1.3",
+      "status": "latest",
+      "updatedAt": "2026-10-11T22:00:09Z",
+      "notes": "Unofficial static recompilation of the Xbox 360 version of Need for Speed: Most Wanted (2005): a native port for Steam Deck, Steam Machine, Steam Frame, Linux and Mac (iPhone/iPad: sideload the experimental IPA or build it yourself). Bring your own disc: no game files included. Not affiliated with EA or Valve.",
+      "website": "https://projectugarte.com/speedbreaker/",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
       "repo": "madelrandel-blip/NFSMW-Recompiled",
@@ -3017,6 +3144,21 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "bryantmh/rush2recompiled",
+      "title": "Rush 2: Extreme Racing USA",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.13",
+      "status": "latest",
+      "updatedAt": "2026-10-12T04:05:09Z",
+      "notes": "A recompilation of the N64 Classic: Rush 2",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
       "repo": "ant0-blase/Saw2-X360-ReXGlue",
       "title": "Saw II: Flesh & Blood",
       "console": "Xbox 360",
@@ -3373,6 +3515,23 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "carlosrmz009/littleplanet",
+      "title": "Sonic the Hedgehog CD",
+      "console": "Sega CD",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-11T04:49:59Z",
+      "notes": "Sonic the Hedgehog CD decompilation",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
       "repo": "mstan/Sonic3AndKnucklesRecomp",
       "title": "Sonic3AndKnucklesRecomp",
       "console": "Mega Drive",
@@ -3476,6 +3635,40 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "carlosrmz009/arwing",
+      "title": "Star Fox",
+      "console": "SNES",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-11T17:38:07Z",
+      "notes": "Star Fox decomp / PC port with quality of life improvements",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
+      "repo": "carlosrmz009/arwing2",
+      "title": "Star Fox 2",
+      "console": "SNES",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-10T02:46:36Z",
+      "notes": "PROJECT ARWING - StarFox 2 decomp with quality of life improvements",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
       "repo": "tim-tim707/SW_RACER_RE",
@@ -4063,6 +4256,21 @@
       "via": "Lists: resetera"
     },
     {
+      "repo": "MaskeZenY/WindowWaker",
+      "title": "The Legend of Zelda: The Wind Waker",
+      "console": "GameCube",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.0-win",
+      "status": "latest",
+      "updatedAt": "2026-10-10T21:41:17Z",
+      "notes": "Native Window port of The Legend of Zelda: The Wind Waker (GameCube). Bring your own game files.",
+      "website": "https://github.com/centollOS/SwitchWaker/releases",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
       "repo": "ZeldaWWHDRecomp/ZeldaWWHDRecomp",
       "title": "The Legend of Zelda: The Wind Waker HD",
       "console": "Wii U",
@@ -4207,6 +4415,21 @@
       "via": "The Gaming Emporium, 8 Oct 2026"
     },
     {
+      "repo": "TGP482/SCDA-XBERecomp",
+      "title": "Tom Clancy's Splinter Cell: Double Agent",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "V1",
+      "status": "latest",
+      "updatedAt": "2026-10-11T19:19:36Z",
+      "notes": "An unofficial original Xbox version PC port of Splinter Cell: Double Agent via static recompilation.",
+      "website": "https://discord.gg/8dAn4ZSsap",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
       "repo": "XProger/OpenLara",
       "title": "Tomb Raider 1-5",
       "console": "PC (Windows)",
@@ -4338,6 +4561,21 @@
       "website": "",
       "addedAt": "2026-10-01T13:40:33.134Z",
       "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "MaryNCRT/Ultimate-Mortal-Kombat-3-iOS-Recomp",
+      "title": "Ultimate Mortal Kombat 3",
+      "console": "Others",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.0.8-alpha",
+      "status": "prerelease",
+      "updatedAt": "2026-10-10T07:44:33Z",
+      "notes": "Ultimate Mortal Kombat 3 (iOS, EA Mobile 2011), fully decompiled: all 2,572 game functions are readable C, checked against a static ARM-to-C recompiler. Native port in progress: menus, sound and saves run; fight data tables extracted from your copy and verified; not playable yet. No game assets - bring your own copy.",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
       "repo": "BelmanteGu/UltraStreetFighterIVRecomp",
@@ -4534,6 +4772,21 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "shaneomac1337/WWE-AllStars-Recomp",
+      "title": "WWE All Stars",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-11T19:58:59Z",
+      "notes": "Unofficial Windows version of WWE All Stars (Xbox 360), recompiled with ReXGlue. Bring your own disc image.",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
       "repo": "PromethenDev/wwe13-recomp",
       "title": "wwe13 recomp",
       "console": "Unknown",
@@ -4666,6 +4919,22 @@
       "website": "https://discord.gg/Ad9BwSzctP",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "wootbeer/dinotale",
+      "title": "Yoshi's Story",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-11T20:57:03Z",
+      "notes": "Yoshi's Story Recomp",
+      "website": "",
+      "addedAt": "2026-10-12T19:42:08.577Z",
+      "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
       "repo": "Unchiga/Yu-Gi-Oh-Forbidden-Memories-Recompiled",
