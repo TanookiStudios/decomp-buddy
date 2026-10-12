@@ -302,6 +302,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <button id="clearFilters" type="button" class="small">Clear</button>
     </div>
     <div id="conBar" class="conbar" role="group" aria-label="Console"></div>
+    <div class="legal" id="where" role="region" aria-label="Where games go" hidden><span><span>Games you set up go into this folder:</span> <strong id="whereDir" translate="no"></strong><br><span>Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.</span></span><button id="whereChange" type="button">Change…</button><button id="whereOk" type="button">Keep It</button></div>
     <div class="status" id="catalogStatus" role="status" aria-live="polite"></div>
     <div id="addGame" class="addGame" hidden>
       <div class="row"><input id="agRepo" type="text" placeholder="https://github.com/owner/repo" autocomplete="off" spellcheck="false" aria-label="Repository"><input id="agTitle" type="text" placeholder="Game title (optional)" aria-label="Title" style="flex:0 0 220px"><input id="agConsole" type="text" placeholder="Console (optional)" aria-label="Console" style="flex:0 0 160px"></div>

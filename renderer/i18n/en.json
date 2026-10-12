@@ -2,7 +2,7 @@
  "_meta": {
   "language": "English",
   "source": true,
-  "strings": 821
+  "strings": 826
  },
  "strings": {
   "(a CI build)": "(a CI build)",
@@ -111,6 +111,7 @@
   "Catalog Sources": "Catalog Sources",
   "Change the folders in Settings": "Change the folders in Settings",
   "Changes apply to this set-up only.": "Changes apply to this set-up only.",
+  "Change…": "Change…",
   "Check For Conflicts": "Check For Conflicts",
   "Check For Updates": "Check For Updates",
   "Check For Updates ({0})": "Check For Updates ({0})",
@@ -234,6 +235,7 @@
   "Games You May Like": "Games You May Like",
   "Games found": "Games found",
   "Games you may like": "Games you may like",
+  "Games you set up go into this folder:": "Games you set up go into this folder:",
   "Generate Missing": "Generate Missing",
   "Generate Missing ({0})": "Generate Missing ({0})",
   "Generate {0} plans on your AI key? That's about ${1}.": "Generate {0} plans on your AI key? That's about ${1}.",
@@ -274,7 +276,9 @@
   "Installing a CI build needs a GitHub token (Settings → GitHub Token) - GitHub doesn't hand them out anonymously.": "Installing a CI build needs a GitHub token (Settings → GitHub Token) - GitHub doesn't hand them out anonymously.",
   "Installing the missing Windows runtimes - Windows may ask for permission…": "Installing the missing Windows runtimes - Windows may ask for permission…",
   "It Isn't There": "It Isn't There",
+  "Keep It": "Keep It",
   "Keep saves in step between your computers through a folder your cloud drive already syncs (iCloud Drive, OneDrive, Dropbox, Google Drive). When a game closes, its saves are backed up and copied there; when another computer has a newer one, Installed Games offers it. Nothing goes to Tanooki Studios or anyone else.": "Keep saves in step between your computers through a folder your cloud drive already syncs (iCloud Drive, OneDrive, Dropbox, Google Drive). When a game closes, its saves are backed up and copied there; when another computer has a newer one, Installed Games offers it. Nothing goes to Tanooki Studios or anyone else.",
+  "Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.": "Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.",
   "Kept: {0}": "Kept: {0}",
   "Key saved.": "Key saved.",
   "Language": "Language",
@@ -656,6 +660,7 @@
   "What's new this week: {0} of your game{1} got a new release - see Installed Games": "What's new this week: {0} of your game{1} got a new release - see Installed Games",
   "Where Browse Games gets its list. Built-in sites are parsed directly; shared sources come from the maintained list and update live; you can add your own GitHub user/org or a page listing repositories. Merged by repository, so nothing shows twice.": "Where Browse Games gets its list. Built-in sites are parsed directly; shared sources come from the maintained list and update live; you can add your own GitHub user/org or a page listing repositories. Merged by repository, so nothing shows twice.",
   "Where The Games Come From": "Where The Games Come From",
+  "Where games go": "Where games go",
   "Which Game Is This?": "Which Game Is This?",
   "Which GameBanana Page Is This Game?": "Which GameBanana Page Is This Game?",
   "Which one a batch lands in follows the": "Which one a batch lands in follows the",

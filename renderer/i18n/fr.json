@@ -829,6 +829,11 @@
   "Update To {0}": "Mettre À Jour Vers {0}",
   "Win": "Win",
   "✓ Added": "✓ Ajouté",
-  "Complete": "Complet"
+  "Complete": "Complet",
+  "Change…": "Changer…",
+  "Games you set up go into this folder:": "Les jeux que vous installez vont dans ce dossier :",
+  "Keep It": "Garder",
+  "Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.": "Vous voulez vos jeux sur un autre disque ? Choisissez un dossier là-bas ; vous pouvez le changer à tout moment dans Réglages → Dossier d'Installation.",
+  "Where games go": "Où vont les jeux"
  }
 }

@@ -829,6 +829,11 @@
   "Update To {0}": "Auf {0} Aktualisieren",
   "Win": "Win",
   "✓ Added": "✓ Hinzugefügt",
-  "Complete": "Vollständig"
+  "Complete": "Vollständig",
+  "Change…": "Ändern…",
+  "Games you set up go into this folder:": "Eingerichtete Spiele landen in diesem Ordner:",
+  "Keep It": "Behalten",
+  "Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.": "Spiele lieber auf einem anderen Laufwerk? Wähle dort einen Ordner – du kannst ihn jederzeit unter Einstellungen → Installationsordner ändern.",
+  "Where games go": "Wo Spiele landen"
  }
 }

@@ -28,7 +28,7 @@ ipcMain.handle("settings:get", async () => {
     moveFiles: s.moveFiles !== false, platform: process.platform,
     provider: id, model: saved.model || PRESETS[id]?.defaultModel || "", baseUrl: saved.baseUrl || PRESETS[id]?.baseUrl || "",
     hasKey: !!decrypt(saved), version: VERSION, hasGithubToken: !!githubToken(s), lang: s.lang || "system", langs: LANGS, osLang: app.getLocale(),
-    theme: s.theme || "system", preferBoxart: !!s.preferBoxart, sawLegal: !!s.sawLegal, setupCount: s.setupCount || 0, nudgedAt: s.nudgedAt || [], collapsedGroups: s.collapsedGroups || [], vault: readVault(vaultDir()),
+    theme: s.theme || "system", preferBoxart: !!s.preferBoxart, sawLegal: !!s.sawLegal, sawWhere: !!s.sawWhere, setupCount: s.setupCount || 0, nudgedAt: s.nudgedAt || [], collapsedGroups: s.collapsedGroups || [], vault: readVault(vaultDir()),
     wishlist: s.wishlist || {}, mine: s.mine || {}, digest: s.digest || null, startCouch: !!s.startCouch, libraryFolders: s.libraryFolders || [], steamAvailable: !!steamDir(),
     discoverSubs: s.discoverSubs || ["decomps", "emulation", "decompilation"], discoverChannels: s.discoverChannels || [],
     target: TARGETS[s.target] ? s.target : "windows", targets: Object.fromEntries(Object.entries(TARGETS).map(([k, t]) => [k, t.label])),
@@ -45,7 +45,7 @@ ipcMain.handle("settings:get", async () => {
     presets: Object.fromEntries(Object.entries(PRESETS).map(([k, p]) => [k, { label: p.label, baseUrl: p.baseUrl, noKey: !!p.noKey, custom: k === "custom" }])),
   };
 });
-ipcMain.handle("settings:set", (_e, { apiKey, installDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, githubToken, lang, preferBoxart, mine, digest, startCouch }) => {
+ipcMain.handle("settings:set", (_e, { apiKey, installDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, githubToken, lang, preferBoxart, mine, digest, startCouch }) => {
   const s = loadSettings();
   if (lang !== undefined) s.lang = lang === "system" || LANGS[lang] ? lang : "system";
   if (githubToken !== undefined) { if (githubToken) s.github = encrypt(githubToken); else delete s.github; applyGitHubToken(githubToken); }
@@ -61,6 +61,7 @@ ipcMain.handle("settings:set", (_e, { apiKey, installDir, transferDir, moveFiles
   if (mine) { s.mine = { ...(s.mine || {}) }; for (const [k, v] of Object.entries(mine)) { if (v === null) delete s.mine[k]; else s.mine[k] = { note: String(v.note || "").slice(0, 4000), rating: Math.max(0, Math.min(5, Number(v.rating) || 0)), at: new Date().toISOString() }; } }
   if (theme) { s.theme = ["light", "dark"].includes(theme) ? theme : "system"; nativeTheme.themeSource = s.theme; }
   if (sawLegal !== undefined) s.sawLegal = !!sawLegal;
+  if (sawWhere !== undefined) s.sawWhere = !!sawWhere;
   if (collapsedGroups) s.collapsedGroups = collapsedGroups;
   if (findsFile !== undefined) s.findsFile = findsFile;
   if (admin !== undefined) s.admin = !!admin;

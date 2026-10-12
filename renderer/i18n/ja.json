@@ -829,6 +829,11 @@
   "Update To {0}": "{0} に更新",
   "Win": "Win",
   "✓ Added": "✓ 追加済み",
-  "Complete": "完全版"
+  "Complete": "完全版",
+  "Change…": "変更…",
+  "Games you set up go into this folder:": "セットアップしたゲームはこのフォルダに入ります：",
+  "Keep It": "このまま",
+  "Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.": "ゲームを別のドライブに置きたい場合は、そこにあるフォルダを選んでください。設定 → インストールフォルダでいつでも変更できます。",
+  "Where games go": "ゲームの保存先"
  }
 }
