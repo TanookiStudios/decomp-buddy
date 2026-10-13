@@ -138,4 +138,5 @@ contextBridge.exposeInMainWorld("buddy", {
   wineRemove: () => ipcRenderer.invoke("wine:remove"),
   runtimesFix: (folder) => ipcRenderer.invoke("runtimes:fix", { folder }),
   gameFunding: (owner, repo, host) => ipcRenderer.invoke("game:funding", { owner, repo, host }),
+  comingSoon: (fresh) => ipcRenderer.invoke("waiting:list", { fresh }),
 });

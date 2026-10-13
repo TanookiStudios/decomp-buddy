@@ -1,6 +1,6 @@
 {
   "name": "decomp-buddy",
-  "version": "0.29.10",
+  "version": "0.29.11",
   "description": "Point it at a decomp/recomp repo; it sets the PC build up so you only drop in your game.",
   "type": "module",
   "main": "main.js",

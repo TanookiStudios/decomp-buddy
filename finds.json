@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-12T19:42:18.694Z",
+  "updatedAt": "2026-10-13T19:40:42.012Z",
   "games": [
     {
       "repo": "thefixinhixon/SplosionManRecomp",
@@ -29,6 +29,21 @@
       "website": "",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "antrad/Abuse_1996",
+      "title": "Abuse (Abuse 1996 20th anniversary port)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "0.9",
+      "status": "latest",
+      "updatedAt": "2016-05-09T07:45:49Z",
+      "notes": "SDL2 port of Abuse by Crack dot Com",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "sal063/Ace-Combat-5-Static-recompilation",
@@ -73,6 +88,21 @@
       "via": "Discover: r/decomps"
     },
     {
+      "repo": "Junior-Jones/Adventure-Island-II-NES-Static-Recomp",
+      "title": "Adventure Island II",
+      "console": "NES",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-08-26T11:15:01Z",
+      "notes": "Static recompilation of Adventure Island II (NES) for Windows 10 and 11. ROM not included.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "elprogramadorloco-arch/agvg2-recomp",
       "title": "agvg2 recomp",
       "console": "Unknown",
@@ -84,6 +114,22 @@
       "website": "",
       "addedAt": "2026-10-04T12:43:14.427Z",
       "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "Aleph-One-Marathon/alephone",
+      "title": "Aleph One",
+      "console": "Others",
+      "platforms": [
+        "Windows",
+        "macOS"
+      ],
+      "version": "release-20260930",
+      "status": "latest",
+      "updatedAt": "2026-10-01T01:46:14Z",
+      "notes": "Aleph One is the open source continuation of Bungie’s Marathon 2 game engine.",
+      "website": "https://alephone.lhowon.org/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "spacefarergames/AloneInTheDarkReHaunted",
@@ -120,6 +166,22 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "PixieCatSupreme/AnodyneSharp",
+      "title": "Anodyne ( AnodyneFNA)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.2",
+      "status": "prerelease",
+      "updatedAt": "2021-07-24T20:10:46Z",
+      "notes": "A rewrite of the game Anodyne in Monogame",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "DerrickGold/ar-recomp",
       "title": "ar recomp",
       "console": "SNES",
@@ -149,6 +211,37 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "Genesis5500/ArmyOfTwo-Recomp",
+      "title": "Army of Two",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-10T18:27:30Z",
+      "notes": "Experimental native PC port of Army of Two (Xbox 360) via static recompilation on the ReXGlue SDK. Host/glue only - bring your own legally-dumped game files.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "arx/ArxLibertatis",
+      "title": "Arx Fatalis (Arx Libertatis)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "1.2.1",
+      "status": "latest",
+      "updatedAt": "2022-04-10T15:29:01Z",
+      "notes": "Cross-platform port of Arx Fatalis, a first-person role-playing game",
+      "website": "https://arx-libertatis.org/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "elprogramadorloco-arch/asuka100-recomp",
       "title": "asuka100 recomp",
       "console": "Unknown",
@@ -162,6 +255,22 @@
       "via": "Discover: r/decomps"
     },
     {
+      "repo": "PauloUbirajara/asuras-wrath-recomp",
+      "title": "Asura's Wrath",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.3.1.2",
+      "status": "prerelease",
+      "updatedAt": "2026-09-11T20:04:32Z",
+      "notes": "Recomp of Asura's Wrath using RexGlue for PC (wip)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "Saffsanity/AuroraStrikers",
       "title": "AuroraStrikers",
       "console": "Unknown",
@@ -172,6 +281,21 @@
       "notes": "Super Mario Strikers (G4QE01) recompilation project — Using Aurora to natively run the game via DirectX 12 —  Bring your own ROM",
       "website": "",
       "addedAt": "2026-09-19T07:18:15.923Z"
+    },
+    {
+      "repo": "doyaGu/Ballanced",
+      "title": "Ballance (Ballanced)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-05-13T05:30:39Z",
+      "notes": "The reversed code of Ballance.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "some-scurvy-dog/banjo-tooie-scurvy-dog-port",
@@ -189,6 +313,70 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "Vidanox/BanjoTooieRecompiled",
+      "title": "Banjo-Tooie (Banjo-Tooie: Recompiled)",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.0-build.7",
+      "status": "latest",
+      "updatedAt": "2026-09-17T19:03:58Z",
+      "notes": "Banjo-Tooie: Recompiled is a native PC port of Banjo-Tooie for Windows and Linux that offers widescreen, high refresh rates, and an in-game settings menu.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "TurningWheel/Barony",
+      "title": "Barony",
+      "console": "PC (Windows)",
+      "notes": "Barony Open Source Release",
+      "website": "http://www.baronygame.com/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games → released",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v5.0.2",
+      "status": "latest",
+      "updatedAt": "2026-02-18T14:28:07Z"
+    },
+    {
+      "repo": "lunarmeadow/barrett",
+      "title": "Rise of the Triad: Dark War (Barrett)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.3-beta",
+      "status": "latest",
+      "updatedAt": "2026-06-14T16:17:30Z",
+      "notes": "Advanced and featureful Rise of the Triad source port for modern systems",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "8street/Bedlam2",
+      "title": "Bedlam 2: Absolute Bedlam",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "2.23",
+      "status": "latest",
+      "updatedAt": "2023-02-18T08:51:26Z",
+      "notes": "Source code for Bedlam 2 (1997) game executable file.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "cyxx/bermuda",
       "title": "Bermuda Syndrome",
       "console": "IBM PC (MS-DOS)",
@@ -200,6 +388,38 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: resetera"
+    },
+    {
+      "repo": "xtreme8000/BetterSpades",
+      "title": "Ace of Spades (BetterSpades)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.5",
+      "status": "latest",
+      "updatedAt": "2021-05-14T18:41:51Z",
+      "notes": "BetterSpades, an Ace of Spades client targeted at low end systems (GL/ES 1.1). Runs on your grandmother's rig!",
+      "website": "https://aos.party/jenkins/job/BetterSpades/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "jorio/BillyFrontier",
+      "title": "Billy Frontier",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.1.1",
+      "status": "latest",
+      "updatedAt": "2023-09-06T19:47:40Z",
+      "notes": "Pangea Software’s Billy Frontier for modern systems",
+      "website": "https://pangeasoft.net/billy",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "droogie/bbhost",
@@ -249,6 +469,54 @@
       "updatedAt": "2026-10-06T20:44:07Z"
     },
     {
+      "repo": "Blizz127/brave-fencer-musashi-decomp-port",
+      "title": "Brave Fencer Musashi",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "bfm-r44-c427ee546-windows-x64",
+      "status": "prerelease",
+      "updatedAt": "2026-10-03T17:44:30Z",
+      "notes": "brave-fencer-musashi-decomp-port is an experimental PC port of Brave Fencer Musashi for PlayStation, playable on Linux and Windows.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Heromachine/Breakdown-Recompilation",
+      "title": "Breakdown",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.2",
+      "status": "latest",
+      "updatedAt": "2026-10-08T01:12:04Z",
+      "notes": "Static recompilation of Breakdown (Xbox, Namco 2004) to a native Windows build. Ships the tool, not the game -- bring your own disc.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "bibendovsky/bstone",
+      "title": "BStone",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "version": "v1.3.4",
+      "status": "latest",
+      "updatedAt": "2026-05-27T17:55:04Z",
+      "notes": "Unofficial source port for Blake Stone series",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "z3xox/BT3-Recomp",
       "title": "BT3 Recomp",
       "console": "Unknown",
@@ -287,6 +555,40 @@
       "website": "",
       "addedAt": "2026-10-01T13:40:27.345Z",
       "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "jorio/Bugdom",
+      "title": "Bugdom",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.3.4",
+      "status": "latest",
+      "updatedAt": "2024-01-03T19:11:58Z",
+      "notes": "🐛 Pangea Software's Bugdom for modern systems",
+      "website": "https://pangeasoft.net/bug",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "jorio/Bugdom2",
+      "title": "Bugdom 2",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v4.0.0",
+      "status": "latest",
+      "updatedAt": "2023-10-08T20:40:40Z",
+      "notes": "Pangea Software’s Bugdom 2 for modern systems 🦗",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "reburndev/reburn3",
@@ -342,6 +644,23 @@
       "addedAt": "2026-09-19T06:47:32.514Z"
     },
     {
+      "repo": "cxong/cdogs-sdl",
+      "title": "C-Dogs SDL",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "2.4.0",
+      "status": "latest",
+      "updatedAt": "2026-01-26T03:11:56Z",
+      "notes": "Classic overhead run-and-gun game",
+      "website": "https://cxong.github.io/cdogs-sdl/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "bvschaik/julius",
       "title": "Caesar III",
       "console": "PC (Windows)",
@@ -378,6 +697,36 @@
       "via": "Lists: quiver"
     },
     {
+      "repo": "goshavindtburg/NX1recomp",
+      "title": "Call of Duty: Future Warfare",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "0.9.2",
+      "status": "prerelease",
+      "updatedAt": "2026-07-20T19:35:59Z",
+      "notes": "This is a static recompilation/PC port of Call of Duty: Future Warfare",
+      "website": "https://discord.gg/EpRmD5HGXc",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "vladtrc/iw4L",
+      "title": "Call of Duty: Modern Warfare 2 (IW4L)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-demo.21",
+      "status": "prerelease",
+      "updatedAt": "2026-10-12T19:50:30Z",
+      "notes": "Standalone experimental Call of Duty runtime in Rust, built on bevy and wgpu",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "dethrace-labs/dethrace",
       "title": "Carmageddon",
       "console": "PC (Windows)",
@@ -393,6 +742,70 @@
       "website": "https://twitter.com/dethrace_labs",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "codenamecpp/carnage3d",
+      "title": "Grand Theft Auto (Carnage3D)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "test_2",
+      "status": "prerelease",
+      "updatedAt": "2021-09-26T10:44:14Z",
+      "notes": "Reimplementation of Grand Theft Auto 1 [GTA1]",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "RevoSucks/CV64Recomp",
+      "title": "Castlevania 64",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.5.0",
+      "status": "latest",
+      "updatedAt": "2026-10-06T03:02:16Z",
+      "notes": "A recompilation of Castlevania for the N64.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Spicywonda/castlevania-chronicles-recomp",
+      "title": "Castlevania Chronicles",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.3.10",
+      "status": "latest",
+      "updatedAt": "2026-10-12T02:47:27Z",
+      "notes": "Experimental Castlevania Chronicles PS1 recompilation with RecompOne. macOS development, Windows build tooling, original disc required.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "ArnoAnsems/CatacombGL",
+      "title": "Catacomb 3-D and the Catacomb Adventure Series (Abyss, Armageddon, Apocalypse)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.5.7-beta",
+      "status": "prerelease",
+      "updatedAt": "2025-01-04T22:04:34Z",
+      "notes": "CatacombGL is a source port with OpenGL graphics for Catacomb 3D (1991), The Catacomb Abyss (1992), The Catacomb Armageddon (1992) and The Catacomb Apocalypse (1993).",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "gameblabla/CSE2",
@@ -439,6 +852,23 @@
       "via": "Bulk paste"
     },
     {
+      "repo": "EXOK/Celeste64",
+      "title": "Celeste 64: Fragments of the Mountain",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.1.1",
+      "status": "latest",
+      "updatedAt": "2024-02-06T01:31:03Z",
+      "notes": "A game made by the Celeste developers in a week(ish, closer to 2)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "YuutaTsubasa/ChaotixRecompiled",
       "title": "ChaotixRecompiled",
       "console": "Unknown",
@@ -453,6 +883,53 @@
       "website": "",
       "addedAt": "2026-09-29T13:10:16.036Z",
       "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Panzerschrek/Chasm-Reverse",
+      "title": "Chasm: The Rift (Chasm-Reverse)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "0.3",
+      "status": "latest",
+      "updatedAt": "2017-12-03T05:05:53Z",
+      "notes": "Tools for reverse-engineering of game \"Chasm: The Rift\"",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "chocolate-doom/chocolate-doom",
+      "title": "Chocolate Doom",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "chocolate-doom-3.1.1",
+      "status": "latest",
+      "updatedAt": "2025-08-16T17:23:36Z",
+      "notes": "Chocolate Doom is a Doom source port that is minimalist and historically accurate.",
+      "website": "https://www.chocolate-doom.org/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Henrique194/chocolate-quake",
+      "title": "Chocolate Quake",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows",
+        "macOS"
+      ],
+      "version": "chocolate-quake-2.1.0",
+      "status": "latest",
+      "updatedAt": "2026-02-22T20:09:49Z",
+      "notes": "A purist Quake source port that restores the original look and feel of v1.09 and earlier.",
+      "website": "https://www.doomworld.com/forum/topic/153415",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "OpenLoco/OpenLoco",
@@ -562,6 +1039,40 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "cortex-command-community/Cortex-Command-Community-Project",
+      "title": "Cortex Command",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "nightly",
+      "status": "prerelease",
+      "updatedAt": "2026-05-30T02:46:46Z",
+      "notes": "[ARCHIVED] Cortex Command - Open Source under GNU AGPL v3 (no game data included)",
+      "website": "https://cortex-command-community.github.io/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Velaron/cs16-client",
+      "title": "Counter-Strike (bunnyhop.lol)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "continuous",
+      "status": "prerelease",
+      "updatedAt": "2026-10-12T19:53:21Z",
+      "notes": "Counter-Strike reverse-engineered.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "SkiddyToast/Crackdown",
       "title": "Crackdown",
       "console": "Xbox 360",
@@ -601,6 +1112,22 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "NyperYuhgard/CTR-PC-Port",
+      "title": "Crash Team Racing (CTR-PC-Port)",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "Open-Beta-1.7",
+      "status": "prerelease",
+      "updatedAt": "2026-07-20T06:30:02Z",
+      "notes": "A PC Port From Crash Team Racing",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "GetLostIn/CTR-NitroFueled-PC",
       "title": "Crash Team Racing Nitro-Fueled",
       "console": "PlayStation 4",
@@ -616,6 +1143,22 @@
       "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
+      "repo": "Maxilure/MindOver-Recomp",
+      "title": "Crash: Mind over Mutant",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.0-alpha",
+      "status": "latest",
+      "updatedAt": "2026-10-07T13:20:52Z",
+      "notes": "An unofficial port of Crash Mind Over Mutant (Xbox 360) into a Native PC Game",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "banteg/crimson",
       "title": "Crimsonland",
       "console": "PC (Windows)",
@@ -627,6 +1170,54 @@
       "website": "https://crimson.banteg.xyz",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "fabiangreffrath/crispy-doom",
+      "title": "Crispy Doom",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "macOS"
+      ],
+      "version": "crispy-doom-7.2",
+      "status": "latest",
+      "updatedAt": "2026-10-12T09:41:41Z",
+      "notes": "Crispy Doom is a limit-removing enhanced-resolution Doom source port based on Chocolate Doom.",
+      "website": "https://fabiangreffrath.github.io/crispy-homepage",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "jorio/CroMagRally",
+      "title": "Cro-Mag Rally",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "3.0.1",
+      "status": "latest",
+      "updatedAt": "2024-02-07T21:14:31Z",
+      "notes": "The wildest racing game since man invented the wheel!",
+      "website": "https://pangeasoft.net/cromag",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "atsb/daikatana-restoration-project",
+      "title": "Daikatana (Daikatana Restoration Project)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "1.4",
+      "status": "prerelease",
+      "updatedAt": "2026-09-28T18:17:45Z",
+      "notes": "Daikatana restoration aiming to have a clean 1.2 source and to support modern systems",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "bmbelo87/ddr-1st-recomp",
@@ -713,6 +1304,21 @@
       "via": "Discover: r/decomps"
     },
     {
+      "repo": "parkerallan/doa3-recomp",
+      "title": "Dead or Alive 3",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.2",
+      "status": "latest",
+      "updatedAt": "2026-10-12T03:38:50Z",
+      "notes": "Dead or Alive 3 PC Port ",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "OverkillLabs/DeadCells-PS5-Native",
       "title": "DeadCells PS5 Native",
       "console": "PlayStation",
@@ -726,6 +1332,21 @@
       "website": "",
       "addedAt": "2026-09-29T13:44:10.552Z",
       "via": "Discover: r/emulation"
+    },
+    {
+      "repo": "jcsix694/def-jam-vendetta-recomp",
+      "title": "Def Jam Vendetta",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.3.0",
+      "status": "latest",
+      "updatedAt": "2026-10-13T14:13:27Z",
+      "notes": "Def Jam Vendetta (PS2) recompiled for PC with PS2Recomp — source only, build from your own disc",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "comoria08/defjam_recomp",
@@ -743,6 +1364,55 @@
       "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
+      "repo": "vyanhursky/DefJamFFNY-recomp",
+      "title": "Def Jam: Fight for NY (DefJamFFNY-recomp)",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.8.0",
+      "status": "latest",
+      "updatedAt": "2026-10-13T04:37:41Z",
+      "notes": "Def Jam: Fight for NY PC port — static recompilation of the original Xbox game for native Windows and macOS (Direct3D 11 / Vulkan). Bring your own game dump.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "InsanityBringer/PiccuEngine",
+      "title": "Descent 3 (Piccu Engine)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.3.0-proto4",
+      "status": "prerelease",
+      "updatedAt": "2025-07-25T20:29:02Z",
+      "notes": "Descent 3: Piccu Engine, a version of the game Descent 3 focused on quality-of-life improvements. ",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "dhewm/dhewm3",
+      "title": "Doom 3 (dhewm3)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows",
+        "macOS"
+      ],
+      "version": "1.5.5",
+      "status": "latest",
+      "updatedAt": "2026-06-08T13:46:34Z",
+      "notes": "dhewm 3 (Doom3 sourceport) main repository",
+      "website": "https://dhewm3.org/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "diasurgical/devilution",
       "title": "Diablo",
       "console": "PC (Windows)",
@@ -758,6 +1428,23 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "diasurgical/DevilutionX",
+      "title": "Diablo (DevilutionX)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.5.5",
+      "status": "latest",
+      "updatedAt": "2025-10-30T17:00:17Z",
+      "notes": "Diablo and Hellfire for modern systems (PC, consoles, handhelds), based on the reverse-engineered Devilution source.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "Boron853/Souls-of-the-Reaper",
       "title": "Diablo III",
       "console": "Xbox 360",
@@ -771,6 +1458,38 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "sobomax/digger",
+      "title": "Digger (Digger Remastered (sobomax fork))",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.4",
+      "status": "prerelease",
+      "updatedAt": "2026-05-03T17:17:20Z",
+      "notes": "Classical game of Digger, digitally remastered and enhanced",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Wyrelade/DW2-PC",
+      "title": "Digimon World 2",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-13T15:54:15Z",
+      "notes": "PC port of Digimon World 2 (PS1) built from the matching decomp. Needs your own disc image.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "gascarcella/dw2003recomp",
@@ -879,6 +1598,54 @@
       "via": "Lists: quiver"
     },
     {
+      "repo": "dsda-org/dsda-doom",
+      "title": "Doom (dsda-doom)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.30.1",
+      "status": "latest",
+      "updatedAt": "2026-10-09T19:16:04Z",
+      "notes": "This is a successor of prboom+ with extra tooling for demo recording and playback, with a focus on speedrunning and quality of life.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "fabiangreffrath/woof",
+      "title": "Doom (Woof)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "woof_16.0.0",
+      "status": "latest",
+      "updatedAt": "2026-09-08T06:14:38Z",
+      "notes": "Woof! is a continuation of the Boom/MBF bloodline of Doom source ports",
+      "website": "https://fabiangreffrath.github.io/woof/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "bradharding/doomretro",
+      "title": "DoomRetro",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v6.3",
+      "status": "latest",
+      "updatedAt": "2026-08-08T01:05:37Z",
+      "notes": "The classic, refined DOOM source port. For Windows PC.",
+      "website": "https://www.doomretro.com",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "citrongames/Dora64",
       "title": "Dora64",
       "console": "Unknown",
@@ -943,6 +1710,21 @@
       "via": "The Gaming Emporium, 8 Oct 2026"
     },
     {
+      "repo": "mstan/DragonBallZLegacyofGokuIIRecomp",
+      "title": "Dragon Ball Z: The Legacy of Goku II",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.0.2",
+      "status": "latest",
+      "updatedAt": "2026-08-03T02:28:35Z",
+      "notes": "Static recompilation of Dragon Ball Z: The Legacy of Goku II with Adaptive Widescreen · Part of the R.A.I.D. community",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "Sinan-Karakaya/DQ8-Recompiled",
       "title": "Dragon Quest VIII",
       "console": "PlayStation 2",
@@ -958,6 +1740,22 @@
       "website": "",
       "addedAt": "2026-10-08T18:20:24.836Z",
       "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "urxp/dRally",
+      "title": "Death Rally (dRally)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.2",
+      "status": "latest",
+      "updatedAt": "2022-01-13T23:11:43Z",
+      "notes": "Open Source Engine / Death Rally [1996]",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "jlagedo/dreams-to-reality-re",
@@ -1003,6 +1801,40 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "gameflorist/dunedynasty",
+      "title": "Dune II: The Building of a Dynasty (Dune Dynasty)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.6.4",
+      "status": "latest",
+      "updatedAt": "2025-05-31T17:22:36Z",
+      "notes": "Dune Dynasty is a remaster / enhancement of the classic real-time strategy game Dune II by Westwood Studios. It builds upon the original reverse-engineered game engine and adds many enhancements, modernizations and new features. Windows, macOS and Linux are supported. (This is a continuation of the abandoned sourceforge project.)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "stefanhendriks/Dune-II---The-Maker",
+      "title": "Dune II: The Building of a Dynasty (Dune II - The Maker)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "bleeding-edge-f03bf0f5",
+      "status": "latest",
+      "updatedAt": "2026-10-13T15:50:25Z",
+      "notes": "A remake of the classic Dune 2 - The Building of a Dynasty (by Westwood Studios) with several enhancements. Like: higher screenresolutions, zooming, multiselect, skirmish play, etc.",
+      "website": "https://www.dune2themaker.com",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "dkfans/keeperfx",
       "title": "Dungeon Keeper",
       "console": "IBM PC (MS-DOS)",
@@ -1014,6 +1846,38 @@
       "website": "https://keeperfx.net/",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: quiver"
+    },
+    {
+      "repo": "gbsphenx/skproject",
+      "title": "Dungeon Master II: Skullkeep (skproject)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "rel-20210703",
+      "status": "prerelease",
+      "updatedAt": "2021-07-03T08:03:11Z",
+      "notes": "Dungeon Master ][ Skullkeep, unofficial port for Windows",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "dxx-redux/dxx-redux",
+      "title": "dxx-redux",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.1",
+      "status": "latest",
+      "updatedAt": "2025-01-25T10:18:55Z",
+      "notes": "Descent 1&2 source port based on DXX-Retro",
+      "website": "https://dxx-redux.com",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "rages4calm/earthbound-companion",
@@ -1079,6 +1943,22 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "edge-classic/EDGE-classic",
+      "title": "Doom (EDGE-Classic source port)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "1.53",
+      "status": "latest",
+      "updatedAt": "2026-07-11T07:52:37Z",
+      "notes": "Cross-Platform OpenGL Doom Source Port with powerful modding features",
+      "website": "https://edge-classic.github.io",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "goliathret/EdgeOfTimeRecomp",
       "title": "EdgeOfTimeRecomp",
       "console": "Xbox 360",
@@ -1119,6 +1999,53 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "exult/exult",
+      "title": "Exult",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "snapshot-v1.13.1.20261013",
+      "status": "prerelease",
+      "updatedAt": "2026-10-13T08:35:43Z",
+      "notes": "Exult is a project to recreate Ultima 7 for modern operating systems, using the game's original plot, data, and graphics files.",
+      "website": "http://exult.info",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "QW-Group/ezquake-source",
+      "title": "Quake (ezQuake QuakeWorld client)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "3.6.9",
+      "status": "latest",
+      "updatedAt": "2026-03-01T19:45:47Z",
+      "notes": "main ezQuake source code base",
+      "website": "https://www.ezquake.com/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "neuviemeporte/f15se2-re",
+      "title": "F-15 Strike Eagle II (F-15 II)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.9.3",
+      "status": "latest",
+      "updatedAt": "2026-06-22T23:31:34Z",
+      "notes": "Reconstructed source code for the Microprose game F-15 Strike Eagle 2 for MS-DOS",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "Fable2Recomp/Fable2Recomp",
       "title": "Fable II",
       "console": "Xbox 360",
@@ -1130,6 +2057,38 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: resetera"
+    },
+    {
+      "repo": "Edw590/F1DP",
+      "title": "Fallout (F1DP)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.3",
+      "status": "latest",
+      "updatedAt": "2025-08-08T21:55:46Z",
+      "notes": "An engine patcher for the MS-DOS version of Fallout 1 including patches from Crafty's sFall1/sFall, High-Res patch, TeamX, and Fallout Fixt",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "alexbatalov/fallout1-ce",
+      "title": "Fallout (Fallout Community Edition)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.1.0",
+      "status": "latest",
+      "updatedAt": "2024-03-03T19:08:06Z",
+      "notes": "Fallout for modern operating systems",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "alexbatalov/fallout2-re",
@@ -1180,6 +2139,22 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "ihhub/fheroes2",
+      "title": "Heroes of Might and Magic II (fheroes2)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.1.17",
+      "status": "latest",
+      "updatedAt": "2026-06-30T14:33:54Z",
+      "notes": "fheroes2 is a recreation of Heroes of Might and Magic II game engine",
+      "website": "https://ihhub.github.io/fheroes2/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "whompay/FNCReborn",
       "title": "Fight Night Champion",
       "console": "Xbox 360",
@@ -1209,6 +2184,38 @@
       "addedAt": "2026-09-24T10:10:10.460Z"
     },
     {
+      "repo": "james2doyle/ffta-recomp",
+      "title": "Final Fantasy Tactics Advance",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.6",
+      "status": "latest",
+      "updatedAt": "2026-10-12T21:22:36Z",
+      "notes": "Native recompilation of Final Fantasy Tactics Advance built on the mstan/gbarecomp framework",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Jorge262007/FFTARecomp",
+      "title": "Final Fantasy Tactics Advance (FFTARecomp)",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-13T09:26:28Z",
+      "notes": "Native Windows port of Final Fantasy Tactics Advance with widescreen, video/audio options and a one-click installer.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "ficed/Braver",
       "title": "Final Fantasy VII",
       "console": "PlayStation",
@@ -1220,6 +2227,23 @@
       "website": "",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "rubymatrix/xi-on-anything",
+      "title": "Final Fantasy XI",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows",
+        "macOS"
+      ],
+      "version": "v0.2.4",
+      "status": "latest",
+      "updatedAt": "2026-10-03T17:11:45Z",
+      "notes": "Static recompilation of FINAL FANTASY XI's FFXiMain.dll (and FFXi.dll) from 32-bit x86 to C, so the game runs natively on arm64 macOS without Wine or Rosetta",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "Lordingard/SacredStonesRecomp",
@@ -1236,6 +2260,21 @@
       "website": "",
       "addedAt": "2026-10-08T18:20:24.836Z",
       "via": "The Gaming Emporium, 8 Oct 2026"
+    },
+    {
+      "repo": "DiaLight/Flame",
+      "title": "Dungeon Keeper 2 (Flame)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v260206",
+      "status": "latest",
+      "updatedAt": "2026-02-05T00:04:24Z",
+      "notes": "Dungeon Keeper II partial recompilation with bug fixes",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "cyxx/REminiscence",
@@ -1292,6 +2331,56 @@
       "website": "",
       "addedAt": "2026-09-26T19:57:07.880Z",
       "via": "Bulk paste"
+    },
+    {
+      "repo": "wheybags/freeablo",
+      "title": "Diablo (Freeablo)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.4",
+      "status": "latest",
+      "updatedAt": "2020-03-06T18:41:03Z",
+      "notes": "[ARCHIVED] Modern reimplementation of the Diablo 1 game engine",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "riperiperi/FreeSO",
+      "title": "The Sims Online (FreeSO)",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.8.5-beta",
+      "status": "prerelease",
+      "updatedAt": "2026-09-20T17:22:18Z",
+      "notes": "Re-implementation of The Sims Online. ",
+      "website": "http://freeso.org",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "scp-fs2open/fs2open.github.com",
+      "title": "FreeSpace 2 (FS2Open)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "release_26_2_0-RC1",
+      "status": "latest",
+      "updatedAt": "2026-09-24T10:06:21Z",
+      "notes": "Origin Repository for SCP FreeSpace 2 Open",
+      "website": "https://www.hard-light.net/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "danisandoval/fukami",
@@ -1372,6 +2461,37 @@
       "addedAt": "2026-09-19T14:05:01.701Z"
     },
     {
+      "repo": "saulob/geometry-wars-retro-evolved-2-recompiled",
+      "title": "Geometry Wars: Retro Evolved 2",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.2.2",
+      "status": "latest",
+      "updatedAt": "2026-10-12T18:23:42Z",
+      "notes": "Geometry Wars: Retro Evolved 2 native PC port via static recompilation, with TRG launcher, high frame rates, local achievements and offline leaderboards",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "codenamecpp/GLKeeper",
+      "title": "Dungeon Keeper 2 (GLKeeper)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "dev-8",
+      "status": "prerelease",
+      "updatedAt": "2026-09-27T07:55:01Z",
+      "notes": "Open Source Dungeon Keeper 2 Reimplementation",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "ThatGuyMcd/Glover-R",
       "title": "Glover",
       "console": "Nintendo 64",
@@ -1386,6 +2506,22 @@
       "website": "",
       "addedAt": "2026-10-08T18:20:24.836Z",
       "via": "Maddie's Brave tabs, 8 Oct 2026"
+    },
+    {
+      "repo": "afwbkbc/glsmac",
+      "title": "Sid Meier's Alpha Centauri (GLSMAC)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "development",
+      "status": "prerelease",
+      "updatedAt": "2026-10-01T09:22:49Z",
+      "notes": "Unofficial open-source OpenGL/SDL2 reimplementation of Sid Meier's Alpha Centauri ( + Alien Crossfire )",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "FelipePrado0/gow3_pc",
@@ -1418,6 +2554,22 @@
       "via": "The Gaming Emporium, 8 Oct 2026"
     },
     {
+      "repo": "Shmargus/GSRecomp",
+      "title": "Golden Sun (GSRecomp (Golden Sun Recompiled))",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "0.4.4",
+      "status": "prerelease",
+      "updatedAt": "2026-10-10T10:13:07Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "kholdfuzion/GoldenRecomp",
       "title": "GoldenEye 007",
       "console": "Nintendo 64",
@@ -1429,6 +2581,21 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: backloggd"
+    },
+    {
+      "repo": "ysrdevs/goldeneye-metal",
+      "title": "GoldenEye 007 (goldeneye-metal)",
+      "console": "Nintendo 64",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v0.5.1",
+      "status": "latest",
+      "updatedAt": "2026-10-09T20:28:29Z",
+      "notes": "GoldenEye Metal is an experimental, source-only static recompilation project focused on a native Apple Silicon and Metal rendering path. This repository contains the runtime, toolchain, Metal backend, and game integration in one tree.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "andrebrumdev/gow2-recomp",
@@ -1599,6 +2766,21 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "GTTeancum/OpenH3M",
+      "title": "Halo 3: Mythic",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "beta-0.8",
+      "status": "latest",
+      "updatedAt": "2026-08-17T01:43:47Z",
+      "notes": "Open Halo 3 Mythic: native Windows recompilation of the Halo 3 Mythic multiplayer disc.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "OMG-Guest/Halo-Mobile",
       "title": "Halo Mobile",
       "console": "Unknown",
@@ -1631,6 +2813,54 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: portsdr"
+    },
+    {
+      "repo": "ChupathingyCE/chupathingyce",
+      "title": "Halo: Combat Evolved (ChupathingyCE (OpenCE community build))",
+      "console": "Xbox",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.7.3e",
+      "status": "latest",
+      "updatedAt": "2026-10-11T19:27:17Z",
+      "notes": "Halo: Combat Evolved on Windows, Mac, Linux and Android: a community build of OpenCE with its own releases, dedicated servers and the Delta network family.",
+      "website": "https://halo.milenko.org",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "bnunu/halo-ce-universal",
+      "title": "Halo: Combat Evolved (halo-ce-universal (bnunu fork, 128 players))",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "launcher-v1.8",
+      "status": "latest",
+      "updatedAt": "2026-10-03T00:02:52Z",
+      "notes": "Fork of cybersecurity/halo-ce-universal (Halo: Combat Evolved decomp ported to Windows, Linux and Android) with multiplayer raised to 128 players and 128 machines",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "saulob/hard-corps-uprising-recompiled",
+      "title": "Hard Corps: Uprising",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.4.0",
+      "status": "latest",
+      "updatedAt": "2026-10-13T05:39:01Z",
+      "notes": "Hard Corps: Uprising native PC port via static recompilation, the Xbox 360 XBLA Contra spin-off, with TRG launcher",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "harvestwhisperer/hm64-decomp",
@@ -1730,6 +2960,23 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "iortcw/iortcw",
+      "title": "Return to Castle Wolfenstein (iortcw)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.51c",
+      "status": "latest",
+      "updatedAt": "2019-03-16T21:15:16Z",
+      "notes": "Merge of ioquake3 features and fixes into RTCW code bases",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "DogParty/iPodClickWheelRecomps",
       "title": "iPodClickWheelRecomps",
       "console": "Unknown",
@@ -1745,6 +2992,39 @@
       "notes": "An assortment of iPod Classic games that have been recompiled to run on modern systems",
       "website": "",
       "addedAt": "2026-09-19T07:20:08.223Z"
+    },
+    {
+      "repo": "andrei-drexler/ironwail",
+      "title": "Quake (ironwail)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.8.2",
+      "status": "latest",
+      "updatedAt": "2026-08-11T17:20:22Z",
+      "notes": "High-performance QuakeSpasm fork",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "ja2-stracciatella/ja2-stracciatella",
+      "title": "Jagged Alliance 2 (Jagged Alliance Stracciatella)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.22.1",
+      "status": "latest",
+      "updatedAt": "2025-10-05T09:26:01Z",
+      "notes": "The continuation of the venerable JA2-Stracciatella project.",
+      "website": "https://ja2-stracciatella.github.io/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "open-goal/jak-project",
@@ -1779,6 +3059,23 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: quiver"
+    },
+    {
+      "repo": "deathkiller/jazz2",
+      "title": "Jazz Jackrabbit 2 (Jazz² Resurrection)",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "3.8.0",
+      "status": "latest",
+      "updatedAt": "2026-08-22T17:18:56Z",
+      "notes": "🎮 · Jazz² Resurrection: Open-source reimplementation of Jazz Jackrabbit 2",
+      "website": "https://de4th.dev/jazz2/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "GTTeancum/Jet-Moto-Anthology",
@@ -1865,6 +3162,23 @@
       "via": "Discover: r/decomps"
     },
     {
+      "repo": "LBALab/lba2-classic-community",
+      "title": "Little Big Adventure 2 (lba2-classic-community)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "latest",
+      "status": "prerelease",
+      "updatedAt": "2026-05-10T07:46:58Z",
+      "notes": "Community-maintained source port of the original Little Big Adventure 2 (Twinsen’s Odyssey) engine.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "elmasas/lcs-recomp",
       "title": "lcs recomp",
       "console": "Unknown",
@@ -1875,6 +3189,38 @@
       "notes": "",
       "website": "",
       "addedAt": "2026-09-26T01:18:50.177Z"
+    },
+    {
+      "repo": "Gh0stBlade/KAIN2",
+      "title": "Legacy of Kain: Soul Reaver (Legacy of Kain: Soul Reaver Decompile)",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "B6007",
+      "status": "prerelease",
+      "updatedAt": "2024-04-24T17:24:19Z",
+      "notes": "Legacy of Kain: Soul Reaver Decompile",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "sdlpal/sdlpal",
+      "title": "Legend of Sword and Fairy (SDLPal)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v3.0.2025.0616",
+      "status": "latest",
+      "updatedAt": "2025-06-15T20:16:16Z",
+      "notes": "SDL-based reimplementation of the classic Chinese-language RPG known as PAL.",
+      "website": "https://sdlpal.github.io/sdlpal",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "isledecomp/isle",
@@ -1910,6 +3256,21 @@
       "via": "Lists: quiver"
     },
     {
+      "repo": "isledecomp/racers",
+      "title": "Lego Racers",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "continuous",
+      "status": "latest",
+      "updatedAt": "2026-10-03T14:28:44Z",
+      "notes": "A decompilation of LEGO Racers (1999)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "harrysof/LegoToypad",
       "title": "LegoToypad",
       "console": "Unknown",
@@ -1923,6 +3284,56 @@
       "website": "",
       "addedAt": "2026-10-05T17:56:20.075Z",
       "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "Librelancer/Librelancer",
+      "title": "Freelancer (Librelancer)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "macOS"
+      ],
+      "version": "2025.11",
+      "status": "latest",
+      "updatedAt": "2025-11-07T15:28:17Z",
+      "notes": "Librelancer has moved",
+      "website": "https://librelancer.net",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "clover-moe/lilium-voyager",
+      "title": "Star Trek Voyager: Elite Force Holomatch (lilium-voyager)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.40",
+      "status": "latest",
+      "updatedAt": "2019-11-02T22:11:22Z",
+      "notes": "An engine replacement for Star Trek Voyager: Elite Force Holomatch (multiplayer).",
+      "website": "https://clover.moe/lilium-voyager",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "peiikai/LASRecomp",
+      "title": "The Legend of Zelda: Link's Awakening",
+      "console": "Nintendo Switch",
+      "platforms": [
+        "macOS",
+        "Windows",
+        "Linux"
+      ],
+      "version": "beta_2",
+      "status": "latest",
+      "updatedAt": "2026-10-12T01:00:55Z",
+      "notes": "Static recompilation of Link's Awakening (Switch) to native macOS, Windows and Linux",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "MaxDeadBear/Re-Cherry",
@@ -1968,6 +3379,22 @@
       "addedAt": "2026-09-19T06:43:06.328Z"
     },
     {
+      "repo": "WiredForWar/machines",
+      "title": "Machines: Wired for War",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.7.5",
+      "status": "latest",
+      "updatedAt": "2026-09-02T19:29:51Z",
+      "notes": "Community fork of Machines: Wired for War",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "sonicnext-dev/MarathonRecomp",
       "title": "MarathonRecomp",
       "console": "Xbox 360",
@@ -1978,6 +3405,40 @@
       "notes": "An unofficial PC port of the Xbox 360 version of Sonic the Hedgehog (2006) created through the process of static recompilation",
       "website": "",
       "addedAt": "2026-09-19T06:45:21.438Z"
+    },
+    {
+      "repo": "RandomityGuy/MBHaxe",
+      "title": "Marble Blast Gold (MBHaxe)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.3.1-mbu",
+      "status": "latest",
+      "updatedAt": "2026-09-28T22:51:40Z",
+      "notes": "An optimized port of Marble Blast Gold, Platinum, Ultra and PlatinumQuest with 99% identical physics and cross platform multiplayer, runs on Windows, Mac, Linux, Web, iOS and Android! Written in Haxe!",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "The-New-Platinum-Team/OpenMBG",
+      "title": "Marble Blast Gold (OpenMBG)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "2.2.1",
+      "status": "latest",
+      "updatedAt": "2026-04-25T15:58:15Z",
+      "notes": "MBG but reverse engineered",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "MBU-Team/OpenMBU",
@@ -2008,6 +3469,53 @@
       "website": "",
       "addedAt": "2026-10-12T19:42:08.577Z",
       "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
+      "repo": "jbalcomb/ReMoM",
+      "title": "Master of Magic (ReMoM)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.0.8",
+      "status": "latest",
+      "updatedAt": "2026-07-31T03:11:23Z",
+      "notes": "Re-assembly of Master of Magic v1.31 - SimTex Universe (STU)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "maxr-dot-org/maxr",
+      "title": "M.A.X.R. (Mechanized Assault & eXploration Reloaded)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "release-0.2.17",
+      "status": "latest",
+      "updatedAt": "2024-11-07T16:25:53Z",
+      "notes": "A turn based strategy game",
+      "website": "https://www.maxr.org/forum.php",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "nemo22/mdk-sdl",
+      "title": "MDK Sdl",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.1",
+      "status": "latest",
+      "updatedAt": "2026-10-13T08:36:22Z",
+      "notes": "Port of MDK (Shiny Entertainment, 1997) to C# and SDL3, based on reverse engineering: stereo 3D, VR viewer (Cardboard) on Android and desktop, gamepads - work in progress",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "alariq/mc2",
@@ -2057,6 +3565,23 @@
       "website": "https://discord.gg/Ad9BwSzctP",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "MegaGlest/megaglest-source",
+      "title": "MegaGlest",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "snapshot",
+      "status": "prerelease",
+      "updatedAt": "2023-03-15T20:09:28Z",
+      "notes": "MegaGlest real-time strategy game engine (cross-platform, 3-d)",
+      "website": "http://megaglest.org/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "mstan/MegaManZeroRecomp",
@@ -2112,6 +3637,21 @@
       "website": "",
       "addedAt": "2026-10-01T13:41:43.054Z",
       "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Drommedhar/mgs-reintegral",
+      "title": "Metal Gear Solid (mgs-reintegral)",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.0-alpha.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-10T19:30:09Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "FluffyQuack/rexglue-MetalSlugXX",
@@ -2176,6 +3716,23 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: backloggd"
+    },
+    {
+      "repo": "jorio/MightyMike",
+      "title": "Mighty Mike",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v3.0.2",
+      "status": "latest",
+      "updatedAt": "2023-01-28T20:21:16Z",
+      "notes": "Pangea Software's Mighty Mike (Power Pete) for modern systems",
+      "website": "https://pangeasoft.net/mightymike",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "mstan/MinishCapRecomp",
@@ -2284,6 +3841,23 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "jorio/Nanosaur2",
+      "title": "Nanosaur 2: Hatchling (Nanosaur 2 (jorio))",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v2.1.0",
+      "status": "latest",
+      "updatedAt": "2022-12-17T22:06:40Z",
+      "notes": "Pangea Software’s Nanosaur II for modern systems",
+      "website": "https://jorio.itch.io/nanosaur2",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "jorjbarbosa/naruto-rise-recomp",
       "title": "Naruto: Rise of a Ninja",
       "console": "Xbox 360",
@@ -2299,6 +3873,21 @@
       "via": "The Gaming Emporium, 8 Oct 2026"
     },
     {
+      "repo": "NBlood/NBlood",
+      "title": "NBlood",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "r14388",
+      "status": "latest",
+      "updatedAt": "2026-09-14T19:00:01Z",
+      "notes": "Reverse-engineered ports of Build games using EDuke32 engine technology and development principles (NBlood/Rednukem/PCExhumed)",
+      "website": "https://discord.gg/nNQWEvSTvZ",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "OpenNFS/OpenNFS",
       "title": "Need For Speed 1-6",
       "console": "PC (Windows)",
@@ -2310,6 +3899,53 @@
       "website": "http://opennfs.com",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "zaps166/NFSIISE",
+      "title": "Need for Speed II: Special Edition (NFSIISE)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows",
+        "macOS"
+      ],
+      "version": "v1.4.0",
+      "status": "latest",
+      "updatedAt": "2024-03-16T22:56:02Z",
+      "notes": "Need For Speed™ II SE - Cross-platform wrapper with 3D acceleration and TCP protocol!",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "vasist15-source/nfs-carbon-mac",
+      "title": "Need for Speed: Carbon (nfs-carbon-mac)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v0.1.10",
+      "status": "latest",
+      "updatedAt": "2026-10-10T23:13:06Z",
+      "notes": "Need for Speed: Carbon (PC) natively on Apple Silicon Macs via static recompilation. Bring your own game.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "elforeign/nfs-most-wanted-mac",
+      "title": "Need for Speed: Most Wanted (nfs-most-wanted-mac)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v2.0.4",
+      "status": "latest",
+      "updatedAt": "2026-10-12T19:55:30Z",
+      "notes": "Need for Speed: Most Wanted (2005), native on Apple Silicon Macs by static recompilation. Bring your own PC game.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "SpeedBreakerProject/speedbreaker",
@@ -2325,6 +3961,21 @@
       "website": "https://projectugarte.com/speedbreaker/",
       "addedAt": "2026-10-12T19:42:08.577Z",
       "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
+      "repo": "WitherBlitz/NSMB-Wii-Multiplayer-Recompilation",
+      "title": "New Super Mario Bros. Wii (NSMB Wii Multiplayer Decompilation)",
+      "console": "Wii",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.0.13",
+      "status": "latest",
+      "updatedAt": "2026-10-13T16:47:29Z",
+      "notes": "New Super Mario Bros. Wii running natively on Android and Windows: a static recompilation built on WiiCompiled. Bring your own game.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "madelrandel-blip/NFSMW-Recompiled",
@@ -2371,6 +4022,40 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "nxengine/nxengine-evo",
+      "title": "Cave Story (NXEngine-evo)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v2.6.5-1",
+      "status": "latest",
+      "updatedAt": "2021-07-08T12:01:19Z",
+      "notes": "nxengine refactoring",
+      "website": "https://discord.gg/jnwmA7DhQh",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "odamex/odamex",
+      "title": "Doom (Odamex)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "12.3.0",
+      "status": "latest",
+      "updatedAt": "2026-08-06T03:54:45Z",
+      "notes": "Odamex - Online Multiplayer Doom port with a strong focus on the original gameplay while providing a breadth of enhancements.  ",
+      "website": "https://odamex.net",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "AliveTeam/alive_reversing",
       "title": "Oddworld 1-2",
       "console": "PlayStation",
@@ -2404,6 +4089,22 @@
       "addedAt": "2026-09-26T01:22:07.505Z"
     },
     {
+      "repo": "sulix/omnispeak",
+      "title": "Commander Keen in Goodbye Galaxy! (Omnispeak)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "1.2preview",
+      "status": "prerelease",
+      "updatedAt": "2024-12-16T04:32:16Z",
+      "notes": "An open-source re-implementation of \"Commander Keen in Goodbye Galaxy\"",
+      "website": "https://davidgow.net/keen/omnispeak.html",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "SHOEGAZEssb/ooa-godot",
       "title": "ooa godot",
       "console": "Unknown",
@@ -2415,6 +4116,38 @@
       "website": "",
       "addedAt": "2026-09-26T19:57:06.033Z",
       "via": "Bulk paste"
+    },
+    {
+      "repo": "open-annihilation/open-annihilation",
+      "title": "Total Annihilation (Open Annihilation)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.7.4",
+      "status": "latest",
+      "updatedAt": "2026-10-10T07:17:06Z",
+      "notes": "Open Source port of the Total Annihilation & TA: Kingdoms engines.",
+      "website": "https://play.coreprime.net",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "OpenFodder/openfodder",
+      "title": "Cannon Fodder (Open Fodder)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "2.0.0",
+      "status": "latest",
+      "updatedAt": "2025-12-16T21:23:17Z",
+      "notes": "Open Fodder: An open source port of Cannon Fodder",
+      "website": "http://openfodder.com",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "SSunnKing/Open-Nectar---Pikmin-Native-PC-Mobile-Port",
@@ -2447,6 +4180,105 @@
       "addedAt": "2026-09-19T07:21:26.908Z"
     },
     {
+      "repo": "openblack/openblack",
+      "title": "Black & White (openblack)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2024-09-04T13:52:04Z",
+      "notes": "openblack is an open-source game engine that supports playing Black & White (2001).",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "OpenCrystalCaves/OpenCrystalCaves",
+      "title": "OpenCrystalCaves",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "0.7.0",
+      "status": "latest",
+      "updatedAt": "2026-08-29T01:19:40Z",
+      "notes": "OCC is an unofficial open source engine reimplementation of the game trilogy Crystal Caves",
+      "website": "https://congusbongus.itch.io/opencrystalcaves",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "OpenDUNE/OpenDUNE",
+      "title": "Dune II: The Building of a Dynasty (OpenDUNE)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows",
+        "Linux"
+      ],
+      "version": "0.9",
+      "status": "latest",
+      "updatedAt": "2018-05-25T12:51:19Z",
+      "notes": "DUNE, REINVENTED",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "OpenE2140/OpenE2140",
+      "title": "Earth 2140 (OpenE2140)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "release-20260920",
+      "status": "latest",
+      "updatedAt": "2026-09-20T20:52:55Z",
+      "notes": "Remake of Earth 2140 using OpenRA.",
+      "website": "https://opene2140.net",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "OpenEnroth/OpenEnroth",
+      "title": "Might and Magic VII: For Blood and Honor (OpenEnroth)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "nightly",
+      "status": "prerelease",
+      "updatedAt": "2026-09-28T18:33:48Z",
+      "notes": "Open reimplementation of Might and Magic 6 7 8 game engine",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Try/OpenGothic",
+      "title": "Gothic II: Night of the Raven (OpenGothic)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.92",
+      "status": "prerelease",
+      "updatedAt": "2026-05-17T18:25:05Z",
+      "notes": "Reimplementation of Gothic 2 Notr",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "GTTeancum/OpenJam",
       "title": "OpenJam",
       "console": "Xbox 360",
@@ -2462,6 +4294,74 @@
       "via": "Bulk paste"
     },
     {
+      "repo": "JACoders/OpenJK",
+      "title": "OpenJK",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "latest",
+      "status": "latest",
+      "updatedAt": "2026-09-29T09:22:50Z",
+      "notes": "Community effort to maintain and improve Jedi Academy (SP & MP) + Jedi Outcast (SP only) released by Raven Software",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "IceReaper/OpenKrush",
+      "title": "OpenKrush",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows",
+        "Linux"
+      ],
+      "version": "playtest-20220222-3",
+      "status": "latest",
+      "updatedAt": "2022-02-22T20:30:48Z",
+      "notes": "A KKnD and KKnD2 mod on OpenRA engine.",
+      "website": "https://kknd-game.com",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "openmoh/openmohaa",
+      "title": "Medal of Honor: Allied Assault (OpenMoHAA)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.82.1",
+      "status": "latest",
+      "updatedAt": "2025-08-05T17:01:23Z",
+      "notes": "Open re-implementation of Medal of Honor: Allied Assault including Spearhead and Breakthrough expansions with modern features and bugfixes from ioquake3 with cross-platform support",
+      "website": "https://docs.openmohaa.org/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "omf2097/openomf",
+      "title": "One Must Fall 2097 (openomf)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "latest",
+      "status": "prerelease",
+      "updatedAt": "2026-10-05T00:00:44Z",
+      "notes": "One Must Fall 2097 Remake",
+      "website": "http://www.openomf.org",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "OpenPhantom/OpenPhantom",
       "title": "OpenPhantom",
       "console": "Unknown",
@@ -2474,6 +4374,122 @@
       "notes": "Star Wars Episode I: The Phantom Menace (1999) PC on Windows 10/11, Steam Deck and Proton. Modern installer, widescreen and ultrawide, uncapped FPS, FOV fix, upgraded controls, working music and video, engine decompilation and modding tools.",
       "website": "https://swopenphantom.org",
       "addedAt": "2026-09-19T05:51:26.670Z"
+    },
+    {
+      "repo": "themuffinator/openQ4",
+      "title": "Quake 4 (openQ4)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.13.2",
+      "status": "latest",
+      "updatedAt": "2026-09-14T20:18:39Z",
+      "notes": "The modern way to play QUAKE 4.",
+      "website": "https://www.moddb.com/mods/openq4",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "OpenReliant/openreliant",
+      "title": "StarLancer (OpenReliant)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.13.0",
+      "status": "latest",
+      "updatedAt": "2026-10-13T11:52:38Z",
+      "notes": "An open-source reimplementation of StarLancer's engine, in Zig on SDL3. Needs your own copy of the game.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Dzierzan/OpenSA",
+      "title": "Swarm Assault (OpenSA)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "20230905",
+      "status": "latest",
+      "updatedAt": "2023-10-01T19:43:34Z",
+      "notes": "This repository contains Swarm Assault remake project based on the OpenRA Mod SDK.",
+      "website": "https://www.moddb.com/mods/opensa",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "OpenSAGE/OpenSAGE",
+      "title": "OpenSAGE",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.3.0",
+      "status": "prerelease",
+      "updatedAt": "2018-10-29T00:46:19Z",
+      "notes": "OpenSAGE is a free, open source re-implementation of SAGE, the 3D real time strategy (RTS) engine used in Command & Conquer: Generals and other RTS titles from EA Pacific. Written in C#. Not affiliated with EA.",
+      "website": "https://opensage.github.io",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "nicholas-ochoa/OpenSC2K",
+      "title": "SimCity 2000 (OpenSC2K)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.3.0",
+      "status": "latest",
+      "updatedAt": "2026-10-09T19:27:55Z",
+      "notes": "OpenSC2K - Open Source remake of Sim City 2000 using rust and godot. Available for macOS, Windows and Linux",
+      "website": "http://opensc2k.net",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "yvt/openspades",
+      "title": "Ace of Spades (OpenSpades client)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.3",
+      "status": "latest",
+      "updatedAt": "2019-01-04T13:43:00Z",
+      "notes": "Compatible client of Ace of Spades 0.75",
+      "website": "http://openspades.yvt.jp/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "afritz1/OpenTESArena",
+      "title": "The Elder Scrolls: Arena (OpenTESArena)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "opentesarena-0.18.0",
+      "status": "latest",
+      "updatedAt": "2026-08-13T03:56:58Z",
+      "notes": "Open-source re-implementation of The Elder Scrolls: Arena.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "opentestdriveunlimited/OpenTestDriveUnlimited",
@@ -2492,6 +4508,23 @@
       "addedAt": "2026-09-18T12:20:47.029Z"
     },
     {
+      "repo": "elyosh/OpenTIE",
+      "title": "Star Wars: TIE Fighter (OpenTIE)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.0.7",
+      "status": "latest",
+      "updatedAt": "2026-10-04T17:49:52Z",
+      "notes": "Open-source recomp of TIE Fighter.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "GiZcesi/OpenTricky",
       "title": "OpenTricky",
       "console": "Xbox",
@@ -2505,6 +4538,40 @@
       "website": "",
       "addedAt": "2026-10-05T17:54:59.868Z",
       "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "JGRennison/OpenTTD-patches",
+      "title": "OpenTTD (OpenTTD-patches)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "jgrpp-0.73.4",
+      "status": "latest",
+      "updatedAt": "2026-10-12T18:03:29Z",
+      "notes": "OpenTTD - http://www.openttd.org/ - with additional patches",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "opentyrian/opentyrian",
+      "title": "OpenTyrian",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v2.1.20260913",
+      "status": "latest",
+      "updatedAt": "2026-09-14T00:00:40Z",
+      "notes": "An open-source port of the scrolling shooter Tyrian.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "elyosh/OpenXvT",
@@ -2540,6 +4607,55 @@
       "via": "Discover: r/decomps"
     },
     {
+      "repo": "elyosh/OpenXWA",
+      "title": "Star Wars: X-Wing Alliance (OpenXWA)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.0.17",
+      "status": "latest",
+      "updatedAt": "2026-08-31T21:08:14Z",
+      "notes": "Open-source recomp of X-Wing Alliance.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "OutpostUniverse/OPHD",
+      "title": "OutpostHD (OPHD)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.8.10",
+      "status": "latest",
+      "updatedAt": "2026-06-01T22:40:01Z",
+      "notes": "OutpostHD - Open source remake of Sierra On-Line's Outpost",
+      "website": "https://forum.outpost2.net/index.php/topic,5718.0.html",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "jorio/OttoMatic",
+      "title": "Otto Matic",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "4.0.1",
+      "status": "latest",
+      "updatedAt": "2023-01-31T22:46:58Z",
+      "notes": "Pangea Software’s Otto Matic 🤖",
+      "website": "https://pangeasoft.net/otto",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "TekRantGaming/outpost-kaloki-x-recompiled",
       "title": "Outpost Kaloki X",
       "console": "Xbox 360",
@@ -2566,6 +4682,21 @@
       "website": "http://reassembler.blogspot.com",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium, backloggd"
+    },
+    {
+      "repo": "ZgzInfinity/OutRun",
+      "title": "OutRun",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "v5.0-Windows",
+      "status": "latest",
+      "updatedAt": "2023-06-07T22:46:06Z",
+      "notes": "A new version of the game Out Run of 1986 for PC using SFML and C++",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "r4dius/outrun2-decomp",
@@ -2634,6 +4765,22 @@
       "notes": "",
       "website": "",
       "addedAt": "2026-09-17T10:30:36.841Z"
+    },
+    {
+      "repo": "kirby1237/PaRappaTheRapperRecomp",
+      "title": "PaRappaTheRapper",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-10-08T07:54:30Z",
+      "notes": "a static recompilation of PaRappa the Rapper made with psxrecomp",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "faligame/Parasite-Eve-HD-Remaster",
@@ -2854,6 +5001,21 @@
       "addedAt": "2026-09-19T05:51:19.222Z"
     },
     {
+      "repo": "missingno7/pre2_port",
+      "title": "Prehistorik 2 (missingno7 pre2_port (dos_re))",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.4.0",
+      "status": "latest",
+      "updatedAt": "2026-07-12T21:08:26Z",
+      "notes": "Prehistorik 2 DOS_RE Source-Port Workbench",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "NagyD/SDLPoP",
       "title": "Prince of Persia",
       "console": "IBM PC (MS-DOS)",
@@ -2865,6 +5027,21 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: resetera"
+    },
+    {
+      "repo": "Supermedo/prince-of-persia-2-windows",
+      "title": "Prince of Persia 2: The Shadow & the Flame",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-09-23T16:20:41Z",
+      "notes": "Static recompilation of the DOS Prince of Persia 2 into a native Windows game (recompiler + runtime; needs your own copy of the game)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "GenryTheFox0/Project-2099",
@@ -2879,6 +5056,21 @@
       "notes": "Unofficial Windows recompilation of Spider-Man: Edge of Time with PC controls, settings, localization, achievements and mod support.",
       "website": "https://t.me/teamgenrythefox",
       "addedAt": "2026-09-24T10:11:50.725Z"
+    },
+    {
+      "repo": "MissingThePixel/MTR-PGR4",
+      "title": "Project Gotham Racing 4 (MTR-PGR4)",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-10-08T22:15:06Z",
+      "notes": "MissingTheRecompilation: Project Gotham Racing 4",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "theclub654/ProjectCane",
@@ -2920,6 +5112,54 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "fte-team/fteqw",
+      "title": "Quake (q1.pieter.com (FTE QuakeWorld))",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "2025-09-27",
+      "status": "latest",
+      "updatedAt": "2025-09-27T08:03:30Z",
+      "notes": "This is the official GitHub mirror for the FTEQW project.",
+      "website": "https://www.fteqw.org/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "kondrak/vkQuake2",
+      "title": "Quake II (Batocera port package 'vkquake2')",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "1.5.10",
+      "status": "latest",
+      "updatedAt": "2026-08-26T14:49:03Z",
+      "notes": "id Software's Quake 2 v3.21 with mission packs and Vulkan support (Windows, Linux, macOS, FreeBSD, Raspberry Pi 4)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "ec-/Quake3e",
+      "title": "Quake III Arena (Quake3e)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "latest",
+      "status": "latest",
+      "updatedAt": "2026-10-13T15:36:35Z",
+      "notes": "Improved Quake III Arena engine",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "boricuapab/quest64tale-recompiled",
       "title": "quest64tale recompiled",
       "console": "Unknown",
@@ -2952,6 +5192,23 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "raceintospace/raceintospace",
+      "title": "Buzz Aldrin's Race into Space",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "version": "v2.0.0",
+      "status": "latest",
+      "updatedAt": "2025-03-27T17:48:52Z",
+      "notes": "This is the GitHub home of Race Into Space, the computer version of the Liftoff! board game by Fritz Bronner. It was developed by Strategic Visions and published by Interplay as a disk-based game in 1993 and a CD-ROM in 1994.  It was open-sourced in 2005 and a number of improvements have been made over the original.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "DomazinUS/RaceWave46",
       "title": "RaceWave46",
       "console": "Unknown",
@@ -2964,6 +5221,22 @@
       "notes": "An AI-assisted Wave Race 64 recompilation for Windows, with modern graphics and expanded local multiplayer.",
       "website": "",
       "addedAt": "2026-09-19T06:42:24.898Z"
+    },
+    {
+      "repo": "skynettx/raptor",
+      "title": "Raptor: Call of the Shadows (skynettx raptor)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.8.2",
+      "status": "latest",
+      "updatedAt": "2026-09-28T19:16:00Z",
+      "notes": "Reversed-engineered source port from Raptor Call Of The Shadows",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "RayCarrot/Rayman3Readvanced",
@@ -2991,6 +5264,38 @@
       "addedAt": "2026-09-26T01:20:12.317Z"
     },
     {
+      "repo": "ZDoom/Raze",
+      "title": "Raze (Duke Nukem 3D, Blood, Redneck Rampage, Shadow Warrior, Exhumed)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "version": "1.11.0",
+      "status": "latest",
+      "updatedAt": "2025-02-22T17:47:27Z",
+      "notes": "Build engine port backed by GZDoom tech. Currently supports Duke Nukem 3D, Blood, Shadow Warrior, Redneck Rampage and Powerslave/Exhumed.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "RobertBeckebans/RBDOOM-3-BFG",
+      "title": "Doom 3: BFG Edition (RBDOOM-3-BFG)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.6.0",
+      "status": "latest",
+      "updatedAt": "2025-05-10T16:32:44Z",
+      "notes": "Doom 3 BFG Edition source port with updated DX12 / Vulkan renderer and modern game engine features",
+      "website": "https://www.moddb.com/mods/rbdoom-3-bfg",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "thefixinhixon/RealSteelRecomp",
       "title": "Real Steel",
       "console": "Xbox 360",
@@ -3005,6 +5310,22 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "turican0/remc2",
+      "title": "Magic Carpet 2: The Netherworlds (remc2)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "0.9.15.1-beta-stable",
+      "status": "prerelease",
+      "updatedAt": "2026-10-12T20:50:51Z",
+      "notes": "Recode Binary code of game Magic Carpet2 to C/C++ language(remake MC2 for any platform)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "JFryy/reshadowtower",
@@ -3038,6 +5359,21 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "BrazilianHobbyist/Project-RE-Visited-RE3",
+      "title": "Resident Evil 3: Nemesis (Project RE: Visited)",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.2.1",
+      "status": "latest",
+      "updatedAt": "2026-10-13T01:25:34Z",
+      "notes": "Static recompilation and native PC port of Resident Evil 3: Nemesis (PS1)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "ecruells/resident-evil-pc-decomp",
       "title": "resident evil pc decomp",
       "console": "Unknown",
@@ -3069,6 +5405,23 @@
       "via": "The Gaming Emporium, 8 Oct 2026"
     },
     {
+      "repo": "lethal-guitar/RigelEngine",
+      "title": "Duke Nukem II (Rigel Engine)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.9.1",
+      "status": "latest",
+      "updatedAt": "2022-12-10T17:55:58Z",
+      "notes": "A modern re-implementation of the classic DOS game Duke Nukem II",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "jackpoison-prog/RingOut",
       "title": "RingOut",
       "console": "GameCube",
@@ -3082,6 +5435,37 @@
       "notes": "Native PC port of a GameCube fighting game via static recompilation - PowerPC translated to C, run as native x86-64 on a Dolphin-derived runtime",
       "website": "",
       "addedAt": "2026-09-19T05:50:19.866Z"
+    },
+    {
+      "repo": "LTCHIPS/rottexpr",
+      "title": "Rise of the Triad (rottexpr)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.01",
+      "status": "latest",
+      "updatedAt": "2021-01-19T18:31:44Z",
+      "notes": "A Rise Of The Triad Source Port with additional gameplay options and more...",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "silentsudin/RoadTripAdventure-recomp",
+      "title": "Road Trip (Choro Q HG 2)",
+      "console": "PlayStation 2",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.2.3",
+      "status": "latest",
+      "updatedAt": "2026-10-11T22:52:15Z",
+      "notes": "A static recompilation of Road Trip (Choro Q HG 2) for macOS and Android, built from your own disc",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "ihatecompvir/band3_recomp",
@@ -3128,6 +5512,23 @@
       "via": "Lists: quiver"
     },
     {
+      "repo": "MustaphaTR/Romanovs-Vengeance",
+      "title": "Red Alert 2: Romanov's Vengeance",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "playtest-20241215",
+      "status": "latest",
+      "updatedAt": "2024-12-15T20:29:05Z",
+      "notes": "Romanov's Vengeance is an OpenRA mod based on Red Alert 2.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "2003scape/rsc-c",
       "title": "Runescape (2003)",
       "console": "PC (Windows)",
@@ -3157,6 +5558,22 @@
       "website": "",
       "addedAt": "2026-10-12T19:42:08.577Z",
       "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
+      "repo": "in0finite/SanAndreasUnity",
+      "title": "Grand Theft Auto: San Andreas (San Andreas Unity)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v4.0",
+      "status": "latest",
+      "updatedAt": "2022-05-24T03:08:40Z",
+      "notes": "Open source reimplementation of GTA San Andreas game engine in Unity",
+      "website": "https://discord.gg/p6jjud5",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "ant0-blase/Saw2-X360-ReXGlue",
@@ -3200,6 +5617,21 @@
       "via": "Bulk paste"
     },
     {
+      "repo": "zlatkok/swos-port",
+      "title": "Sensible World of Soccer 96/97 (swos-port)",
+      "console": "Amiga",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "swpe-0.99.2026",
+      "status": "latest",
+      "updatedAt": "2026-09-06T22:35:24Z",
+      "notes": "",
+      "website": "https://discord.gg/b275aMwjuX",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "Y0oshi/lain-psx-decompiled",
       "title": "Serial Experiments Lain",
       "console": "PlayStation",
@@ -3217,6 +5649,73 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "tx00100xt/SeriousSamClassic",
+      "title": "Serious Sam: The First Encounter (SeriousSamClassic (tx00100xt) + CecilBotMod)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "version": "1.10.7",
+      "status": "latest",
+      "updatedAt": "2025-02-02T21:37:48Z",
+      "notes": "Open source game engine version developed by Croteam for Serious Sam Classic (Windows, Linux, FreeBSD, OpenBSD, NetBSD, macOS, Raspberry Pi OS). Based on https://github.com/Croteam-official/Serious-Engine and linux port https://github.com/icculus/Serious-Engine",
+      "website": "https://42amsterdam.net/samforum/content.php",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "tx00100xt/SeriousSamAlphaRemake",
+      "title": "SeriousSamAlphaRemake",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.5.3",
+      "status": "latest",
+      "updatedAt": "2023-10-22T12:05:23Z",
+      "notes": "Serious Sam Alpha Remake open source project based on https://github.com/Croteam-official/Serious-Engine and linux port https://github.com/icculus/Serious-Engine. Zdzichu official repo: https://github.com/GrlPwr-Zdzichu/SeriousSamAlphaRemake-Legacy",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "tx00100xt/SeriousSamClassic-VK",
+      "title": "SeriousSamClassic-VK",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "version": "1.10.7",
+      "status": "latest",
+      "updatedAt": "2025-02-02T19:36:40Z",
+      "notes": "Open source game engine version developed by Croteam for Serious Sam Classic with Vulkan support (Windows, Linux, FreeBSD,  OpenBSD, macOS, Raspberry Pi OS). Based on https://github.com/sultim-t/Serious-Engine-Vk and linux port https://github.com/icculus/Serious-Engine",
+      "website": "https://42amsterdam.net/samforum/content.php",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "NJH-1001/SexyParoRecomp",
+      "title": "Sexy Parodius",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-09-03T23:55:35Z",
+      "notes": "Owned-input Windows x86-64 PSXRecomp project for Sexy Parodius (Japan, SLPM-86009)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "rlerrr/shandalar-sdl3-appimage",
       "title": "shandalar sdl3 appimage",
       "console": "Unknown",
@@ -3230,6 +5729,39 @@
       "website": "",
       "addedAt": "2026-10-01T13:41:47.889Z",
       "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "vibecodekun/shantaerecomp",
+      "title": "Shantae",
+      "console": "Game Boy Color",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.15",
+      "status": "latest",
+      "updatedAt": "2026-10-13T18:36:11Z",
+      "notes": "Shantae (GBC) static recompilation for Windows and Linux, with an expanded view, no slowdown, rewind and shader presets. Bring your own ROM.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "ABrandau/Shattered-Paradise-SDK",
+      "title": "Shattered Paradise",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "playtest-20241231",
+      "status": "latest",
+      "updatedAt": "2024-12-31T08:07:23Z",
+      "notes": "Shattered Paradise's main repository and installation Kit.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "SheepStealer2001/Sheep-Dog-n-Wolf-Rewooled",
@@ -3249,6 +5781,39 @@
       "via": "Discover: r/decomps"
     },
     {
+      "repo": "SDW-Community/Sheep-Dog-n-Wolf-Rewooled",
+      "title": "Sheep Dog n Wolf: Rewooled",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.1.1",
+      "status": "latest",
+      "updatedAt": "2026-10-12T18:52:11Z",
+      "notes": "Sheep-Dog-n-Wolf-Rewooled is a PC port of Sheep, Dog 'n' Wolf that replaces Windows-specific layers with SDL3 for modern systems.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Interrupt/systemshock",
+      "title": "System Shock (Shockolate)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.8.2",
+      "status": "prerelease",
+      "updatedAt": "2020-01-18T22:41:27Z",
+      "notes": "Shockolate - A minimalist and cross platform System Shock source port.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "konovalov-aleks/reSL",
       "title": "Shortline railroad",
       "console": "IBM PC (MS-DOS)",
@@ -3263,6 +5828,21 @@
       "website": "https://konovalov-aleks.github.io/shortline-railroads.html",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "signus-game/signus",
+      "title": "Signus: The Artefact Wars",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.96.1",
+      "status": "latest",
+      "updatedAt": "2023-12-23T21:23:29Z",
+      "notes": "Signus: The Artefact Wars. Czech turn-based strategy game similar to Battle Isle series",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "SlickAmogus/silent-hill-pc-nightly",
@@ -3291,6 +5871,53 @@
       "website": "",
       "addedAt": "2026-10-04T11:44:44.413Z",
       "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "simutrans/simutrans",
+      "title": "simutrans",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "Nightly",
+      "status": "latest",
+      "updatedAt": "2026-10-05T12:20:57Z",
+      "notes": "Simutrans is a freeware and open-source transportation simulator. :flower_playing_cards:",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "christianortel/skate2-recompile-pc",
+      "title": "Skate 2 (PC port, christianortel)",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-10-12T15:22:21Z",
+      "notes": "Community Windows PC port of Skate 2, built with ReXGlue. Controller support, adjustable rendering quality, and unlocked FPS. Original game files required.",
+      "website": "https://github.com/christianortel/skate2-recompile-pc/releases/latest",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "SK8-ENGINE/skate-3-rust-engine",
+      "title": "Skate 3 (Skate 3 Rust Engine)",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "experimental",
+      "status": "prerelease",
+      "updatedAt": "2026-09-09T01:45:44Z",
+      "notes": "Rust and Bevy skating project based on Skate 3 reverse-engineering research. Game assets not included.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "spyrosadventure/cloud-patrol-decomp",
@@ -3391,6 +6018,21 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "smiluredev/SonicAdvanceRecomp",
+      "title": "Sonic Advance",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "V1",
+      "status": "latest",
+      "updatedAt": "2026-08-22T21:20:21Z",
+      "notes": "Sonic Advance Recompilation Project",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "SAT-R/sa2",
       "title": "Sonic Advance 2",
       "console": "Game Boy Advance",
@@ -3455,6 +6097,21 @@
       "via": "Lists: gdoc"
     },
     {
+      "repo": "DropSonic0/Sonic-Mania-Decompilation",
+      "title": "Sonic Mania (Sonic-Mania-Decompilation)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "99.99",
+      "status": "latest",
+      "updatedAt": "2025-06-23T02:47:34Z",
+      "notes": "PS3-PORT",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "ThisKwasior/Sonic-Mania-25MB",
       "title": "Sonic Mania 25MB",
       "console": "Unknown",
@@ -3482,6 +6139,21 @@
       "addedAt": "2026-09-26T01:21:01.412Z"
     },
     {
+      "repo": "jnmartin84/sonic-r",
+      "title": "Sonic R (sonic-r (jnmartin84))",
+      "console": "Saturn",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0-bugfix1",
+      "status": "latest",
+      "updatedAt": "2026-09-15T00:21:17Z",
+      "notes": "A reimplementation of Sonic R for multiple platforms.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "ElspethThePict/S1Forever",
       "title": "Sonic the Hedgehog",
       "console": "Mega Drive",
@@ -3496,6 +6168,23 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: quiver"
+    },
+    {
+      "repo": "mstan/SonicTheHedgehogRecomp",
+      "title": "Sonic the Hedgehog",
+      "console": "Mega Drive",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v0.7.0",
+      "status": "latest",
+      "updatedAt": "2026-09-14T03:22:11Z",
+      "notes": "Sonic the Hedgehog recompiled for the Sega Genesis using segagenesisrecomp · Part of the R.A.I.D. community",
+      "website": "https://discord.gg/Ad9BwSzctP",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "RSDKModding/RSDKv4-Decompilation",
@@ -3565,6 +6254,22 @@
       "addedAt": "2026-09-24T10:21:02.744Z"
     },
     {
+      "repo": "fragglet/sdl-sopwith",
+      "title": "Sopwith (SDL Sopwith)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "sdl-sopwith-2.9.0",
+      "status": "latest",
+      "updatedAt": "2025-12-06T23:10:53Z",
+      "notes": "Classic bi-plane shoot-'em up",
+      "website": "https://fragglet.github.io/sdl-sopwith",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "LightVelox/sotc-vibe-pc",
       "title": "sotc vibe pc",
       "console": "Unknown",
@@ -3576,6 +6281,22 @@
       "website": "",
       "addedAt": "2026-10-05T17:57:50.252Z",
       "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "FluffyQuack/rexglue-SoulCaliburIV",
+      "title": "Soulcalibur IV",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.9.1",
+      "status": "latest",
+      "updatedAt": "2026-07-07T15:11:50Z",
+      "notes": "SoulCalibur IV Statically Recompiled using ReXGlue SDK",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "k4zmu2a/SpaceCadetPinball",
@@ -3592,6 +6313,38 @@
       "website": "",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "pakompom/SpaceRangersHD_FPC",
+      "title": "Space Rangers HD: A War Apart (SpaceRangersHD_FPC)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "build-20261013-132119-73208d22d2d1",
+      "status": "latest",
+      "updatedAt": "2026-10-13T13:25:44Z",
+      "notes": "A cross-platform port of Space Rangers HD: A War Apart based on the decompilation.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "yancharkin/SpelunkyClassicHD",
+      "title": "Spelunky (ported build from released source))",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "1.2.2",
+      "status": "latest",
+      "updatedAt": "2025-09-03T15:37:03Z",
+      "notes": "A modified version of Derek Yu's game Spelunky Classic.",
+      "website": "https://yancharkin.github.io/SpelunkyClassicHDhtml5/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "SirSymo/SM2-Recomp",
@@ -3758,6 +6511,23 @@
       "via": "Discover: r/decomps"
     },
     {
+      "repo": "sergiou87/open-supaplex",
+      "title": "Supaplex (OpenSupaplex)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v7.2.2",
+      "status": "latest",
+      "updatedAt": "2026-03-30T23:08:13Z",
+      "notes": "Reverse engineering Supaplex",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "elliotttate/BombermanRecomp",
       "title": "Super Bomberman",
       "console": "SNES",
@@ -3900,6 +6670,22 @@
       "via": "Lists: resetera, quiver, gdoc"
     },
     {
+      "repo": "JHDev2006/Super-Mario-World-Remastered-Public",
+      "title": "Super Mario World (Super Mario World Remastered)",
+      "console": "SNES",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.1",
+      "status": "latest",
+      "updatedAt": "2025-03-07T17:15:32Z",
+      "notes": "A Remake / Remaster of the original Super Mario World, in Godot. Adds new features / improvements!",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "snesrev/sm",
       "title": "Super Metroid",
       "console": "SNES",
@@ -3960,6 +6746,23 @@
       "addedAt": "2026-09-26T01:18:01.881Z"
     },
     {
+      "repo": "dpjudas/SurrealEngine",
+      "title": "SurrealEngine",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "nightly",
+      "status": "latest",
+      "updatedAt": "2025-08-14T21:37:03Z",
+      "notes": "Unreal Engine 1 Reimplementation",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "shaneomac1337/SVR2011-Recomp",
       "title": "SVR2011 Recomp",
       "console": "Xbox 360",
@@ -3986,6 +6789,36 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "swfans/syndicatfx",
+      "title": "Syndicate (SyndicatFX)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "0.0.6.1022",
+      "status": "latest",
+      "updatedAt": "2025-12-09T12:11:25Z",
+      "notes": "Syndicate Fan Expansion, Open Source implementation of the classic game from Bullfrog, based on Syndicate Plus.",
+      "website": "https://discord.gg/cnHmWqe49t",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "swfans/syndwarsfx",
+      "title": "Syndicate Wars",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "0.3.8.4358",
+      "status": "prerelease",
+      "updatedAt": "2026-10-05T21:09:58Z",
+      "notes": "Syndicate Wars Fan Expansion, Open Source remake of the classic Bullfrog game",
+      "website": "https://discord.gg/cnHmWqe49t",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "alexbeavs-ps1-ports/syphon-filter-2-recomp",
       "title": "syphon filter 2 recomp",
       "console": "Unknown",
@@ -4010,6 +6843,37 @@
       "notes": "Play Syphon Filter 2 natively on PC with 16:9 widescreen, mouse camera control, and enhanced graphics via this experimental static recompilation.",
       "website": "https://asser4775-cyber.github.io",
       "addedAt": "2026-09-19T05:51:57.872Z"
+    },
+    {
+      "repo": "mechakotik/tails-adventure",
+      "title": "Tails Adventure (Tails Adventure Remake)",
+      "console": "Game Gear",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.3.2-1",
+      "status": "latest",
+      "updatedAt": "2026-04-22T14:22:14Z",
+      "notes": "Tails Adventure remade from the ground up for PC and Android",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "fabiangreffrath/taradino",
+      "title": "Rise of the Triad (Taradino)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "20251222",
+      "status": "latest",
+      "updatedAt": "2025-12-22T12:52:09Z",
+      "notes": "SDL2 port of Rise of the Triad",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "FishB0nes98/Tekken3Recompiled",
@@ -4129,6 +6993,21 @@
       "via": "Discover: r/decomps"
     },
     {
+      "repo": "invinceble55-wq/Estacado-The-Darkness-Recomp",
+      "title": "The Darkness",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.9.8",
+      "status": "prerelease",
+      "updatedAt": "2026-10-12T13:06:06Z",
+      "notes": "Estacado: a native PC recompilation of The Darkness (Xbox 360). Unofficial fan port; bring your own copy of the game.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "portingpete/The-Darkness-Recomp",
       "title": "The Darkness Recomp",
       "console": "Unknown",
@@ -4159,6 +7038,54 @@
       "website": "http://www.dfworkshop.net",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: quiver"
+    },
+    {
+      "repo": "OpenMW/openmw",
+      "title": "The Elder Scrolls III: Morrowind (OpenMW)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "openmw-0.51.0",
+      "status": "latest",
+      "updatedAt": "2026-06-19T19:58:46Z",
+      "notes": "Open-source Morrowind engine: better performance, Lua modding, runs on Linux/macOS/Android.",
+      "website": "https://gitlab.com/OpenMW/openmw",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "team-eternity/eternity",
+      "title": "The Eternity Engine",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows",
+        "macOS"
+      ],
+      "version": "4.06.00",
+      "status": "latest",
+      "updatedAt": "2026-06-13T20:22:07Z",
+      "notes": "The Eternity Engine",
+      "website": "http://eternity.youfailit.net/wiki/Main_Page",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "dpt/The-Great-Escape-in-C",
+      "title": "The Great Escape in C",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "macos-0.95",
+      "status": "prerelease",
+      "updatedAt": "2022-04-20T23:19:20Z",
+      "notes": "Classic ZX Spectrum game \"The Great Escape\" rewritten in portable C",
+      "website": "http://www.davespace.co.uk/the.great.escape/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "mstan/LegendOfZeldaNESRecomp",
@@ -4219,6 +7146,23 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: resetera"
+    },
+    {
+      "repo": "ZakyPew/epoch-equinox",
+      "title": "The Legend of Zelda: Oracle of Ages / Oracle of Seasons",
+      "console": "Game Boy Color",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.7.3",
+      "status": "latest",
+      "updatedAt": "2026-09-18T19:06:47Z",
+      "notes": "The Legend of Zelda: Oracle of Ages recompilation using gb-recompiled",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "kirby-letsgo/oracles-decomp",
@@ -4288,6 +7232,38 @@
       "via": "Maddie's Brave tabs, 8 Oct 2026"
     },
     {
+      "repo": "centollOS/SwitchWakerHD",
+      "title": "The Legend of Zelda: The Wind Waker HD",
+      "console": "Wii U",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.4.6",
+      "status": "latest",
+      "updatedAt": "2026-10-12T15:47:56Z",
+      "notes": "Wind Waker HD (Wii U) static recompilation for Nintendo Switch, deko3d renderer. Requires your own game dump.",
+      "website": "https://github.com/centollOS/SwitchWakerHD/releases",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Gumpolas/TooTawersRecomp",
+      "title": "The Lord of the Rings: The Two Towers",
+      "console": "Xbox",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "1.7",
+      "status": "latest",
+      "updatedAt": "2026-10-13T10:24:47Z",
+      "notes": "A native Windows PC port of The Lord of the Rings: The Two Towers (Xbox, USA, 2002), made by static recompilation. It needs your own copy of the game, either the disc image (ISO) or an extracted folder. No game data is included.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "freeserf/freeserf",
       "title": "The Settlers I",
       "console": "IBM PC (MS-DOS)",
@@ -4350,6 +7326,36 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "GrognardsFromHell/TemplePlus",
+      "title": "The Temple of Elemental Evil (TemplePlus)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.98",
+      "status": "latest",
+      "updatedAt": "2025-08-07T01:22:35Z",
+      "notes": "ToEE hooks, extensions and fixes",
+      "website": "https://github.com/GrognardsFromHell/DllDocumentation/wiki",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "nemo22/skynet-godot",
+      "title": "The Terminator: SkyNET (skynet-godot)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.5.0",
+      "status": "latest",
+      "updatedAt": "2026-10-13T11:53:42Z",
+      "notes": "A Godot 4 port of Bethesda's 1996 XnGine shooters SkyNET and Future Shock - plays your own copy of the original game data.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "riseio/TWIPE_00Sheven",
       "title": "The World Is Not Enough",
       "console": "Nintendo 64",
@@ -4381,6 +7387,23 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: quiver"
+    },
+    {
+      "repo": "psi29a/thirdeye",
+      "title": "Eye of the Beholder III: Assault on Myth Drannor (Thirdeye)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "thirdeye-0.89.0",
+      "status": "latest",
+      "updatedAt": "2026-07-13T17:07:57Z",
+      "notes": "ThirdEye is an open source AESOP replacement to play Eye of the Beholder 3 and Dungeon Hack",
+      "website": "http://www.mindwerks.net/projects/thirdeye/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "teampopwork/Thunderball",
@@ -4502,6 +7525,53 @@
       "via": "Lists: resetera"
     },
     {
+      "repo": "LANCommander/TonyWasAProSkater",
+      "title": "Tony Hawk's Pro Skater (Tony Was A Pro Skater)",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-13T03:02:51Z",
+      "notes": "PC port of Tony Hawk's Pro Skater (THPS1).",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "CNTianQi233/th06-sdl2",
+      "title": "Touhou 6: The Embodiment of Scarlet Devil (th06-sdl2)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "Archived-fix1.1.0",
+      "status": "latest",
+      "updatedAt": "2026-05-20T13:15:46Z",
+      "notes": "Rebuild the th06 decompilation project based on SDL2 and OpenGL by decoupling the original's low-level dependency on Direct3D 8, achieving modernization and cross-platform compatibility for the game engine.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "N0zoM1z0/th08",
+      "title": "Touhou 8: Imperishable Night (th08)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "v0.2.1-linux-64bit",
+      "status": "latest",
+      "updatedAt": "2026-09-19T01:50:59Z",
+      "notes": "Source reconstruction of 東方永夜抄 ～ Imperishable Night 1.00d",
+      "website": "https://rea.tools/blog/touhou-reconstruction/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "PeriBluGaming/ToyStory2Recomp",
       "title": "Toy Story 2: Buzz Lightyear to the Rescue!",
       "console": "PlayStation",
@@ -4516,6 +7586,39 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "Tribal-Trouble/tribaltrouble",
+      "title": "Tribal Trouble",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v2.0.557-103.1008",
+      "status": "prerelease",
+      "updatedAt": "2026-09-28T01:41:33Z",
+      "notes": "Tribal Trouble is a realtime strategy game released by Oddlabs in 2004. In 2014 the source was released under GPL2 license.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "triplea-game/triplea",
+      "title": "triplea",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "2026-10.16.15815",
+      "status": "latest",
+      "updatedAt": "2026-10-04T20:13:47Z",
+      "notes": "TripleA is a turn based strategy game and board game engine, similar to Axis & Allies or Risk.",
+      "website": "https://triplea-game.org/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "rep-stosw/tube64",
@@ -4591,6 +7694,87 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "abedegno/underworld-exhumed",
+      "title": "Underworld Exhumed",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "uw2-v1.2.2",
+      "status": "latest",
+      "updatedAt": "2026-10-10T13:18:11Z",
+      "notes": "Underworld Exhumed: Ultima Underworld I and II as byte-matching source code and native ports for macOS, Windows and Linux",
+      "website": "https://abedegno.github.io/underworld-exhumed-web/",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "PQMarine/UnderworldRevisited",
+      "title": "Ultima Underworld: The Stygian Abyss (Underworld Revisited)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.7.0",
+      "status": "latest",
+      "updatedAt": "2026-10-11T10:10:06Z",
+      "notes": "An open-source reimplementation of Ultima Underworld: The Stygian Abyss (1992) in Unity, faithful to the original's rules. Fully playable. Needs the GOG version; no game data included.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "hankmorgan/UnderworldGodot",
+      "title": "UnderworldGodot",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "Release-31-main",
+      "status": "prerelease",
+      "updatedAt": "2026-06-20T13:15:58Z",
+      "notes": "Engine recreation for Ultima Underworld and Ultima Underworld 2 using the Godot Engine",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "UltimaBeaR/OpenChaos",
+      "title": "Urban Chaos (OpenChaos)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v1.0.2",
+      "status": "latest",
+      "updatedAt": "2026-06-27T22:10:07Z",
+      "notes": "OpenChaos — Fan Modernization of Urban Chaos",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "FrozenSand/ioq3-for-UrbanTerror-4",
+      "title": "Urban Terror (ut.pieter.com (ioUrbanTerror -> WebAssembly))",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "release-4.3.4",
+      "status": "latest",
+      "updatedAt": "2018-06-22T08:16:59Z",
+      "notes": "The officially supported ioquake3 engine by the Frozen Sand Development Team for the game Urban Terror 4.x",
+      "website": "http://www.urbanterror.info",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "abedegno/UW2Decomp",
       "title": "UW2Decomp",
       "console": "Unknown",
@@ -4606,6 +7790,39 @@
       "website": "",
       "addedAt": "2026-10-05T17:54:25.119Z",
       "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "kvark/vange-rs",
+      "title": "Vange-rs",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "terrain-paper",
+      "status": "latest",
+      "updatedAt": "2026-08-26T05:37:33Z",
+      "notes": "Rusty Vangers clone",
+      "website": "https://vange.rs",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "TheAssemblyArmada/Vanilla-Conquer",
+      "title": "VanillaConquer",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "latest",
+      "status": "prerelease",
+      "updatedAt": "2026-07-16T13:57:33Z",
+      "notes": "Vanilla Conquer provides clean, cross-platform builds of the C&C Remastered Collection and the standalone legacy games.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "Voicedrew11/verdite2",
@@ -4637,6 +7854,22 @@
       "addedAt": "2026-09-26T01:19:35.115Z"
     },
     {
+      "repo": "mr-finster/vf2-recomp",
+      "title": "Virtua Fighter 2 (arcade recompilation)",
+      "console": "Arcade",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "latest",
+      "updatedAt": "2026-10-13T03:02:02Z",
+      "notes": "Virtua Fighter 2 (Sega Model 2, 1994) for Mac, Windows and Steam Deck: the arcade's i960 program recompiled to native code, up to 6x, widescreen, smooth 120 fps. Bring your own vf2.zip.",
+      "website": "https://vf2-recomp.pages.dev",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "crabinacrabic/VivaPinataRecomp",
       "title": "VivaPinataRecomp",
       "console": "Xbox 360",
@@ -4648,6 +7881,22 @@
       "website": "",
       "addedAt": "2026-10-04T11:38:13.195Z",
       "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Novum/vkQuake",
+      "title": "vkQuake",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "1.37.0",
+      "status": "latest",
+      "updatedAt": "2026-10-12T03:36:06Z",
+      "notes": "Vulkan Quake port based on QuakeSpasm",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "Wargus/wargus",
@@ -4712,6 +7961,23 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "Warzone2100/warzone2100",
+      "title": "Warzone 2100",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "4.7.0",
+      "status": "latest",
+      "updatedAt": "2026-04-07T15:47:54Z",
+      "notes": "Command the forces of The Project in a battle to rebuild the world after mankind has been nearly destroyed by nuclear missiles. A 100% free and open source real-time strategy game for Windows, macOS, Linux, BSD+",
+      "website": "https://wz2100.net",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "elliotttate/wave-race-64-recomp",
       "title": "Wave Race 64",
       "console": "Nintendo 64",
@@ -4726,6 +7992,40 @@
       "website": "",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "neuromancer/wc1-re",
+      "title": "Wing Commander (wc1-re)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.0.13",
+      "status": "latest",
+      "updatedAt": "2026-09-14T08:18:29Z",
+      "notes": "Wing Commander 1 source reconstruction and SDL2 port",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "neuromancer/wc2-re",
+      "title": "Wing Commander II: Vengeance of the Kilrathi (wc2-re)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.0.14",
+      "status": "latest",
+      "updatedAt": "2026-09-17T06:01:26Z",
+      "notes": "Wing Commander 2 source reconstruction and SDL2 port",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "nikolaygorb/WetRecomp",
@@ -4743,6 +8043,22 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "arelkair/wiiparty-recomp",
+      "title": "Wii Party",
+      "console": "Wii",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.11-alpha",
+      "status": "latest",
+      "updatedAt": "2026-10-13T17:02:31Z",
+      "notes": "Static recompilation of Wii Party for native PC. Requires your own legally obtained copy of the game; no copyrighted assets included.",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
       "repo": "phoboslab/wipeout-rewrite",
       "title": "Wipeout",
       "console": "PlayStation",
@@ -4754,6 +8070,23 @@
       "website": "",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "ReflectionHLE/ReflectionHLE",
+      "title": "Wolfenstein 3D (ReflectionHLE (Reflection Keen))",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "release-20260606",
+      "status": "latest",
+      "updatedAt": "2026-06-06T19:49:44Z",
+      "notes": "Ports of Keen Dreams, the 3D Catacomb games and Wolfenstein 3D and derived games, and BioMenace (DOS)",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "jjmhalew/WoodyRE",
@@ -4828,6 +8161,22 @@
       "website": "http://openapoc.org",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: quiver"
+    },
+    {
+      "repo": "FWGS/xash3d-fwgs",
+      "title": "Half-Life (xash3d-fwgs)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "continuous",
+      "status": "prerelease",
+      "updatedAt": "2026-10-13T06:44:03Z",
+      "notes": "Xash3D FWGS engine",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "CrownParkComputing/Xbox360-Native-Ports",
@@ -4982,6 +8331,21 @@
       "website": "",
       "addedAt": "2026-10-05T17:56:16.055Z",
       "via": "Discover: r/decomps"
+    },
+    {
+      "repo": "mstan/ZeroRacersVirtualBoyRecomp",
+      "title": "Zero Racers",
+      "console": "Virtual Boy",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.0.3",
+      "status": "latest",
+      "updatedAt": "2026-09-11T01:05:04Z",
+      "notes": "Zero Racers Virtual Boy native recompilation with recomp-ui and independent cosimulation",
+      "website": "",
+      "addedAt": "2026-10-13T18:57:18.372Z",
+      "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
       "repo": "moshferatu/zombies-ate-my-neighbors-pc-port",

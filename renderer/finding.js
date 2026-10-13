@@ -96,3 +96,29 @@ async function renderFunding(g) {
   el.querySelectorAll("[data-fund]").forEach((b) => (b.onclick = () => window.buddy.openExternal(b.dataset.fund)));
 }
 
+
+// ---- Coming Soon: waiting.json - decomps and ports with no computer download yet (kept out of the catalog)
+let soon = null;
+async function loadSoon(fresh = false) {
+  $("soonMeta").textContent = "Loading the list…";
+  try { soon = await window.buddy.comingSoon(fresh); }
+  catch (err) { soon = null; $("soonMeta").textContent = err.message.replace(/^.*Error: /, ""); $("soonList").innerHTML = ""; return; }
+  const consoles = [...new Set(soon.games.map((g) => g.console || "Unknown"))].sort((a, b) => a.localeCompare(b));
+  const pick = $("soonConsole").value;
+  $("soonConsole").innerHTML = `<option value="">All Consoles</option>` + consoles.map((c) => `<option value="${esc(c)}"${c === pick ? " selected" : ""}>${esc(c)}</option>`).join("");
+  renderSoon();
+}
+const repoPage = (g) => (g.host === "gitlab" ? "https://gitlab.com/" : "https://github.com/") + g.repo;
+function renderSoon() {
+  if (!soon) return;
+  const q = $("soonSearch").value.trim().toLowerCase(), con = $("soonConsole").value;
+  const list = soon.games.filter((g) => (!con || (g.console || "Unknown") === con) && (!q || `${g.title} ${g.repo}`.toLowerCase().includes(q)));
+  $("soonMeta").textContent = `${list.length} of ${soon.games.length} game(s)${soon.stale ? " - offline, showing the last copy" : ""}.`;
+  $("soonList").innerHTML = list.map((g) => `<div class="srcRow"><span></span><div><div class="lab" translate="no">${esc(g.title)}</div><div class="u wrap"><span translate="no">${esc(g.console || "Unknown")} · ${esc(g.repo)}</span>${g.notes ? ` - <span translate="no">${esc(g.notes)}</span>` : ""}</div></div><button class="small" type="button" data-soon="${esc(repoPage(g))}" aria-label="${esc(`Open ${g.title} on GitHub`)}">Open</button></div>`).join("")
+    || `<p class="sub">Nothing matches.</p>`;
+  $("soonList").querySelectorAll("[data-soon]").forEach((b) => (b.onclick = () => window.buddy.openExternal(b.dataset.soon)));
+}
+$("soonSearch").oninput = renderSoon;
+$("soonConsole").onchange = renderSoon;
+$("soonRefresh").onclick = () => loadSoon(true);
+document.querySelector('nav.side button[data-nav="soon"]')?.addEventListener("click", () => { if (!soon) loadSoon(); });

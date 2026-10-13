@@ -841,6 +841,13 @@
   "No Thanks": "いいえ",
   "When a new game finishes setting up, the app tells tanookistudios.com \"+1 for this game\" - just the game's name. Nothing about you or your computer is sent. You can change this any time in Settings.": "新しいゲームのセットアップが完了すると、アプリがtanookistudios.comに「このゲームに+1」と送ります。送るのはゲーム名だけで、あなたやコンピューターの情報は一切送りません。設定でいつでも変更できます。",
   "When a new game from the catalog finishes setting up, tell tanookistudios.com \"+1 for this game\" - just the game's name, nothing about you or your computer. Off means nothing is sent.": "カタログの新しいゲームのセットアップが完了したら、tanookistudios.comに「このゲームに+1」と送ります。ゲーム名だけで、あなたやコンピューターの情報は送りません。オフなら何も送りません。",
-  "Decomp Buddy is free. There is no paywall coming, no account to make, and no advertising. You bring your own legally owned games; nothing about you leaves this computer. If it saved you an evening of README archaeology, you can support Maddie's work, and that support is what keeps her building useful, privacy-respecting things the world forgot to make.": "Decomp Buddy は無料です。ペイウォールはなく、アカウントも不要で、広告もありません。合法的に所有しているゲームをお持ちいただき、このコンピューター外には何も送信されません。README 考古学の夜間を節約できた場合は、Maddie の仕事をサポートでき、そのサポートが彼女が有用でプライバシーを尊重するものを構築し続けることになります。"
+  "Decomp Buddy is free. There is no paywall coming, no account to make, and no advertising. You bring your own legally owned games; nothing about you leaves this computer. If it saved you an evening of README archaeology, you can support Maddie's work, and that support is what keeps her building useful, privacy-respecting things the world forgot to make.": "Decomp Buddy は無料です。ペイウォールはなく、アカウントも不要で、広告もありません。合法的に所有しているゲームをお持ちいただき、このコンピューター外には何も送信されません。README 考古学の夜間を節約できた場合は、Maddie の仕事をサポートでき、そのサポートが彼女が有用でプライバシーを尊重するものを構築し続けることになります。",
+  "- offline, showing the last copy": "- オフラインのため、前回のコピーを表示しています",
+  "All Consoles": "すべてのゲーム機",
+  "Coming Soon": "近日登場",
+  "Games people are decompiling or porting that don't have a Windows, Mac or Linux download yet. When one does, it moves to Browse Games by itself.": "逆コンパイルや移植が進められているものの、まだWindows・Mac・Linux用のダウンロードがないゲームです。ダウンロードが出ると、自動で「ゲームを参照」に移ります。",
+  "Loading the list…": "リストを読み込んでいます…",
+  "Open {0} on GitHub": "GitHubで{0}を開く",
+  "{0} of {1} game(s){2}.": "{1}本中{0}本{2}。"
  }
 }

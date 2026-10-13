@@ -31,3 +31,4 @@ export async function getWaiting(force = false) {
     throw new Error(isNetworkError(err) ? "You're offline, and this list hasn't been downloaded yet." : err.message);
   }
 }
+ipcMain.handle("waiting:list", async (_e, { fresh: force } = {}) => { const w = await getWaiting(force); return { games: w.games || [], at: w.at, stale: !!w.stale }; });

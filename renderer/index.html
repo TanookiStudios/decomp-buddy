@@ -154,6 +154,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   <button type="button" data-nav="browse" class="active">Browse Games</button>
   <button type="button" data-nav="new">New Games</button>
   <button type="button" data-nav="foryou">Games You May Like</button>
+  <button type="button" data-nav="soon">Coming Soon</button>
   <hr>
   <button type="button" data-nav="library">Installed Games</button>
   <hr>
@@ -257,6 +258,19 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     </div>
     <div id="forYouList" class="cardList"></div>
     <div class="foot"><span class="n pickCount"></span><button class="primary pickAdd" type="button" disabled>Add To Links</button></div>
+  </section>
+
+  <section id="soon" class="view" data-view="soon" aria-label="Coming Soon">
+    <div class="head">
+      <div><h1>Coming Soon</h1><p class="sub">Games people are decompiling or porting that don't have a Windows, Mac or Linux download yet. When one does, it moves to Browse Games by itself.</p></div>
+      <div class="actions"><button id="soonRefresh" type="button">Refresh</button></div>
+    </div>
+    <div class="toolbar">
+      <input id="soonSearch" type="text" placeholder="Search title or project" autocomplete="off" spellcheck="false" aria-label="Search">
+      <select id="soonConsole" aria-label="Console"></select>
+    </div>
+    <p class="sub" id="soonMeta" role="status" aria-live="polite"></p>
+    <div id="soonList" class="srcList"></div>
   </section>
 
   <section id="detail" class="view" data-view="detail" aria-label="Game details">
