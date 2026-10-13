@@ -20,6 +20,7 @@ import { checkAgainstDats } from "../dat.js";
 import { dumpKind } from "../dump.js";
 import { romIndexFile, datDir, savesOf } from "./files.js";
 import { backupSaves } from "../saves.js";
+import { countSetups } from "./setupcount.js";
 import { vaultDir, logTo, loadSettings, saveSettings, activeProvider, outDirFor, plansFileFor, currentTarget, state, diskCache, isNetworkError } from "./core.js";
 
 ipcMain.handle("verify", async (e, { path: file, gameFile, outDir }) => {
@@ -122,6 +123,7 @@ ipcMain.handle("setup", async (e, { items }) => {
       return { ...it, picks: picks || {}, verifications: verifications || {} };
     });
     // Updating a game that's already here? Back its saves up first (locations from the published facts).
+    const isNew = jobs.map((j) => !fs.existsSync(path.join(outDir, gameFolderName(j.plan), "decomp-buddy.json")));
     for (const j of jobs) {
       const folder = path.join(outDir, gameFolderName(j.plan));
       if (!fs.existsSync(path.join(folder, "decomp-buddy.json"))) continue;
@@ -132,6 +134,7 @@ ipcMain.handle("setup", async (e, { items }) => {
     const out = await setupBatch(jobs, { outDir, mode, log, keep: [...(s.romFolders || []), vaultDir()], ctrl: setupCtrl }).finally(() => { setupCtrl = null; });
     for (const r of out.results) if (!r.ok && /fetch failed|ENOTFOUND|EAI_AGAIN|ECONNREFUSED/i.test(r.error || "")) r.error = offline().message;
     out.results.forEach((r, i) => { if (r.ok) state.pending.delete(jobs[i].id); });
+    countSetups(jobs.filter((_j, i) => out.results[i]?.ok && isNew[i])); // new games only - an update isn't a new set-up
     const okCount = out.results.filter((r) => r.ok).length;
     if (okCount) { const st = loadSettings(); st.setupCount = (st.setupCount || 0) + okCount; saveSettings(st); out.setupCount = st.setupCount; out.nudgedAt = st.nudgedAt || []; }
     return out;

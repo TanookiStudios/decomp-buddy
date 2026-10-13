@@ -58,6 +58,8 @@ async function refresh() {
   $("legal").hidden = !!settings.sawLegal;
   // First run: say where games will go, so nobody finds out by filling up C:.
   $("where").hidden = !!settings.sawWhere; $("whereDir").textContent = settings.installDir || "";
+  // Asked once, after the where-games-go note: may we count set-ups? (null = not asked yet)
+  $("countAsk").hidden = !settings.sawWhere || settings.countSetups !== null; $("countSetups").checked = settings.countSetups === true;
   renderVault();
   renderLibFolders();
   renderSources();
@@ -255,7 +257,10 @@ $("theme").onchange = async () => { await window.buddy.setSettings({ theme: $("t
 // Cards, the detail page, Library and folder icons all ask again for the picture they should show.
 $("preferBoxart").onchange = async () => { await window.buddy.setSettings({ preferBoxart: $("preferBoxart").checked }); iconCache.clear(); iconPaths.clear(); await refresh(); if (catalog.games.length) renderCatalog(); };
 $("legalOk").onclick = async () => { await window.buddy.setSettings({ sawLegal: true }); $("legal").hidden = true; };
-$("whereOk").onclick = async () => { await window.buddy.setSettings({ sawWhere: true }); $("where").hidden = true; };
+$("whereOk").onclick = async () => { await window.buddy.setSettings({ sawWhere: true }); await refresh(); };
+const answerCount = async (yes) => { await window.buddy.setSettings({ countSetups: yes }); await refresh(); };
+$("countYes").onclick = () => answerCount(true); $("countNo").onclick = () => answerCount(false);
+$("countSetups").onchange = () => answerCount($("countSetups").checked);
 $("whereChange").onclick = async () => { const dir = await window.buddy.chooseFolder(); if (!dir) return; await window.buddy.setSettings({ installDir: dir, sawWhere: true }); await refresh(); };
 
 // ---------- Library ----------

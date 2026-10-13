@@ -151,7 +151,6 @@
   "Dark": "ダーク",
   "Decomp Buddy Mods": "Decomp Buddy モッズ",
   "Decomp Buddy has no investors, no ads, and no plan to get any. It has a tip page. You can probably see where this is going.": "Decomp Buddy には投資家がなく、広告もなく、取得する計画もありません。寄付ページがあります。どこに向かっているのか、おそらくわかるでしょう。",
-  "Decomp Buddy is free. There is no paywall coming, no account to make, and no advertising. You bring your own AI key and your own legally owned games; nothing about you leaves this computer. If it saved you an evening of README archaeology, you can support Maddie's work, and that support is what keeps her building useful, privacy-respecting things the world forgot to make.": "Decomp Buddy は無料です。ペイウォールはなく、アカウントも不要で、広告もありません。独自の AI キーと合法的に所有しているゲームをお持ちいただき、このコンピューター外には何も送信されません。README 考古学の夜間を節約できた場合は、Maddie の仕事をサポートでき、そのサポートが彼女が有用でプライバシーを尊重するものを構築し続けることになります。",
   "Decomp Buddy is one of those holes. The decomp and recomp scene is doing something remarkable - turning games that were locked to old consoles into real native PC programs - but every project ships with its own build, its own folder rules, its own idea of where your disc image goes. Maddie got tired of reading twenty READMEs to set up twenty games, so she built the thing that reads them for you, checks that the dump you picked is the one the project actually wants, and hands you a folder that just works.": "Decomp Buddy はそのようなギャップの 1 つです。decomp と recomp シーンは何か注目に値することをしています - 古いコンソールにロックされていたゲームを実際のネイティブ PC プログラムに変えています - しかし、すべてのプロジェクトは独自のビルド、独自のフォルダルール、ディスクイメージがどこに行くかについての独自の考えで出荷されます。Maddie は 20 個のゲームをセットアップするために 20 個の README を読むことに疲れました。そこで彼女は、それらをあなたのために読み、選んだダンプがプロジェクトが実際に望むものであることを確認し、ただ機能するフォルダを渡すものを構築しました。",
   "Decomp Buddy never downloads games. You supply your own copies; verification checks they're the ones the project needs.": "Decomp Buddy はゲームをダウンロードしません。独自のコピーを提供します。検証チェックでプロジェクトが必要とするものであることを確認します。",
   "Decomp Buddy {0} is available (you have {1}).{2}": "Decomp Buddy {0} が利用可能です (現在 {1})。{2}",
@@ -834,6 +833,14 @@
   "Games you set up go into this folder:": "セットアップしたゲームはこのフォルダに入ります：",
   "Keep It": "このまま",
   "Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.": "ゲームを別のドライブに置きたい場合は、そこにあるフォルダを選んでください。設定 → インストールフォルダでいつでも変更できます。",
-  "Where games go": "ゲームの保存先"
+  "Where games go": "ゲームの保存先",
+  "Count Mine": "カウントする",
+  "Count My Set-Ups": "セットアップ数をカウント",
+  "Count your set-ups": "セットアップ数のカウント",
+  "Help count how many games Decomp Buddy has set up?": "Decomp Buddyがセットアップしたゲームの数を数えるのに協力しますか？",
+  "No Thanks": "いいえ",
+  "When a new game finishes setting up, the app tells tanookistudios.com \"+1 for this game\" - just the game's name. Nothing about you or your computer is sent. You can change this any time in Settings.": "新しいゲームのセットアップが完了すると、アプリがtanookistudios.comに「このゲームに+1」と送ります。送るのはゲーム名だけで、あなたやコンピューターの情報は一切送りません。設定でいつでも変更できます。",
+  "When a new game from the catalog finishes setting up, tell tanookistudios.com \"+1 for this game\" - just the game's name, nothing about you or your computer. Off means nothing is sent.": "カタログの新しいゲームのセットアップが完了したら、tanookistudios.comに「このゲームに+1」と送ります。ゲーム名だけで、あなたやコンピューターの情報は送りません。オフなら何も送りません。",
+  "Decomp Buddy is free. There is no paywall coming, no account to make, and no advertising. You bring your own legally owned games; nothing about you leaves this computer. If it saved you an evening of README archaeology, you can support Maddie's work, and that support is what keeps her building useful, privacy-respecting things the world forgot to make.": "Decomp Buddy は無料です。ペイウォールはなく、アカウントも不要で、広告もありません。合法的に所有しているゲームをお持ちいただき、このコンピューター外には何も送信されません。README 考古学の夜間を節約できた場合は、Maddie の仕事をサポートでき、そのサポートが彼女が有用でプライバシーを尊重するものを構築し続けることになります。"
  }
 }

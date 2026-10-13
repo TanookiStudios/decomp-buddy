@@ -303,6 +303,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     </div>
     <div id="conBar" class="conbar" role="group" aria-label="Console"></div>
     <div class="legal" id="where" role="region" aria-label="Where games go" hidden><span><span>Games you set up go into this folder:</span> <strong id="whereDir" translate="no"></strong><br><span>Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.</span></span><button id="whereChange" type="button">Change…</button><button id="whereOk" type="button">Keep It</button></div>
+    <div class="legal" id="countAsk" role="region" aria-label="Count your set-ups" hidden><span><span>Help count how many games Decomp Buddy has set up?</span><br><span>When a new game finishes setting up, the app tells tanookistudios.com "+1 for this game" - just the game's name. Nothing about you or your computer is sent. You can change this any time in Settings.</span></span><button id="countYes" type="button">Count Mine</button><button id="countNo" type="button">No Thanks</button></div>
     <div class="status" id="catalogStatus" role="status" aria-live="polite"></div>
     <div id="addGame" class="addGame" hidden>
       <div class="row"><input id="agRepo" type="text" placeholder="https://github.com/owner/repo" autocomplete="off" spellcheck="false" aria-label="Repository"><input id="agTitle" type="text" placeholder="Game title (optional)" aria-label="Title" style="flex:0 0 220px"><input id="agConsole" type="text" placeholder="Console (optional)" aria-label="Console" style="flex:0 0 160px"></div>
@@ -383,6 +384,8 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
         <div class="row" style="margin-top:8px"><span style="flex:1"></span><button id="libFolderAdd" type="button">Add Folder…</button></div>
       </div>
       <div>
+        <label class="check"><input id="countSetups" type="checkbox"> Count My Set-Ups</label>
+        <p class="sub">When a new game from the catalog finishes setting up, tell tanookistudios.com "+1 for this game" - just the game's name, nothing about you or your computer. Off means nothing is sent.</p>
         <label class="check"><input id="startCouch" type="checkbox"> Start In Couch Mode</label>
         <p class="sub">Opens straight into the full-screen, controller-friendly Installed Games - handy on a TV or a Steam Deck. Starting Decomp Buddy with --couch does the same, and on a Steam Deck in Gaming Mode it's automatic.</p>
         <div class="row"><span class="sub" id="steamSelfState" style="flex:1" role="status" aria-live="polite">Put Decomp Buddy itself in Steam, opening in Couch Mode - on a Steam Deck it becomes a tile in Gaming Mode.</span><button id="steamSelf" type="button">Add Decomp Buddy To Steam</button></div>
@@ -448,7 +451,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <p>Maddie is an autistic app developer who builds privacy-focused apps and websites for things she thinks should already exist. When the internet leaves an oddly specific hole in the world, she has a habit of falling into it and eventually climbing back out with a working product.</p>
       <p>Decomp Buddy is one of those holes. The decomp and recomp scene is doing something remarkable - turning games that were locked to old consoles into real native PC programs - but every project ships with its own build, its own folder rules, its own idea of where your disc image goes. Maddie got tired of reading twenty READMEs to set up twenty games, so she built the thing that reads them for you, checks that the dump you picked is the one the project actually wants, and hands you a folder that just works.</p>
       <p>Because autism and a few other life complications make traditional employment a particularly bad match, app development is Maddie's full-time job. It has been rewarding, unpredictable, occasionally ridiculous, and one heck of a ride.</p>
-      <p>Decomp Buddy is free. There is no paywall coming, no account to make, and no advertising. You bring your own AI key and your own legally owned games; nothing about you leaves this computer. If it saved you an evening of README archaeology, you can support Maddie's work, and that support is what keeps her building useful, privacy-respecting things the world forgot to make.</p>
+      <p>Decomp Buddy is free. There is no paywall coming, no account to make, and no advertising. You bring your own legally owned games; nothing about you leaves this computer. If it saved you an evening of README archaeology, you can support Maddie's work, and that support is what keeps her building useful, privacy-respecting things the world forgot to make.</p>
       <p><a class="support" href="#" id="supportLink">Support Maddie's Work</a></p>
       <div class="sig" role="img" aria-label="Signed, Maddie">
           <svg viewBox="0 0 330 116" style="width:clamp(190px,34vw,270px); height:auto; overflow:visible; display:block; color:currentColor" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
