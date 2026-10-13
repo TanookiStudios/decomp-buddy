@@ -43,6 +43,15 @@ test("7z and tar.gz go through 7za; cue wins over bin", async () => {
   assert.deepEqual(ftg.map((f) => path.basename(f)).sort(), ["Game.bin", "Game.cue"]);
 });
 
+test("a Linux .tar.xz keeps its executable runnable", { skip: process.platform === "win32" }, async () => {
+  const d = tmp();
+  const src = path.join(d, "src"); fs.mkdirSync(src);
+  fs.writeFileSync(path.join(src, "game_"), Buffer.alloc(9000, 1)); fs.chmodSync(path.join(src, "game_"), 0o755);
+  execFileSync("tar", ["-cJf", path.join(d, "g.tar.xz"), "-C", src, "game_"]);
+  await extractArchive(path.join(d, "g.tar.xz"), path.join(d, "out"));
+  assert.doesNotThrow(() => fs.accessSync(path.join(d, "out", "game_"), fs.constants.X_OK));
+});
+
 test("rar goes through unrar", async () => {
   const d = tmp();
   const files = await extractArchive(new URL("./fixtures/FolderTest.rar", import.meta.url).pathname, path.join(d, "out"));

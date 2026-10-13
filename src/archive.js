@@ -42,7 +42,9 @@ export async function extractArchive(file, dest, { log = () => {} } = {}) {
   else {
     await run(path7za(), ["x", "-y", "-bd", `-o${dest}`, file], { maxBuffer: 16 * 1024 * 1024 });
     for (const inner of walk(dest).filter((p) => /\.tar$/i.test(p))) {
-      await run(path7za(), ["x", "-y", "-bd", `-o${dest}`, inner], { maxBuffer: 16 * 1024 * 1024 });
+      // 7za drops a tar's permission bits, so a Linux game's executable wouldn't run; the system tar keeps them.
+      if (process.platform === "win32") await run(path7za(), ["x", "-y", "-bd", `-o${dest}`, inner], { maxBuffer: 16 * 1024 * 1024 });
+      else await run("tar", ["-xf", inner, "-C", dest], { maxBuffer: 16 * 1024 * 1024 });
       fs.rmSync(inner);
     }
   }

@@ -166,3 +166,13 @@ test("collection artwork paths become raw file URLs", async () => {
   assert.equal(artworkUrl("./logo.png", { ...g, repoHost: "gitlab" }), "https://gitlab.com/Alexbeavs-PS1-Ports/psxrecomp-ports/-/raw/HEAD/logo.png");
   assert.equal(artworkUrl("../etc/passwd", g), null);
 });
+
+test("attachFacts adds every computer the published plan installs on", async () => {
+  const { attachFacts } = await import("../src/expand.js");
+  const pub = { plans: { "github:solarcookies/tip-recomp": { targets: { windows: {}, linux: {} }, facts: { completeness: "playable" } } } };
+  const [g] = attachFacts([{ owner: "SolarCookies", repo: "TiP-Recomp", platforms: ["Windows"] }], pub);
+  assert.deepEqual(g.platforms, ["Windows", "Linux"]);
+  assert.equal(g.facts.completeness, "playable");
+  const [n] = attachFacts([{ owner: "x", repo: "y", platforms: ["Windows"] }], pub);
+  assert.deepEqual(n.platforms, ["Windows"]);
+});

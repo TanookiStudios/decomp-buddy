@@ -35,7 +35,16 @@ export function expandMultiGame(games, pub) {
 }
 
 
+const PLATFORM_OF_TARGET = { windows: "Windows", linux: "Linux", "macos-arm64": "macOS", "macos-x64": "macOS" };
+
+// Facts from the published plan, plus every computer it has install steps for: a list site saying
+// "Windows" goes stale the day a Linux build ships, and the plan is what the app actually installs.
 export function attachFacts(games, pub) {
-  for (const g of games) g.facts = (g.owner && pub?.plans?.[planKey(g.repoHost || "github", g.owner, g.repo)]?.facts) || null;
+  for (const g of games) {
+    const entry = g.owner && pub?.plans?.[planKey(g.repoHost || "github", g.owner, g.repo)];
+    g.facts = entry?.facts || null;
+    const planned = Object.keys(entry?.targets || {}).map((t) => PLATFORM_OF_TARGET[t]).filter(Boolean);
+    if (planned.length) g.platforms = [...new Set([...(g.platforms || []), ...planned])];
+  }
   return games;
 }
