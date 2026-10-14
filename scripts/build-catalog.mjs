@@ -3,8 +3,8 @@
 // else who wants it. Reads every source the app reads (built-in catalogs, Individual Finds, shared
 // sources), folds in published plans (collections become one entry per game, plus facts), writes
 // <site>/public/decomp-buddy/catalog.json.
-//   node scripts/build-catalog.mjs [--site <TanookiStudios-Site path>]
+//   node scripts/build-catalog.mjs [--site <TanookiStudios-Site path>] [--recheck]   (--recheck: check Coming Soon for downloads now, not every 6 hours)
 import { buildCatalog } from "../src/publiccatalog.js";
 
 const i = process.argv.indexOf("--site");
-buildCatalog(i > 0 ? { site: process.argv[i + 1] } : {}).catch((err) => { console.error(`✗ ${err.message}`); process.exit(1); });
+buildCatalog({ ...(i > 0 ? { site: process.argv[i + 1] } : {}), recheck: process.argv.includes("--recheck") }).catch((err) => { console.error(`✗ ${err.message}`); process.exit(1); });

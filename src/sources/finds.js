@@ -39,6 +39,21 @@ const CONSOLE_HINTS = [
 ];
 const PLATFORM_OF_ASSET = [[/win(dows|64|32)?[-_.]|\.exe$|\.msi$|-win\b/i, "Windows"], [/mac(os)?|darwin|\.dmg$|\.pkg$/i, "macOS"], [/linux|\.appimage$|\.deb$|\.tar\.zst$/i, "Linux"], [/android|\.apk$/i, "Android"]];
 
+// One repo's facts, from either API: meta = { full_name, description, homepage, pushed_at, topics,
+// stargazers_count, fork }, live = non-draft releases newest first, each { tag_name, prerelease, published_at, assets: [{ name }] }.
+function infoFrom(key, meta, live) {
+  const platforms = new Set();
+  for (const r of live) for (const a of r.assets || []) for (const [re, p] of PLATFORM_OF_ASSET) if (re.test(a.name)) platforms.add(p);
+  const text = `${meta.name || ""} ${meta.description || ""} ${(meta.topics || []).join(" ")}`;
+  const consoleGuess = (CONSOLE_HINTS.find(([re]) => re.test(text)) || [])[1] || "";
+  return {
+    repo: meta.full_name || key, notes: meta.description || "", website: meta.homepage || "",
+    platforms: [...platforms], version: live[0]?.tag_name || null, status: live[0] ? (live[0].prerelease ? "prerelease" : "latest") : "none",
+    updatedAt: live[0]?.published_at || meta.pushed_at || "", consoleGuess, exists: !!meta.full_name,
+    stars: meta.stargazers_count || 0, fork: !!meta.fork, releases: live.slice(0, 3).map((r) => ({ tag: r.tag_name, files: (r.assets || []).map((a) => a.name).slice(0, 12) })),
+  };
+}
+
 // Everything GitHub will tell us about a repo without the AI: description, homepage, latest tag,
 // which platforms the release assets cover, last push, and a console guess from the text.
 export async function enrichFromGitHub(key) {
@@ -48,16 +63,45 @@ export async function enrichFromGitHub(key) {
   if (metaRes.status === 403 || metaRes.status === 429) throw new Error("GitHub rate limit hit. Wait an hour or set GITHUB_TOKEN.");
   const meta = await metaRes.json().catch(() => ({}));
   const releases = await (await fetch(`https://api.github.com/repos/${key}/releases?per_page=30`, { headers: h, signal: AbortSignal.timeout(20_000) })).json().catch(() => []);
-  const live = Array.isArray(releases) ? releases.filter((r) => !r.draft) : [];
-  const platforms = new Set();
-  for (const r of live) for (const a of r.assets || []) for (const [re, p] of PLATFORM_OF_ASSET) if (re.test(a.name)) platforms.add(p);
-  const text = `${meta.name || ""} ${meta.description || ""} ${(meta.topics || []).join(" ")}`;
-  const consoleGuess = (CONSOLE_HINTS.find(([re]) => re.test(text)) || [])[1] || "";
-  return {
-    repo: meta.full_name || key, notes: meta.description || "", website: meta.homepage || "",
-    platforms: [...platforms], version: live[0]?.tag_name || null, status: live[0] ? (live[0].prerelease ? "prerelease" : "latest") : "none",
-    updatedAt: live[0]?.published_at || meta.pushed_at || "", consoleGuess, exists: !!meta.full_name,
-  };
+  return infoFrom(key, meta, Array.isArray(releases) ? releases.filter((r) => !r.draft) : []);
+}
+
+// The same facts for many repos at once: GraphQL answers ~40 repos per request from its own hourly
+// allowance, where REST spends 2 requests per repo. Returns Map(key -> info, or the Error for its batch).
+// Without a token (GraphQL needs one) it falls back to one REST lookup at a time.
+const REPO_FIELDS = `nameWithOwner description homepageUrl pushedAt stargazerCount isFork
+  repositoryTopics(first: 10) { nodes { topic { name } } }
+  releases(first: 30, orderBy: { field: CREATED_AT, direction: DESC }) { nodes { tagName isPrerelease isDraft publishedAt releaseAssets(first: 50) { nodes { name } } } }`;
+export async function enrichMany(keys, { size = 40, post = graphql } = {}) {
+  const out = new Map();
+  if (!process.env.GITHUB_TOKEN) { for (const k of keys) out.set(k, await enrichFromGitHub(k).catch((err) => err)); return out; }
+  for (let i = 0; i < keys.length; i += size) {
+    const batch = keys.slice(i, i + size);
+    const query = `query {\n${batch.map((k, j) => { const [o, n] = k.split("/"); return `r${j}: repository(owner: ${JSON.stringify(o)}, name: ${JSON.stringify(n || "")}) { ${REPO_FIELDS} }`; }).join("\n")}\n}`;
+    let data;
+    try { data = await post(query); }
+    catch (err) { for (const k of batch) out.set(k, err); continue; }
+    batch.forEach((k, j) => {
+      const r = data?.[`r${j}`];
+      if (!r) { out.set(k, infoFrom(k, {}, [])); return; } // not found (deleted, private, or a typo)
+      const meta = { full_name: r.nameWithOwner, name: r.nameWithOwner.split("/")[1], description: r.description, homepage: r.homepageUrl, pushed_at: r.pushedAt,
+        topics: r.repositoryTopics.nodes.map((t) => t.topic.name), stargazers_count: r.stargazerCount, fork: r.isFork };
+      const live = r.releases.nodes.filter((x) => !x.isDraft).map((x) => ({ tag_name: x.tagName, prerelease: x.isPrerelease, published_at: x.publishedAt, assets: x.releaseAssets.nodes }));
+      out.set(k, infoFrom(k, meta, live));
+    });
+  }
+  return out;
+}
+
+async function graphql(query) {
+  const res = await fetch("https://api.github.com/graphql", { method: "POST", headers: { "User-Agent": "decomp-buddy", Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, "Content-Type": "application/json" }, body: JSON.stringify({ query }), signal: AbortSignal.timeout(60_000) });
+  const body = await res.json().catch(() => ({}));
+  if (res.status === 403 || res.status === 429 || body.errors?.some((e) => e.type === "RATE_LIMITED")) throw new Error("GitHub rate limit hit. Wait an hour or set GITHUB_TOKEN.");
+  if (!res.ok) throw new Error(`GitHub GraphQL answered HTTP ${res.status}`);
+  // A missing repo comes back as null plus a NOT_FOUND error; anything else wrong is the whole batch's problem.
+  const fatal = (body.errors || []).filter((e) => e.type !== "NOT_FOUND");
+  if (!body.data || fatal.length) throw new Error(`GitHub GraphQL: ${(fatal[0] || {}).message || "no data"}`);
+  return body.data;
 }
 
 export function readBundled() {

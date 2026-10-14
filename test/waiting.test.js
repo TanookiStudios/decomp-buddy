@@ -84,3 +84,40 @@ test("waiting: a rate limit counts every project it left unchecked", async () =>
     assert.match(lines.join("\n"), /\(3 couldn't be checked\)/);
   } finally { process.env.GITHUB_TOKEN = prev ?? ""; }
 });
+
+test("waiting: checked at most every few hours, and a rate-limited check doesn't count as checked", async () => {
+  const { dir, findsFile } = fixture();
+  const stampFile = path.join(dir, "stamp");
+  const prev = process.env.GITHUB_TOKEN; process.env.GITHUB_TOKEN = "test";
+  let asked = 0;
+  const checkMany = async (keys) => { asked += keys.length; return new Map(keys.map((k) => [k, { exists: true, repo: k, platforms: [] }])); };
+  try {
+    await promoteReady({ findsFile, log: () => {}, checkMany, stampFile });
+    assert.equal(asked, 3);
+    await promoteReady({ findsFile, log: () => {}, checkMany, stampFile });
+    assert.equal(asked, 3, "a second build within the window asks nobody");
+    await promoteReady({ findsFile, log: () => {}, checkMany, stampFile, force: true });
+    assert.equal(asked, 6);
+    fs.rmSync(stampFile);
+    await promoteReady({ findsFile, log: () => {}, checkMany: async (keys) => new Map(keys.map((k) => [k, new Error("GitHub rate limit hit.")])), stampFile });
+    assert.ok(!fs.existsSync(stampFile), "a failed check must not start the 6-hour wait");
+  } finally { process.env.GITHUB_TOKEN = prev ?? ""; }
+});
+
+test("enrichMany reads a GraphQL batch: renames followed, missing repos marked, platforms from release files", async () => {
+  const { enrichMany } = await import("../src/sources/finds.js");
+  const prev = process.env.GITHUB_TOKEN; process.env.GITHUB_TOKEN = "test";
+  let queries = 0;
+  const post = async (q) => { queries++; assert.match(q, /r0: repository\(owner: "Old", name: "name"\)/);
+    return { r0: { nameWithOwner: "New/name", description: "N64 port", homepageUrl: "", pushedAt: "2026-01-01T00:00:00Z", stargazerCount: 5, isFork: false, repositoryTopics: { nodes: [] },
+      releases: { nodes: [{ tagName: "v2", isPrerelease: false, isDraft: false, publishedAt: "2026-02-01T00:00:00Z", releaseAssets: { nodes: [{ name: "game-windows-x64.zip" }, { name: "game.AppImage" }] } }] } }, r1: null }; };
+  try {
+    const m = await enrichMany(["Old/name", "gone/repo"], { post });
+    assert.equal(queries, 1);
+    const a = m.get("Old/name");
+    assert.equal(a.repo, "New/name"); assert.deepEqual(a.platforms.sort(), ["Linux", "Windows"]); assert.equal(a.version, "v2"); assert.equal(a.consoleGuess, "Nintendo 64");
+    assert.equal(m.get("gone/repo").exists, false);
+    const failed = await enrichMany(["a/b"], { post: async () => { throw new Error("GitHub rate limit hit."); } });
+    assert.ok(failed.get("a/b") instanceof Error);
+  } finally { process.env.GITHUB_TOKEN = prev ?? ""; }
+});

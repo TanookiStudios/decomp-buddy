@@ -11,13 +11,14 @@ import { promoteReady, readWaiting, waitingFileNextTo, withoutExcluded } from ".
 
 export const SCHEMA_VERSION = 1;
 
-export async function buildCatalog({ site = path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site"), log = console.log } = {}) {
+export async function buildCatalog({ site = path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site"), log = console.log, recheck = false } = {}) {
   const dir = path.join(site, "public", "decomp-buddy");
   const findsFile = path.join(dir, "finds.json");
-  await promoteReady({ findsFile, log }); // anything on Waiting For A Port that now has a download joins the catalog
+  const cacheDir = path.join(os.homedir(), ".decomp-buddy", "catalog-build"); fs.mkdirSync(cacheDir, { recursive: true });
+  // Anything on Coming Soon that now has a download joins the catalog (checked at most every 6 hours; --recheck forces it).
+  await promoteReady({ findsFile, log, stampFile: path.join(cacheDir, "waiting-checked"), force: recheck });
   const pub = await fetchPublished({ file: path.join(dir, "plans.json") });
   const shared = await fetchSharedSources({ file: path.join(dir, "sources.json") });
-  const cacheDir = path.join(os.homedir(), ".decomp-buddy", "catalog-build"); fs.mkdirSync(cacheDir, { recursive: true });
   const cat = await fetchCatalog({ cacheDir, refresh: true, config: { shared, findsFile } });
   const games = attachFacts(expandMultiGame(withoutExcluded(cat.games, readWaiting(waitingFileNextTo(findsFile))), pub), pub); // waiting + hidden stay out, whichever source lists them
   await enrichBoxart(games, { cacheDir });

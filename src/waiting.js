@@ -6,7 +6,7 @@
 //                   "hidden": [{ "repo", "title", "reason" }] }   <- not a PC game at all (lists, mods, phone ports): never shown, never promoted
 import fs from "node:fs";
 import path from "node:path";
-import { enrichFromGitHub, publishFinds, repoKey } from "./sources/finds.js";
+import { enrichMany, publishFinds, repoKey } from "./sources/finds.js";
 
 export const WAITING_URL = "https://tanookistudios.com/decomp-buddy/waiting.json";
 const DESKTOP = new Set(["Windows", "macOS", "Linux"]);
@@ -30,24 +30,28 @@ export const withoutExcluded = (games, doc) => {
 
 // Ask GitHub about every waiting project; any with a desktop download moves into finds.json.
 // Needs GITHUB_TOKEN (two calls per project). Returns the repos that moved.
-export async function promoteReady({ findsFile, log = console.log, check = enrichFromGitHub }) {
+// checkMany(keys) -> Map(key -> info | Error) answers in batches (GraphQL); tests pass a one-repo `check`.
+// stampFile + everyHours: a rebuild within that window skips the check (it costs a GitHub request per 40
+// projects), unless force. The stamp is only written after a check that didn't hit a rate limit.
+export async function promoteReady({ findsFile, log = console.log, check, checkMany = enrichMany, stampFile, everyHours = 6, force = false }) {
   const file = waitingFileNextTo(findsFile);
   const doc = readWaiting(file);
   if (!doc.games.length) return [];
   if (!process.env.GITHUB_TOKEN) { log(`waiting: skipped checking ${doc.games.length} project(s) for new downloads - no GITHUB_TOKEN`); return []; }
+  const last = stampFile && fs.existsSync(stampFile) ? Date.parse(fs.readFileSync(stampFile, "utf8")) : 0;
+  if (!force && Date.now() - last < everyHours * 3600e3) { log(`waiting: checked ${new Date(last).toISOString()}, next check after ${everyHours}h`); return []; }
+  const ask = check ? async (keys) => { const m = new Map(); for (const k of keys) m.set(k, await check(k).catch((err) => err)); return m; } : checkMany;
+  const keys = doc.games.map((g) => repoKey(g.repo));
+  const answers = await ask(keys);
   const moved = [], stay = [];
-  let i = 0, failed = 0;
-  async function worker() {
-    while (i < doc.games.length) {
-      const g = doc.games[i++];
-      try {
-        const info = await check(repoKey(g.repo));
-        if (info.exists && info.platforms.some((p) => DESKTOP.has(p))) moved.push({ ...g, repo: info.repo, platforms: info.platforms, version: info.version, status: info.status, updatedAt: info.updatedAt, notes: info.notes || g.notes, website: info.website || g.website, via: `${g.via || "Waiting"} → released` });
-        else stay.push(g);
-      } catch (err) { failed++; stay.push(g); if (/rate limit/.test(err.message)) { const rest = doc.games.slice(i); stay.push(...rest); failed += rest.length; i = doc.games.length; } }
-    }
-  }
-  await Promise.all(Array.from({ length: 8 }, worker));
+  let failed = 0;
+  doc.games.forEach((g, i) => {
+    const info = answers.get(keys[i]);
+    if (!info || info instanceof Error) { failed++; stay.push(g); return; }
+    if (info.exists && info.platforms.some((p) => DESKTOP.has(p))) moved.push({ ...g, repo: info.repo, platforms: info.platforms, version: info.version, status: info.status, updatedAt: info.updatedAt, notes: info.notes || g.notes, website: info.website || g.website, via: `${g.via || "Waiting"} → released` });
+    else stay.push(g);
+  });
+  if (stampFile && !failed) fs.writeFileSync(stampFile, new Date().toISOString());
   if (moved.length) {
     publishFinds(findsFile, moved);
     stay.sort((a, b) => a.title.localeCompare(b.title));
