@@ -1,6 +1,6 @@
 // Sorts the Discover queue with Claude Code agents instead of by hand (or the paid API).
 //
-//   node scripts/triage.mjs prep   [--site <TanookiStudios-Site>] [--queue <settings.json>] [--batch 25]
+//   node scripts/triage.mjs prep   [--site <TanookiStudios-Site>] [--queue <settings.json> | --repos <list.txt>] [--batch 25]
 //   node scripts/triage.mjs check  <batch id>
 //   node scripts/triage.mjs import [--site <TanookiStudios-Site>]
 //
@@ -74,7 +74,9 @@ async function prep() {
   const size = Number(arg("--batch")) || 25;
   for (const d of ["jobs", "ctx", "out", "done"]) fs.mkdirSync(J(d), { recursive: true });
   fs.writeFileSync(J("RULES.md"), RULES);
-  const have = known(), queue = Object.values(readJSON(QUEUE).discovered || {});
+  // --repos <file>: sort a hand-picked list (one owner/repo per line, e.g. from browser tabs) instead of the app's queue.
+  const list = arg("--repos");
+  const have = known(), queue = list ? fs.readFileSync(list, "utf8").split("\n").map((l) => l.trim()).filter(Boolean).map((repo) => ({ repo })) : Object.values(readJSON(QUEUE).discovered || {});
   const listed = new Map([...have].map((r) => [r.split("/")[1], r]));
   const todo = queue.map((c) => c.repo).filter((r) => r && !have.has(r.toLowerCase()));
   console.log(`queue ${queue.length}, already filed ${queue.length - todo.length}, to sort ${todo.length}`);
