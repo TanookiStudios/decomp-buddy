@@ -12,7 +12,7 @@ export const canonRepo = (full) => { const [o, ...r] = String(full || "").split(
 // names the rest of the app already uses (boxart folders, the console guesses in sources/finds.js).
 const CONSOLE_ALIASES = [[/^(nintendo )?game ?boy advance$|^gba$/i, "Game Boy Advance"], [/^nintendo entertainment system$|^famicom$/i, "NES"],
   [/^super nintendo( entertainment system)?$|^super famicom$/i, "SNES"], [/^sony playstation$|^ps1$|^psx$/i, "PlayStation"], [/^sony playstation 2$/i, "PlayStation 2"],
-  [/^(sony )?playstation portable$/i, "PlayStation Portable"], [/^sega genesis$|^genesis$|^sega mega drive$/i, "Mega Drive"],
+  [/^(sony )?playstation portable$/i, "PlayStation Portable"], [/^sega genesis$|^genesis$|^sega mega drive$|^(sega )?mega drive ?\/ ?genesis$/i, "Mega Drive"],
   [/^(ibm )?pc \((ms-)?dos\)$|^ms-dos$|^dos$/i, "IBM PC (MS-DOS)"], [/^nintendo gamecube$/i, "GameCube"], [/^sega (dreamcast|saturn)$/i, (m) => m.replace(/^sega /i, "")]];
 export function canonConsole(c) {
   const s = String(c || "").trim(), hit = CONSOLE_ALIASES.find(([re]) => re.test(s));
