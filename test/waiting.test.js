@@ -121,3 +121,12 @@ test("enrichMany reads a GraphQL batch: renames followed, missing repos marked, 
     assert.ok(failed.get("a/b") instanceof Error);
   } finally { process.env.GITHUB_TOKEN = prev ?? ""; }
 });
+
+test("enrichMany: a release labeled NOT A RELEASE / test-only is not a download", async () => {
+  const { enrichMany } = await import("../src/sources/finds.js");
+  const prev = process.env.GITHUB_TOKEN; process.env.GITHUB_TOKEN = "test";
+  const post = async () => ({ r0: { nameWithOwner: "a/b", description: "", homepageUrl: "", pushedAt: "2026-01-01T00:00:00Z", stargazerCount: 0, isFork: false, repositoryTopics: { nodes: [] },
+    releases: { nodes: [{ name: "NOT A RELEASE: test file for issue #12 only", tagName: "issue-12-test-build", isPrerelease: true, isDraft: false, publishedAt: "2026-02-01T00:00:00Z", releaseAssets: { nodes: [{ name: "NOT-A-RELEASE-issue12-test-only-windows.zip" }] } }] } } });
+  try { const i = (await enrichMany(["a/b"], { post })).get("a/b"); assert.deepEqual(i.platforms, []); assert.equal(i.version, null); }
+  finally { process.env.GITHUB_TOKEN = prev ?? ""; }
+});

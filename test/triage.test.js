@@ -18,3 +18,13 @@ test("triage answers: play needs a desktop download, every repo answered once, k
   const p = problems(bad, ["a/port", "b/decomp"], ctxOf).join("\n");
   for (const want of [/b\/decomp: console "N64"/, /b\/decomp: "play" needs/, /x\/stray: verdict/, /x\/stray: title is empty/, /a\/port: missing/, /x\/stray: not in this batch/]) assert.match(p, want);
 });
+
+test("triage: an unnamed zip counts as a desktop download only with a word-for-word README quote naming the computer", async () => {
+  const { problems, desktopOf } = await import("../scripts/triage.mjs");
+  const c = { platforms: [], releases: [{ tag: "v1", files: ["Game.zip"] }], readme: "A native port.\nRequirements: Windows 10/11 64-bit.\n" };
+  const ok = { repo: "a/game", verdict: "play", title: "Game", console: "Xbox", reason: "r", platforms: ["Windows", "Linux"], platform_quote: "Requirements: Windows 10/11 64-bit." };
+  assert.deepEqual(desktopOf(ok, c), ["Windows"], "Linux isn't in the quote, so it's dropped");
+  assert.deepEqual(problems({ results: [ok] }, ["a/game"], () => c), []);
+  assert.deepEqual(desktopOf({ ...ok, platform_quote: "Runs on Windows." }, c), [], "a quote that isn't in the README doesn't count");
+  assert.deepEqual(desktopOf(ok, { ...c, releases: [] }), [], "no release files, no download");
+});

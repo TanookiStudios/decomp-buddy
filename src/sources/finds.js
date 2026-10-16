@@ -41,7 +41,10 @@ const PLATFORM_OF_ASSET = [[/win(dows|64|32)?[-_.]|\.exe$|\.msi$|-win\b/i, "Wind
 
 // One repo's facts, from either API: meta = { full_name, description, homepage, pushed_at, topics,
 // stargazers_count, fork }, live = non-draft releases newest first, each { tag_name, prerelease, published_at, assets: [{ name }] }.
-function infoFrom(key, meta, live) {
+// A release its author labels as not a release ("NOT A RELEASE: test file for issue #12 only") isn't a download.
+const NOT_A_RELEASE = /not[\s_-]*a[\s_-]*release|test[\s_-]*(file|build)?[\s_-]*only/i;
+function infoFrom(key, meta, releases) {
+  const live = releases.filter((r) => !NOT_A_RELEASE.test(`${r.name || ""} ${r.tag_name} ${(r.assets || []).map((a) => a.name).join(" ")}`));
   const platforms = new Set();
   for (const r of live) for (const a of r.assets || []) for (const [re, p] of PLATFORM_OF_ASSET) if (re.test(a.name)) platforms.add(p);
   const text = `${meta.name || ""} ${meta.description || ""} ${(meta.topics || []).join(" ")}`;
@@ -71,7 +74,7 @@ export async function enrichFromGitHub(key) {
 // Without a token (GraphQL needs one) it falls back to one REST lookup at a time.
 const REPO_FIELDS = `nameWithOwner description homepageUrl pushedAt stargazerCount isFork
   repositoryTopics(first: 10) { nodes { topic { name } } }
-  releases(first: 30, orderBy: { field: CREATED_AT, direction: DESC }) { nodes { tagName isPrerelease isDraft publishedAt releaseAssets(first: 50) { nodes { name } } } }`;
+  releases(first: 30, orderBy: { field: CREATED_AT, direction: DESC }) { nodes { name tagName isPrerelease isDraft publishedAt releaseAssets(first: 50) { nodes { name } } } }`;
 export async function enrichMany(keys, { size = 40, post = graphql } = {}) {
   const out = new Map();
   if (!process.env.GITHUB_TOKEN) { for (const k of keys) out.set(k, await enrichFromGitHub(k).catch((err) => err)); return out; }
@@ -86,7 +89,7 @@ export async function enrichMany(keys, { size = 40, post = graphql } = {}) {
       if (!r) { out.set(k, infoFrom(k, {}, [])); return; } // not found (deleted, private, or a typo)
       const meta = { full_name: r.nameWithOwner, name: r.nameWithOwner.split("/")[1], description: r.description, homepage: r.homepageUrl, pushed_at: r.pushedAt,
         topics: r.repositoryTopics.nodes.map((t) => t.topic.name), stargazers_count: r.stargazerCount, fork: r.isFork };
-      const live = r.releases.nodes.filter((x) => !x.isDraft).map((x) => ({ tag_name: x.tagName, prerelease: x.isPrerelease, published_at: x.publishedAt, assets: x.releaseAssets.nodes }));
+      const live = r.releases.nodes.filter((x) => !x.isDraft).map((x) => ({ name: x.name, tag_name: x.tagName, prerelease: x.isPrerelease, published_at: x.publishedAt, assets: x.releaseAssets.nodes }));
       out.set(k, infoFrom(k, meta, live));
     });
   }

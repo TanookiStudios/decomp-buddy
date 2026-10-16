@@ -47,6 +47,7 @@ Also give:
 - "reason": one short sentence saying why.
 
 Use only what the job text says. Never guess a download exists: "play" requires the Desktop download line to name Windows, macOS or Linux.
+One exception: when the release has files but their names don't say the computer (e.g. "Game-v1.0.zip"), and the README clearly says which computer that download is for, you may answer "play" with "platforms": ["Windows"] (or macOS / Linux) and "platform_quote": the README sentence that says so, copied word for word (it must name that computer).
 
 Answer file: out/<batch id>.json, raw JSON only:
 { "results": [ { "repo": "owner/name", "verdict": "play|soon|hide|unsure", "title": "...", "console": "...", "reason": "..." }, ... one per repo in the batch ] }
@@ -120,6 +121,17 @@ async function prep() {
 // The batch's repos live in their own file: README text inside the job can look like anything.
 const batchRepos = (id) => readJSON(J("jobs", `${id}.repos.json`));
 
+// Which computers a "play" answer installs on: what the release file names say, or - when the files don't
+// name one (e.g. "Game-v1.0.zip") - the agent's "platforms", backed by a README sentence copied word for word.
+export function desktopOf(r, c) {
+  const named = (c?.platforms || []).filter((p) => DESKTOP.includes(p));
+  if (named.length) return named;
+  const hasFiles = (c?.releases || []).some((x) => x.files.length), q = String(r.platform_quote || "").trim();
+  if (!hasFiles || q.length < 8 || !String(c?.readme || "").includes(q)) return [];
+  const said = { Windows: /windows/i, macOS: /mac ?os|macintosh|\bmac\b/i, Linux: /linux/i };
+  return (Array.isArray(r.platforms) ? r.platforms : []).filter((p) => DESKTOP.includes(p) && said[p].test(q));
+}
+
 // The same checks import makes; agents run it on their own answer.
 export function problems(answer, repos, ctxOf) {
   const out = [], got = new Map();
@@ -127,7 +139,7 @@ export function problems(answer, repos, ctxOf) {
     if (!VERDICTS.includes(r.verdict)) out.push(`${r.repo}: verdict must be one of ${VERDICTS.join("/")}`);
     if (r.verdict !== "hide" && !CONSOLES.includes(r.console)) out.push(`${r.repo}: console "${r.console}" isn't in the list`);
     if (!String(r.title || "").trim()) out.push(`${r.repo}: title is empty`);
-    if (r.verdict === "play" && !(ctxOf(r.repo)?.platforms || []).some((p) => DESKTOP.includes(p))) out.push(`${r.repo}: "play" needs a Windows/macOS/Linux download, and the job lists none - use "soon"`);
+    if (r.verdict === "play" && !desktopOf(r, ctxOf(r.repo)).length) out.push(`${r.repo}: "play" needs a Windows/macOS/Linux download: the job lists none, and no "platforms" + verbatim "platform_quote" from the README backs one - use "soon" or "unsure"`);
     got.set(String(r.repo).toLowerCase(), r);
   }
   for (const r of repos) if (!got.has(r.toLowerCase())) out.push(`${r}: missing from results`);
@@ -155,7 +167,7 @@ function importAnswers() {
     for (const r of a.results) {
       const c = ctxOf(r.repo), repo = c?.repo || r.repo;
       if (have.has(repo.toLowerCase())) continue; have.add(repo.toLowerCase());
-      if (r.verdict === "play") finds.push({ repo, title: r.title, console: r.console, platforms: c.platforms.filter((p) => DESKTOP.includes(p)), version: c.version, status: c.status, updatedAt: c.updatedAt, notes: c.notes || "", website: c.website || "", addedAt: now, via });
+      if (r.verdict === "play") finds.push({ repo, title: r.title, console: r.console, platforms: desktopOf(r, c), version: c.version, status: c.status, updatedAt: c.updatedAt, notes: c.notes || "", website: c.website || "", addedAt: now, via });
       else if (r.verdict === "soon") soon.push({ repo, title: r.title, console: r.console, notes: c?.notes || "", website: c?.website || "", addedAt: now, via });
       else if (r.verdict === "hide") hide.push({ repo, title: r.title, reason: r.reason });
       else unsure.push({ repo, title: r.title, reason: r.reason });
