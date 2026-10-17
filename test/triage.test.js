@@ -28,3 +28,10 @@ test("triage: an unnamed zip counts as a desktop download only with a word-for-w
   assert.deepEqual(desktopOf({ ...ok, platform_quote: "Runs on Windows." }, c), [], "a quote that isn't in the README doesn't count");
   assert.deepEqual(desktopOf(ok, { ...c, releases: [] }), [], "no release files, no download");
 });
+
+test("triage: a Reddit title becomes a short GitHub search", async () => {
+  const { titleQuery } = await import("../scripts/triage.mjs");
+  assert.equal(titleQuery("Burnout 3 Takedown Is Finally On PC"), "Burnout 3 Takedown");
+  assert.equal(titleQuery("[WIP] Genesis Road Rash 3 native-port and remaster"), "Genesis Road Rash 3 remaster");
+  assert.equal(titleQuery("Project Shaolin: Mortal Kombat: Shaolin Monks (original Xbox) static recomp"), "Project Shaolin Mortal Kombat Shaolin");
+});

@@ -1,6 +1,6 @@
 // Sorts the Discover queue with Claude Code agents instead of by hand (or the paid API).
 //
-//   node scripts/triage.mjs prep   [--site <TanookiStudios-Site>] [--queue <settings.json> | --repos <list.txt>] [--batch 25]
+//   node scripts/triage.mjs prep   [--site <TanookiStudios-Site>] [--queue <settings.json> | --repos <list.txt>] [--no-reddit] [--batch 25]
 //   node scripts/triage.mjs check  <batch id>
 //   node scripts/triage.mjs import [--site <TanookiStudios-Site>]
 //
@@ -16,6 +16,7 @@ import os from "node:os";
 import path from "node:path";
 import { enrichMany, publishFinds } from "../src/sources/finds.js";
 import { readWaiting, excludedKeys } from "../src/waiting.js";
+import { scanReddit } from "../src/discover.js";
 
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
 const SITE = arg("--site") || path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site");
@@ -63,6 +64,21 @@ function known() {
   return k;
 }
 
+// A Reddit post with no link: search GitHub for its title. GitHub's search allows 30 a minute, so 2.5s apart.
+// shortcut: the 40 newest titles per run; each run only sees Reddit's newest 100 posts anyway.
+const STOP = /\b(the|a|an|is|are|of|on|for|and|to|in|with|my|i|now|out|finally|here|new|release|released|wip|native|pc|port|ported|recomp|recompiled|recompilation|decomp|decompilation|static|running|runs|game|v?\d+(\.\d+)+)\b/gi;
+export const titleQuery = (t) => t.replace(/\[[^\]]*\]|\([^)]*\)/g, " ").replace(/[^A-Za-z0-9' ]+/g, " ").replace(STOP, " ").replace(/\s+/g, " ").trim().split(" ").slice(0, 5).join(" ");
+async function titleLeads(posts) {
+  const out = [], seen = new Set(), since = Date.now() - 180 * 86400e3;
+  for (const p of posts.slice(0, 40)) {
+    const q = titleQuery(p.title); if (q.length < 3 || seen.has(q.toLowerCase())) continue; seen.add(q.toLowerCase());
+    const res = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=updated&per_page=5`, { headers: { "User-Agent": "decomp-buddy", Accept: "application/vnd.github+json", ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}) } }).catch(() => null);
+    if (res?.ok) for (const r of ((await res.json()).items || []).filter((r) => Date.parse(r.pushed_at) > since && /recomp|decomp|port|native|pc/i.test(`${r.name} ${r.description || ""}`)).slice(0, 3)) out.push({ repo: r.full_name, title: p.title, via: `r/${p.sub} (title search)` });
+    await new Promise((r) => setTimeout(r, 2500));
+  }
+  return out;
+}
+
 async function readme(repo) {
   for (const f of ["README.md", "readme.md", "README.MD", "Readme.md", "README"]) {
     const r = await fetch(`https://raw.githubusercontent.com/${repo}/HEAD/${f}`, { signal: AbortSignal.timeout(15_000) }).catch(() => null);
@@ -78,6 +94,13 @@ async function prep() {
   // --repos <file>: sort a hand-picked list (one owner/repo per line, e.g. from browser tabs) instead of the app's queue.
   const list = arg("--repos");
   const have = known(), queue = list ? fs.readFileSync(list, "utf8").split("\n").map((l) => l.trim()).filter(Boolean).map((repo) => ({ repo })) : Object.values(readJSON(QUEUE).discovered || {});
+  // The queue sort also reads Reddit's newest posts itself (--no-reddit skips it; a --repos list never does).
+  if (!list && !process.argv.includes("--no-reddit")) {
+    const r = await scanReddit();
+    const leads = await titleLeads(r.unlinked);
+    console.log(`reddit: ${r.length} linked repo(s), ${r.unlinked.length} post(s) without a link -> ${leads.length} GitHub match(es)${r.errors.length ? ` (${r.errors.join("; ")})` : ""}`);
+    queue.push(...r, ...leads);
+  }
   const listed = new Map([...have].map((r) => [r.split("/")[1], r]));
   const todo = queue.map((c) => c.repo).filter((r) => r && !have.has(r.toLowerCase()));
   console.log(`queue ${queue.length}, already filed ${queue.length - todo.length}, to sort ${todo.length}`);

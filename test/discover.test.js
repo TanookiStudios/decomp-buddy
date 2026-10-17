@@ -17,3 +17,18 @@ test("youtube: channel id resolution accepts ids and handles; feed parse pulls r
   const r = await scanYouTube(["nope"], { resolve: async () => { throw new Error("no such channel"); } });
   assert.deepEqual(r.candidates, []); assert.match(r.errors[0], /no such channel/);
 });
+
+test("reddit: posts without a GitHub link keep their title as a lead; a 429 gets one retry", async () => {
+  const { parseRedditRss, scanReddit } = await import("../src/discover.js");
+  const xml = `<feed><entry><title>Burnout 3 Takedown Is Finally On PC</title><link href="https://www.reddit.com/r/recomps/comments/y/"/><updated>2026-10-16T00:00:00+00:00</updated><content type="html">&lt;p&gt;video&lt;/p&gt;</content></entry>
+  <entry><title>What should I play tonight?</title><link href="https://www.reddit.com/r/recomps/comments/z/"/></entry></feed>`;
+  const r = parseRedditRss(xml, "recomps");
+  assert.equal(r.length, 0);
+  assert.deepEqual(r.unlinked.map((u) => u.title), ["Burnout 3 Takedown Is Finally On PC"]);
+  const real = globalThis.fetch; let calls = 0;
+  globalThis.fetch = async () => (++calls === 1 ? { status: 429, ok: false } : { status: 200, ok: true, text: async () => xml });
+  try {
+    const s = await scanReddit(["recomps"], { gap: 0, retryAfter: 0 });
+    assert.equal(calls, 2); assert.deepEqual(s.errors, []); assert.equal(s.unlinked.length, 1);
+  } finally { globalThis.fetch = real; }
+});

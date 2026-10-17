@@ -1,4 +1,4 @@
-// Finding projects nobody has listed yet: r/decomps (RSS - Reddit's JSON needs OAuth, the feed
+// Finding projects nobody has listed yet: Reddit (RSS - Reddit's JSON needs OAuth, the feed
 // doesn't) and GitHub search. Both return raw candidates; the admin decides what's real.
 
 const UA = "decomp-buddy/discover (by /u/tanookistudios)";
@@ -13,28 +13,40 @@ export function reposIn(text) {
 }
 
 export function parseRedditRss(xml, sub) {
-  const out = [];
+  const out = [], unlinked = [];
   for (const [, entry] of xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)) {
     const title = unescape((entry.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || "");
     const link = (entry.match(/<link href="([^"]+)"/) || [])[1] || "";
     const updated = (entry.match(/<updated>([^<]+)<\/updated>/) || [])[1] || "";
     const content = unescape((entry.match(/<content[^>]*>([\s\S]*?)<\/content>/) || [])[1] || "");
-    for (const [, repo] of reposIn(`${content} ${link}`)) out.push({ repo, title, via: `r/${sub}`, url: link, seen: updated });
+    const repos = reposIn(`${content} ${link}`);
+    for (const [, repo] of repos) out.push({ repo, title, via: `r/${sub}`, url: link, seen: updated });
+    // A post about a port with no GitHub link in it (a video, a screenshot): the title is still a lead.
+    if (!repos.size && /recomp|decomp|port|native|remaster|\bpc\b/i.test(title)) unlinked.push({ title, url: link, sub, seen: updated });
   }
+  out.unlinked = unlinked;
   return out;
 }
 
-// One bad subreddit (429s are common) doesn't sink the others; errors come back alongside.
-export async function scanReddit(subs = ["decomps"]) {
-  const out = [], errors = [];
-  for (const sub of subs) {
+export const REDDIT_SUBS = ["decomps", "recomps", "emulation", "decompilation"];
+const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// One bad subreddit doesn't sink the others; errors come back alongside. Reddit answers 429 when feeds
+// are asked for back to back, so subreddits go a few seconds apart and a 429 gets one slower retry.
+export async function scanReddit(subs = REDDIT_SUBS, { gap = 10000, retryAfter = 45000 } = {}) {
+  const out = [], errors = [], unlinked = [];
+  for (const [i, sub] of subs.entries()) {
+    if (i) await pause(gap);
     try {
-      const res = await fetch(`https://www.reddit.com/r/${sub}/new.rss?limit=100`, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(20_000) });
+      const get = () => fetch(`https://www.reddit.com/r/${sub}/new.rss?limit=100`, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(20_000) });
+      let res = await get();
+      if (res.status === 429) { await pause(retryAfter); res = await get(); }
       if (!res.ok) { errors.push(`r/${sub} answered ${res.status}`); continue; }
-      out.push(...parseRedditRss(await res.text(), sub));
+      const got = parseRedditRss(await res.text(), sub);
+      out.push(...got); unlinked.push(...got.unlinked);
     } catch (err) { errors.push(`r/${sub}: ${err.message}`); }
   }
-  out.errors = errors;
+  out.errors = errors; out.unlinked = unlinked;
   return out;
 }
 

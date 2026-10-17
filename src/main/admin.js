@@ -3,7 +3,7 @@ import { ipcMain } from "electron";
 import fs from "node:fs";
 import path from "node:path";
 import { repoKey, publishFinds, enrichFromGitHub, FINDS_URL } from "../sources/finds.js";
-import { scanReddit, scanGitHub, scanBluesky, scanYouTube, scanGitHubTopics } from "../discover.js";
+import { scanReddit, scanGitHub, scanBluesky, scanYouTube, scanGitHubTopics, REDDIT_SUBS } from "../discover.js";
 import { publishSources, removeSource, sourceKey, validateSourceEntry, normalizeUser } from "../sources/shared-sources.js";
 import { logTo, loadSettings, saveSettings, defaultFindsFile, sourcesFileFor, state } from "./core.js";
 import { planNewFinds } from "./plans.js";
@@ -74,7 +74,7 @@ ipcMain.handle("discover:scan", async (e) => {
   const dismissed = s.discoverDismissed || {};
   const found = new Map(Object.entries(s.discovered || {}));
   const errors = [];
-  const subs = s.discoverSubs?.length ? s.discoverSubs : ["decomps", "emulation", "decompilation"];
+  const subs = s.discoverSubs?.length ? s.discoverSubs : REDDIT_SUBS;
   const channels = s.discoverChannels || []; // YouTube killed RSS for most channels; opt-in only
   const feeds = [
     ["Reddit", () => scanReddit(subs)],

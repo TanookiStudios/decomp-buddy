@@ -13,7 +13,7 @@ export const canonRepo = (full) => { const [o, ...r] = String(full || "").split(
 const CONSOLE_ALIASES = [[/^(nintendo )?game ?boy advance$|^gba$/i, "Game Boy Advance"], [/^nintendo entertainment system$|^famicom$/i, "NES"],
   [/^super nintendo( entertainment system)?$|^super famicom$/i, "SNES"], [/^sony playstation$|^ps1$|^psx$/i, "PlayStation"], [/^sony playstation 2$/i, "PlayStation 2"],
   [/^(sony )?playstation portable$/i, "PlayStation Portable"], [/^sega genesis$|^genesis$|^sega mega drive$|^(sega )?mega drive ?\/ ?genesis$/i, "Mega Drive"],
-  [/^(ibm )?pc \((ms-)?dos\)$|^ms-dos$|^dos$/i, "IBM PC (MS-DOS)"], [/^nintendo gamecube$/i, "GameCube"], [/^sega (dreamcast|saturn)$/i, (m) => m.replace(/^sega /i, "")]];
+  [/^(ibm )?pc \((ms-)?dos\)$|^ms-dos$|^dos$|^ms-dos pc$|^pc \(ms-dos ?\/ ?windows\)$/i, "IBM PC (MS-DOS)"], [/^pc$|^windows$/i, "PC (Windows)"], [/^xbox 360 ?\/ ?pc \(windows\)$/i, "Xbox 360"], [/^nintendo gamecube$/i, "GameCube"], [/^sega (dreamcast|saturn)$/i, (m) => m.replace(/^sega /i, "")]];
 export function canonConsole(c) {
   const s = String(c || "").trim(), hit = CONSOLE_ALIASES.find(([re]) => re.test(s));
   return !hit ? c : typeof hit[1] === "function" ? hit[1](s) : hit[1];

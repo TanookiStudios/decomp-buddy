@@ -24,7 +24,7 @@ install "Sonic Unleashed Recompiled - Xbox 360" hedge-dev/UnleashedRecomp v1.0.3
 install "Perfect Dark - Nintendo 64" perfect-dark-pc-port/perfect_dark ci-dev-build "Perfect Dark" "Nintendo 64"
 install "Metroid Prime - GameCube" Odrannnn/MetroidPrimePort v0.18.0 "Metroid Prime" "GameCube"
 cat > $P/settings.json <<JSON
-{"installDir":"$T/Games","transferDir":"$T/Transfer to PC","sawLegal":true,"theme":"light","target":"macos-arm64","window":{"width":1280,"height":800},"nudgedAt":[3,7,10,20,30,40,50,60,70,80,90,100],
+{"installDir":"$T/Games","transferDir":"$T/Transfer to PC","sawLegal":true,"sawWhere":true,"countSetups":false,"theme":"light","target":"macos-arm64","window":{"width":1280,"height":800},"nudgedAt":[3,7,10,20,30,40,50,60,70,80,90,100],
  "wishlist":{"github:perfect-dark-pc-port/perfect_dark":{"addedAt":"2026-10-01T00:00:00Z"}}}
 JSON
 
@@ -34,6 +34,7 @@ SHOTS=(
   'new-games|await loadCatalog({ refresh: false }); showView("new"); await wait(9000);'
   'games-you-may-like|await loadCatalog({ refresh: false }); showView("foryou"); await wait(9000);'
   'game-page|await loadCatalog({ refresh: false }); const g = catalog.games.find((x) => /zelda64recomp/i.test(x.repo || "")); const ic = await window.buddy.catalogIcon(g.id); if (ic) iconCache.set(g.id, ic.dataUrl); await showDetail(g); await wait(9000);'
+  'coming-soon|document.querySelector("nav.side button[data-nav=soon]").click(); for (let i = 0; i < 40 && !document.querySelector("#soonList .srcRow"); i++) await wait(500); await wait(1500);'
   'installed-games|await loadCatalog({ refresh: false, checkInstalled: true }); showView("library"); await wait(9000);'
   'install-from-github|await loadCatalog({ refresh: false }); showView("setup"); $("target").value = "windows"; $("target").dispatchEvent(new Event("change")); await wait(1500); $("urls").value = "https://github.com/HarbourMasters/Shipwright\nhttps://github.com/xander-haj/Z3R"; $("analyze").click(); for (let i = 0; i < 60 && document.querySelectorAll("#games .game").length < 2; i++) await wait(1000); await wait(2000);'
 )

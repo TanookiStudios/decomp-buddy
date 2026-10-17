@@ -15,6 +15,7 @@ import { readVault } from "../vault.js";
 import { steamDir } from "../steam.js";
 import { fetchSharedSources, sourceKey, validateSourceEntry, normalizeUser, SOURCES_URL } from "../sources/shared-sources.js";
 import { VERSION, vaultDir, logFile, encrypt, decrypt, loadSettings, saveSettings, outDirFor, defaultFindsFile, sourcesFileFor, currentTarget, githubToken, applyGitHubToken, here } from "./core.js";
+import { REDDIT_SUBS } from "../discover.js";
 
 ipcMain.handle("settings:get", async () => {
   const s = loadSettings();
@@ -30,7 +31,7 @@ ipcMain.handle("settings:get", async () => {
     hasKey: !!decrypt(saved), version: VERSION, hasGithubToken: !!githubToken(s), lang: s.lang || "system", langs: LANGS, osLang: app.getLocale(),
     theme: s.theme || "system", preferBoxart: !!s.preferBoxart, sawLegal: !!s.sawLegal, sawWhere: !!s.sawWhere, setupCount: s.setupCount || 0, nudgedAt: s.nudgedAt || [], collapsedGroups: s.collapsedGroups || [], vault: readVault(vaultDir()),
     wishlist: s.wishlist || {}, mine: s.mine || {}, digest: s.digest || null, startCouch: !!s.startCouch, countSetups: s.countSetups ?? null, libraryFolders: s.libraryFolders || [], steamAvailable: !!steamDir(),
-    discoverSubs: s.discoverSubs || ["decomps", "emulation", "decompilation"], discoverChannels: s.discoverChannels || [],
+    discoverSubs: s.discoverSubs || REDDIT_SUBS, discoverChannels: s.discoverChannels || [],
     target: TARGETS[s.target] ? s.target : "windows", targets: Object.fromEntries(Object.entries(TARGETS).map(([k, t]) => [k, t.label])),
     sources: {
       builtin: BUILTIN.map((b) => ({ id: b.SOURCE.id, label: b.SOURCE.label, url: b.SOURCE.url, enabled: s.sources?.builtin?.[b.SOURCE.id] !== false })),
