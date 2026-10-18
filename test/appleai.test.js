@@ -34,3 +34,25 @@ test("apple: a README too long for the model is retried shorter; a made-up downl
   fs.writeFileSync(bin, `#!/bin/sh\ncat >/dev/null; echo '{"game_title":"Game","release_asset":"nope.zip"}'\n`, { mode: 0o755 });
   await assert.rejects(planViaApple(ctx, { target: "windows", bin }), /couldn't find a Windows PC download/);
 });
+
+test("apple: every Mac that can't run it reports 'not available' instead of breaking", async () => {
+  const { status } = await import("../src/appleai.js");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "appleai-off-"));
+  const fake = (name, body, mode = 0o755) => { const p = path.join(dir, name); fs.writeFileSync(p, body, { mode }); return p; };
+  // Apple Intelligence switched off (or still downloading): the helper says so.
+  const off = await status({ bin: fake("off", `#!/bin/sh\necho '{"available":false,"reason":"appleIntelligenceNotEnabled"}'\n`) });
+  assert.equal(off.available, false); assert.match(off.reason, /NotEnabled/);
+  // Older macOS: the loader refuses a binary built for macOS 26 before main() runs.
+  const old = await status({ bin: fake("old", `#!/bin/sh\necho "dyld: Symbol not found: FoundationModels" >&2\nexit 134\n`) });
+  assert.equal(old.available, false); assert.match(old.reason, /Apple silicon and macOS 26/);
+  // Intel Mac: an arm64-only file the kernel won't run (a non-executable stands in for "Bad CPU type").
+  const intel = await status({ bin: fake("intel", "\x7fELF not a mac binary", 0o644) });
+  assert.equal(intel.available, false);
+  // Helper missing from the app bundle.
+  const gone = await status({ bin: path.join(dir, "nope") });
+  assert.equal(gone.available, false);
+  // Not a Mac: never even looks for the helper.
+  const real = process.platform; Object.defineProperty(process, "platform", { value: "win32" });
+  try { const win = await status({ bin: fake("never", `#!/bin/sh\necho '{"available":true}'\n`) }); assert.equal(win.available, false); }
+  finally { Object.defineProperty(process, "platform", { value: real }); }
+});
