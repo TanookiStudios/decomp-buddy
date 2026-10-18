@@ -1,7 +1,7 @@
 // Sorts the Discover queue with Claude Code agents instead of by hand (or the paid API).
 //
 //   node scripts/triage.mjs prep   [--site <TanookiStudios-Site>] [--queue <settings.json> | --repos <list.txt>] [--no-reddit] [--scan] [--batch 25]
-//   (--repos lines: owner/repo, a github.com link, or a gitlab.com link)
+//   (--repos lines: owner/repo, a github.com link, a gitlab.com link, or a codeberg.org link)
 //   node scripts/triage.mjs check  <batch id>
 //   node scripts/triage.mjs import [--site <TanookiStudios-Site>]
 //
@@ -15,7 +15,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { enrichMany, enrichFromGitLab, publishFinds } from "../src/sources/finds.js";
+import { enrichMany, enrichFromGitLab, enrichFromCodeberg, publishFinds } from "../src/sources/finds.js";
 import { readWaiting, excludedKeys } from "../src/waiting.js";
 import { scanReddit, scanBluesky, scanGitHub, scanGitHubTopics } from "../src/discover.js";
 
@@ -27,7 +27,8 @@ const WORK = path.join(os.homedir(), ".decomp-buddy-triage");
 const J = (...p) => path.join(WORK, ...p);
 const readJSON = (f) => JSON.parse(fs.readFileSync(f, "utf8"));
 const idOf = (repo) => repo.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-const DESKTOP = ["Windows", "macOS", "Linux"];
+// Where Decomp Buddy can install a game: computers, plus Android phones/handhelds and Meta Quest headsets (over USB).
+const DESKTOP = ["Windows", "macOS", "Linux", "Android", "Meta Quest"];
 export const VERDICTS = ["play", "soon", "hide", "unsure"];
 const CONSOLES = ["PlayStation", "PlayStation 2", "PlayStation 3", "PlayStation 4", "PlayStation Portable", "Xbox", "Xbox 360", "Nintendo 64", "GameCube", "Wii", "Wii U",
   "Nintendo Switch", "NES", "SNES", "Game Boy", "Game Boy Color", "Game Boy Advance", "Nintendo DS", "Nintendo 3DS", "Virtual Boy", "Mega Drive", "Master System", "Sega CD", "Saturn",
@@ -35,12 +36,12 @@ const CONSOLES = ["PlayStation", "PlayStation 2", "PlayStation 3", "PlayStation 
 
 const RULES = `# Sorting Decomp Buddy's Discover queue
 
-Decomp Buddy lists games people can PLAY on a computer from their own copy: decompilations, static recompilations, native PC ports and engine reimplementations. Each batch file lists repos found by automatic searches; most are noise. For EVERY repo in the batch decide one verdict:
+Decomp Buddy lists games people can PLAY from their own copy - on a computer, an Android phone or handheld, or a Meta Quest headset: decompilations, static recompilations, native ports and engine reimplementations. Each batch file lists repos found by automatic searches; most are noise. For EVERY repo in the batch decide one verdict:
 
-- "play": a game you can play on Windows, macOS or Linux, AND the job's "Desktop download" line names at least one of those. Ports, recomps, decomp builds, engine reimplementations that run one specific game with the player's files, fan remakes and open-source releases of commercial games all count.
-- "soon": a decompilation, recompilation or PC port of one specific game that has no Windows/macOS/Linux download yet (including matching ROM decomps that rebuild the original cartridge or disc).
+- "play": a game you can play on Windows, macOS, Linux, Android or Meta Quest, AND the job's "Desktop download" line names at least one of those (an .apk counts for Android / Meta Quest). Ports, recomps, decomp builds, engine reimplementations that run one specific game with the player's files, fan remakes and open-source releases of commercial games all count.
+- "soon": a decompilation, recompilation or PC port of one specific game that has no Windows/macOS/Linux/Android/Meta Quest download yet (including matching ROM decomps that rebuild the original cartridge or disc).
 - "hide": copies and copycats - forks, re-uploads, or a repo with the same name as a known project under an unrelated account (the job warns you when Decomp Buddy already lists that name), unless the README clearly says it's a distinct, maintained port with its own downloads. Also anything that looks like malware bait: a random-looking account name, a README pushing a download link, zip or archive password, "crack", "free download", or "full version". When in doubt about a copy, "hide".
-- "hide" also: tools, libraries, SDKs, emulators, launchers, mod managers, mods, ROM hacks, randomizers, texture or translation patches, save editors, phone/console/VR-only ports, homework and tutorials, empty or placeholder repos, forks with no changes, awesome-lists, piracy, and repos unrelated to games (search noise).
+- "hide" also: tools, libraries, SDKs, emulators, launchers, mod managers, mods, ROM hacks, randomizers, texture or translation patches, save editors, ports that only run on a console or another VR headset (Switch, PS Vita, 3DS homebrew, PSVR...), homework and tutorials, empty or placeholder repos, forks with no changes, awesome-lists, piracy, and repos unrelated to games (search noise).
 - "unsure": only when the text really doesn't let you tell. Maddie reviews these by hand.
 
 Also give:
@@ -48,7 +49,7 @@ Also give:
 - "console": the ORIGINAL platform, exactly one of: ${CONSOLES.join(", ")}.
 - "reason": one short sentence saying why.
 
-Use only what the job text says. Never guess a download exists: "play" requires the Desktop download line to name Windows, macOS or Linux.
+Use only what the job text says. Never guess a download exists: "play" requires the Desktop download line to name Windows, macOS, Linux, Android or Meta Quest.
 One exception: when the release has files but their names don't say the computer (e.g. "Game-v1.0.zip"), and the README clearly says which computer that download is for, you may answer "play" with "platforms": ["Windows"] (or macOS / Linux) and "platform_quote": the README sentence that says so, copied word for word (it must name that computer).
 
 Answer file: out/<batch id>.json, raw JSON only:
@@ -57,17 +58,22 @@ Answer file: out/<batch id>.json, raw JSON only:
 Then run: node ~/Documents/GitHub/DecompBuddy/scripts/triage.mjs check <batch id>   and fix anything it reports.
 `;
 
-// GitLab projects travel through the sorter as "gitlab:owner/repo"; GitHub ones stay plain "owner/repo".
-const GITLAB_LIST = () => path.join(DIR, "gitlab.json");
-export const queueKey = (s) => { const m = String(s).match(/gitlab\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$/i); return m ? `gitlab:${m[1]}` : String(s).replace(/^https?:\/\/github\.com\//i, "").replace(/\.git$/, ""); };
+// GitLab and Codeberg projects travel through the sorter as "gitlab:owner/repo" / "codeberg:owner/repo"; GitHub ones stay plain "owner/repo".
+// Their playable finds go into their own list file on the site (a shared "list" source), not finds.json.
+const FORGES = {
+  gitlab: { site: "https://gitlab.com", raw: (key, f) => `https://gitlab.com/${key}/-/raw/HEAD/${f}`, enrich: enrichFromGitLab, list: "gitlab.json", label: "GitLab" },
+  codeberg: { site: "https://codeberg.org", raw: (key, f) => `https://codeberg.org/${key}/raw/HEAD/${f}`, enrich: enrichFromCodeberg, list: "codeberg.json", label: "Codeberg" },
+};
+const forgeOf = (r) => Object.keys(FORGES).find((f) => String(r).startsWith(`${f}:`)) || null;
+export const queueKey = (s) => { const m = String(s).match(/(gitlab\.com|codeberg\.org)\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$/i); return m ? `${m[1].split(".")[0].toLowerCase()}:${m[2]}` : String(s).replace(/^https?:\/\/github\.com\//i, "").replace(/\.git$/, ""); };
 function known() {
   const k = new Set();
-  for (const g of readJSON(path.join(DIR, "catalog.json")).games) if (g.repo) k.add((g.host === "gitlab" ? `gitlab:${g.repo}` : g.repo).toLowerCase());
+  for (const g of readJSON(path.join(DIR, "catalog.json")).games) if (g.repo) k.add((FORGES[g.host] ? `${g.host}:${g.repo}` : g.repo).toLowerCase());
   for (const g of readJSON(path.join(DIR, "finds.json")).games) k.add(g.repo.toLowerCase());
-  try { for (const g of readJSON(GITLAB_LIST()).games) k.add(queueKey(g.repoUrl).toLowerCase()); } catch {}
+  for (const f of Object.values(FORGES)) try { for (const g of readJSON(path.join(DIR, f.list)).games) k.add(queueKey(g.repoUrl).toLowerCase()); } catch {}
   const w = readWaiting(path.join(DIR, "waiting.json"));
   for (const r of excludedKeys(w)) k.add(r);
-  for (const g of [...w.games, ...w.hidden]) if (g.host === "gitlab") k.add(`gitlab:${g.repo}`.toLowerCase());
+  for (const g of [...w.games, ...w.hidden]) if (FORGES[g.host]) k.add(`${g.host}:${g.repo}`.toLowerCase());
   return k;
 }
 
@@ -87,9 +93,9 @@ async function titleLeads(posts) {
 }
 
 async function readme(repo) {
-  const gl = repo.startsWith("gitlab:"), key = gl ? repo.slice(7) : repo;
+  const forge = FORGES[forgeOf(repo)], key = forge ? repo.slice(repo.indexOf(":") + 1) : repo;
   for (const f of ["README.md", "readme.md", "README.MD", "Readme.md", "README"]) {
-    const r = await fetch(gl ? `https://gitlab.com/${key}/-/raw/HEAD/${f}` : `https://raw.githubusercontent.com/${key}/HEAD/${f}`, { signal: AbortSignal.timeout(15_000) }).catch(() => null);
+    const r = await fetch(forge ? forge.raw(key, f) : `https://raw.githubusercontent.com/${key}/HEAD/${f}`, { signal: AbortSignal.timeout(15_000) }).catch(() => null);
     if (r?.ok) return (await r.text()).slice(0, 2500);
   }
   return "";
@@ -121,11 +127,12 @@ async function prep() {
   const todo = [...new Map(queue.map((c) => c.repo).filter((r) => r && !have.has(r.toLowerCase())).map((r) => [r.toLowerCase(), r])).values()];
   console.log(`queue ${queue.length}, already filed ${queue.length - todo.length}, to sort ${todo.length}`);
   // GitHub facts 40 repos per request (GraphQL); READMEs come from raw.githubusercontent.com, which has no quota.
-  const need = todo.filter((r) => !fs.existsSync(J("ctx", `${idOf(r)}.json`)) && !r.startsWith("gitlab:"));
+  const need = todo.filter((r) => !fs.existsSync(J("ctx", `${idOf(r)}.json`)) && !forgeOf(r));
   let failed = 0;
-  // GitLab: one project at a time from its public API (a handful per run, no key needed).
-  for (const r of todo.filter((r) => r.startsWith("gitlab:") && !fs.existsSync(J("ctx", `${idOf(r)}.json`)))) {
-    try { const e = await enrichFromGitLab(r.slice(7)); fs.writeFileSync(J("ctx", `${idOf(r)}.json`), JSON.stringify({ queued: r, ...e, host: "gitlab", repo: `gitlab:${e.repo}`, readme: e.exists ? await readme(`gitlab:${e.repo}`) : "" })); }
+  // GitLab / Codeberg: one project at a time from their public APIs (a handful per run, no key needed).
+  for (const r of todo.filter((r) => forgeOf(r) && !fs.existsSync(J("ctx", `${idOf(r)}.json`)))) {
+    const host = forgeOf(r);
+    try { const e = await FORGES[host].enrich(r.slice(host.length + 1)); fs.writeFileSync(J("ctx", `${idOf(r)}.json`), JSON.stringify({ queued: r, ...e, host, repo: `${host}:${e.repo}`, readme: e.exists ? await readme(`${host}:${e.repo}`) : "" })); }
     catch { failed++; }
   }
   for (let b = 0; b < need.length; b += 200) {
@@ -172,7 +179,7 @@ export function desktopOf(r, c) {
   if (named.length) return named;
   const hasFiles = (c?.releases || []).some((x) => x.files.length), q = String(r.platform_quote || "").trim();
   if (!hasFiles || q.length < 8 || !String(c?.readme || "").includes(q)) return [];
-  const said = { Windows: /windows/i, macOS: /mac ?os|macintosh|\bmac\b/i, Linux: /linux/i };
+  const said = { Windows: /windows/i, macOS: /mac ?os|macintosh|\bmac\b/i, Linux: /linux/i, Android: /android/i, "Meta Quest": /quest|oculus/i };
   return (Array.isArray(r.platforms) ? r.platforms : []).filter((p) => DESKTOP.includes(p) && said[p].test(q));
 }
 
@@ -183,7 +190,7 @@ export function problems(answer, repos, ctxOf) {
     if (!VERDICTS.includes(r.verdict)) out.push(`${r.repo}: verdict must be one of ${VERDICTS.join("/")}`);
     if (r.verdict !== "hide" && !CONSOLES.includes(r.console)) out.push(`${r.repo}: console "${r.console}" isn't in the list`);
     if (!String(r.title || "").trim()) out.push(`${r.repo}: title is empty`);
-    if (r.verdict === "play" && !desktopOf(r, ctxOf(r.repo)).length) out.push(`${r.repo}: "play" needs a Windows/macOS/Linux download: the job lists none, and no "platforms" + verbatim "platform_quote" from the README backs one - use "soon" or "unsure"`);
+    if (r.verdict === "play" && !desktopOf(r, ctxOf(r.repo)).length) out.push(`${r.repo}: "play" needs a Windows/macOS/Linux/Android/Meta Quest download: the job lists none, and no "platforms" + verbatim "platform_quote" from the README backs one - use "soon" or "unsure"`);
     got.set(String(r.repo).toLowerCase(), r);
   }
   for (const r of repos) if (!got.has(r.toLowerCase())) out.push(`${r}: missing from results`);
@@ -218,18 +225,23 @@ function importAnswers() {
     }
     fs.renameSync(J("out", f), J("done", f));
   }
-  // GitLab games go into gitlab.json (a shared "list" source every copy of the app already reads), not finds.json.
-  const gitlab = finds.filter((g) => g.repo.startsWith("gitlab:"));
-  if (gitlab.length) {
-    let doc = { games: [] }; try { doc = readJSON(GITLAB_LIST()); } catch {}
+  // GitLab / Codeberg games go into gitlab.json / codeberg.json (shared "list" sources every copy of the app reads), not finds.json.
+  for (const [host, forge] of Object.entries(FORGES)) {
+    const mine = finds.filter((g) => forgeOf(g.repo) === host);
+    if (!mine.length) continue;
+    const file = path.join(DIR, forge.list);
+    let doc = { games: [] }; try { doc = readJSON(file); } catch {}
     const byUrl = new Map(doc.games.map((g) => [g.repoUrl.toLowerCase(), g]));
-    for (const g of gitlab) byUrl.set(`https://gitlab.com/${g.repo.slice(7)}`.toLowerCase(), { name: g.title, repoUrl: `https://gitlab.com/${g.repo.slice(7)}`, console: g.console, platforms: g.platforms, version: g.version, description: g.notes });
-    fs.writeFileSync(GITLAB_LIST(), JSON.stringify({ updatedAt: now, note: "Decomp Buddy finds hosted on GitLab", games: [...byUrl.values()] }, null, 2) + "\n");
-    console.log(`gitlab.json: +${gitlab.length} - deploy the site BEFORE rebuilding the catalog (the catalog reads the live list)`);
+    for (const g of mine) { const url = `${forge.site}/${g.repo.slice(host.length + 1)}`; byUrl.set(url.toLowerCase(), { name: g.title, repoUrl: url, console: g.console, platforms: g.platforms, version: g.version, description: g.notes }); }
+    fs.writeFileSync(file, JSON.stringify({ updatedAt: now, note: `Decomp Buddy finds hosted on ${forge.label}`, games: [...byUrl.values()] }, null, 2) + "\n");
+    // The list only reaches the app once the site's sources.json names it.
+    const sf = path.join(DIR, "sources.json"), listUrl = `https://tanookistudios.com/decomp-buddy/${forge.list}`;
+    try { const s = readJSON(sf); if (!s.sources.some((x) => x.value === listUrl)) { s.sources.push({ type: "list", value: listUrl, label: `${forge.label} Finds` }); s.updatedAt = now; fs.writeFileSync(sf, JSON.stringify(s, null, 2) + "\n"); console.log(`sources.json: added ${forge.list}`); } } catch {}
+    console.log(`${forge.list}: +${mine.length} - deploy the site BEFORE rebuilding the catalog (the catalog reads the live list)`);
   }
-  const github = finds.filter((g) => !g.repo.startsWith("gitlab:"));
+  const github = finds.filter((g) => !forgeOf(g.repo));
   if (github.length) publishFinds(path.join(DIR, "finds.json"), github);
-  for (const g of [...soon, ...hide]) if (g.repo.startsWith("gitlab:")) { g.repo = g.repo.slice(7); g.host = "gitlab"; }
+  for (const g of [...soon, ...hide]) { const host = forgeOf(g.repo); if (host) { g.repo = g.repo.slice(host.length + 1); g.host = host; } }
   const wf = path.join(DIR, "waiting.json"), w = readJSON(wf);
   w.games.push(...soon); w.hidden.push(...hide);
   w.games.sort((a, b) => a.title.localeCompare(b.title)); w.updatedAt = now;

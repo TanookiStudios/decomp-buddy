@@ -9,7 +9,7 @@ const fundingCache = diskCache("funding"), waitingCache = diskCache("waiting");
 const fresh = (hit, ms) => hit && Date.now() - Date.parse(hit.at) < ms;
 
 ipcMain.handle("game:funding", async (_e, { owner, repo, host }) => {
-  if (!owner || host === "gitlab") return { links: [] };
+  if (!owner || (host && host !== "github")) return { links: [] }; // FUNDING.yml lookups are GitHub's
   const key = `${owner}/${repo}`;
   const hit = fundingCache.get(key); if (fresh(hit, 7 * DAY)) return hit.v;
   try { const v = await fetchFunding(owner, repo); fundingCache.set(key, v); return v; }

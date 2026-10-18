@@ -7,7 +7,8 @@ const modsState = (m, cls = "") => { $("modsState").textContent = m; $("modsStat
 // ---- Load order (folder-method ports: the game reads its mods folder alphabetically)
 let orderDraft = [];
 function renderModsExtras(r) {
-  $("modsConflicts").innerHTML = ""; $("modsGb").hidden = true;
+  $("modsConflicts").innerHTML = ""; $("modsGb").hidden = true; $("modsTs").hidden = true;
+  tsCommunity = r.community || null; $("modsTsBtn").hidden = !tsCommunity;
   const enabled = r.items.filter((it) => it.enabled === true).map((it) => it.name);
   const folderPort = r.mods?.method === "folder" && r.mods?.folder;
   if (!folderPort || enabled.length < 2) { $("modsOrder").innerHTML = ""; return; }
@@ -61,8 +62,9 @@ async function gbList() {
         <label for="gbSort" class="sub" style="margin:0">Sort</label><select id="gbSort" style="width:auto">${[["popular", "Most Downloaded"], ["updated", "Recently Updated"], ["new", "Newest"], ["liked", "Most Liked"]].map(([k, l]) => `<option value="${k}" ${k === gb.sort ? "selected" : ""}>${l}</option>`).join("")}</select>
         <button class="small" type="button" id="gbWrong" title="Pick a different GameBanana page for this game">Not This Game?</button></div>
       <p class="sub">Mods are made by the GameBanana community and download straight from GameBanana, checked against the checksum it publishes. Read each mod's page for how to use it.</p>
+      ${r.hidden ? `<p class="sub">Adult mods hidden on this page: ${r.hidden}. Settings › Show Adult Mods shows them.</p>` : ""}
       <div class="srcList">${r.mods.map((m) => `<div class="gbmod">${m.image ? `<img src="${esc(m.image)}" alt="${esc(m.name)} preview" loading="lazy">` : `<div class="noimg"></div>`}<div><div class="lab">${esc(m.name)}${m.obsolete ? ` <span class="badge upd">Obsolete</span>` : ""}</div><div class="u">${esc([m.author && `by ${m.author}`, m.category, `♥ ${m.likes}`, m.updated && `updated ${fmtDate(m.updated)}`].filter(Boolean).join(" · "))}</div></div><button class="small" type="button" data-gbmod="${m.id}">Files</button></div><div id="gbfiles-${m.id}"></div>`).join("")}</div>
-      <div class="row" style="margin-top:6px"><button class="small" type="button" id="gbPrev" ${gb.page > 1 ? "" : "disabled"}>Previous</button><span class="sub">Page ${gb.page}</span><button class="small" type="button" id="gbNext" ${r.complete || r.mods.length < 20 ? "disabled" : ""}>Next</button></div>`;
+      <div class="row" style="margin-top:6px"><button class="small" type="button" id="gbPrev" ${gb.page > 1 ? "" : "disabled"}>Previous</button><span class="sub">Page ${gb.page}</span><button class="small" type="button" id="gbNext" ${r.complete || (r.count ?? r.mods.length) < 20 ? "disabled" : ""}>Next</button></div>`;
     $("gbSort").onchange = () => { gb.sort = $("gbSort").value; gb.page = 1; gbList(); };
     $("gbPrev").onclick = () => { gb.page--; gbList(); }; $("gbNext").onclick = () => { gb.page++; gbList(); };
     $("gbWrong").onclick = async () => { await window.buddy.gbSetGame(modsGame.repo, null); const res = await window.buddy.gbGame(modsGame.repo, modsGame.title); gbPickGame(res.results); };
@@ -88,7 +90,35 @@ $("modsGb").addEventListener("click", async (e) => {
   }
 });
 
-// ---- Updates for packs and GameBanana mods you've installed (checked at most every six hours)
+// ---- Thunderstore (games whose mod community lives there: the N64 Recomp games and a few HarbourMasters ports)
+let tsCommunity = null;
+$("modsTsBtn").onclick = () => { $("modsTs").hidden = false; tsList(""); };
+async function tsList(q, refocus = false) {
+  $("modsTs").innerHTML = `<p class="sub">Loading mods…</p>`;
+  try {
+    const r = await window.buddy.tsMods(tsCommunity, q);
+    const needs = (m) => { if (!m.needs.length) return ""; const size = m.needs.reduce((n, d) => n + (d.size || 0), 0); return `<div class="u">Also needs: ${esc(m.needs.map((d) => d.title).join(", "))} - installed along with it${size ? ` (${mb(size)} more)` : ""}.</div>`; };
+    $("modsTs").innerHTML = `<div class="row" style="margin:12px 0 6px"><h4 style="margin:0;flex:1">Thunderstore <span class="sub">· ${r.total} mods</span></h4>
+        <input id="tsQ" type="search" placeholder="Search Thunderstore" aria-label="Search this game's Thunderstore mods" spellcheck="false" value="${esc(q)}" style="width:220px"><button class="small" type="button" id="tsQGo">Search</button></div>
+      <p class="sub">Mods are made by the Thunderstore community and download straight from Thunderstore, checked against the size it lists. Anything a mod needs is downloaded with it.</p>
+      ${r.hidden ? `<p class="sub">Adult mods hidden: ${r.hidden}. Settings › Show Adult Mods shows them.</p>` : ""}
+      <div class="srcList">${r.mods.map((m) => `<div class="gbmod ts">${m.icon ? `<img src="${esc(m.icon)}" alt="${esc(m.title)} icon" loading="lazy">` : `<div class="noimg"></div>`}<div><div class="lab">${esc(m.title)}</div><div class="u">${esc([m.author && `by ${m.author}`, `${m.downloads.toLocaleString()} downloads`, m.version && `version ${m.version}`, mb(m.size)].filter(Boolean).join(" · "))}</div>${m.description ? `<div class="u">${esc(m.description)}</div>` : ""}${needs(m)}${m.missing.length ? `<div class="u">It also lists ${esc(m.missing.join(", "))}, which isn't on this game's Thunderstore, so that part is skipped.</div>` : ""}</div><span><button class="small" type="button" data-tsext="${esc(m.url)}" aria-label="Open ${esc(m.title)} on Thunderstore">Page</button><button class="small primary" type="button" data-tsmod="${esc(m.fullName)}" aria-label="Install ${esc(m.title)}">Install</button></span></div>`).join("") || `<p class="sub">${q ? "No mods match that search." : "No mods on Thunderstore for this game yet."}</p>`}</div>
+      ${r.found > r.mods.length ? `<p class="sub">Showing the ${r.mods.length} most downloaded of ${r.found}. Search to find the others.</p>` : ""}`;
+    const go = () => tsList($("tsQ").value.trim(), true);
+    $("tsQGo").onclick = go; $("tsQ").onkeydown = (e) => { if (e.key === "Enter") go(); };
+    if (refocus) $("tsQ").focus();
+  } catch (err) { $("modsTs").innerHTML = `<p class="sub">Thunderstore: ${esc(err.message.replace(/^.*Error: /, ""))}</p>`; }
+}
+$("modsTs").addEventListener("click", async (e) => {
+  const ext = e.target.closest("[data-tsext]"), ins = e.target.closest("[data-tsmod]");
+  if (ext) return window.buddy.openExternal(ext.dataset.tsext);
+  if (!ins) return;
+  ins.disabled = true; modsState("Downloading from Thunderstore…");
+  try { const r = await window.buddy.tsInstall(modsGame.folder, tsCommunity, ins.dataset.tsmod); modsState(`${r.installed.join(", ")} ${r.installed.length === 1 ? "is" : "are"} in Decomp Buddy Mods.`, "ok"); await renderMods(); }
+  catch (err) { modsState(err.message.replace(/^.*Error: /, ""), "bad"); ins.disabled = false; }
+});
+
+// ---- Updates for packs, GameBanana and Thunderstore mods you've installed (checked at most every six hours)
 let packUpdatesAt = 0, packUpdatesList = [];
 async function renderPackUpdates(force = false) {
   if (force || Date.now() - packUpdatesAt > 6 * 3600e3) { packUpdatesAt = Date.now(); packUpdatesList = await window.buddy.modsUpdates().catch(() => []); }

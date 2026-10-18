@@ -11,8 +11,10 @@ export function parseRepoUrl(input) {
   const t = String(input).trim();
   const gl = t.match(/gitlab\.com[/:]([^/\s]+)\/([^/\s#?]+)/i);
   if (gl) return { host: "gitlab", owner: gl[1], repo: gl[2].replace(/\.git$/, "") };
+  const cb = t.match(/codeberg\.org[/:]([^/\s]+)\/([^/\s#?]+)/i);
+  if (cb) return { host: "codeberg", owner: cb[1], repo: cb[2].replace(/\.git$/, "") };
   const m = t.match(/github\.com[/:]([^/\s]+)\/([^/\s#?]+)/i) || t.match(/^([\w.-]+)\/([\w.-]+)$/);
-  if (!m) throw new Error(`Not a GitHub or GitLab repo link: ${input}`);
+  if (!m) throw new Error(`Not a GitHub, GitLab or Codeberg repo link: ${input}`);
   return { host: "github", owner: m[1], repo: m[2].replace(/\.git$/, "") };
 }
 
@@ -32,24 +34,29 @@ async function gh(path, accept) {
   return accept?.includes("raw") ? res.text() : res.json();
 }
 
+// Newest first. Multi-game repos ship one release per game, so keep them all.
+export async function fetchReleases({ owner, repo }) {
+  const list = await gh(`/repos/${owner}/${repo}/releases?per_page=100`);
+  return (list || []).filter((r) => !r.draft).map((r) => ({
+    tag: r.tag_name,
+    name: r.name || r.tag_name,
+    publishedAt: r.published_at,
+    prerelease: !!r.prerelease,
+    url: r.html_url,
+    assets: (r.assets || []).map((a) => ({ name: a.name, size: a.size, url: a.browser_download_url, digest: a.digest || null, uploader: a.uploader?.login || null })),
+  }));
+}
+
 export async function fetchRepoContext({ owner, repo }) {
   const meta = await gh(`/repos/${owner}/${repo}`);
   if (!meta) throw new Error(`Repo not found: ${owner}/${repo}`);
   const branch = meta.default_branch;
 
-  const [readme, tree, releaseList] = await Promise.all([
+  const [readme, tree, releases] = await Promise.all([
     gh(`/repos/${owner}/${repo}/readme`, "application/vnd.github.raw+json"),
     gh(`/repos/${owner}/${repo}/git/trees/${encodeURIComponent(branch)}?recursive=1`),
-    gh(`/repos/${owner}/${repo}/releases?per_page=100`),
+    fetchReleases({ owner, repo }),
   ]);
-  // Newest first. Multi-game repos ship one release per game, so keep them all.
-  const releases = (releaseList || []).filter((r) => !r.draft).map((r) => ({
-    tag: r.tag_name,
-    name: r.name || r.tag_name,
-    publishedAt: r.published_at,
-    url: r.html_url,
-    assets: (r.assets || []).map((a) => ({ name: a.name, size: a.size, url: a.browser_download_url, digest: a.digest || null })),
-  }));
 
   const paths = (tree?.tree || []).filter((e) => e.type === "blob").map((e) => e.path);
   const docPaths = [

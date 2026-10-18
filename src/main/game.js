@@ -4,12 +4,13 @@ import { app, ipcMain, dialog, shell, BrowserWindow } from "electron";
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { folderUsage, detectTarget, adoptManifest, checkFolder } from "../gametools.js";
+import { folderUsage, detectTarget, adoptManifest, checkFolder, shortcutFor, splitArgs } from "../gametools.js";
 import { cloudCandidates, gameKey, listCloud, pushToCloud, newerFromElsewhere, mapSavePaths } from "../savesync.js";
 import { backupSaves, restoreSaves } from "../saves.js";
 import { verifyPick } from "../verify.js";
 import { checkRuntimes, installRuntimes, RUNTIMES } from "../winruntimes.js";
 import { download, freeBytes } from "../setup.js";
+import { kiosk } from "./window.js";
 import { makePack, packSize } from "../offlinepack.js";
 import { applyPatchFile, patchedName, describePatch } from "../patch.js";
 import { UPDATE_URL } from "../updates.js";
@@ -28,6 +29,72 @@ export function libraryFolder(folder) {
   if (!libraryDirs(loadSettings()).some((d) => path.dirname(f) === path.resolve(d)) || !fs.existsSync(path.join(f, MANIFEST))) throw new Error("That isn't one of your installed games.");
   return f;
 }
+
+// ---- Name, tags, hidden (yours; kept across updates via USER_FIELDS)
+// Same tag in other capitals is the same tag: the first spelling wins.
+export function cleanTags(tags) {
+  const seen = new Map();
+  for (const t of (Array.isArray(tags) ? tags : []).map((x) => String(x).replace(/\s+/g, " ").trim().slice(0, 30)).filter(Boolean)) if (!seen.has(t.toLowerCase())) seen.set(t.toLowerCase(), t);
+  return [...seen.values()].slice(0, 12);
+}
+ipcMain.handle("game:setUser", (_e, { folder, displayName, tags, hidden, autoUpdate, skipTag }) => {
+  const f = libraryFolder(folder), patch = {};
+  if (autoUpdate !== undefined) patch.autoUpdate = autoUpdate === true || autoUpdate === false ? autoUpdate : undefined; // undefined = your default
+  if (skipTag !== undefined) patch.skipTag = skipTag ? String(skipTag).slice(0, 100) : undefined;
+  if (displayName !== undefined) patch.displayName = String(displayName || "").replace(/\s+/g, " ").trim().slice(0, 120) || undefined;
+  if (tags !== undefined) patch.tags = cleanTags(tags);
+  if (hidden !== undefined) patch.hidden = !!hidden || undefined;
+  stamp(f, patch); return true;
+});
+
+// ---- Remove A Game: the whole folder to the Trash (you can still get it back), never a hard delete.
+ipcMain.handle("game:remove", async (e, { folder }) => {
+  if (kiosk.locked) throw new Error("That is switched off in Kiosk Mode.");
+  const f = libraryFolder(folder), m = readM(f);
+  // Test harness only: a throwaway "Trash" so a smoke run never puts anything in the real one.
+  if (process.env.DECOMP_HEADLESS && process.env.DECOMP_TRASH_DIR) { fs.mkdirSync(process.env.DECOMP_TRASH_DIR, { recursive: true }); fs.renameSync(f, path.join(process.env.DECOMP_TRASH_DIR, path.basename(f))); }
+  else await shell.trashItem(f);
+  try { writeInstallHtml(path.dirname(f)); } catch {}
+  logTo(e.sender, `Removed ${m.displayName || m.plan?.game_title || path.basename(f)}: moved ${f} to the Trash.${m.steamAppId ? " Its Steam shortcut is still in Steam - remove it there." : ""}`);
+  return { steam: !!m.steamAppId };
+});
+
+// ---- Desktop Shortcut
+ipcMain.handle("game:shortcut", async (e, { folder }) => {
+  const f = libraryFolder(folder), m = readM(f), s = loadSettings();
+  const compat = !targetIsHost(m.target || "windows");
+  const exe = findExecutable(f, m.plan?.build?.executable, compat ? "win32" : process.platform);
+  if (!exe) throw new Error("Couldn't find the game's program, so there's nothing to point a shortcut at.");
+  const icon = ["artwork.png", "artwork.jpg"].map((n) => path.join(f, n)).find((p) => fs.existsSync(p)) || null;
+  if (compat && !s.shortcutKey) { s.shortcutKey = crypto.randomBytes(16).toString("hex"); saveSettings(s); }
+  const link = compat ? `decompbuddy://play?folder=${encodeURIComponent(f)}&k=${s.shortcutKey}` : null;
+  const sc = shortcutFor({ desktop: (process.env.DECOMP_HEADLESS && process.env.DECOMP_DESKTOP) || app.getPath("desktop"), title: m.displayName || m.plan?.game_title || path.basename(f), exe, args: splitArgs(m.launchArgs), icon: process.platform === "win32" ? null : icon, link });
+  // Replace our own earlier shortcut; never anything else that happens to have the name.
+  const had = (() => { try { return fs.lstatSync(sc.file); } catch { return null; } })();
+  if (had && had.isDirectory()) throw new Error(`There's already a folder called "${path.basename(sc.file)}" on your desktop.`);
+  if (had) fs.rmSync(sc.file);
+  if (sc.kind === "lnk") { if (!shell.writeShortcutLink(sc.file, "create", { target: sc.target, cwd: sc.cwd, args: sc.args, icon: sc.icon, iconIndex: 0 })) throw new Error("Windows wouldn't make the shortcut."); }
+  else if (sc.kind === "symlink") fs.symlinkSync(sc.target, sc.file);
+  else fs.writeFileSync(sc.file, sc.text, { mode: sc.mode || 0o644 });
+  logTo(e.sender, `Desktop shortcut: ${sc.file}`);
+  return { file: sc.file };
+});
+
+// ---- Pick A Version: every release of the game, and installing one of them (saves backed up first).
+ipcMain.handle("game:releases", async (_e, { folder }) => {
+  const m = readM(libraryFolder(folder)); if (!m.repoUrl) throw new Error("This game has no project link, so there are no other versions to pick.");
+  const { parseRepoUrl } = await import("../github.js"), { hostOf } = await import("../hosts.js");
+  const ref = parseRepoUrl(m.repoUrl);
+  return (await hostOf(ref.host).releases(ref)).filter((r) => r.assets?.length).map((r) => ({ tag: r.tag, name: r.name, publishedAt: r.publishedAt, prerelease: !!r.prerelease, current: r.tag === m.release?.tag }));
+});
+ipcMain.handle("game:installVersion", async (e, { folder, tag }) => {
+  const f = libraryFolder(folder), m = readM(f);
+  const { updateInstalled } = await import("./setup.js");
+  const [r] = await updateInstalled([{ folder: f, repoUrl: m.repoUrl, target: m.target || "windows", tag }], { log: (x) => logTo(e.sender, x) });
+  if (!r.ok) throw new Error(r.error || "That version didn't install.");
+  if (tag) stamp(f, { skipTag: undefined });
+  return r;
+});
 
 // ---- Launch options
 ipcMain.handle("game:options", (_e, { folder }) => { const m = readM(libraryFolder(folder)); return { launchArgs: m.launchArgs || "" }; });

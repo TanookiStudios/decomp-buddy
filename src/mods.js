@@ -56,13 +56,15 @@ export function addModFile(gameFolder, file) {
   return dest;
 }
 
-export async function downloadPack(gameFolder, url, { log = () => {}, name: given = null, check = null } = {}) {
+// unpack: false keeps an archive whole in Decomp Buddy Mods, for games whose own installer takes it as it is.
+export async function downloadPack(gameFolder, url, { log = () => {}, name: given = null, check = null, unpack = true } = {}) {
   const dir = path.join(modsDir(gameFolder), "downloads"); fs.mkdirSync(dir, { recursive: true });
   const name = (given || decodeURIComponent(url.split("/").pop().split("?")[0]) || "pack").replace(/[<>:"/\\|?*\x00-\x1f]/g, "_");
   const dest = path.join(dir, name);
   log(`Downloading ${name}…`);
   await download(url, dest, log);
   if (check) { try { check(dest); } catch (err) { fs.rmSync(dest, { force: true }); throw err; } }
+  if (!unpack) { fs.copyFileSync(dest, path.join(modsDir(gameFolder), name)); return dest; }
   return unpackIntoMods(gameFolder, dest, { log });
 }
 // Archives: unpack, then hand the contents over as items - single mod files become files,
@@ -74,7 +76,8 @@ export function unpackIntoMods(gameFolder, dest, { log = () => {} } = {}) {
     try { const n = extractZip(dest, unpacked); log(`Unpacked ${n} item(s).`); } catch (err) { log(`Left packed (${err.message}).`); return dest; }
     const all = walk(unpacked);
     const modFiles = all.filter((f) => MOD_EXT.test(f) && !ARCHIVE.test(f));
-    if (modFiles.length && modFiles.length === all.filter((f) => !/\.(txt|md|nfo|url)$/i.test(f)).length) for (const f of modFiles) fs.copyFileSync(f, path.join(modsDir(gameFolder), path.basename(f)));
+    // Readmes and Thunderstore's package metadata (manifest.json, icon.png) don't stop a pack of plain mod files being plain files.
+    if (modFiles.length && modFiles.length === all.filter((f) => !/\.(txt|md|nfo|url)$|(^|[\\/])(manifest\.json|icon\.png)$/i.test(f)).length) for (const f of modFiles) fs.copyFileSync(f, path.join(modsDir(gameFolder), path.basename(f)));
     else { const item = path.join(modsDir(gameFolder), path.basename(unpacked)); fs.rmSync(item, { recursive: true, force: true }); fs.cpSync(unpacked, item, { recursive: true }); }
   } else fs.copyFileSync(dest, path.join(modsDir(gameFolder), name));
   return dest;

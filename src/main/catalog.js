@@ -37,7 +37,9 @@ async function liveTagsFor(repoKeys) {
   return out;
 }
 
-ipcMain.handle("catalog:get", async (_e, { refresh = true, checkInstalled = false } = {}) => {
+ipcMain.handle("catalog:get", (_e, opts = {}) => loadCatalog(opts));
+// The merged catalog as Browse shows it (also used by the background update check, with no window open).
+export async function loadCatalog({ refresh = true, checkInstalled = false } = {}) {
   const st = loadSettings();
   const cfg = { ...(st.sources || {}), shared: await fetchSharedSources({ file: sourcesFileFor(st) }), localFinds: st.localFinds || [], findsFile: st.findsFile || defaultFindsFile() };
   const cat = await fetchCatalog({ cacheDir: app.getPath("userData"), refresh, config: cfg });
@@ -61,11 +63,14 @@ ipcMain.handle("catalog:get", async (_e, { refresh = true, checkInstalled = fals
     const live = await liveTagsFor(Object.keys(installed));
     for (const g of cat.games) {
       const l = g.owner && !g.gameOf && live[`${g.owner}/${g.repo}`.toLowerCase()]; // collection games keep their own tag
-      if (l) Object.assign(g, { version: l.tag, status: l.status, updatedAt: l.updatedAt || g.updatedAt, releaseUrl: l.url, liveChecked: true });
+      // With published steps, the version that installs is theirs; GitHub's newest just waits beside it (follow.mjs moves it).
+      if (l && g.publishedTag) { if (l.tag !== g.version) g.latestVersion = l.tag; g.liveChecked = true; }
+      else if (l) Object.assign(g, { version: l.tag, status: l.status, updatedAt: l.updatedAt || g.updatedAt, releaseUrl: l.url, liveChecked: true });
     }
   }
   return { games: cat.games, fetchedAt: cat.fetchedAt, perSource: Object.fromEntries(Object.entries(cat.perSource || {}).map(([k, v]) => [k, { label: v.label || k, count: v.count, error: v.error || null }])), stale: !!cat.stale, error: cat.error || null, installed };
-});
+}
+
 const MIME = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp", ".ico": "image/x-icon", ".svg": "image/svg+xml" };
 ipcMain.handle("catalog:icon", async (_e, { id }) => {
   const game = state.catalogGames.find((g) => g.id === id);

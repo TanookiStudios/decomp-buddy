@@ -1,0 +1,60 @@
+{
+ "note": "Trimmed real Codeberg (Forgejo) API answers for BoundlessWizard/asura-wrath-recomp, 2026-10-18",
+ "repo": {
+  "full_name": "BoundlessWizard/asura-wrath-recomp",
+  "name": "asura-wrath-recomp",
+  "description": "Recomp of Asura's Wrath using RexGlue",
+  "website": "",
+  "html_url": "https://codeberg.org/BoundlessWizard/asura-wrath-recomp",
+  "default_branch": "master",
+  "archived": false,
+  "updated_at": "2026-10-02T17:44:46+02:00",
+  "stars_count": 1,
+  "fork": false,
+  "topics": [
+   "recompilation",
+   "rexglue",
+   "rexglue-sdk"
+  ]
+ },
+ "releases": [
+  {
+   "tag_name": "v0.3.2",
+   "name": "v0.3.2",
+   "html_url": "https://codeberg.org/BoundlessWizard/asura-wrath-recomp/releases/tag/v0.3.2",
+   "draft": false,
+   "prerelease": true,
+   "published_at": "2026-09-05T03:58:09+02:00",
+   "assets": [
+    {
+     "name": "asura_wrath_recomp_linux_x86_64.zip",
+     "size": 30356604,
+     "browser_download_url": "https://codeberg.org/BoundlessWizard/asura-wrath-recomp/releases/download/v0.3.2/asura_wrath_recomp_linux_x86_64.zip"
+    },
+    {
+     "name": "asura_wrath_recomp_windows_x86_64.zip",
+     "size": 26889654,
+     "browser_download_url": "https://codeberg.org/BoundlessWizard/asura-wrath-recomp/releases/download/v0.3.2/asura_wrath_recomp_windows_x86_64.zip"
+    }
+   ]
+  }
+ ],
+ "tree": {
+  "truncated": false,
+  "total_count": 3,
+  "tree": [
+   {
+    "path": "README.md",
+    "type": "blob"
+   },
+   {
+    "path": "src",
+    "type": "tree"
+   },
+   {
+    "path": "src/main.cpp",
+    "type": "blob"
+   }
+  ]
+ }
+}

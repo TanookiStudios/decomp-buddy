@@ -6,7 +6,7 @@ import path from "node:path";
 import AdmZip from "adm-zip";
 import { listMods, addModFile, setModEnabled, applyOrder, findConflicts, resyncEnabled } from "../src/mods.js";
 import { presetValues } from "../src/presets.js";
-import { modOf } from "../src/gamebanana.js";
+import { modOf, listMods as gbList, hideAdult } from "../src/gamebanana.js";
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), "db-mods2-"));
 const zip = (file, entries) => { const z = new AdmZip(); for (const [n, c] of Object.entries(entries)) z.addFile(n, Buffer.from(c)); z.writeZip(file); return file; };
@@ -50,4 +50,17 @@ test("GameBanana records are read defensively", () => {
   const m = modOf({ _idRow: 5, _sName: "HD Link", _aSubmitter: { _sName: "Djipi" }, _aPreviewMedia: { _aImages: [{ _sBaseUrl: "https://i", _sFile: "a.jpg", _sFile220: "220-a.jpg" }] }, _tsDateUpdated: 1700000000, _nLikeCount: 3 });
   assert.equal(m.image, "https://i/220-a.jpg"); assert.equal(m.author, "Djipi"); assert.equal(m.url, "https://gamebanana.com/mods/5"); assert.equal(m.updated, "2023-11-14T22:13:20.000Z");
   assert.equal(modOf({ _idRow: 6 }).name, "Untitled");
+});
+
+test("adult GameBanana mods are flagged from real answers and hidden unless asked for", async () => {
+  const fx = JSON.parse(fs.readFileSync(new URL("./fixtures/gamebanana-ratings.json", import.meta.url), "utf8"));
+  const r = await gbList(6498, { fetchImpl: async () => ({ ok: true, json: async () => fx.index }) });
+  assert.deepEqual(r.mods.map((m) => [m.id, m.adult]), [[176019, true], [499008, false], [549058, false]]);
+  assert.equal(r.count, 3);
+  assert.deepEqual(hideAdult(r.mods, false).map((m) => m.id), [499008, 549058]);
+  assert.equal(hideAdult(r.mods, true).length, 3);
+  const [drugs, nudity] = fx.profiles.map(modOf);
+  assert.equal(drugs.adult, false, "a drug-use rating alone isn't adult");
+  assert.equal(nudity.adult, true);
+  assert.equal(modOf({ _idRow: 1, _sInitialVisibility: "show", _aContentRatings: { st: "Sexual Themes" } }).adult, true, "ratings count even when visibility says show");
 });

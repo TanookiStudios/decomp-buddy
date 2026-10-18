@@ -1,0 +1,208 @@
+[
+ {
+  "name": "RecompExternalPython_for_Starfox64Recompiled",
+  "full_name": "LT_Schmiddy-RecompExternalPython_for_Starfox64Recompiled",
+  "owner": "LT_Schmiddy",
+  "package_url": "https://thunderstore.io/c/starfox-64-recompiled/p/LT_Schmiddy/RecompExternalPython_for_Starfox64Recompiled/",
+  "date_created": "2026-06-07T02:52:44.242869Z",
+  "date_updated": "2026-06-07T02:52:51.780223Z",
+  "uuid4": "c7e6db4c-aa0e-4598-bb24-8a59a4ad234a",
+  "rating_score": 0,
+  "is_pinned": false,
+  "is_deprecated": false,
+  "has_nsfw_content": false,
+  "categories": [
+   "Libraries"
+  ],
+  "versions": [
+   {
+    "name": "RecompExternalPython_for_Starfox64Recompiled",
+    "full_name": "LT_Schmiddy-RecompExternalPython_for_Starfox64Recompiled-2.0.0",
+    "description": "A resource for modders. Enables use of Python code and the Python Standard Library within mods, enabling many behaviors that would otherwise require an external library to be compiled.",
+    "icon": "https://ccdn.thunderstore.io/live/repository/icons/LT_Schmiddy-RecompExternalPython_for_Starfox64Recompiled-2.0.0.png",
+    "version_number": "2.0.0",
+    "dependencies": [],
+    "download_url": "https://thunderstore.io/package/download/LT_Schmiddy/RecompExternalPython_for_Starfox64Recompiled/2.0.0/",
+    "downloads": 271,
+    "date_created": "2026-06-07T02:52:48.476342Z",
+    "website_url": "https://github.com/LT-Schmiddy/zelda64recomp-python-extlibs-mod",
+    "is_active": true,
+    "uuid4": "cb1aee8f-f67e-4702-a569-6f10231770ac",
+    "file_size": 218084893
+   }
+  ]
+ },
+ {
+  "name": "Uncompressed_Voices",
+  "full_name": "BlueSky-Uncompressed_Voices",
+  "owner": "BlueSky",
+  "package_url": "https://thunderstore.io/c/starfox-64-recompiled/p/BlueSky/Uncompressed_Voices/",
+  "date_created": "2026-05-19T23:19:49.236006Z",
+  "date_updated": "2026-05-19T23:20:01.840407Z",
+  "uuid4": "2c713d84-37ea-4a34-a679-4891179d5b78",
+  "rating_score": 4,
+  "is_pinned": false,
+  "is_deprecated": false,
+  "has_nsfw_content": false,
+  "categories": [
+   "Audio"
+  ],
+  "versions": [
+   {
+    "name": "Uncompressed_Voices",
+    "full_name": "BlueSky-Uncompressed_Voices-1.0.0",
+    "description": "A mod that restores Starfox 64 real-time dialog to its uncompressed glory!",
+    "icon": "https://ccdn.thunderstore.io/live/repository/icons/BlueSky-Uncompressed_Voices-1.0.0.png",
+    "version_number": "1.0.0",
+    "dependencies": [
+     "SonicDcer-Audio_API-0.5.1"
+    ],
+    "download_url": "https://thunderstore.io/package/download/BlueSky/Uncompressed_Voices/1.0.0/",
+    "downloads": 2760,
+    "date_created": "2026-05-19T23:19:59.002381Z",
+    "website_url": "",
+    "is_active": true,
+    "uuid4": "c99b2f4e-46a9-435d-9692-c2c0e3fb4a8e",
+    "file_size": 108132139
+   }
+  ]
+ },
+ {
+  "name": "Audio_API",
+  "full_name": "SonicDcer-Audio_API",
+  "owner": "SonicDcer",
+  "package_url": "https://thunderstore.io/c/starfox-64-recompiled/p/SonicDcer/Audio_API/",
+  "donation_link": "https://ko-fi.com/sonicdreamcaster",
+  "date_created": "2026-05-18T15:36:48.136024Z",
+  "date_updated": "2026-05-18T15:37:01.882452Z",
+  "uuid4": "12465090-5bcc-4866-8f21-77a66452c025",
+  "rating_score": 3,
+  "is_pinned": false,
+  "is_deprecated": false,
+  "has_nsfw_content": false,
+  "categories": [
+   "Mods"
+  ],
+  "versions": [
+   {
+    "name": "Audio_API",
+    "full_name": "SonicDcer-Audio_API-0.5.1",
+    "description": "This is an API for modders that enables easily replacing in-game audio.",
+    "icon": "https://ccdn.thunderstore.io/live/repository/icons/SonicDcer-Audio_API-0.5.1.png",
+    "version_number": "0.5.1",
+    "dependencies": [],
+    "download_url": "https://thunderstore.io/package/download/SonicDcer/Audio_API/0.5.1/",
+    "downloads": 2192,
+    "date_created": "2026-05-18T15:37:00.237053Z",
+    "website_url": "https://github.com/sonicdcer/sf64-audio-api",
+    "is_active": true,
+    "uuid4": "1fff9cef-ab7e-4d96-935c-fbe24b19ad3e",
+    "file_size": 8278174
+   }
+  ]
+ },
+ {
+  "name": "Stop_N_Swop_Transfer_Tool",
+  "full_name": "Vertigo-Stop_N_Swop_Transfer_Tool",
+  "owner": "Vertigo",
+  "package_url": "https://thunderstore.io/c/starfox-64-recompiled/p/Vertigo/Stop_N_Swop_Transfer_Tool/",
+  "date_created": "2026-06-07T23:30:43.287620Z",
+  "date_updated": "2026-06-24T11:28:06.335756Z",
+  "uuid4": "4f727a9e-30db-437a-b46b-82215ec9cb80",
+  "rating_score": 1,
+  "is_pinned": false,
+  "is_deprecated": true,
+  "has_nsfw_content": false,
+  "categories": [
+   "Mods"
+  ],
+  "versions": [
+   {
+    "name": "Stop_N_Swop_Transfer_Tool",
+    "full_name": "Vertigo-Stop_N_Swop_Transfer_Tool-1.1.3",
+    "description": "Transfer Stop 'n' Swop items from Banjo-Kazooie to other N64 Recompilation games.",
+    "icon": "https://ccdn.thunderstore.io/live/repository/icons/Vertigo-Stop_N_Swop_Transfer_Tool-1.1.3.png",
+    "version_number": "1.1.3",
+    "dependencies": [
+     "LT_Schmiddy-RecompExternalPython_for_BanjoRecompiled-2.0.0"
+    ],
+    "download_url": "https://thunderstore.io/package/download/Vertigo/Stop_N_Swop_Transfer_Tool/1.1.3/",
+    "downloads": 90,
+    "date_created": "2026-06-24T11:28:05.792203Z",
+    "website_url": "",
+    "is_active": true,
+    "uuid4": "a999557d-9ad6-45db-8d01-cbeac30fd69e",
+    "file_size": 84271
+   },
+   {
+    "name": "Stop_N_Swop_Transfer_Tool",
+    "full_name": "Vertigo-Stop_N_Swop_Transfer_Tool-1.1.2",
+    "description": "Transfer Stop 'n' Swop items from Banjo-Kazooie to other N64 Recompilation games.",
+    "icon": "https://ccdn.thunderstore.io/live/repository/icons/Vertigo-Stop_N_Swop_Transfer_Tool-1.1.2.png",
+    "version_number": "1.1.2",
+    "dependencies": [
+     "LT_Schmiddy-RecompExternalPython_for_BanjoRecompiled-2.0.0"
+    ],
+    "download_url": "https://thunderstore.io/package/download/Vertigo/Stop_N_Swop_Transfer_Tool/1.1.2/",
+    "downloads": 52,
+    "date_created": "2026-06-24T11:25:59.607053Z",
+    "website_url": "",
+    "is_active": true,
+    "uuid4": "af6bda93-80cd-4403-865d-df57018c4ff1",
+    "file_size": 84259
+   }
+  ]
+ },
+ {
+  "name": "Stop_N_Swop_Tranfer_Tool",
+  "full_name": "Vertigo-Stop_N_Swop_Tranfer_Tool",
+  "owner": "Vertigo",
+  "package_url": "https://thunderstore.io/c/starfox-64-recompiled/p/Vertigo/Stop_N_Swop_Tranfer_Tool/",
+  "date_created": "2026-06-08T14:46:04.726712Z",
+  "date_updated": "2026-06-14T15:20:19.816066Z",
+  "uuid4": "1d76d697-72fe-482e-9edf-16a6fb6da900",
+  "rating_score": 1,
+  "is_pinned": false,
+  "is_deprecated": true,
+  "has_nsfw_content": false,
+  "categories": [
+   "Mods"
+  ],
+  "versions": [
+   {
+    "name": "Stop_N_Swop_Tranfer_Tool",
+    "full_name": "Vertigo-Stop_N_Swop_Tranfer_Tool-1.1.0",
+    "description": "Transfer Stop 'n' Swop items from Banjo-Kazooie to Star Fox 64.",
+    "icon": "https://ccdn.thunderstore.io/live/repository/icons/Vertigo-Stop_N_Swop_Tranfer_Tool-1.1.0.png",
+    "version_number": "1.1.0",
+    "dependencies": [
+     "LT_Schmiddy-RecompExternalPython_for_Starfox64Recompiled-2.0.0"
+    ],
+    "download_url": "https://thunderstore.io/package/download/Vertigo/Stop_N_Swop_Tranfer_Tool/1.1.0/",
+    "downloads": 64,
+    "date_created": "2026-06-14T15:20:19.419780Z",
+    "website_url": "",
+    "is_active": true,
+    "uuid4": "7dcfa7fb-79b1-4080-b493-15e8f0cae576",
+    "file_size": 74385
+   },
+   {
+    "name": "Stop_N_Swop_Tranfer_Tool",
+    "full_name": "Vertigo-Stop_N_Swop_Tranfer_Tool-1.0.2",
+    "description": "Transfer Stop 'n' Swop items from Banjo-Kazooie to Star Fox 64.",
+    "icon": "https://ccdn.thunderstore.io/live/repository/icons/Vertigo-Stop_N_Swop_Tranfer_Tool-1.0.2.png",
+    "version_number": "1.0.2",
+    "dependencies": [
+     "LT_Schmiddy-RecompExternalPython_for_Starfox64Recompiled-2.0.0"
+    ],
+    "download_url": "https://thunderstore.io/package/download/Vertigo/Stop_N_Swop_Tranfer_Tool/1.0.2/",
+    "downloads": 55,
+    "date_created": "2026-06-08T18:07:13.553385Z",
+    "website_url": "",
+    "is_active": true,
+    "uuid4": "5005d1d8-17da-4920-8211-ccd28551c2f9",
+    "file_size": 76868
+   }
+  ]
+ }
+]

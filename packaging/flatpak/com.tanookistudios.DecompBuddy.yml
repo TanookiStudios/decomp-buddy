@@ -20,6 +20,7 @@ finish-args:
   - --filesystem=home            # game folders, your game files, Steam's shortcuts file
   - --filesystem=/run/media      # SD cards on a Steam Deck
   - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.freedesktop.Flatpak     # Windows games start through Steam's Proton outside the sandbox (flatpak-spawn --host)
   - --env=DECOMP_FLATPAK=1       # the app updates through Flatpak, not its own updater
 modules:
   - name: decomp-buddy

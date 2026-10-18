@@ -37,10 +37,10 @@ export function activeProvider(s) {
   return resolveProvider(id, { apiKey: decrypt(saved), model: saved.model, baseUrl: saved.baseUrl });
 }
 
-// Which folder a target lands in: games for this machine -> install folder; others -> transfer folder.
+// Which folder a target lands in: games for this machine (or a phone/headset plugged into it) -> install folder; others -> transfer folder.
 export function outDirFor(s, target) {
   const id = TARGETS[target] ? target : "windows";
-  return targetIsHost(id) ? (s.installDir || defaultInstallDir()) : (s.transferDir || s.outDir || defaultTransferDir());
+  return targetIsHost(id) || TARGETS[id].kind === "device" ? (s.installDir || defaultInstallDir()) : (s.transferDir || s.outDir || defaultTransferDir());
 }
 // On Maddie's Mac the site repo is right there; everyone else fills the path in by hand.
 export function defaultFindsFile() {
@@ -65,8 +65,16 @@ globalThis.fetch = (input, init = {}) => {
     if (!h.has("authorization")) h.set("authorization", `Bearer ${process.env.GITHUB_TOKEN}`);
     init = { ...init, headers: h };
   }
-  return realFetch(input, init);
+  const res = realFetch(input, init);
+  if (!url.startsWith("https://api.github.com/")) return res;
+  // Remember what GitHub says is left this hour, for the counter in Settings.
+  return res.then((r) => {
+    const left = r.headers?.get?.("x-ratelimit-remaining");
+    if (left != null && (r.headers.get("x-ratelimit-resource") || "core") === "core") Object.assign(githubRate, { left: Number(left), limit: Number(r.headers.get("x-ratelimit-limit")), resetAt: Number(r.headers.get("x-ratelimit-reset")) * 1000 });
+    return r;
+  });
 };
+export const githubRate = {};
 
 export const isNetworkError = (err) => err?.name === "TypeError" && /fetch failed/i.test(err.message) || ["ENOTFOUND", "ECONNREFUSED", "ECONNRESET", "EAI_AGAIN", "ETIMEDOUT", "ENETUNREACH"].includes(err?.cause?.code) || err?.name === "TimeoutError";
 // Things read from the network, kept on disk so they still work offline (repo context, game pages).

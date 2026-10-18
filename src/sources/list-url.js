@@ -1,8 +1,9 @@
 // Source: a URL that lists game projects - a gist, a README, a plain .txt, a JSON catalog, or a web
-// page. Plain text/HTML: every github.com / gitlab.com owner/repo link is a card. JSON: each entry
+// page. Plain text/HTML: every github.com / gitlab.com / codeberg.org owner/repo link is a card. JSON: each entry
 // that names a game and points at a repository becomes a card with its own title, console,
 // platforms, icon and version. A page that draws its list with JavaScript (no links in the HTML)
 // is followed to the JSON file its script loads - same site only.
+import { hostOf, repoUrlOf } from "../hosts.js";
 
 const MAX_BYTES = 12 * 1024 * 1024;
 const PLATFORMS = new Set(["Windows", "macOS", "Linux"]);
@@ -12,20 +13,20 @@ const CONSOLE = [[/^playstation\s*1$|^ps1$|^psx$/i, "PlayStation"], [/^super nin
 const consoleName = (c) => { const s = String(c || "").trim(); if (!s) return "Unknown"; const hit = CONSOLE.find(([re]) => re.test(s)); return hit ? hit[1] : s; };
 const BAD_OWNER = /^(sponsors|orgs|topics|features|about|settings|marketplace|explore|search|login|signup|site|apps|collections)$/i;
 
-// github.com/owner/repo, gitlab.com/owner/repo, or a bare "owner/repo" (only where a field says it's a repo)
+// github.com/owner/repo, gitlab.com/owner/repo, codeberg.org/owner/repo, or a bare "owner/repo" (only where a field says it's a repo)
 function repoRef(v, { bare = false } = {}) {
   const s = String(v || "").trim();
-  let m = s.match(/^https?:\/\/(?:www\.)?(github|gitlab)\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$/i);
+  let m = s.match(/^https?:\/\/(?:www\.)?(github|gitlab)\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$/i) || s.match(/^https?:\/\/(?:www\.)?(codeberg)\.org\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$/i);
   if (!m && bare) { const b = s.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/); if (b) m = [s, "github", b[1], b[2]]; }
   if (!m || BAD_OWNER.test(m[2])) return null;
   return { host: m[1].toLowerCase(), owner: m[2], repo: m[3] };
 }
 
 function card(id, ref, extra = {}) {
-  const { host, owner, repo } = ref; const base = `https://${host}.com/${owner}/${repo}`;
+  const { host, owner, repo } = ref; const base = repoUrlOf(host, owner, repo);
   return {
     source: id, id: `${host}:${owner}/${repo}`.toLowerCase(), title: repo.replace(/[-_]+/g, " "), project: repo, console: "Unknown", platforms: [],
-    repoUrl: base, repoHost: host, owner, repo, version: null, releaseUrl: `${base}/${host === "gitlab" ? "-/releases" : "releases"}`, status: "unknown", updatedAt: "", iconUrl: "", website: "", aiAssisted: false,
+    repoUrl: base, repoHost: host, owner, repo, version: null, releaseUrl: `${base}/${hostOf(host).releasesPath}`, status: "unknown", updatedAt: "", iconUrl: "", website: "", aiAssisted: false,
     ...extra,
   };
 }
@@ -58,8 +59,8 @@ export function fromJson(data, id) {
 
 export function fromText(text, id) {
   const out = new Map();
-  for (const m of text.matchAll(/https?:\/\/(?:www\.)?(github|gitlab)\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?=[\/"'<>\s),\]#?]|$)/g)) {
-    const ref = repoRef(`https://${m[1]}.com/${m[2]}/${m[3]}`); if (!ref) continue;
+  for (const m of text.matchAll(/https?:\/\/(?:www\.)?(github\.com|gitlab\.com|codeberg\.org)\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?=[\/"'<>\s),\]#?]|$)/g)) {
+    const ref = repoRef(`https://${m[1]}/${m[2]}/${m[3]}`); if (!ref) continue;
     const c = card(id, ref); if (!out.has(c.id)) out.set(c.id, c);
   }
   return [...out.values()];
@@ -100,7 +101,7 @@ export function makeSource(url) {
           if (games.length) break;
         }
       }
-      if (!games.length) throw new Error(`${label} lists no GitHub or GitLab repositories${page.json ? "" : " (not in the page, nor in any data file it loads)"}`);
+      if (!games.length) throw new Error(`${label} lists no GitHub, GitLab or Codeberg repositories${page.json ? "" : " (not in the page, nor in any data file it loads)"}`);
       return games;
     },
   };

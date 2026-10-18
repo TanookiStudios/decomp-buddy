@@ -14,6 +14,8 @@ const STATUS = {
   needs_build: ["Needs Build", "warn"],
   needs_attention: ["Needs Attention", "warn"],
   unsupported: ["Not Installable", "bad"],
+  staged: ["Ready To Copy To Your Device", "ok"],
+  on_device: ["On Your Device", "ok"],
 };
 
 // Manifests written by older versions: the build block used to be called "windows".

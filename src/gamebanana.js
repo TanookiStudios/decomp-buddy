@@ -26,7 +26,14 @@ export async function searchGames(q, { fetchImpl = fetch } = {}) {
   return (j._aRecords || []).slice(0, 8).map((r) => ({ id: r._idRow, name: r._sName, url: r._sProfileUrl || null, icon: r._sIconUrl || null }));
 }
 
-const SORTS = { popular: "Generic_MostDownloaded", new: "Generic_Newest", updated: "Generic_LatestUpdated", liked: "Generic_MostLiked" };
+// Adult content: GameBanana has no NSFW flag; it sets _sInitialVisibility "warn"/"hide" (vs "show") on mods whose
+// content ratings are sexual (e.g. "sa": "Skimpy Attire", "pn": "Partial Nudity"). Gore or drug ratings stay "show".
+const ADULT_RATING = /nudity|sexual|skimpy|suggestive|lewd/i;
+export const isAdult = (r) => ["warn", "hide"].includes(r._sInitialVisibility) || Object.values(r._aContentRatings || {}).some((v) => ADULT_RATING.test(v));
+// Shared by GameBanana and Thunderstore lists: adult mods only when Settings › Show Adult Mods is on.
+export const hideAdult = (mods, show) => (show ? mods : mods.filter((m) => !m.adult));
+
+const SORTS ={ popular: "Generic_MostDownloaded", new: "Generic_Newest", updated: "Generic_LatestUpdated", liked: "Generic_MostLiked" };
 const img = (r) => { const i = r._aPreviewMedia?._aImages?.[0]; return i ? `${i._sBaseUrl}/${i._sFile220 || i._sFile}` : null; };
 export function modOf(r) {
   return {
@@ -34,12 +41,13 @@ export function modOf(r) {
     author: r._aSubmitter?._sName || null, authorUrl: r._aSubmitter?._sProfileUrl || null, category: r._aRootCategory?._sName || null,
     image: img(r), likes: r._nLikeCount || 0, views: r._nViewCount || 0, version: r._sVersion || null,
     updated: r._tsDateUpdated || r._tsDateModified || r._tsDateAdded ? new Date(1000 * (r._tsDateUpdated || r._tsDateModified || r._tsDateAdded)).toISOString() : null,
-    hasFiles: r._bHasFiles !== false, obsolete: !!r._bIsObsolete,
+    hasFiles: r._bHasFiles !== false, obsolete: !!r._bIsObsolete, adult: isAdult(r),
   };
 }
 export async function listMods(gameId, { page = 1, sort = "popular", fetchImpl = fetch } = {}) {
   const j = await get(`${GB}/Mod/Index?_nPage=${page}&_nPerpage=20&_aFilters%5BGeneric_Game%5D=${Number(gameId)}&_sSort=${SORTS[sort] || SORTS.popular}`, fetchImpl);
-  return { total: j._aMetadata?._nRecordCount || 0, complete: !!j._aMetadata?._bIsComplete, mods: (j._aRecords || []).filter((r) => r._sModelName === "Mod").map(modOf) };
+  // count: records on this page before any filtering, so paging still knows whether there's a next page.
+  return { total: j._aMetadata?._nRecordCount || 0, complete: !!j._aMetadata?._bIsComplete, count: (j._aRecords || []).length, mods: (j._aRecords || []).filter((r) => r._sModelName === "Mod").map(modOf) };
 }
 
 const strip = (html) => String(html || "").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/\n{3,}/g, "\n\n").trim();

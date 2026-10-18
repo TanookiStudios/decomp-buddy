@@ -37,7 +37,7 @@ const CONSOLE_HINTS = [
   [/game ?boy ?advance|\bgba\b/i, "Game Boy Advance"], [/game ?boy ?color|\bgbc\b/i, "Game Boy Color"], [/game ?boy|\bgb\b/i, "Game Boy"], [/nintendo ?ds|\bnds\b/i, "Nintendo DS"],
   [/\bsnes\b|super nintendo/i, "SNES"], [/\bnes\b|famicom/i, "NES"], [/dreamcast/i, "Dreamcast"], [/mega ?drive|genesis/i, "Mega Drive"], [/\bxbox\b/i, "Xbox"],
 ];
-const PLATFORM_OF_ASSET = [[/win(dows|64|32)?[-_.]|\.exe$|\.msi$|-win\b/i, "Windows"], [/mac(os)?|darwin|\.dmg$|\.pkg$/i, "macOS"], [/linux|\.appimage$|\.deb$|\.tar\.zst$/i, "Linux"], [/android|\.apk$/i, "Android"]];
+const PLATFORM_OF_ASSET = [[/win(dows|64|32)?[-_.]|\.exe$|\.msi$|-win\b/i, "Windows"], [/mac(os)?|darwin|\.dmg$|\.pkg$/i, "macOS"], [/linux|\.appimage$|\.deb$|\.tar\.zst$/i, "Linux"], [/^(?!.*(quest|oculus|openxr|(^|[^a-z])vr([^a-z]|$))).*(android.*|\.apk)$/i, "Android"], [/^(?=.*(quest|oculus|openxr|(^|[^a-z])vr([^a-z]|$))).*\.apk$/i, "Meta Quest"]]; // a Quest .apk isn't a phone app
 
 // One repo's facts, from either API: meta = { full_name, description, homepage, pushed_at, topics,
 // stargazers_count, fork }, live = non-draft releases newest first, each { tag_name, prerelease, published_at, assets: [{ name }] }.
@@ -78,6 +78,16 @@ export async function enrichFromGitLab(key) {
   const rel = (await get(`${api}/releases?per_page=30`)) || [];
   return infoFrom(key, { full_name: meta.path_with_namespace, name: meta.path, description: meta.description, homepage: "", pushed_at: meta.last_activity_at, topics: meta.topics || [], stargazers_count: meta.star_count, fork: !!meta.forked_from_project },
     rel.filter((r) => !r.upcoming_release).map((r) => ({ name: r.name, tag_name: r.tag_name, prerelease: false, published_at: r.released_at, assets: (r.assets?.links || []).map((l) => ({ name: l.name })) })));
+}
+// And for a Codeberg repo, from its Forgejo API (Forgejo answers in GitHub's shape, mostly).
+export async function enrichFromCodeberg(key) {
+  const api = `https://codeberg.org/api/v1/repos/${key}`, h = { "User-Agent": "decomp-buddy", Accept: "application/json" };
+  const get = async (u) => { const r = await fetch(u, { headers: h, signal: AbortSignal.timeout(20_000) }); if (r.status === 429) throw new Error("Codeberg rate limit hit."); return r.ok ? r.json() : null; };
+  const meta = await get(api);
+  if (!meta) return infoFrom(key, {}, []);
+  const rel = (await get(`${api}/releases?limit=30`)) || [];
+  return infoFrom(key, { full_name: meta.full_name, name: meta.name, description: meta.description, homepage: meta.website || "", pushed_at: meta.updated_at, topics: meta.topics || [], stargazers_count: meta.stars_count, fork: !!meta.fork },
+    rel.filter((r) => !r.draft).map((r) => ({ name: r.name, tag_name: r.tag_name, prerelease: !!r.prerelease, published_at: r.published_at, assets: (r.assets || []).map((a) => ({ name: a.name })) })));
 }
 
 // The same facts for many repos at once: GraphQL answers ~40 repos per request from its own hourly

@@ -1,0 +1,124 @@
+{
+ "note": "Trimmed real GameBanana apiv11 answers, 2026-10-18: Mod/Index for Super Smash Bros. Ultimate (6498), and two ProfilePages with content ratings",
+ "index": {
+  "_aMetadata": {
+   "_nRecordCount": 16771,
+   "_bIsComplete": false
+  },
+  "_aRecords": [
+   {
+    "_idRow": 176019,
+    "_sModelName": "Mod",
+    "_sName": "Swimsuit Pyra and Mythra",
+    "_sProfileUrl": "https://gamebanana.com/mods/176019",
+    "_tsDateAdded": 1615564795,
+    "_tsDateModified": 1662310286,
+    "_tsDateUpdated": 1651465857,
+    "_bHasFiles": true,
+    "_aSubmitter": {
+     "_sName": "LN_310",
+     "_sProfileUrl": "https://gamebanana.com/members/1723947"
+    },
+    "_aRootCategory": {
+     "_sName": "Skins"
+    },
+    "_sVersion": "",
+    "_bIsObsolete": false,
+    "_sInitialVisibility": "warn",
+    "_bHasContentRatings": true,
+    "_nLikeCount": 519,
+    "_nViewCount": 313215
+   },
+   {
+    "_idRow": 499008,
+    "_sModelName": "Mod",
+    "_sName": "The CSK Collection",
+    "_sProfileUrl": "https://gamebanana.com/mods/499008",
+    "_tsDateAdded": 1709524217,
+    "_tsDateModified": 1783187145,
+    "_tsDateUpdated": 1783187273,
+    "_bHasFiles": true,
+    "_aSubmitter": {
+     "_sName": "Coolsonickirby",
+     "_sProfileUrl": "https://gamebanana.com/members/1489478"
+    },
+    "_aRootCategory": {
+     "_sName": "Skyline"
+    },
+    "_sVersion": "5.0.6",
+    "_bIsObsolete": false,
+    "_sInitialVisibility": "show",
+    "_bHasContentRatings": false,
+    "_nLikeCount": 368,
+    "_nViewCount": 343116
+   },
+   {
+    "_idRow": 549058,
+    "_sModelName": "Mod",
+    "_sName": "One Slot Effects [Updated]",
+    "_sProfileUrl": "https://gamebanana.com/mods/549058",
+    "_tsDateAdded": 1729115007,
+    "_tsDateModified": 1788483466,
+    "_tsDateUpdated": 1788483939,
+    "_bHasFiles": true,
+    "_aSubmitter": {
+     "_sName": "moklmaru",
+     "_sProfileUrl": "https://gamebanana.com/members/1493154"
+    },
+    "_aRootCategory": {
+     "_sName": "Skyline"
+    },
+    "_sVersion": "",
+    "_bIsObsolete": false,
+    "_sInitialVisibility": "show",
+    "_bHasContentRatings": false,
+    "_nLikeCount": 304,
+    "_nViewCount": 195378
+   }
+  ]
+ },
+ "profiles": [
+  {
+   "_idRow": 381520,
+   "_sName": "Breaking Bad",
+   "_sProfileUrl": "https://gamebanana.com/mods/381520",
+   "_tsDateAdded": 1654292352,
+   "_tsDateModified": 1655351044,
+   "_aSubmitter": {
+    "_sName": "Carino",
+    "_sProfileUrl": "https://gamebanana.com/members/2131653"
+   },
+   "_sVersion": "",
+   "_bIsObsolete": false,
+   "_sInitialVisibility": "show",
+   "_nLikeCount": 294,
+   "_nViewCount": 130823,
+   "_aRootCategory": {},
+   "_aContentRatings": {
+    "du": "Drug Use"
+   }
+  },
+  {
+   "_idRow": 380384,
+   "_sName": "FUNKIN' IS MAGIC",
+   "_sProfileUrl": "https://gamebanana.com/mods/380384",
+   "_tsDateAdded": 1653792554,
+   "_tsDateModified": 1655921080,
+   "_tsDateUpdated": 1655337999,
+   "_aSubmitter": {
+    "_sName": "bbpanzu",
+    "_sProfileUrl": "https://gamebanana.com/members/1764067"
+   },
+   "_sVersion": "1.0.2",
+   "_bIsObsolete": false,
+   "_sInitialVisibility": "hide",
+   "_nLikeCount": 370,
+   "_nViewCount": 347630,
+   "_aRootCategory": {},
+   "_aContentRatings": {
+    "pn": "Partial Nudity",
+    "bg": "Blood and Gore"
+   }
+  }
+ ]
+}

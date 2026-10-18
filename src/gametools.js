@@ -27,6 +27,39 @@ export function launchSpec(exe, { platform = process.platform, args = [], wait =
   return { cmd: exe, argv: args, opts: { cwd: path.dirname(exe), shell: platform === "win32" && /\.(bat|cmd)$/i.test(exe) } };
 }
 
+// The game's program in an installed folder: the plan's hint first, then the shallowest program that isn't a launcher/setup/uninstaller.
+export function findExecutable(dir, hint, platform = process.platform) {
+  const want = hint ? String(hint).toLowerCase() : null;
+  const walk = (d, depth = 0, out = []) => { if (depth > 3) return out; for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) { if (/\.app$/i.test(e.name)) out.push(p); else if (!/^(Source|Game Files|Mods|node_modules|\.)/.test(e.name)) walk(p, depth + 1, out); } else out.push(p); } return out; };
+  const files = walk(dir);
+  const isExe = (p) => platform === "win32" ? /\.(exe|bat)$/i.test(p) : platform === "darwin" ? /\.app$/i.test(p) || (() => { try { fs.accessSync(p, fs.constants.X_OK); return !/\.(sh|py|txt|json|ini|ico|png|jpg|dll|dylib|so|md|bin|cue|iso)$/i.test(p) && fs.statSync(p).size > 10_000; } catch { return false; } })() : (() => { try { fs.accessSync(p, fs.constants.X_OK); return !/\.(sh|py|txt|json|ini|png|jpg|dll|so|md|bin|cue|iso)$/i.test(p) && !fs.statSync(p).isDirectory(); } catch { return false; } })();
+  const exes = files.filter(isExe);
+  if (want) { const hit = exes.find((p) => path.basename(p).toLowerCase() === want) || exes.find((p) => path.basename(p).toLowerCase().startsWith(want.replace(/\.(exe|app)$/, ""))); if (hit) return hit; }
+  // prefer top level, then shortest path, then non-launcher names
+  return exes.sort((a, b) => a.split(path.sep).length - b.split(path.sep).length || (/launcher|setup|uninstall|rexiso|crash/i.test(path.basename(a)) ? 1 : 0) - (/launcher|setup|uninstall|rexiso|crash/i.test(path.basename(b)) ? 1 : 0))[0] || null;
+}
+
+// A desktop shortcut for an installed game. Straight to its program when it runs natively; through Decomp Buddy
+// (a decompbuddy://play link) when it needs Wine or Proton. Returns what to write - the caller writes it.
+const safeName = (t) => String(t || "Game").replace(/[\\/:*?"<>|\u0000-\u001f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80) || "Game";
+const winArg = (a) => (/[\s"]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a);
+const desktopArg = (a) => `"${String(a).replace(/["`$\\]/g, "\\$&")}"`; // freedesktop Exec quoting
+const xml = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+export function shortcutFor({ platform = process.platform, desktop, title, exe, args = [], icon = null, link = null }) {
+  const name = safeName(title);
+  if (link) {
+    if (platform === "win32") return { kind: "text", file: path.join(desktop, `${name}.url`), text: `[InternetShortcut]\r\nURL=${link}\r\n${icon ? `IconFile=${icon}\r\nIconIndex=0\r\n` : ""}` };
+    if (platform === "darwin") return { kind: "text", file: path.join(desktop, `${name}.webloc`), text: `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0"><dict><key>URL</key><string>${xml(link)}</string></dict></plist>\n` };
+    return { kind: "text", mode: 0o755, file: path.join(desktop, `${name}.desktop`), text: `[Desktop Entry]\nType=Application\nName=${name}\nExec=xdg-open ${desktopArg(link)}\n${icon ? `Icon=${icon}\n` : ""}Terminal=false\n` };
+  }
+  if (platform === "win32") return { kind: "lnk", file: path.join(desktop, `${name}.lnk`), target: exe, cwd: path.dirname(exe), args: args.map(winArg).join(" "), icon: icon || exe };
+  if (platform === "darwin") {
+    if (/\.app$/i.test(exe) && !args.length) return { kind: "symlink", file: path.join(desktop, name), target: exe };
+    return { kind: "text", mode: 0o755, file: path.join(desktop, `${name}.command`), text: `#!/bin/sh\ncd ${desktopArg(path.dirname(exe))} || exit 1\nexec ${/\.app$/i.test(exe) ? `open -a ${desktopArg(exe)}${args.length ? ` --args ${args.map(desktopArg).join(" ")}` : ""}` : [exe, ...args].map(desktopArg).join(" ")}\n` };
+  }
+  return { kind: "text", mode: 0o755, file: path.join(desktop, `${name}.desktop`), text: `[Desktop Entry]\nType=Application\nName=${name}\nExec=${[exe, ...args].map(desktopArg).join(" ")}\nPath=${path.dirname(exe)}\n${icon ? `Icon=${icon}\n` : ""}Terminal=false\n` };
+}
+
 // Bytes under a path; symlinks are counted as themselves, never followed.
 export function dirSize(p) {
   let st; try { st = fs.lstatSync(p); } catch { return 0; }

@@ -4,9 +4,9 @@
 import os from "node:os";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { parseRepoUrl, fetchRepoContext as fetchGitHub } from "./github.js";
-import { fetchRepoContext as fetchGitLab } from "./gitlab.js";
-const fetchRepoContext = (ref) => (ref.host === "gitlab" ? fetchGitLab(ref) : fetchGitHub(ref));
+import { parseRepoUrl } from "./github.js";
+import { fetchContextFor } from "./hosts.js";
+const fetchRepoContext = fetchContextFor;
 import { planFromContext } from "./plan.js";
 import { setupGame } from "./setup.js";
 import { sweepMacJunk } from "./junk.js";

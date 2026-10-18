@@ -12,6 +12,7 @@ function showView(name) {
   if (name === "admin") { renderPublished(); renderDead(); renderStats(); renderSuggestions(); if (catalog.games.length) plansStatus(); else loadCatalog({ refresh: false }).then(plansStatus); }
   if (name === "library") { renderLibrary(); renderPad(); }
   if (name === "settings") { renderRomLibrary(); renderLocal(); }
+  if (typeof devicesView === "function") devicesView(name === "devices"); // devices.js loads after this file
 }
 document.querySelectorAll("nav.side button[data-nav]").forEach((b) => (b.onclick = () => showView(b.dataset.nav)));
 document.getElementById("supportLink").onclick = (e) => { e.preventDefault(); window.buddy.openExternal("https://tanookistudios.com/SupportMe"); };
@@ -36,7 +37,7 @@ async function refresh() {
   presets = settings.presets;
   hasKey = settings.hasKey || !!presets[settings.provider]?.noKey;
   $("outDir").value = settings.outDir;
-  $("outDirWhy").textContent = settings.targetIsHost ? "Runs on this computer - Install Folder." : "For another OS - Transfer Folder.";
+  $("outDirWhy").textContent = settings.targetKind === "device" ? "For a phone or headset - it waits in the Install Folder, then goes over USB." : settings.targetIsHost ? "Runs on this computer - Install Folder." : "For another OS - Transfer Folder.";
   $("installDir").value = settings.installDir; $("transferDir").value = settings.transferDir;
   $("moveFiles").checked = settings.moveFiles;
   $("provider").innerHTML = Object.entries(presets).map(([k, p]) => `<option value="${k}">${esc(p.label)}</option>`).join("");
@@ -45,21 +46,28 @@ async function refresh() {
   $("model").value = settings.model;
   $("modelSelect").hidden = true; $("model").hidden = false;
   $("keyState").textContent = settings.hasKey ? "Key saved." : "No key saved yet - paste one and hit Save.";
+  const gr = settings.githubRate;
+  $("ghRate").textContent = gr ? `GitHub lookups left this hour: ${gr.left.toLocaleString()} of ${gr.limit.toLocaleString()}${gr.left < gr.limit ? ` - back to full at ${new Date(gr.resetAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : ""}.` : "";
   $("ghToken").placeholder = settings.hasGithubToken ? "Token saved - paste a new one to replace it" : "Optional - paste a token"; $("clearGhToken").hidden = !settings.hasGithubToken;
   $("modelState").textContent = settings.model ? `Using ${settings.model}` : "No model chosen yet.";
   $("appVersion").textContent = settings.version ? `Version ${settings.version}` : "";
   $("theme").value = settings.theme || "system";
+  $("updSchedule").value = settings.updateSchedule || "off"; $("updAuto").checked = !!settings.autoUpdateAll; $("updBackground").checked = !!settings.runInBackground; $("updLogin").checked = !!settings.startAtLogin;
+  $("updLogin").disabled = !$("updBackground").checked; $("updLogin").title = $("updBackground").checked ? "" : "Turn on Keep Running In The Background first";
+  $("uiScale").value = Math.round((settings.uiScale || 1) * 100); $("uiScaleVal").textContent = `${$("uiScale").value}%`;
   $("preferBoxart").checked = !!settings.preferBoxart;
+  $("showAdultMods").checked = !!settings.showAdultMods;
   $("startCouch").checked = !!settings.startCouch;
   $("lang").innerHTML = `<option value="system">Follow The System</option>` + Object.entries(settings.langs || {}).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
   $("lang").value = settings.lang || "system";
   applyLang();
   document.documentElement.dataset.theme = settings.theme && settings.theme !== "system" ? settings.theme : "";
+  if (typeof applyLook === "function") { applyLook(); kioskControls(); } // look.js / kiosk.js load after this file
   $("legal").hidden = !!settings.sawLegal;
   // First run: say where games will go, so nobody finds out by filling up C:.
   $("where").hidden = !!settings.sawWhere; $("whereDir").textContent = settings.installDir || "";
   // Asked once, after the where-games-go note: may we count set-ups? (null = not asked yet)
-  $("countAsk").hidden = !settings.sawWhere || settings.countSetups !== null; $("countSetups").checked = settings.countSetups === true;
+  $("countAsk").hidden = !settings.sawWhere || settings.countSetups !== null; $("countSetups").checked = settings.countSetups === true; $("shareStats").checked = settings.shareStats === true;
   renderVault();
   renderLibFolders();
   renderSources();
@@ -75,6 +83,7 @@ async function refresh() {
   $("target").innerHTML = Object.entries(settings.targets).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("");
   $("target").value = settings.target;
   targetPlatformLabel();
+  if (typeof fillSetupDevices === "function") fillSetupDevices(); // devices.js loads after this file
   $("clean").hidden = settings.platform === "win32";
   providerUI();
 }
@@ -253,14 +262,31 @@ function wantedLang() {
 }
 async function applyLang() { const w = wantedLang(); if (w !== appliedLang) appliedLang = await window.I18N.use(w); }
 $("lang").onchange = async () => { await window.buddy.setSettings({ lang: $("lang").value }); await refresh(); };
+for (const [id, key] of [["updSchedule", "updateSchedule"], ["updAuto", "autoUpdateAll"], ["updBackground", "runInBackground"], ["updLogin", "startAtLogin"]]) {
+  $(id).onchange = async () => {
+    const v = $(id).type === "checkbox" ? $(id).checked : $(id).value;
+    await window.buddy.setSettings({ [key]: v, ...(key === "runInBackground" && !v ? { startAtLogin: false } : {}) });
+    await window.buddy.autoUpdateApply(); await refresh();
+  };
+}
+const updSummary = (r) => !r ? "" : `Last checked ${new Date(r.at).toLocaleString()}: ${r.found ? `${r.found} update(s) found` : "everything is up to date"}${r.installed.length ? `, installed ${r.installed.join(", ")}` : ""}${r.failed.length ? `. Couldn't update: ${r.failed.join("; ")}` : ""}.`;
+$("updNow").onclick = async () => { $("updNow").disabled = true; $("updState").textContent = "Checking…"; try { $("updState").textContent = updSummary(await window.buddy.autoUpdateCheck()); } catch (err) { $("updState").textContent = err.message.replace(/^.*Error: /, ""); } $("updNow").disabled = false; renderLibrary(); };
+window.buddy.onAutoUpdateDone((r) => { $("updState").textContent = updSummary(r); if (r.installed.length) renderLibrary(); });
+window.buddy.autoUpdateLast().then((r) => { $("updState").textContent = updSummary(r); }).catch(() => {});
+$("uiScale").oninput = () => { $("uiScaleVal").textContent = `${$("uiScale").value}%`; };
+$("uiScale").onchange = () => window.buddy.setSettings({ uiScale: Number($("uiScale").value) / 100 });
+$("uiScaleReset").onclick = async () => { $("uiScale").value = 100; $("uiScaleVal").textContent = "100%"; await window.buddy.setSettings({ uiScale: 1 }); };
 $("theme").onchange = async () => { await window.buddy.setSettings({ theme: $("theme").value }); await refresh(); };
 // Cards, the detail page, Library and folder icons all ask again for the picture they should show.
+$("showAdultMods").onchange = () => window.buddy.setSettings({ showAdultMods: $("showAdultMods").checked });
 $("preferBoxart").onchange = async () => { await window.buddy.setSettings({ preferBoxart: $("preferBoxart").checked }); iconCache.clear(); iconPaths.clear(); await refresh(); if (catalog.games.length) renderCatalog(); };
 $("legalOk").onclick = async () => { await window.buddy.setSettings({ sawLegal: true }); $("legal").hidden = true; };
 $("whereOk").onclick = async () => { await window.buddy.setSettings({ sawWhere: true }); await refresh(); };
 const answerCount = async (yes) => { await window.buddy.setSettings({ countSetups: yes }); await refresh(); };
 $("countYes").onclick = () => answerCount(true); $("countNo").onclick = () => answerCount(false);
 $("countSetups").onchange = () => answerCount($("countSetups").checked);
+$("shareStats").onchange = async () => { await window.buddy.setSettings({ shareStats: $("shareStats").checked }); await refresh(); };
+$("statsShow").onclick = async (e) => { e.preventDefault(); $("statsPreview").hidden = !$("statsPreview").hidden; if (!$("statsPreview").hidden) $("statsPreview").textContent = JSON.stringify(await window.buddy.statsPreview(), null, 2); };
 $("whereChange").onclick = async () => { const dir = await window.buddy.chooseFolder(); if (!dir) return; await window.buddy.setSettings({ installDir: dir, sawWhere: true }); await refresh(); };
 
 // ---------- Library ----------
@@ -270,8 +296,8 @@ async function renderLibrary() {
   const wished = catalog.games.filter(isWished);
   const shelfOf = (items, title, tile) => items.length ? `<div class="shelf"><div class="shelf-title">${esc(title)}</div><div class="books">${items.map(tile).join("")}</div></div>` : "";
   const book = (g) => {
-    const upd = g.repo && updateAvailable(catalog.games.find((c) => c.owner && `${c.owner}/${c.repo}`.toLowerCase() === g.repo.toLowerCase()) || {}, [{ tag: g.tag }]);
-    const chips = [g.tag || (g.adopted ? "version unknown" : ""), TARGET_LABEL[g.target] || g.target, g.filesNeeded ? `${g.filesNeeded} file(s) needed` : "", upd ? "update available" : ""].filter(Boolean).join(" · ");
+    const upd = g.repo && libUpdate(g);
+    const chips = [g.tag || (g.adopted ? "version unknown" : ""), TARGET_LABEL[g.target] || g.target, g.device?.model || "", g.filesNeeded ? `${g.filesNeeded} file(s) needed` : "", upd ? "update available" : "", g.hidden ? "hidden" : "", ...g.tags].filter(Boolean).join(" · ");
     return `<div class="book" data-key="${esc(g.key)}">
       <div class="cover">${g.art ? `<img src="${g.art}" alt="${esc(g.title)} artwork">` : `<div class="nocover" translate="no">${esc(g.title)}</div>`}
         <div class="acts">
@@ -292,19 +318,43 @@ async function renderLibrary() {
     </div>`;
   };
   const wishTile = (g) => `<div class="book" data-wish="${esc(g.id)}"><div class="cover">${iconCache.get(g.id) && iconCache.get(g.id) !== "pending" ? `<img src="${iconCache.get(g.id)}" alt="">` : `<div class="nocover">${esc(g.title)}</div>`}<div class="acts"><button class="primary" type="button" data-lib="addwish">Add To Links</button><button type="button" data-lib="detailwish">Details</button></div></div><div class="title">★ ${esc(g.title)}</div><div class="chips">${esc([g.console, g.version].filter(Boolean).join(" · "))}</div></div>`;
-  const recent = library.filter((g) => g.lastPlayed).slice(1, 9); // the newest one is the Continue Playing card
-  renderContinue(library.find((g) => g.lastPlayed));
+  // Your tags and hidden games: the tag bar filters every shelf; hidden games stay out unless Show Hidden is on.
+  const tags = [...new Set(library.flatMap((g) => g.tags))].sort((a, b) => a.localeCompare(b));
+  if (libTag && !tags.includes(libTag)) libTag = "";
+  const hiddenN = library.filter((g) => g.hidden).length;
+  $("libTags").hidden = !tags.length && !hiddenN;
+  $("libTags").innerHTML = (tags.length ? [["", "All"], ...tags.map((t) => [t, t])].map(([t, label]) => `<button type="button" class="small" data-tag="${esc(t)}" aria-pressed="${libTag === t}">${esc(label)}</button>`).join("") : "")
+    + (hiddenN ? `<label class="small"><input type="checkbox" id="libShowHidden" ${libShowHidden ? "checked" : ""}> Show Hidden (${hiddenN})</label>` : "");
+  const shown = library.filter((g) => (libShowHidden || !g.hidden) && (!libTag || g.tags.includes(libTag)));
+  const recent = shown.filter((g) => g.lastPlayed).slice(1, 9); // the newest one is the Continue Playing card
+  renderContinue(shown.find((g) => g.lastPlayed));
   renderSyncBanner();
   renderDigest();
   renderPackUpdates();
-  $("shelves").innerHTML = [shelfOf(recent, "Recently Played", book), shelfOf(library, "All Games", book), shelfOf(wished, "Wishlist", wishTile)].join("") || `<p class="sub">Nothing set up yet. Browse Games → pick some → Set Up Games, and they'll appear here.</p>`;
-  const upds = library.filter((g) => g.repo && updateAvailable(catalog.games.find((c) => c.owner && `${c.owner}/${c.repo}`.toLowerCase() === g.repo.toLowerCase()) || {}, [{ tag: g.tag }])).length;
+  $("shelves").innerHTML = [shelfOf(recent, "Recently Played", book), shelfOf(shown.filter((g) => !g.onDevice), libTag ? `Tagged “${libTag}”` : "All Games", book), shelfOf(shown.filter((g) => g.onDevice), "On Your Phones And Headsets", book), shelfOf(wished, "Wishlist", wishTile)].join("") || `<p class="sub">Nothing set up yet. Browse Games → pick some → Set Up Games, and they'll appear here.</p>`;
+  const upds = library.filter((g) => g.repo && libUpdate(g)).length;
   $("libUpdateAll").hidden = !upds; $("libUpdateAll").textContent = `Update All (${upds})`;
   $("libMeta").textContent = `${library.length} game(s) set up${upds ? ` · ${upds} with updates` : ""}.`;
   for (const g of wished) if (iconCache.get(g.id) === undefined) portCard(g);
 }
-const TARGET_LABEL = { windows: "Windows PC", "macos-arm64": "Mac (Apple Silicon)", "macos-x64": "Mac (Intel)", linux: "Linux" };
+// An installed game's update: the catalog's version differs from yours, and you didn't skip that version.
+// The catalog card an installed game came from (collections match by title).
+const catalogOf = (g) => g?.repo && catalog.games.find((x) => x.owner && `${x.owner}/${x.repo}`.toLowerCase() === g.repo.toLowerCase() && (!x.gameTitle || x.gameTitle === g.originalTitle));
+function libUpdate(g) { const c = catalogOf(g); return !!c && c.version !== g.skipTag && updateAvailable(c, [{ tag: g.tag }]); }
+const TARGET_LABEL = { windows: "Windows PC", "windows-arm64": "Windows PC (ARM)", "macos-arm64": "Mac (Apple Silicon)", "macos-x64": "Mac (Intel)", linux: "Linux", "linux-arm64": "Linux (ARM)", android: "Android Phone Or Handheld", quest: "Meta Quest" };
 $("libRefresh").onclick = renderLibrary;
+let libTag = "", libShowHidden = false;
+// A game that closes within seconds of Play: say so, with the end of what it printed.
+window.buddy.onGameFailed((f) => {
+  const el = $("launchFail"); el.hidden = false; el.dataset.log = f.logPath;
+  el.innerHTML = `<strong translate="no">${esc(f.title)}</strong> <strong>closed right away</strong> <span class="sub">(${esc(f.signal || `exit code ${f.code}`)})</span>`
+    + (f.tail ? `<pre class="logTail">${esc(f.tail)}</pre>` : `<p class="sub">It didn't print anything. Check the README for what it needs - often a missing game file or a graphics driver.</p>`)
+    + `<div class="row"><button type="button" data-lf="open">Open The Full Log</button><button type="button" data-lf="close">Dismiss</button></div>`;
+});
+$("launchFail").addEventListener("click", (e) => { const b = e.target.closest("[data-lf]"); if (!b) return; if (b.dataset.lf === "open") window.buddy.open($("launchFail").dataset.log); else $("launchFail").hidden = true; });
+try { libTag = localStorage.getItem("libTag") || ""; } catch {}
+$("libTags").addEventListener("click", (e) => { const b = e.target.closest("[data-tag]"); if (!b) return; libTag = b.dataset.tag; try { localStorage.setItem("libTag", libTag); } catch {} renderLibrary(); });
+$("libTags").addEventListener("change", (e) => { if (e.target.id === "libShowHidden") { libShowHidden = e.target.checked; renderLibrary(); } });
 // ---- Build from source
 async function startBuild(g) {
   $("buildPanel").hidden = false; $("buildTitle").textContent = `Build From Source - ${g.title}`; $("buildLog").textContent = ""; $("buildState").textContent = "";
@@ -416,6 +466,16 @@ const padNotes = (g) => { const c = catalog.games.find((x) => x.owner && g.repo 
 
 // ---- Offline banner
 const setOnline = () => { $("offlineBanner").hidden = navigator.onLine; };
+// News from the site (news.json), dismissed for good once closed.
+let newsItem = null;
+async function showNews() {
+  newsItem = await window.buddy.newsGet().catch(() => null);
+  $("newsBar").hidden = !newsItem; if (!newsItem) return;
+  $("newsText").textContent = newsItem.text; $("newsMore").hidden = !newsItem.url;
+}
+$("newsMore").onclick = (e) => { e.preventDefault(); if (newsItem?.url) window.buddy.openExternal(newsItem.url); };
+$("newsClose").onclick = async () => { if (newsItem) await window.buddy.newsDismiss(newsItem.id); $("newsBar").hidden = true; };
+setTimeout(showNews, 4000);
 window.addEventListener("online", setOnline); window.addEventListener("offline", setOnline); setOnline();
 
 // ---- Saves
@@ -582,6 +642,8 @@ $("detailPorts").onclick = (e) => { const a = e.target.closest("[data-portid]");
 // ---------- Facts (from published plans) and other ports ----------
 const COMPLETE = { playable: "Playable Start To Finish", mostly: "Mostly Playable", partial: "Partly Playable", wip: "Not Playable Yet" };
 const DECK = { verified: "Steam Deck Verified", works: "Runs On Steam Deck" };
+// What the project's README says about AI (scripts/ailabel.mjs): a neutral label, never a ranking.
+const AI_USE = { none: "No AI Used", assisted: "AI-Assisted", generated: "Made With AI" };
 function healthNotes(f) {
   const h = f?.health || {}; const out = [];
   if (h.archived) out.push(["warn", "Archived", "The author archived this repository - no more updates."]);
@@ -590,10 +652,25 @@ function healthNotes(f) {
   if (!h.archived && quiet > 730) out.push(["muted", `Quiet Since ${new Date(h.pushedAt).getUTCFullYear()}`, `No commits since ${fmtDate(h.pushedAt)}.`]);
   return out;
 }
+// ---- Player reports: counts for computers like this one, shown once at least 3 people reported.
+let reports = { counts: { byGame: {}, broken: {} }, sys: "", mine: {} };
+const loadReports = () => window.buddy.reportCounts().then((r) => { reports = r; }).catch(() => {});
+setTimeout(() => loadReports().then(() => { if (catalog.games.length) renderCatalog(); }), 3000);
+const SYS_LABEL = { "windows-x64": "Windows PCs", "windows-arm64": "ARM Windows PCs", "macos-arm64": "Apple Silicon Macs", "macos-x64": "Intel Macs", "linux-x64": "Linux PCs", "linux-arm64": "ARM Linux PCs", deck: "Steam Decks" };
+function reportsFor(g) {
+  const c = g?.id && reports.counts.byGame[String(g.id).toLowerCase()]?.[reports.sys];
+  if (!c) return null;
+  const [runs, issues, no] = c, n = runs + issues + no;
+  return n >= 3 ? { runs, issues, no, n, well: runs > (issues + no) } : null;
+}
+const reportLine = (g) => { const r = reportsFor(g); return r ? `${r.runs} say it runs well, ${r.issues} had issues, ${r.no} couldn't get it running` : ""; };
 function factsBlock(g) {
   const f = g.facts; if (!f) return "";
   const rows = [
     COMPLETE[f.completeness] && [COMPLETE[f.completeness], f.completeness_quote, true],
+    AI_USE[f.ai_use] && ["AI Use", `${AI_USE[f.ai_use]}${f.ai_quote ? ` - “${f.ai_quote}”` : ""}`, false],
+    reportsFor(g) && [`Players On ${SYS_LABEL[reports.sys] || "Your Computer"}`, reportLine(g), false],
+    g.scan?.at && ["Scanned For Malware", `Decomp Buddy scanned ${g.scan.files === 1 ? "this download" : `all ${g.scan.files} downloads`} with ${g.scan.engine.split("/")[0]} on ${fmtDate(g.scan.at)} and found no known malware. Setup only installs those exact files.`, false],
     DECK[f.steam_deck] && [DECK[f.steam_deck], f.deck_quote, true],
     ...healthNotes(f).map(([, label, why]) => [label, why, false]),
     f.save_paths?.length && ["Saves", f.save_paths.map((p) => `${p.platform === "any" ? "" : p.platform + ": "}${p.path}`).join(" · "), false],
@@ -986,7 +1063,7 @@ setTimeout(dailyCheck, 8000);
 setTimeout(() => window.buddy.suggestFlush().catch(() => {}), 12000); // suggestions made while offline
 setInterval(dailyCheck, 24 * 60 * 60 * 1000);
 $("target").onchange = async () => { await window.buddy.setSettings({ target: $("target").value }); await refresh(); if (catalog.games.length) renderCatalog(); };
-const PLATFORM_OF_TARGET = { windows: "Windows", "macos-arm64": "macOS", "macos-x64": "macOS", linux: "Linux" };
+const PLATFORM_OF_TARGET = { windows: "Windows", "windows-arm64": "Windows", "macos-arm64": "macOS", "macos-x64": "macOS", linux: "Linux", "linux-arm64": "Linux", android: "Android", quest: "Meta Quest" }; // same as src/targets.js (test/targets.test.js checks)
 let runsOnTouched = false;
 function targetPlatformLabel() { if (!runsOnTouched) $("catRunsOn").value = PLATFORM_OF_TARGET[$("target").value] || "Windows"; }
 
@@ -999,6 +1076,7 @@ $("analyze").onclick = async () => {
     games = await window.buddy.analyze({ urls: urls.map((u) => (catalogPicks.has(u) ? { url: u, ...catalogPicks.get(u) } : u)) });
     picks.clear(); verifications.clear(); overrides.clear(); reviewOpen.clear(); autoFrom.clear();
     drives = await window.buddy.dumpDrives().catch(() => []);
+    fillSetupDevices(); // a phone or headset plugged in since the screen opened
     renderGames();
     // Fill in what the BIOS vault and your game-file library can answer with confidence.
     (async () => {
@@ -1026,8 +1104,10 @@ $("setup").onclick = async () => {
   $("setup").disabled = true; $("analyze").disabled = true; status("Setting up… (three games at a time)");
   $("setupPause").hidden = false; $("setupCancel").hidden = false; $("setupPause").textContent = "Pause Downloads";
   try {
-    const { results, setupCount, nudgedAt } = await window.buddy.setup({ items });
+    const { results, setupCount, nudgedAt, outDir } = await window.buddy.setup({ items });
+    const onDevice = await installAfterSetup(results, outDir);
     showResults(results, active, warn);
+    if (onDevice) $("resultsSummary").textContent += ` ${onDevice}`;
     maybeNudge(setupCount, nudgedAt || []);
     for (const g of active) catalogPicks.delete(g.url); // consumed: the next pick from this repo starts fresh
     games = []; picks.clear(); verifications.clear(); skipped.clear(); overrides.clear(); reviewOpen.clear(); $("games").innerHTML = "";
@@ -1043,7 +1123,7 @@ $("setupPause").onclick = async () => {
 };
 $("setupCancel").onclick = async () => { if (confirm("Cancel the set-up? Games already finished stay set up.")) await window.buddy.setupCancel(); };
 
-const STATUS_TEXT = { ready: "Ready", needs_build: "Needs build on PC", needs_attention: "Needs attention", unsupported: "Not installable" };
+const STATUS_TEXT = { ready: "Ready", needs_build: "Needs build on PC", needs_attention: "Needs attention", unsupported: "Not installable", staged: "Ready to copy to your device", on_device: "On your device" };
 
 function showResults(results, active, warn) {
   const tile = (cls, name, sub) => `<div class="tile ${cls}"><span translate="no">${esc(name)}</span>${sub ? `<small>${esc(sub)}</small>` : ""}</div>`;
@@ -1125,12 +1205,12 @@ function visibleGames() {
   const q = $("catSearch").value.trim().toLowerCase();
   const con = catCon, st = $("catStatus").value, srcF = $("catSource").value;
   const plat = PLATFORM_OF_TARGET[$("target").value] || "Windows";
-  const runsOn = $("catRunsOn").value, instOnly = $("catInstalled").checked, wishOnly = $("catWish").checked, playOnly = $("catPlayable").checked;
+  const runsOn = $("catRunsOn").value, instOnly = $("catInstalled").checked, wishOnly = $("catWish").checked, playOnly = $("catPlayable").checked, wellOnly = $("catRunsWell").checked, aiWant = $("catAI").value;
   const runsOk = (g) => !runsOn || (runsOn === "Steam Deck" ? ["verified", "works"].includes(g.facts?.steam_deck) : g.platforms.includes(runsOn) || !g.platforms.length);
   let list = catalog.games.filter((g) =>
     (!q || `${g.title} ${g.project}`.toLowerCase().includes(q)) &&
     (!con || g.console === con) && (!st || g.status === st) && (!srcF || (g.sources || [g.source]).includes(srcF)) &&
-    runsOk(g) && (!playOnly || ["playable", "mostly"].includes(g.facts?.completeness)) && (!instOnly || installedFor(g)) && (!wishOnly || isWished(g)));
+    runsOk(g) && (!playOnly || ["playable", "mostly"].includes(g.facts?.completeness)) && (!instOnly || installedFor(g)) && (!wishOnly || isWished(g)) && (!wellOnly || reportsFor(g)?.well) && (!aiWant || (g.facts?.ai_use || "unsaid") === aiWant));
   const sort = $("catSort").value;
   const byTitle = (a, b) => a.title.localeCompare(b.title) || a.project.localeCompare(b.project);
   const plats = (g) => ["Windows", "macOS", "Linux"].filter((p) => g.platforms.includes(p)).join(" · ") || "No builds";
@@ -1187,7 +1267,7 @@ function renderCatalog() {
   $("catCount").textContent = `${list.length} shown · ${catSelected.size} selected${updates ? ` · ${updates} update(s) available` : ""}`;
   document.querySelectorAll(".pickAdd").forEach((b) => (b.disabled = !catSelected.size));
   document.querySelectorAll(".pickCount").forEach((n) => (n.textContent = catSelected.size ? `${catSelected.size} selected` : ""));
-  const extra = [$("catStatus").value, $("catSource").value, $("catPlayable").checked, $("catInstalled").checked, $("catWish").checked].filter(Boolean).length;
+  const extra = [$("catStatus").value, $("catSource").value, $("catPlayable").checked, $("catRunsWell").checked, $("catAI").value, $("catInstalled").checked, $("catWish").checked].filter(Boolean).length;
   $("moreFiltersBtn").textContent = extra ? `More Filters (${extra})` : "More Filters";
   const allUpd = catalog.games.filter((g) => updateAvailable(g, installedFor(g))).length;
   $("catUpdateAll").hidden = !allUpd; $("catUpdateAll").textContent = `Update All (${allUpd})`;
@@ -1228,7 +1308,7 @@ $("updatesBtn").onclick = async () => {
 $("catalogRefresh").onclick = () => loadCatalog({ refresh: true });
 document.querySelectorAll("[data-ext]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); window.buddy.openExternal(a.dataset.ext); }));
 document.getElementById("aboutSources").onclick = (e) => { const a = e.target.closest("a[data-url]"); if (a) { e.preventDefault(); window.buddy.openExternal(a.dataset.url); } };
-for (const id of ["catSearch", "catStatus", "catSource", "catSort", "catRunsOn", "catPlayable", "catInstalled", "catWish"]) $(id).oninput = renderCatalog;
+for (const id of ["catSearch", "catStatus", "catSource", "catSort", "catRunsOn", "catPlayable", "catRunsWell", "catAI", "catInstalled", "catWish"]) $(id).oninput = renderCatalog;
 $("conBar").onclick = (e) => {
   const b = e.target.closest("[data-con]"); if (!b) return;
   catCon = b.dataset.con;
@@ -1236,7 +1316,7 @@ $("conBar").onclick = (e) => {
   renderCatalog(); $("catalogList").scrollTop = 0;
 };
 $("moreFiltersBtn").onclick = () => { const open = $("moreFilters").hidden; $("moreFilters").hidden = !open; $("moreFiltersBtn").setAttribute("aria-expanded", String(open)); };
-$("clearFilters").onclick = () => { $("catStatus").value = ""; $("catSource").value = ""; for (const id of ["catPlayable", "catInstalled", "catWish"]) $(id).checked = false; renderCatalog(); };
+$("clearFilters").onclick = () => { $("catStatus").value = ""; $("catSource").value = ""; $("catAI").value = ""; for (const id of ["catPlayable", "catRunsWell", "catInstalled", "catWish"]) $(id).checked = false; renderCatalog(); };
 $("catUpdateAll").onclick = () => updateAll(catalog.games.filter((g) => updateAvailable(g, installedFor(g))));
 $("libUpdateAll").onclick = async () => { if (!catalog.games.length) await loadCatalog({ refresh: true, checkInstalled: true }); updateAll(catalog.games.filter((g) => updateAvailable(g, installedFor(g)))); };
 $("catRunsOn").onchange = () => { runsOnTouched = true; renderCatalog(); };

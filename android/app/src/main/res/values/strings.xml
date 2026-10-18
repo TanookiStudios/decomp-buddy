@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Decomp Buddy</string>
+
+    <string name="tab_browse">Browse</string>
+    <string name="tab_installed">Installed</string>
+    <string name="tab_about">About Maddie</string>
+
+    <string name="search_label">Search Games</string>
+    <string name="loading">Loading Games…</string>
+    <string name="load_failed">Couldn\'t load the game list: %1$s</string>
+    <string name="retry">Try Again</string>
+    <string name="offline_note">You\'re offline, so this is the last list Decomp Buddy saved.</string>
+    <string name="no_matches">No games match that search.</string>
+    <string name="game_count">%1$d games, %2$d ready to install</string>
+
+    <string name="scanned_chip">Scanned For Malware</string>
+    <string name="coming_soon">Install Steps Coming Soon</string>
+    <string name="coming_soon_why">Decomp Buddy hasn\'t written Android install steps for this game yet. Check back soon, or set it up with Decomp Buddy on a computer.</string>
+    <string name="not_scanned_note">Decomp Buddy hasn\'t scanned this download for malware yet.</string>
+    <string name="console_project">%1$s · %2$s</string>
+    <string name="version">Version %1$s</string>
+
+    <string name="back">Back</string>
+    <string name="install">Install</string>
+    <string name="update">Update</string>
+    <string name="reinstall">Reinstall</string>
+    <string name="launch">Launch</string>
+    <string name="remove">Remove</string>
+    <string name="view_project">View Project Page</string>
+    <string name="launch_game">Launch %1$s</string>
+    <string name="update_game">Update %1$s</string>
+    <string name="remove_game">Remove %1$s</string>
+    <string name="choose_file_for">Choose your %1$s</string>
+
+    <string name="game_files_heading">Game Files</string>
+    <string name="game_file_formats">Accepted: %1$s</string>
+    <string name="choose_file">Choose File</string>
+    <string name="first_run_heading">First Run</string>
+    <string name="notes_heading">Notes</string>
+
+    <string name="installed_empty">Games you install with Decomp Buddy show up here.</string>
+    <string name="installed_version">Installed: %1$s</string>
+    <string name="update_available">Update Available: %1$s</string>
+    <string name="no_launcher">This game can\'t be opened from here. Look for it in your app list.</string>
+
+    <string name="status_finding">Finding The Download…</string>
+    <string name="status_downloading">Downloading…</string>
+    <string name="status_installing">Installing…</string>
+    <string name="status_installed">%1$s is installed.</string>
+    <string name="status_cancelled">Install cancelled.</string>
+    <string name="status_failed">Couldn\'t install: %1$s</string>
+    <string name="flagged">A virus scanner flagged this download; Decomp Buddy won\'t install it until it\'s been reviewed.</string>
+    <string name="mismatch">This file changed after Decomp Buddy scanned it, so it wasn\'t installed.</string>
+    <string name="not_apk">That download isn\'t an Android app, so it wasn\'t installed.</string>
+    <string name="unsupported_host">Decomp Buddy can only download from GitHub so far.</string>
+    <string name="unknown_error">something went wrong</string>
+
+    <string name="perm_install_title">Allow Decomp Buddy To Install Games</string>
+    <string name="perm_install_body">Android asks before any app installs other apps. On the next screen, turn on “Allow from this source”, then come back here and Decomp Buddy will carry on.</string>
+    <string name="perm_storage_title">Allow Decomp Buddy To Place Game Files</string>
+    <string name="perm_storage_body">This game looks for its files in a folder on your device\'s storage, outside Decomp Buddy. To put them there for you, Android needs your OK on the next screen (“Allow access to manage all files”). Decomp Buddy only writes the files you pick.</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="not_now">Not Now</string>
+    <string name="manual_copy">To do it by hand: copy your file into the “%1$s” folder on your device\'s internal storage.</string>
+
+    <string name="file_checking">Checking Your File…</string>
+    <string name="file_wrong_size">That file is the wrong size (%1$d bytes; this game needs %2$d), so it wasn\'t copied. Check you picked the right file.</string>
+    <string name="file_no_match">That file doesn\'t match any version this game supports, so it wasn\'t copied. Check you picked the right file.</string>
+    <string name="file_placed">Copied to %1$s.</string>
+    <string name="file_ok_keep">That file checks out. The game asks for it the first time it starts, so keep it somewhere on your device.</string>
+    <string name="file_bad_path">This game\'s install steps point outside your device\'s storage, so Decomp Buddy won\'t copy files for it.</string>
+    <string name="file_failed">Couldn\'t copy that file: %1$s</string>
+
+    <string name="about_body">Decomp Buddy is made by Maddie at Tanooki Studios. It sets up fan-made Android ports of console games you already own, straight on your phone or handheld. It\'s free, with no ads, no tracking and no account.</string>
+    <string name="support_button">Support Maddie\'s Work</string>
+    <string name="support_note">Never required. Everything stays free.</string>
+</resources>

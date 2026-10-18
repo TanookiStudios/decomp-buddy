@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src blob:">
 <title>Decomp Buddy</title>
 <style>
 /* The look of decompbuddy.com: a cream cartridge shell, navy ink and label window, gold highlights.
@@ -23,16 +23,35 @@
 .shelf { position:relative; padding:0 8px 18px; border-bottom:14px solid #6b4a2b; box-shadow:0 8px 0 #4a3119, 0 12px 12px rgba(0,0,0,.35); background:linear-gradient(to bottom, transparent 0, transparent 80%, rgba(0,0,0,.12) 100%) }
 .shelf-title { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 10px }
 .books { display:flex; gap:18px; flex-wrap:wrap; align-items:flex-end }
-.book { width:150px; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative }
-.book .cover { width:150px; height:150px; display:flex; align-items:flex-end; justify-content:center }
-.book .cover img { max-width:150px; max-height:150px; box-shadow:2px 4px 10px rgba(0,0,0,.45); border-radius:3px; display:block }
-.book .cover .nocover { width:110px; height:150px; background:var(--window); border-radius:3px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; padding:8px; font-size:13px; color:var(--windowfg) }
+.shelf-wrap { --cs:calc(var(--cardsize, 150px) * var(--cardk, 1)) }
+.book { width:var(--cs); display:flex; flex-direction:column; align-items:center; gap:6px; position:relative }
+.book .cover { width:var(--cs); height:var(--cs); display:flex; align-items:flex-end; justify-content:center }
+.book .cover img { max-width:var(--cs); max-height:var(--cs); box-shadow:2px 4px 10px rgba(0,0,0,.45); border-radius:3px; display:block }
+.book .cover .nocover { width:calc(var(--cs) * .73); height:var(--cs); background:var(--window); border-radius:3px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; padding:8px; font-size:13px; color:var(--windowfg) }
 .book .title { font-size:13px; font-weight:600; text-align:center; line-height:1.25; max-height:2.5em; overflow:hidden }
 .book .chips { font-size:11px; color:var(--muted); text-align:center }
-.book .acts { display:none; position:absolute; inset:0 0 auto 0; top:0; background:rgba(0,0,0,.72); border-radius:6px; padding:8px; flex-direction:column; gap:6px; height:150px; justify-content:flex-start; overflow-y:auto }
+.book .acts { display:none; position:absolute; inset:0 0 auto 0; top:0; background:rgba(0,0,0,.72); border-radius:6px; padding:8px; flex-direction:column; gap:6px; height:var(--cs); justify-content:flex-start; overflow-y:auto }
 .book:hover .acts, .book:focus-within .acts { display:flex }
 .book .acts button { font-size:12px; padding:5px 8px; color:#fff; border-color:rgba(255,255,255,.5); background:rgba(0,0,0,.3) } .book .acts button.primary { background:var(--gold); border-color:var(--gold); color:#1d2140 }
 .book .acts button:disabled { opacity:.7 }
+/* Library Layout: Compact is smaller tiles without the chips; List is one row per game, its buttons on the right */
+.shelf-wrap.layout-compact { --cardk:.7; gap:16px } .layout-compact .books { gap:10px } .layout-compact .book .chips { display:none } .layout-compact .book .title { font-size:12px }
+.shelf-wrap.layout-list { --cs:64px } .layout-list .books { flex-direction:column; align-items:stretch; gap:8px }
+.layout-list .book { width:auto; flex-direction:row; gap:14px; min-height:72px } .layout-list .book .cover { flex:0 0 auto; align-items:center } .layout-list .book .cover .nocover { font-size:9px; padding:4px }
+.layout-list .book .title, .layout-list .book .chips { text-align:left } .layout-list .book .title { flex:0 1 auto }
+.layout-list .book .acts { inset:0 0 0 30%; height:auto; flex-direction:row; flex-wrap:wrap; align-content:center }
+/* Make It Yours: a background picture behind the main area, dimmed with the page color so text stays readable */
+main.lookbg { background:linear-gradient(color-mix(in srgb, var(--bg) var(--bgdim, 60%), transparent), color-mix(in srgb, var(--bg) var(--bgdim, 60%), transparent)), var(--lookimg) center / cover no-repeat }
+.swatches { display:flex; gap:8px; flex-wrap:wrap; align-items:center } .swatch { width:34px; height:34px; padding:0; border-radius:50%; border:2px solid var(--fg) } .swatch[aria-pressed="true"] { box-shadow:0 0 0 3px var(--bg), 0 0 0 6px var(--fg) }
+.swatches input[type=color] { width:44px; height:34px; padding:0 2px; border:2px solid var(--fg); border-radius:8px; background:var(--card); cursor:pointer }
+.lookPart { margin-top:12px } .lookPart > label { font-size:12.5px }
+/* Kiosk Mode keypad (inside Couch Mode) */
+#kioskPad { position:fixed; inset:0; z-index:5; background:rgba(13,14,18,.94); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px }
+#kioskPad h2 { margin:0; font-size:26px } #kioskPad .kdots { font-size:30px; letter-spacing:.3em; min-height:40px; color:#e0a53a } #kioskPad .kmsg { min-height:24px; margin:0; color:#ffb4ab; font-weight:600 }
+#kioskPad .kkeys { display:grid; grid-template-columns:repeat(3, 96px); gap:12px }
+#kioskPad button { font-size:24px; height:72px; color:#f2f2ee; background:#1b1d24; border:3px solid #555; border-radius:12px; box-shadow:none } #kioskPad button.kword { font-size:17px }
+#kioskPad button:focus, #kioskPad button:focus-visible { outline:none; border-color:#e0a53a; background:#252834 } #kioskPad #kioskCancel { height:auto; font-size:16px; padding:10px 18px }
+.sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap }
 /* Continue Playing hero */
 .hero { display:flex; gap:18px; align-items:center; background:var(--card); border:2px solid var(--fg); box-shadow:0 3px 0 var(--shadow); border-radius:12px; padding:14px 16px }
 .hero img { width:120px; height:120px; object-fit:contain; border-radius:6px } .hero .nocover { width:90px; height:120px; background:var(--window); border-radius:6px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; padding:6px; color:var(--windowfg); font-size:12px }
@@ -40,6 +59,7 @@
 .more-sec { border-top:1px solid var(--line); padding:12px 0 4px } .more-sec h4 { margin:0 0 6px }
 /* GameBanana list */
 .gbmod { display:grid; grid-template-columns:110px 1fr auto; gap:10px; align-items:center; background:var(--card); border:2px solid var(--line); border-radius:8px; padding:6px 10px } .gbmod img { width:110px; height:62px; object-fit:cover; border-radius:4px } .gbmod .noimg { width:110px; height:62px; background:var(--line); border-radius:4px }
+.gbmod.ts { grid-template-columns:62px 1fr auto } .gbmod.ts img, .gbmod.ts .noimg { width:62px }
 /* Couch Mode */
 #couch { position:fixed; inset:0; z-index:80; background:#0d0e12; color:#f2f2ee; overflow-y:auto; padding:18px 36px 60px; font-size:18px }
 #couch .cbar { display:flex; align-items:center; gap:12px; margin-bottom:10px } #couch .cbar img { width:36px; height:36px; border-radius:8px } #couch .grow { flex:1 }
@@ -59,7 +79,7 @@
 .detail { display:grid; grid-template-columns:260px minmax(0,1fr); gap:22px } .detail .cover img { width:260px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,.3) }
 .detail .readme { max-width:760px; line-height:1.55 } .detail .readme img { max-width:100%; border-radius:6px } .detail .readme pre { background:var(--code, var(--log)); color:var(--logfg); padding:10px; border-radius:6px; overflow:auto; font-size:12.5px } .detail .readme code { font-size:13px } .detail .readme table { border-collapse:collapse } .detail .readme td, .detail .readme th { border:2px solid var(--line); padding:4px 8px }
 .shots { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px } .shots img { height:140px; border-radius:6px }
-.banner { background:var(--card); border:2px solid var(--line); border-left:4px solid #b45309; border-radius:8px; padding:8px 12px; margin:0 0 12px; font-size:14px }
+.banner { background:var(--card); border:2px solid var(--line); border-left:4px solid #b45309; border-radius:8px; padding:8px 12px; margin:0 0 12px; font-size:14px } .banner.news { border-left-color:var(--gold, #e0a53a); display:flex; gap:10px; align-items:center } .banner.news #newsText { flex:1 }
 .cfgrow { display:grid; grid-template-columns:140px 1fr; gap:8px; align-items:center; margin:6px 0 }
 .review { border:1px dashed var(--line); border-radius:8px; padding:10px 12px; margin:8px 0; display:grid; gap:6px } .review select, .review input { flex:1; min-width:0 }
 .file.drop { outline:2px dashed var(--accent); outline-offset:2px }
@@ -98,6 +118,9 @@ textarea { min-height:110px; resize:vertical; font-family:var(--mono); font-size
 button { font:inherit; font-weight:700; padding:8px 15px; border-radius:8px; border:2px solid var(--fg); background:var(--card); color:inherit; cursor:pointer; box-shadow:0 2px 0 var(--shadow); transition:transform .08s }
 button:hover:not(:disabled) { transform:translateY(-1px) } button:active:not(:disabled) { transform:translateY(2px); box-shadow:none }
 button.primary { background:var(--accent); border-color:var(--accent); color:var(--accentfg) }
+.logTail { max-height:180px; overflow:auto; font-size:12px; background:var(--shell2, rgba(0,0,0,.06)); padding:8px; border-radius:6px; white-space:pre-wrap }
+button.danger { border-color:var(--bad); color:var(--bad) } button.danger:hover { background:var(--bad); color:#fff }
+.tagBar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:10px 0 } .tagBar button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accentfg) } .tagBar label { display:flex; gap:6px; align-items:center; margin-left:8px }
 button.gold, button[aria-pressed="true"].pick { background:var(--gold); border-color:var(--gold); color:#1d2140 }
 button:disabled { opacity:.5; cursor:not-allowed; box-shadow:none }
 .actions { display:flex; gap:8px; flex-wrap:wrap }
@@ -157,6 +180,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   <button type="button" data-nav="soon">Coming Soon</button>
   <hr>
   <button type="button" data-nav="library">Installed Games</button>
+  <button type="button" data-nav="devices">Phones And Headsets</button>
   <hr>
   <button type="button" data-nav="setup">Install From GitHub</button>
   <hr>
@@ -169,6 +193,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
 </nav>
 <main>
   <div id="offlineBanner" class="banner" role="status" hidden>You're offline. Browse shows the last catalog it saw; Installed Games, Play, Saves and Roll Back all work. Setting a game up needs the internet to download it.</div>
+  <div id="newsBar" class="banner news" role="status" hidden><span id="newsText"></span> <a href="#" id="newsMore" hidden>Read More</a><button id="newsClose" type="button" class="small" aria-label="Dismiss this news">Dismiss</button></div>
   <div id="updateBar" role="status"><span id="updateText"></span><span class="grow"></span><button id="updateGet" type="button">Download</button><button id="updateLater" type="button">Later</button></div>
   <section id="setup-view" class="view" data-view="setup" aria-label="Install from GitHub">
     <div>
@@ -182,6 +207,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     </div>
     <div class="row">
       <div style="flex:0 0 220px"><label for="target">Build For</label><select id="target"></select></div>
+      <div style="flex:0 0 220px" id="setupDeviceRow" hidden><label for="setupDevice">Install On</label><select id="setupDevice"></select></div>
       <div><label for="outDir">Goes Into</label><div class="row"><input id="outDir" type="text" readonly title="Change the folders in Settings"><button id="openFolder" type="button">Open</button></div><p class="sub" id="outDirWhy"></p></div>
     </div>
     <div class="actions">
@@ -203,6 +229,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     <div id="syncBanner" class="addGame" hidden role="region" aria-label="Newer saves from another computer"></div>
     <div id="digestPanel" class="addGame" hidden role="region" aria-label="What's new this week"></div>
     <div id="packUpdates" class="addGame" hidden role="region" aria-label="Mod and texture pack updates"></div>
+    <div id="launchFail" class="addGame" hidden role="alert"></div>
     <div id="continueHero"></div>
     <div id="txPanel" class="addGame" hidden>
       <div id="txReceive" hidden><strong>Receiving</strong> <span class="sub">into the Install Folder. On the other computer choose "Send To Another Computer…" and enter:</span><div class="row" style="margin-top:6px"><code id="txAddr" style="font-size:16px"></code><span class="sub">code</span><code id="txCode" style="font-size:20px;font-weight:700"></code><span style="flex:1"></span><button id="txStopRx" type="button">Stop</button></div></div>
@@ -225,9 +252,10 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div id="modsPacks" class="srcList" hidden></div>
       <div id="modsList" class="srcList"></div>
       <div id="modsOrder"></div>
-      <div class="row" style="margin-top:8px"><button id="modsConflictBtn" type="button">Check For Conflicts</button><button id="modsGbBtn" type="button">Browse GameBanana</button><span style="flex:1"></span></div>
+      <div class="row" style="margin-top:8px"><button id="modsConflictBtn" type="button">Check For Conflicts</button><button id="modsGbBtn" type="button">Browse GameBanana</button><button id="modsTsBtn" type="button" hidden>Browse Thunderstore</button><span style="flex:1"></span></div>
       <div id="modsConflicts"></div>
       <div id="modsGb" hidden></div>
+      <div id="modsTs" hidden></div>
       <div class="status" id="modsState" role="status" aria-live="polite"></div>
     </div>
     <div id="gamePanel" class="addGame" hidden>
@@ -241,7 +269,42 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div id="savesList" class="srcList"></div>
       <div class="status" id="savesState" role="status" aria-live="polite"></div>
     </div>
+    <div class="tagBar" id="libTags" role="group" aria-label="Filter installed games by tag" hidden></div>
     <div class="shelf-wrap" id="shelves"></div>
+  </section>
+
+  <section id="devices" class="view" data-view="devices" aria-label="Phones and headsets">
+    <div><h1>Phones And Headsets</h1><p class="sub">Android ports go onto an Android phone or handheld, or a Meta Quest headset, over a USB cable. Set the game up in <strong>Install From GitHub</strong> with Build For set to Android Phone Or Handheld or Meta Quest, then install it here.</p></div>
+    <div id="devTools" class="addGame" hidden>
+      <strong>First: Google's Android Platform-Tools</strong>
+      <p class="sub">Decomp Buddy talks to phones and headsets with adb, a free tool from Google (about 16 MB). It comes straight from dl.google.com and is checked against the fingerprint Google publishes.</p>
+      <label class="check"><input type="checkbox" id="devAgree"> I Agree To Google's Android SDK Terms</label>
+      <div><a href="#" id="devTerms">Read Google's Terms</a></div>
+      <div class="actions"><button id="devGetTools" class="primary" type="button">Download Platform-Tools</button></div>
+    </div>
+    <div class="addGame" role="region" aria-label="Meta Quest setup">
+      <strong>Meta Quest: One-Time Setup</strong>
+      <p class="sub">Meta's rules say Developer Mode is for developers; using it to sideload games is at your own risk with your Meta account.</p>
+      <ol class="sub">
+        <li>Make a Meta developer account. You must be 18 or older and verify it with a phone number or a card. <a href="#" data-devlink="https://developers.meta.com/horizon/documentation/native/android/mobile-device-setup/">Meta's Instructions</a></li>
+        <li>In the Meta Horizon app on your phone, open your headset's settings and turn on Developer Mode.</li>
+        <li id="devWinDriver" hidden>Windows only: install Meta's ADB driver. <a href="#" data-devlink="https://developers.meta.com/vr/downloads/package/oculus-adb-drivers/">Meta's ADB Driver</a></li>
+        <li>Plug the headset into this computer with a USB-C cable, put it on, and choose Always Allow From This Computer.</li>
+        <li>Status: <strong id="devQuestState" role="status" aria-live="polite">Not Seen</strong></li>
+      </ol>
+    </div>
+    <div class="addGame" role="region" aria-label="Android phone setup">
+      <strong>Android Phone Or Handheld: One-Time Setup</strong>
+      <ol class="sub">
+        <li>Settings → About Phone → tap Build Number seven times, until it says you're a developer. (On some phones Build Number is under Software Information.)</li>
+        <li>Settings → Developer Options → turn on USB Debugging. (On some phones Developer Options is under System.)</li>
+        <li>Plug it into this computer with a USB cable, unlock it, tick Always Allow From This Computer, and choose Allow.</li>
+        <li>Status: <strong id="devPhoneState" role="status" aria-live="polite">Not Seen</strong></li>
+      </ol>
+      <p class="sub">Wireless Debugging (no cable) isn't supported yet.</p>
+    </div>
+    <div class="status" id="devState" role="status" aria-live="polite"></div>
+    <div id="devCards"></div>
   </section>
 
   <section id="newgames" class="view" data-view="new" aria-label="New games">
@@ -303,7 +366,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     </div>
     <div class="toolbar">
       <input id="catSearch" type="text" placeholder="Search title or project" autocomplete="off" spellcheck="false" aria-label="Search">
-      <select id="catRunsOn" aria-label="Runs on"><option value="">Runs On: Any</option><option value="Windows">Runs On: Windows</option><option value="macOS">Runs On: macOS</option><option value="Linux">Runs On: Linux</option><option value="Steam Deck">Runs On: Steam Deck</option></select>
+      <select id="catRunsOn" aria-label="Runs on"><option value="">Runs On: Any</option><option value="Windows">Runs On: Windows</option><option value="macOS">Runs On: macOS</option><option value="Linux">Runs On: Linux</option><option value="Android">Runs On: Android</option><option value="Meta Quest">Runs On: Meta Quest</option><option value="Steam Deck">Runs On: Steam Deck</option></select>
       <select id="catSort" aria-label="Sort"><option value="console">Console, Then Title</option><option value="platforms">Runs On, Then Console</option><option value="updated">Recently Updated</option><option value="title">Title</option></select>
       <button id="moreFiltersBtn" type="button" aria-expanded="false" aria-controls="moreFilters">More Filters</button>
     </div>
@@ -311,6 +374,8 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <select id="catStatus" aria-label="Status"><option value="">All Statuses</option><option value="latest">Latest</option><option value="prerelease">Pre-release</option></select>
       <select id="catSource" aria-label="Source"><option value="">All Sources</option><option value="portsdr">portsdr.com</option><option value="alexbeav">alexbeav.github.io</option><option value="finds">Individual Finds</option><option value="local-finds">Added By You</option></select>
       <label class="check"><input id="catPlayable" type="checkbox"> Playable Only</label>
+      <label class="check"><input id="catRunsWell" type="checkbox"> Runs Well On Computers Like Mine</label>
+      <label for="catAI">AI Use</label><select id="catAI" style="width:auto"><option value="">Any</option><option value="none">No AI Used</option><option value="assisted">AI-Assisted</option><option value="generated">Made With AI</option><option value="unsaid">Doesn't Say</option></select>
       <label class="check"><input id="catInstalled" type="checkbox"> Installed Only</label>
       <label class="check"><input id="catWish" type="checkbox"> Wishlist</label>
       <button id="clearFilters" type="button" class="small">Clear</button>
@@ -380,6 +445,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div>
         <label for="ghToken">GitHub Token</label>
         <div class="row"><input id="ghToken" type="password" placeholder="Optional - paste a token" autocomplete="off"><button id="saveGhToken" type="button">Save</button><button id="clearGhToken" type="button">Remove</button></div>
+        <p class="sub" id="ghRate" aria-live="polite"></p>
         <p class="sub" id="ghTokenState">Optional. Without one, GitHub allows 60 lookups an hour, which runs out fast when you add or update lots of games. A free token (github.com → Settings → Developer Settings → Fine-Grained Tokens, public repositories, read-only) raises that to 5,000 and unlocks nightly builds. Stored encrypted on this computer.</p>
       </div>
       <label class="check"><input id="moveFiles" type="checkbox" checked> Move picked game files into the game folder (untick to copy them instead)</label>
@@ -388,8 +454,57 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
         <select id="theme" style="width:auto"><option value="system">Follow The System</option><option value="light">Light</option><option value="dark">Dark</option></select>
       </div>
       <div>
+        <label for="uiScale">Interface Size <span class="sub" id="uiScaleVal"></span></label>
+        <input id="uiScale" type="range" min="50" max="200" step="10" value="100" style="width:240px" aria-describedby="uiScaleVal">
+        <button id="uiScaleReset" type="button" class="small">Reset To 100%</button>
+      </div>
+      <div id="lookBox">
+        <label>Make It Yours</label>
+        <p class="sub">Your own accent color, background picture and music, and how Installed Games is laid out. The picture and music are copied into Decomp Buddy's own folder, so moving the originals is fine.</p>
+        <div class="lookPart">
+          <label id="accentLab">Accent Color</label>
+          <div class="swatches" id="accentSwatches" role="group" aria-labelledby="accentLab">
+            <button type="button" class="small" data-accent="" aria-pressed="true">Default</button>
+            <button type="button" class="swatch" data-accent="#e0a53a" aria-label="Gold" aria-pressed="false" style="background:#e0a53a"></button>
+            <button type="button" class="swatch" data-accent="#c2410c" aria-label="Orange" aria-pressed="false" style="background:#c2410c"></button>
+            <button type="button" class="swatch" data-accent="#b3261e" aria-label="Red" aria-pressed="false" style="background:#b3261e"></button>
+            <button type="button" class="swatch" data-accent="#be185d" aria-label="Pink" aria-pressed="false" style="background:#be185d"></button>
+            <button type="button" class="swatch" data-accent="#6d28d9" aria-label="Purple" aria-pressed="false" style="background:#6d28d9"></button>
+            <button type="button" class="swatch" data-accent="#1d4ed8" aria-label="Blue" aria-pressed="false" style="background:#1d4ed8"></button>
+            <button type="button" class="swatch" data-accent="#2b7a3e" aria-label="Green" aria-pressed="false" style="background:#2b7a3e"></button>
+            <input id="accentCustom" type="color" value="#e0a53a" aria-label="Custom Accent Color" title="Custom Accent Color">
+          </div>
+        </div>
+        <div class="lookPart">
+          <label>Background Picture</label>
+          <div class="row"><span class="sub" id="bgState" style="flex:1" role="status" aria-live="polite"></span><button id="bgChoose" type="button">Choose Picture…</button><button id="bgRemove" type="button" hidden>Remove Picture</button></div>
+          <label for="bgDim" style="margin-top:6px">Dim <span class="sub" id="bgDimVal"></span></label>
+          <input id="bgDim" type="range" min="0" max="90" step="5" value="60" style="width:240px" aria-describedby="bgDimVal">
+          <p class="sub">More dimming keeps text easier to read over a busy picture.</p>
+        </div>
+        <div class="lookPart">
+          <label>Background Music</label>
+          <div class="row"><span class="sub" id="musicState" style="flex:1" role="status" aria-live="polite"></span><button id="musicChoose" type="button">Choose Music…</button><button id="musicRemove" type="button" hidden>Remove Music</button></div>
+          <label class="check" style="margin-top:6px"><input id="musicOn" type="checkbox"> Play Music</label>
+          <label for="musicVolume" style="margin-top:6px">Volume <span class="sub" id="musicVolumeVal"></span></label>
+          <input id="musicVolume" type="range" min="0" max="100" step="5" value="50" style="width:240px" aria-describedby="musicVolumeVal">
+          <p class="sub">Loops while Decomp Buddy is on screen and stops when its window is hidden or minimized. MP3, OGG or M4A, up to 30 MB.</p>
+        </div>
+        <div class="lookPart">
+          <label for="lookLayout">Library Layout</label>
+          <select id="lookLayout" style="width:auto"><option value="grid">Grid</option><option value="list">List</option><option value="compact">Compact</option></select>
+          <label for="cardSize" style="margin-top:6px">Card Size <span class="sub" id="cardSizeVal"></span></label>
+          <input id="cardSize" type="range" min="100" max="240" step="10" value="150" style="width:240px" aria-describedby="cardSizeVal">
+        </div>
+        <div class="row lookPart"><span class="sub" id="lookState" style="flex:1" role="status" aria-live="polite"></span><button id="lookReset" type="button">Reset Appearance</button></div>
+      </div>
+      <div>
         <label class="check"><input id="preferBoxart" type="checkbox"> Show Game Box Art Instead Of Project Icons</label>
         <p class="sub">Box art comes from the libretro thumbnail packs. A game with no box art match keeps its project's icon.</p>
+      </div>
+      <div>
+        <label class="check"><input id="showAdultMods" type="checkbox" aria-describedby="showAdultModsHelp"> Show Adult Mods</label>
+        <p class="sub" id="showAdultModsHelp">Mods their makers or the mod site mark as adult (nudity, sexual content) are hidden in GameBanana and Thunderstore until you tick this.</p>
       </div>
       <div>
         <label for="lang">Language</label>
@@ -405,14 +520,47 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div>
         <label class="check"><input id="countSetups" type="checkbox"> Count My Set-Ups</label>
         <p class="sub">When a new game from the catalog finishes setting up, tell tanookistudios.com "+1 for this game" - just the game's name, nothing about you or your computer. Off means nothing is sent.</p>
+        <label class="check"><input id="shareStats" type="checkbox"> Share Anonymous Usage Stats</label>
+        <p class="sub">Once a week, tell tanookistudios.com which version and kind of computer you use, roughly how many games you have, and which features you've turned on - so Maddie knows what to work on. No id, no game names, nothing about you; the site only adds 1 to a few totals. Off means nothing is sent. <a href="#" id="statsShow">See Exactly What's Sent</a></p>
+        <pre id="statsPreview" class="logTail" hidden></pre>
         <label class="check"><input id="startCouch" type="checkbox"> Start In Couch Mode</label>
+      </div>
+      <div>
+        <label>Controller</label>
+        <p class="sub">A controller works on every screen: the D-pad or left stick moves, A presses, B goes back, LB and RB switch screens, and Start opens Couch Mode. On a Steam Deck, pressing A on a text box opens the on-screen keyboard.</p>
+        <div class="row"><label for="padLayout" style="margin:0">Button Layout</label><select id="padLayout" style="width:auto"><option value="xbox">Xbox Style (A Is The Bottom Button)</option><option value="nintendo">Nintendo Style (A And B Swapped, X And Y Swapped)</option></select></div>
+        <div class="srcList" id="padMapList" role="group" aria-label="Controller buttons"></div>
+        <div class="row"><span class="sub" id="padState" style="flex:1" role="status" aria-live="polite"></span><button id="padReset" type="button">Reset Buttons</button></div>
         <p class="sub">Opens straight into the full-screen, controller-friendly Installed Games - handy on a TV or a Steam Deck. Starting Decomp Buddy with --couch does the same, and on a Steam Deck in Gaming Mode it's automatic.</p>
         <div class="row"><span class="sub" id="steamSelfState" style="flex:1" role="status" aria-live="polite">Put Decomp Buddy itself in Steam, opening in Couch Mode - on a Steam Deck it becomes a tile in Gaming Mode.</span><button id="steamSelf" type="button">Add Decomp Buddy To Steam</button></div>
+      </div>
+      <div id="kioskBox">
+        <label>Kiosk Mode</label>
+        <p class="sub">For an arcade cabinet or a shared computer. Decomp Buddy opens straight into Couch Mode, full screen, and leaving it or closing the window needs your PIN. Until then there's no Settings, no Remove Game, no Set Up and no web links. Turning it on locks the app right away.</p>
+        <div class="row"><input id="kioskPin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="New PIN (4 to 8 digits)" aria-label="New PIN"><input id="kioskPin2" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="The same PIN again" aria-label="New PIN Again"><button id="kioskSave" type="button">Save PIN</button></div>
+        <label class="check" style="margin-top:8px"><input id="kioskOn" type="checkbox"> Start In Kiosk Mode</label>
+        <div class="row" style="margin-top:6px"><span class="sub" id="kioskState" style="flex:1" role="status" aria-live="polite"></span><button id="kioskOff" type="button" hidden>Turn Off Kiosk Mode</button></div>
       </div>
       <div id="wineSection" hidden>
         <label>Windows Games On This Mac (Experimental)</label>
         <p class="sub">Some games only come as a Windows version. Wine can run many of those on a Mac: DirectX 9, DirectX 11 and OpenGL games often work; games that need Vulkan or DirectX 12 (most Xbox 360 recomps) usually don't. Each game gets its own Wine setup, so one can't break another. Uses Gcenx's macOS Wine builds from GitHub, checked against their published checksum.</p>
         <div class="row"><span class="sub" id="wineState" style="flex:1" role="status" aria-live="polite"></span><button id="wineInstall" type="button">Set Up Wine</button><button id="wineCancel" type="button" hidden>Cancel</button><button id="wineRemove" type="button" hidden>Remove Wine</button></div>
+      </div>
+      <div>
+        <label>Game Updates</label>
+        <p class="sub">Decomp Buddy checks your installed games for new versions. A new version only shows up after it's been out 48 hours and passed the malware scan.</p>
+        <div class="row" style="flex-wrap:wrap;gap:12px">
+          <div><label for="updSchedule">Check For Updates</label><select id="updSchedule" style="width:auto"><option value="off">Only When I Open Decomp Buddy</option><option value="15m">Every 15 Minutes</option><option value="1h">Every Hour</option><option value="6h">Every 6 Hours</option><option value="daily">Once A Day</option></select></div>
+        </div>
+        <label class="check"><input id="updAuto" type="checkbox"> Install updates by themselves (your saves are backed up first; you can switch this per game in its More… panel)</label>
+        <label class="check"><input id="updBackground" type="checkbox"> Keep running in the background when I close the window (an icon stays in the menu bar or system tray)</label>
+        <label class="check"><input id="updLogin" type="checkbox"> Start with my computer, hidden, so updates keep coming</label>
+        <div class="row"><span class="sub" id="updState" style="flex:1" role="status" aria-live="polite"></span><button id="updNow" type="button">Check Now</button></div>
+      </div>
+      <div id="protonSection" hidden>
+        <label>Windows Games On This Computer</label>
+        <p class="sub">Some games only come as a Windows version. On Linux and Steam Deck, Decomp Buddy plays those through Proton (the same thing Steam uses for Windows games) or Wine. It uses the Proton builds Steam already has: in Steam, search your Library for "Proton" and install one if none is listed. Each game gets its own Windows setup, so one can't break another, and you can pick a different Proton per game in its More… panel.</p>
+        <p class="sub" id="protonState" role="status" aria-live="polite"></p>
       </div>
       <div>
         <label>Save Sync</label>
@@ -472,6 +620,8 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <p>Because autism and a few other life complications make traditional employment a particularly bad match, app development is Maddie's full-time job. It has been rewarding, unpredictable, occasionally ridiculous, and one heck of a ride.</p>
       <p>Decomp Buddy is free. There is no paywall coming, no account to make, and no advertising. You bring your own legally owned games; nothing about you leaves this computer. If it saved you an evening of README archaeology, you can support Maddie's work, and that support is what keeps her building useful, privacy-respecting things the world forgot to make.</p>
       <p><a class="support" href="#" id="supportLink">Support Maddie's Work</a></p>
+      <p class="sub"><a href="#" data-ext="https://github.com/TanookiStudios/decomp-buddy">Star Decomp Buddy On GitHub</a></p>
+      <p class="sub">It's free, and it helps other people find the app.</p>
       <div class="sig" role="img" aria-label="Signed, Maddie">
           <svg viewBox="0 0 330 116" style="width:clamp(190px,34vw,270px); height:auto; overflow:visible; display:block; color:currentColor" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
             <g transform="rotate(-4 160 66) skewX(-8)">
@@ -579,7 +729,15 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   <div id="couchRows"></div>
   <div id="couchDetail" hidden role="region" aria-live="polite"></div>
   <div id="couchStatus" class="cstatus" role="status" aria-live="polite"></div>
+  <div id="kioskPad" hidden role="dialog" aria-modal="true" aria-labelledby="kioskPadTitle">
+    <h2 id="kioskPadTitle">Enter The PIN</h2>
+    <div id="kioskDots" class="kdots" aria-hidden="true"></div><span id="kioskCount" class="sr" aria-live="polite"></span>
+    <p id="kioskMsg" class="kmsg" role="alert"></p>
+    <div id="kioskKeys" class="kkeys" role="group" aria-label="PIN Keypad"><button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" class="kword" data-k="clear">Clear</button><button type="button" data-k="0">0</button><button type="button" class="kword" data-k="ok">OK</button></div>
+    <button id="kioskCancel" type="button">Back To Games</button>
+  </div>
 </div>
+<audio id="lookMusic" loop preload="auto" hidden></audio>
 <div id="nudge" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="nudgeTitle">
   <div class="modal-box">
     <img src="icon.png" alt="" style="width:56px;height:56px;border-radius:14px">
@@ -595,5 +753,9 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
 <script src="finding.js"></script>
 <script src="modsplus.js"></script>
 <script src="couch.js"></script>
+<script src="kiosk.js"></script>
+<script src="look.js"></script>
+<script src="devices.js"></script>
+<script src="pad.js"></script>
 </body>
 </html>

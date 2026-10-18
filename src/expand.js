@@ -2,6 +2,9 @@
 // game, and each card carries the published facts for its repo.
 import { planKey } from "./plans.js";
 import { canonConsole } from "./renames.js";
+import { scanSummary } from "./scan.js";
+import { PLATFORM_OF_TARGET } from "./targets.js";
+import { hostOf } from "./hosts.js";
 
 export const slug = (t) => String(t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -17,7 +20,7 @@ export function artworkUrl(u, g) {
   if (/^https?:\/\//i.test(s)) return s;
   if (!g.owner || s.startsWith("/") || s.includes("..")) return null;
   const p = s.replace(/^\.?\//, "").split("/").map(encodeURIComponent).join("/");
-  return g.repoHost === "gitlab" ? `https://gitlab.com/${g.owner}/${g.repo}/-/raw/HEAD/${p}` : `https://raw.githubusercontent.com/${g.owner}/${g.repo}/HEAD/${p}`;
+  return hostOf(g.repoHost).raw(g.owner, g.repo, p);
 }
 
 export function expandMultiGame(games, pub) {
@@ -35,14 +38,25 @@ export function expandMultiGame(games, pub) {
 }
 
 
-const PLATFORM_OF_TARGET = { windows: "Windows", linux: "Linux", "macos-arm64": "macOS", "macos-x64": "macOS" };
 
 // Facts from the published plan, plus every computer it has install steps for: a list site saying
 // "Windows" goes stale the day a Linux build ships, and the plan is what the app actually installs.
+// The release tag a repo's published plan installs (the one most of its builds use), or null.
+export function publishedTag(entry) {
+  const n = new Map();
+  for (const t of Object.values(entry?.targets || {})) for (const gm of t?.games || []) if (gm.build?.method === "release" && gm.build.release_tag) n.set(gm.build.release_tag, (n.get(gm.build.release_tag) || 0) + 1);
+  return [...n].sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+}
 export function attachFacts(games, pub) {
   for (const g of games) {
     const entry = g.owner && pub?.plans?.[planKey(g.repoHost || "github", g.owner, g.repo)];
     g.facts = entry?.facts || null;
+    g.scan = entry ? scanSummary(entry) : null;
+    // The version Decomp Buddy installs is the published one; a newer release waits its 48 hours and scan
+    // (scripts/follow.mjs) before it shows as an update. Collections already carry their own per-game tag.
+    const tag = !g.repoGames && publishedTag(entry);
+    if (tag) g.publishedTag = tag;
+    if (tag && tag !== g.version) { g.latestVersion = g.version; g.version = tag; }
     const planned = Object.keys(entry?.targets || {}).map((t) => PLATFORM_OF_TARGET[t]).filter(Boolean);
     if (planned.length) g.platforms = [...new Set([...(g.platforms || []), ...planned])];
   }

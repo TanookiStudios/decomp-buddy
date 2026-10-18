@@ -11,14 +11,15 @@ import { pipeline } from "node:stream/promises";
 import { Readable } from "node:stream";
 import AdmZip from "adm-zip";
 import { applyFolderArtwork } from "./icons.js";
-import { targetOf, assetMismatch } from "./targets.js";
+import { targetOf, assetMismatch, armSibling } from "./targets.js";
+import { pickRelease } from "./scan.js";
 import { upgradeManifest } from "./installhtml.js";
 import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 // Manifest fields owned by the player (or stamped after set-up): an update copies them over.
-export const USER_FIELDS = ["lastPlayed", "steamAppId", "launchArgs", "modOrder", "modSources", "adopted", "saveSync"];
+export const USER_FIELDS = ["lastPlayed", "steamAppId", "launchArgs", "modOrder", "modSources", "adopted", "saveSync", "displayName", "tags", "hidden", "runner", "autoUpdate", "skipTag", "device"];
 export const MANIFEST = "decomp-buddy.json";
 
 export function safeName(s) {
@@ -44,7 +45,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Streams to <dest>.part, resuming after a dropped connection (up to `retries` times, backing off),
 // then checks the digest ("sha256:…", what GitHub publishes per asset) over the whole file: a mismatch
 // deletes it and throws. Returns { verified: true|false|null }.
-export async function download(url, dest, log, { digest = null, fetchImpl = fetch, ctrl = null, retries = 4, backoff = 1000 } = {}) {
+export async function download(url, dest, log, { digest = null, fetchImpl = fetch, ctrl = null, retries = 4, backoff = 1000, scanned = false } = {}) {
   const part = `${dest}.part`;
   const [algo, want] = digest && /^(sha256|sha1|md5):([0-9a-f]+)$/i.test(digest) ? digest.split(":") : [null, null];
   let failures = 0, lastPct = -1, total = 0;
@@ -83,9 +84,14 @@ export async function download(url, dest, log, { digest = null, fetchImpl = fetc
   }
   if (!algo) { fs.renameSync(part, dest); if (digest === null) log("  (no checksum published for this file)"); return { verified: null }; }
   const got = await hashFile(part, [algo.toLowerCase()]);
-  if (got[algo.toLowerCase()] !== want.toLowerCase()) { fs.rmSync(part, { force: true }); throw new Error(`Download of ${path.basename(dest)} didn't match GitHub's ${algo} checksum - deleted it. Try again.`); }
+  if (got[algo.toLowerCase()] !== want.toLowerCase()) {
+    fs.rmSync(part, { force: true });
+    throw new Error(scanned
+      ? `${path.basename(dest)} has changed since Decomp Buddy scanned it for malware, so it was deleted instead of installed. It will install again once the new file has been scanned.`
+      : `Download of ${path.basename(dest)} didn't match GitHub's ${algo} checksum - deleted it. Try again.`);
+  }
   fs.renameSync(part, dest);
-  log(`  checksum verified (${algo})`);
+  log(scanned ? "  matches the file Decomp Buddy scanned for malware" : `  checksum verified (${algo})`);
   return { verified: true };
 }
 
@@ -103,10 +109,31 @@ export function listFiles(dir) {
   walk(dir, ""); return out;
 }
 // A .dmg: on a Mac, mount it read-only and copy what's inside; elsewhere 7-Zip reads most of them.
+// Release files setup can open itself. A single program (an AppImage, or an .exe that isn't an installer) counts:
+// it's simply put in the folder. Installers are downloaded and left for you to run.
+export const INSTALLER = /(setup|install(er)?)[^/\\]*\.(exe|msi)$|\.(pkg|flatpak|flatpakref)$/i;
+export const unpackable = (name, platform = process.platform) =>
+  /\.(zip|7z|tar|tgz|tar\.gz|tar\.xz|tar\.bz2|tar\.zst|dmg|deb|appimage)$/i.test(name) || (/\.exe$/i.test(name) && !INSTALLER.test(name))
+  || (/\.run$/i.test(name) && platform !== "win32") || (/\.msi$/i.test(name) && platform === "win32");
+// The members of a Unix "ar" archive (what a .deb is): "!<arch>\n", then a 60-byte header per file.
+export function readAr(buf) {
+  if (buf.subarray(0, 8).toString("latin1") !== "!<arch>\n") throw new Error("Not an ar archive.");
+  const out = []; let o = 8;
+  while (o + 60 <= buf.length) {
+    const name = buf.subarray(o, o + 16).toString("latin1").trim().replace(/\/$/, ""), size = Number(buf.subarray(o + 48, o + 58).toString("latin1").trim());
+    if (!Number.isFinite(size) || o + 60 + size > buf.length) throw new Error("Damaged ar archive.");
+    let body = buf.subarray(o + 60, o + 60 + size), real = name;
+    // BSD-style long name ("#1/<length>"): the name is the first bytes of the body.
+    if (/^#1\/\d+$/.test(name)) { const n = Number(name.slice(3)); real = body.subarray(0, n).toString("latin1").replace(/\0+$/, ""); body = body.subarray(n); }
+    out.push([path.basename(real), body]); o += 60 + size + (size % 2);
+  }
+  return out;
+}
 function unpackDmg(dmg, tmp, seven) {
   if (process.platform !== "darwin") { execFileSync(seven, ["x", "-y", "-bd", `-o${tmp}`, dmg], { stdio: "ignore" }); return; }
   const mnt = fs.mkdtempSync(path.join(os.tmpdir(), "db-dmg-"));
-  execFileSync("hdiutil", ["attach", "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mnt, dmg], { stdio: "ignore" });
+  try { execFileSync("hdiutil", ["attach", "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mnt, dmg], { stdio: "ignore" }); }
+  catch { fs.rmSync(mnt, { recursive: true, force: true }); throw new Error(`${path.basename(dmg)} wouldn't open - if it asks you to accept a license, open it once in Finder, then Update.`); }
   try { for (const n of fs.readdirSync(mnt)) if (!/^\.|^Applications$/.test(n)) execFileSync("cp", ["-R", path.join(mnt, n), tmp]); }
   finally { execFileSync("hdiutil", ["detach", mnt, "-force"], { stdio: "ignore" }); fs.rmSync(mnt, { recursive: true, force: true }); }
 }
@@ -125,6 +152,17 @@ export function extractZip(archive, dir, { entries: record } = {}) {
   // System tar keeps Unix modes (7-Zip's tar reader doesn't); gz/xz/bz2 tars go straight through it.
   const untar = (file) => execFileSync("tar", ["-xf", file, "-C", tmp], { stdio: "ignore" });
   if (/\.dmg$/i.test(input)) unpackDmg(input, tmp, seven);
+  else if (/\.appimage$/i.test(input) || (/\.exe$/i.test(input) && !INSTALLER.test(input))) {
+    const to = path.join(tmp, path.basename(input)); fs.copyFileSync(input, to); if (!/\.exe$/i.test(to)) fs.chmodSync(to, 0o755);
+  } else if (/\.deb$/i.test(input)) {
+    // A .deb is an ar archive holding data.tar.*: the files it would install, unpacked here instead (nothing is installed).
+    const ar = path.join(tmp, ".deb-parts"); fs.mkdirSync(ar);
+    for (const [name, bytes] of readAr(fs.readFileSync(input))) if (/^data\.tar/.test(name)) fs.writeFileSync(path.join(ar, name), bytes);
+    let data = fs.readdirSync(ar).find((n) => /^data\.tar/.test(n)); if (!data) throw new Error(`${path.basename(input)} has no data.tar inside.`);
+    if (/\.zst$/i.test(data)) { const zlib = require("node:zlib"); fs.writeFileSync(path.join(ar, "data.tar"), zlib.zstdDecompressSync(fs.readFileSync(path.join(ar, data)))); data = "data.tar"; }
+    untar(path.join(ar, data)); fs.rmSync(ar, { recursive: true, force: true });
+  } else if (/\.run$/i.test(input)) execFileSync("sh", [input, "--noexec", "--target", tmp], { stdio: "ignore" }); // makeself: unpack only
+  else if (/\.msi$/i.test(input)) execFileSync("msiexec", ["/a", input, "/qn", `TARGETDIR=${tmp}`], { stdio: "ignore" }); // administrative unpack, no install
   else if (/\.tar$/i.test(input) || /\.(tar\.(gz|xz|bz2)|tgz|txz|tbz2?)$/i.test(input)) untar(input);
   else {
     execFileSync(seven, ["x", "-y", "-bd", `-o${tmp}`, input], { stdio: "ignore", maxBuffer: 16 * 1024 * 1024 });
@@ -243,15 +281,24 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
   let statusDetail = "";
   const w = plan.build;
 
-  let release = null;
+  let release = null, apk = null;
   let downloadVerified = null;
   const releaseEntries = [];
   if (w.method === "release") {
-    release = (ctx.releases || []).find((r) => (w.release_tag ? r.tag === w.release_tag : true) && r.assets.some((a) => a.name === w.release_asset))
-      || (ctx.releases || []).find((r) => r.assets.some((a) => a.name === w.release_asset)) || null;
-    const asset = release?.assets.find((a) => a.name === w.release_asset);
+    let asset;
+    ({ release, asset } = pickRelease(ctx.releases, w));
+    // ARM Linux with an x64 plan: the release's aarch64 build of the same file, when there is one.
+    const sibling = target === "linux-arm64" && asset && assetMismatch(asset.name, target) ? armSibling(release.assets, asset.name) : null;
+    if (sibling) { log(`Using ${sibling.name}, the ARM build of ${asset.name}.`); asset = sibling; }
     const wrong = asset && assetMismatch(asset.name, target);
-    if (wrong) {
+    // Decomp Buddy's malware scan: a flagged file is never installed, and a scanned one must be that exact file.
+    const scannedHere = w.scanned?.sha256 && !sibling;
+    const digest = scannedHere ? `sha256:${w.scanned.sha256}` : asset?.digest;
+    if (w.scanned?.flagged) {
+      status = "unsupported";
+      statusDetail = `A virus scanner flagged ${w.release_asset} (${w.scanned.signature}), so Decomp Buddy won't install it until it has been reviewed.`;
+      log(`! ${statusDetail}`);
+    } else if (wrong) {
       status = "unsupported";
       statusDetail = `The only build the docs point at (${asset.name}) is ${wrong}, not a ${T.label} one.`;
       log(`! ${statusDetail}`);
@@ -259,16 +306,26 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
       status = "needs_attention";
       statusDetail = `Claude picked release asset "${w.release_asset}" but it isn't in the release.`;
       log(`! ${statusDetail}`);
-    } else if (!/\.(zip|7z|tar|tgz|tar\.gz|tar\.xz|tar\.bz2|tar\.zst|dmg)$/i.test(asset.name)) {
+    } else if (T.kind === "device") {
+      // A phone/headset game: the .apk waits in this folder until it's installed over USB (src/main/devices.js).
+      log(`Downloading ${asset.name}…`);
+      downloadVerified = (await download(asset.url, path.join(dir, asset.name), log, { digest, ctrl, scanned: !!scannedHere })).verified;
+      if (previous?.apk && previous.apk !== asset.name) fs.rmSync(path.join(dir, path.basename(previous.apk)), { force: true }); // the old version's app file
+      apk = asset.name;
+      status = "staged";
+      statusDetail = `Ready to copy to ${T.where} - plug it in and open Phones And Headsets.`;
+    } else if (!unpackable(asset.name)) {
       const dest = path.join(dir, asset.name);
       log(`Downloading ${asset.name}…`);
-      downloadVerified = (await download(asset.url, dest, log, { digest: asset.digest, ctrl })).verified;
+      downloadVerified = (await download(asset.url, dest, log, { digest, ctrl, scanned: !!scannedHere })).verified;
       status = "needs_attention";
-      statusDetail = `Downloaded ${asset.name} but that format isn't auto-extracted. Unpack it by hand on ${T.where}.`;
+      statusDetail = INSTALLER.test(asset.name)
+        ? `Downloaded ${asset.name}, an installer. Run it on ${T.where} to finish - Decomp Buddy doesn't run installers for you.`
+        : `Downloaded ${asset.name} but that format isn't auto-extracted. Unpack it by hand on ${T.where}.`;
     } else {
       const dest = path.join(dir, asset.name);
       log(`Downloading ${asset.name}…`);
-      downloadVerified = (await download(asset.url, dest, log, { digest: asset.digest, ctrl })).verified;
+      downloadVerified = (await download(asset.url, dest, log, { digest, ctrl, scanned: !!scannedHere })).verified;
       // Updating: keep the old release for Roll Back, and keep your game files out of the swap.
       const placedBefore = (previous?.plan?.game_files || []).filter((f) => f.placed).map((f) => path.join(dir, f.drop_into || "Game Files", f.placed.name));
       const unstash = stashPlaced(dir, placedBefore);
@@ -282,6 +339,9 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
         log(`Extracted ${n} entries.`);
       } finally { unstash(); fs.rmSync(dest, { force: true }); }
     }
+  } else if (w.method === "source" && T.kind === "device") {
+    status = "unsupported";
+    statusDetail = `No ${T.label} app (.apk) in the releases - Decomp Buddy can't build one.`;
   } else if (w.method === "source") {
     const srcDir = path.join(dir, "Source");
     const zipPath = path.join(dir, "source.zip");
@@ -364,6 +424,7 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
     status,
     statusDetail,
     plan,
+    ...(T.kind === "device" ? { apk, package_id: w.package_id || previous?.package_id || null } : {}),
     // What the player set or earned on the old copy survives the update.
     ...Object.fromEntries(USER_FIELDS.filter((k) => previous?.[k] !== undefined).map((k) => [k, previous[k]])),
   };

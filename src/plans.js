@@ -3,6 +3,7 @@
 // Read order: the admin's file on disk, the live feed (cached a day), the copy bundled with the app.
 
 import { canonOwner } from "./renames.js";
+import { PLAN_FALLBACK } from "./targets.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -31,7 +32,7 @@ export async function fetchPublished({ file, cacheDir } = {}) {
 export function lookupPlan(published, key, target) {
   const e = published?.plans?.[key];
   if (!e) return null;
-  const t = e.targets?.[target] || (target === "macos-x64" ? e.targets?.["macos-arm64"] : null);
+  const t = e.targets?.[target] || (PLAN_FALLBACK[target] ? e.targets?.[PLAN_FALLBACK[target]] : null);
   return t ? { analysis: structuredClone(t), tag: e.tag, generatedAt: e.generatedAt } : null;
 }
 
@@ -49,4 +50,5 @@ export function writePlans(file, entries) {
   return data;
 }
 
-export const TARGET_OF_PLATFORM = { Windows: ["windows"], macOS: ["macos-arm64"], Linux: ["linux"] };
+// Which plan targets ccplans writes for a platform a catalog card lists (ARM targets fall back to these).
+export const TARGET_OF_PLATFORM = { Windows: ["windows"], macOS: ["macos-arm64"], Linux: ["linux"], Android: ["android"], "Meta Quest": ["quest"] };

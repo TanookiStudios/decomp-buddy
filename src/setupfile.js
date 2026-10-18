@@ -3,7 +3,8 @@
 
 export const KIND = "decomp-buddy-setup";
 // deviceId, syncDir and voterId belong to this computer: a copy on another one would confuse save sync.
-const SECRET = new Set(["providers", "github", "window", "lastVersion", "discovered", "deviceId", "syncDir", "voterId"]);
+// So do the kiosk PIN hash and the look (its picture and music are files kept on this computer).
+const SECRET = new Set(["providers", "github", "window", "lastVersion", "discovered", "deviceId", "syncDir", "voterId", "myReports", "shortcutKey", "statsSentAt", "kiosk", "look"]);
 
 export function buildExport(settings, { version, library = [], vault = [] } = {}) {
   const s = Object.fromEntries(Object.entries(settings).filter(([k]) => !SECRET.has(k)));

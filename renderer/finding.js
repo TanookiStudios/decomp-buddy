@@ -108,7 +108,7 @@ async function loadSoon(fresh = false) {
   $("soonConsole").innerHTML = `<option value="">All Consoles</option>` + consoles.map((c) => `<option value="${esc(c)}"${c === pick ? " selected" : ""}>${esc(c)}</option>`).join("");
   renderSoon();
 }
-const repoPage = (g) => (g.host === "gitlab" ? "https://gitlab.com/" : "https://github.com/") + g.repo;
+const repoPage = (g) => ({ gitlab: "https://gitlab.com/", codeberg: "https://codeberg.org/" }[g.host] || "https://github.com/") + g.repo;
 function renderSoon() {
   if (!soon) return;
   const q = $("soonSearch").value.trim().toLowerCase(), con = $("soonConsole").value;

@@ -21,8 +21,8 @@ import { SYSTEM as FACTS_SYSTEM, Facts, extractFacts } from "../src/facts.js";
 import { analyzeOne } from "../src/run.js";
 import { writePlans, planKey, TARGET_OF_PLATFORM } from "../src/plans.js";
 import { targetOf } from "../src/targets.js";
-import { fetchRepoContext as fetchGitHub } from "../src/github.js";
-import { fetchRepoContext as fetchGitLab } from "../src/gitlab.js";
+import { fetchContextFor, repoUrlOf } from "../src/hosts.js";
+import { safeRemote } from "../src/adb.js";
 
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
 const SITE = arg("--site") || path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site");
@@ -71,6 +71,9 @@ Facts are read from the README/docs sections of the job.
 - build.method "release": release_asset AND release_tag copied character-for-character from the job's release list, and that asset must be inside that tag, and must be for the target's OS/CPU (Windows x64 → a Windows/win64/x64 .zip/.exe/.7z; Linux x64 → linux/AppImage/.tar.*; macOS arm64 → mac/macos/darwin/universal/arm64 .dmg/.zip). No such asset for that target → "source" (if the docs explain building there), else "unsupported" (or "web_only" for browser builds).
 - Quotes (completeness_quote, deck_quote, controller_notes) copied verbatim from the README/docs text, max 200 chars.
 - Never invent hashes, filenames, or folders the docs don't state - put doubts in "unsure".
+- Targets "android" (an Android phone or handheld) and "quest" (a Meta Quest headset): build.release_asset must be an .apk from the job's release list. No .apk in any release → method "unsupported" (never "source": Decomp Buddy doesn't build apps). For "quest", when several .apks are released, pick the one whose name says quest, oculus or vr; any other .apk is allowed when it's the only one. For "android", never pick an .apk whose name says quest, oculus, vr, xr or openxr.
+- build.package_id: the app's Android package name (e.g. "com.drbeef.questzdoom") only when the README, docs or file tree (AndroidManifest.xml, build.gradle applicationId) states it; else null. Never guess it from the repo name. Always null for computer targets.
+- game_files[].push_to: for "android"/"quest" only, the folder on the device's shared storage the docs say the file goes in, relative to /sdcard (docs say "/sdcard/QuestZDoom/wads" → "QuestZDoom/wads"). No leading slash, no "..", no backslashes. null when the docs don't name a folder, and always null for computer targets. drop_into stays "Game Files" (where the file waits on the computer).
 `;
 
 async function prep() {
@@ -86,7 +89,7 @@ async function prep() {
       // work() only lists repos still missing something, so an old answer in done/ doesn't count - only one awaiting import does.
       if (fs.existsSync(J("out", `${w.id}.json`))) { skipped++; manifest.push(w); continue; }
       try {
-        const ctx = fs.existsSync(J("ctx", `${w.id}.json`)) ? readJSON(J("ctx", `${w.id}.json`)) : await (w.host === "gitlab" ? fetchGitLab : fetchGitHub)({ owner: w.owner, repo: w.repo });
+        const ctx = fs.existsSync(J("ctx", `${w.id}.json`)) ? readJSON(J("ctx", `${w.id}.json`)) : await fetchContextFor({ host: w.host, owner: w.owner, repo: w.repo });
         fs.writeFileSync(J("ctx", `${w.id}.json`), JSON.stringify(ctx));
         const body = renderContext(ctx, { target: w.targets[0] || "windows", preferredTag: w.version || undefined }).split("\n").slice(1).join("\n");
         const head = [
@@ -128,8 +131,14 @@ async function validate(w, ans, ctx) {
     if (!parsed.success) { problems.push(`${t}: ${parsed.error.issues.slice(0, 3).map((i) => `${i.path.join(".")} ${i.message}`).join("; ")}`); continue; }
     if (parsed.data.redirect_repo) { problems.push(`${t}: points at ${parsed.data.redirect_repo} - left for the paid planner`); continue; }
     const bad = assetProblems(parsed.data, ctx); if (bad.length) { problems.push(`${t}: ${bad.join("; ")}`); continue; }
+    // Phones and headsets: an .apk download, and every push_to folder stays under /sdcard (the app refuses it otherwise).
+    if (targetOf(t).kind === "device") {
+      const off = parsed.data.games.flatMap((g) => [...(g.build.method === "release" && !/\.apk$/i.test(g.build.release_asset || "") ? [`${g.build.release_asset} isn't an .apk`] : []),
+        ...g.game_files.filter((f) => f.push_to != null).flatMap((f) => { try { safeRemote(f.push_to, "x"); return []; } catch { return [`push_to "${f.push_to}" leaves /sdcard`]; } })]);
+      if (off.length) { problems.push(`${t}: ${off.join("; ")}`); continue; }
+    }
     try {
-      const items = await analyzeOne(`https://${w.host === "gitlab" ? "gitlab.com" : "github.com"}/${w.owner}/${w.repo}`, { provider: { label: "Claude Code" }, log: () => {}, target: t, fetchContext: async () => ctx, planner: async () => structuredClone(parsed.data) });
+      const items = await analyzeOne(repoUrlOf(w.host, w.owner, w.repo), { provider: { label: "Claude Code" }, log: () => {}, target: t, fetchContext: async () => ctx, planner: async () => structuredClone(parsed.data) });
       entry.targets = { ...(entry.targets || {}), [t]: { redirect_repo: null, games: items.map((i) => i.plan), generatedBy: "claude-code", generatedAt: new Date().toISOString() } };
     } catch (err) { problems.push(`${t}: ${err.message.slice(0, 120)}`); }
   }

@@ -75,8 +75,8 @@ export async function generatePlans(sender, { limit, repos, confirmedJobs, trigg
     return { done: 0, failed: 0, cancelled: false, needsConfirm: total, estimateUsd: plan.estimateUsd };
   }
   const { analyzeOne } = await import("../run.js");
-  const { parseRepoUrl, fetchRepoContext: fetchGitHub } = await import("../github.js");
-  const { fetchRepoContext: fetchGitLab } = await import("../gitlab.js");
+  const { parseRepoUrl } = await import("../github.js");
+  const { fetchContextFor } = await import("../hosts.js");
   genState = { cancelled: false };
   let done = 0, failed = 0, batch = {};
   const tick = () => { if (done % 10 === 0 && Object.keys(batch).length) { writePlans(file, batch); batch = {}; } safeSend(sender, "plans:progress", { done, failed, total }); };
@@ -104,7 +104,7 @@ export async function generatePlans(sender, { limit, repos, confirmedJobs, trigg
       }
       if (!facts || genState.cancelled || done + failed >= total) continue;
       try {
-        if (!ctx) { const ref = parseRepoUrl(g.repoUrl); ctx = await (ref.host === "gitlab" ? fetchGitLab(ref) : fetchGitHub(ref)); }
+        if (!ctx) { const ref = parseRepoUrl(g.repoUrl); ctx = await fetchContextFor(ref); }
         const f = await extractFacts(ctx, { provider });
         batch[key] = { ...(batch[key] || {}), facts: f, factsAt: new Date().toISOString() };
         done++; log(`✓ ${g.title} [facts] ${f.completeness}${f.steam_deck !== "none" ? `, Deck ${f.steam_deck}` : ""}${f.health.archived ? ", archived" : ""}`);

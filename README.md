@@ -4,10 +4,22 @@
 [![Latest release](https://img.shields.io/github/v/release/TanookiStudios/decomp-buddy?label=download&color=1d2140)](https://decompbuddy.com/download)
 [![License: GPL v3](https://img.shields.io/badge/license-GPL--3.0-1d2140)](LICENSE)
 ![Mac · Windows · Linux](https://img.shields.io/badge/runs%20on-Mac%20%C2%B7%20Windows%20%C2%B7%20Linux-1d2140)
+[![GitHub stars](https://img.shields.io/github/stars/TanookiStudios/decomp-buddy?style=flat&color=e0a53a)](https://github.com/TanookiStudios/decomp-buddy/stargazers)
 
 **Every game decompilation, recompilation and native PC port in one place - and each one as close to a one-click install as we can make it.**
 
-Get it at **[decompbuddy.com](https://decompbuddy.com)**. Free, no account, no ads. Made by Maddie at [Tanooki Studios](https://tanookistudios.com).
+**[Download for Windows](https://decompbuddy.com/download) · [Mac](https://decompbuddy.com/download) · [Linux](https://decompbuddy.com/download)** - free, no account, no ads. Made by Maddie at [Tanooki Studios](https://tanookistudios.com). If it helps you, a ⭐ helps other people find it.
+
+### Why Decomp Buddy
+
+- **The biggest catalog of playable ports** - over 1,300 games (live count above), only ones you can actually play.
+- **It sets up your own game file, not just the download** - checks the exact ROM or disc the project needs by checksum, region and version, adds BIOS files, converts and patches when the project says so, and puts it in the right folder.
+- **No AI key needed** - install steps are written ahead of time for every game. Bring your own key (or Apple Intelligence on a Mac, or a free local model) for anything new.
+- **Your saves are safe** - backed up before every update, restore any time, optional sync through your cloud folder.
+- **Updates and Roll Back** - see what changed, Update or Update All, go back if a release breaks.
+- **Steam and Steam Deck** - Install To Steam with full box art, and a controller-friendly Couch Mode.
+- **Windows games on a Mac** through Wine, an approved (notarized) Mac app, and six languages.
+- **Open source** (GPL-3.0), and nothing about you leaves your computer unless you say so.
 
 ![Browse Games: tiles with box art for every Nintendo 64 port, a row of console buttons, search and filters](docs/screenshots/browse.png)
 
@@ -17,7 +29,7 @@ The decomp scene is turning classic console games into real programs that run na
 
 Decomp Buddy wants to be **the definitive source for all of it**: one catalog of every decomp and port worth playing, and a setup that turns each one into a single click plus your own game file.
 
-- **One catalog.** 658 games today (the badge above is live), merged from portsdr.com, community lists and hand-found projects, checked by hand so only games you can actually play are listed. Decomps that only rebuild the original cartridge wait on a separate list and join the catalog on their own the day they ship a PC version.
+- **One catalog.** Over 1,300 games today (the badge above is live), merged from portsdr.com, community lists and hand-found projects, checked by hand so only games you can actually play are listed. Decomps that only rebuild the original cartridge wait on a separate list and join the catalog on their own the day they ship a PC version.
 - **Generative AI reads the instructions so you don't have to.** For every project, an AI reads its GitHub page - README, docs, every release - and turns it into a precise install plan: which download fits your computer, which game file it needs (with the checksum the project publishes), the exact folder it goes in, and how to start it. Those plans are written ahead of time for every game in the catalog, so installing one needs no AI key at all - you just pick your game file.
 - **Any GitHub link works too.** Found a project that isn't in the catalog yet? Paste its link into **Install From GitHub**. With your own AI key (Claude, any OpenAI-compatible service, or a free local model through Ollama) Decomp Buddy reads that repository the same way and sets it up.
 - **Kept up to date for you.** Once a game is installed, Decomp Buddy watches its project for new releases. When one lands, the game is marked, you see what changed, and **Update** (or **Update All**) installs it with your game files carried over and your saves backed up first.

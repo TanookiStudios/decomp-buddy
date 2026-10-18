@@ -9,7 +9,7 @@ const text = (html, re) => { const m = html.match(re); return m ? decode(m[1].re
 const link = (html, label) => { const m = html.match(new RegExp(`<a href="([^"]*)"[^>]*>${label}</a>`)); return m ? decode(m[1]) : ""; };
 
 export function parseRepo(url) {
-  const m = url.match(/^https?:\/\/(github|gitlab)\.com\/([^/\s]+)\/([^/\s#?]+)/i);
+  const m = url.match(/^https?:\/\/(github|gitlab)\.com\/([^/\s]+)\/([^/\s#?]+)/i) || url.match(/^https?:\/\/(codeberg)\.org\/([^/\s]+)\/([^/\s#?]+)/i);
   return m ? { host: m[1].toLowerCase(), owner: m[2], repo: m[3].replace(/\.git$/, "") } : { host: null, owner: null, repo: null };
 }
 

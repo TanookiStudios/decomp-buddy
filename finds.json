@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-18T08:09:11.851Z",
+  "updatedAt": "2026-10-18T20:11:14.752Z",
   "games": [
     {
       "repo": "thefixinhixon/SplosionManRecomp",
@@ -45,6 +45,37 @@
       "notes": "Xbox 360 James Bond games (Quantum of Solace, Blood Stone, 007 Legends) statically recompiled for Windows PC with ReXGlue: Direct3D 12, GDK. Configs and research only, no game files.",
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "omegakatana92/1944-The-Loop-Master-Recomp",
+      "title": "1944: The Loop Master",
+      "console": "Arcade",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-16T17:41:23Z",
+      "notes": "Native PC port of 1944: The Loop Master (Capcom/Raizing, 2000, CPS-2 arcade), built by static recompilation with cps2recomp. Work in progress. Bring your own ROM set; not affiliated with Capcom.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "HossEz/fifa-world-cup-2014-recompiled",
+      "title": "2014 FIFA World Cup Brazil",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T00:29:29Z",
+      "notes": "2014 FIFA World Cup Brazil (Xbox 360) running natively on Windows. An unofficial recompilation, played from your own copy of the game.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -330,6 +361,39 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "omegakatana92/Alien-vs-Predator-arcade-Recomp-",
+      "title": "Alien vs. Predator (Alien vs. Predator Recomp)",
+      "console": "Arcade",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-17T04:04:44Z",
+      "notes": "Native PC port of Alien vs. Predator (Capcom, 1994, CPS-2 arcade), made by static recompilation with cps2recomp. Bring your own ROM set; not affiliated with Capcom.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "Bassquake/Aliens-Versus-Predator-VR",
+      "title": "Aliens versus Predator (AVP VR)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Linux",
+        "Meta Quest",
+        "Windows"
+      ],
+      "version": "1.2",
+      "status": "latest",
+      "updatedAt": "2026-10-12T15:56:56Z",
+      "notes": "VR and flat ports of Aliens Versus Predator (1999). This is a fork of NakedAVP to use OpenXR for VR headets like the Meta Quest and PCVR as well as flat versions for PCs and various devices.",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "petarov/alleycat.exe",
       "title": "Alley Cat",
       "console": "IBM PC (MS-DOS)",
@@ -379,6 +443,22 @@
       "website": "",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "minty-hippo/amped3revamped",
+      "title": "Amped 3 (Amped 3 Revamped)",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "launcher-v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T16:43:39Z",
+      "notes": "This is a recompilation of Amped 3 that has made use of Claude to port the Xbox 360 code to modern platforms.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "PixieCatSupreme/AnodyneSharp",
@@ -516,6 +596,22 @@
       "notes": "Experimental native PC runtime and launcher for Armored Core PSP titles. Bring your own game dump.",
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "omegakatana92/Armored-Warriors-Recomp-",
+      "title": "Armored Warriors",
+      "console": "Arcade",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T01:07:21Z",
+      "notes": "Native PC port of Armored Warriors (Capcom, 1994, CPS-2 arcade beat 'em up), made by static recompilation with cps2recomp. Bring your own ROM set; not affiliated with Capcom.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -710,6 +806,22 @@
       "notes": "A faithful decompilation for Baroque 2004 with added QOL features and keyboard controls.",
       "website": "",
       "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "salman95/Battle-Hunter-Recomp",
+      "title": "Battle Hunter",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.2.1",
+      "status": "latest",
+      "updatedAt": "2026-10-18T02:34:19Z",
+      "notes": "A recompilation of an underrated game for the PS1. Recompiles from MIPS to C.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -1159,6 +1271,23 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "PeriBluGaming/BugsBunnyLostinTimeRecomp",
+      "title": "Bugs Bunny: Lost in Time",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-17T16:56:14Z",
+      "notes": "Bugs Bunny: Lost in Time (USA, SLUS-00838) statically recompiled to a native PC executable with PSXRecomp.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "Heromachine/Burnout-Recompilation",
       "title": "Burnout (Burnout Recompilation)",
       "console": "Xbox",
@@ -1245,6 +1374,21 @@
       "website": "",
       "addedAt": "2026-10-01T13:42:00.170Z",
       "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "brankomatija/BustAGrooveRecompiled-Releases",
+      "title": "Bust A Groove (Bust A Groove Recompiled)",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-13T02:50:14Z",
+      "notes": "A fan-made project to bring the classic PS1 rhythm game Bust a Groove to modern platforms through static recompilation, preserving its original gameplay and iconic style.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "Darhkfox/BusterBustsLoose",
@@ -2005,6 +2149,21 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "Team-Beef-Studios/CSVR",
+      "title": "Counter-Strike (CSVR)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v1.0.5",
+      "status": "latest",
+      "updatedAt": "2026-07-29T13:50:34Z",
+      "notes": "Unofficial Counter-Strike 1.6 VR port",
+      "website": "https://csvr.online",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "SkiddyToast/Crackdown",
       "title": "Crackdown",
       "console": "Xbox 360",
@@ -2139,6 +2298,21 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "GioPixelGH/Crash-Twinsanity-Windows",
+      "title": "Crash Twinsanity",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.8",
+      "status": "latest",
+      "updatedAt": "2026-10-18T13:50:27Z",
+      "notes": "Crash Twinsanity (PS2, PAL) running natively on Windows, played through to the credits: a Windows port of HAB3X's Mac port of Smartkin's C++ decompilation. No game data included: bring your own disc image.",
+      "website": "https://github.com/GioPixelGH/Crash-Twinsanity-Windows/releases/latest",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "Maxilure/MindOver-Recomp",
       "title": "Crash: Mind over Mutant",
       "console": "Xbox 360",
@@ -2153,6 +2327,21 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "wigwoo1/Crazy-Taxi-Catch-A-Ride-PC-Port",
+      "title": "Crazy Taxi: Catch a Ride",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "prototype-1edc1f7a9f7e",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T13:21:14Z",
+      "notes": "A Full Decompile Recomp PC port of the GBA Crazy Taxi game with enhanced resolution, framerate, music, and overall presentation",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "banteg/crimson",
@@ -2233,6 +2422,22 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "drakenabarion/virtualon_pc",
+      "title": "Cyber Troopers Virtual-On Masterpiece",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T02:30:23Z",
+      "notes": "Cyber Troopers Virtual-On Masterpiece 1995-2001 (PS4) running natively on Linux. Built on the Uncharted and Bloodborne PC ports and the shadPS4 renderer. Bring your own dump.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "kitaaaaaa/Oratan-recomp",
       "title": "Cyber Troopers Virtual-On Oratorio Tangram M.S.B.S. Ver.5.66 (Oratan-recomp)",
       "console": "Xbox 360",
@@ -2245,6 +2450,22 @@
       "notes": "Recomp project for Cybertroopers Virtual-On Oratorio Tangram MSBS Ver. 5.66",
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "omegakatana92/Cyberbots-Full-Metal-Madness-Recomp",
+      "title": "Cyberbots: Fullmetal Madness",
+      "console": "Arcade",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-16T16:33:07Z",
+      "notes": "Native PC port of Cyberbots: Fullmetal Madness (Capcom, 1995, CPS-2 arcade), made by static recompilation with cps2recomp. Cheats and training aids. Bring your own ROM set; not affiliated with Capcom.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -2291,6 +2512,36 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "kilnan/DarkRiftRecomp",
+      "title": "Dark Rift",
+      "console": "Nintendo 64",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T12:51:27Z",
+      "notes": "Native port of Dark Rift (N64) via static recompilation (N64Recomp + RT64). Work in progress. No game data included.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "linkssy2/DarkwatchDarkerEdition",
+      "title": "Darkwatch",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.1-test.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T16:42:16Z",
+      "notes": "Darkwatch: Darker Edition — PC port powered by XboxXBERecomp. Bring your own Xbox ISO.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "fabiotc/darkwing-duck-recomp",
@@ -2422,6 +2673,21 @@
       "website": "https://github.com/NoRain211/doa3-re/releases/latest",
       "addedAt": "2026-10-18T08:09:10.064Z",
       "via": "Discover queue (unsure, settled by hand)"
+    },
+    {
+      "repo": "bifftannen1/Dead-Space-2-Recomp",
+      "title": "Dead Space 2",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "tu2-playtest-20261017",
+      "status": "prerelease",
+      "updatedAt": "2026-10-17T15:20:10Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "OverkillLabs/DeadCells-PS5-Native",
@@ -2911,6 +3177,21 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "Team-Beef-Studios/QuestZDoom",
+      "title": "Doom (QuestZDoom)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "1.6.2",
+      "status": "latest",
+      "updatedAt": "2026-09-30T08:01:52Z",
+      "notes": "Quest VR Port of the popular LZDoom/GZDoom Engine with full 6DoF",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "UZDoom/UZDoom",
       "title": "Doom (UZDoom)",
       "console": "IBM PC (MS-DOS)",
@@ -2959,6 +3240,21 @@
       "website": "https://dhewm3.org/",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Team-Beef-Studios/Doom3Quest",
+      "title": "Doom 3 (Doom3Quest)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v1.4.8",
+      "status": "latest",
+      "updatedAt": "2026-09-30T08:30:56Z",
+      "notes": "Doom 3 based on a combination of the excellent dhewm3 and d3wasm projects, with multithreaded backend renderering from emileb, OpenGLES MultiView from DrBeef and lots of VR functionality ported by Baggyg from the excellent Fully Possessed PCVR mod",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "RobertBeckebans/RBDOOM-3-BFG",
@@ -3021,6 +3317,21 @@
       "notes": "Native recompilation of Doraemon 3: Nobita no Machi SOS! for Windows, Linux and Android.",
       "website": "",
       "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "skuza-oss/downhill-revived",
+      "title": "Downhill Domination",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.5",
+      "status": "latest",
+      "updatedAt": "2026-10-18T14:07:36Z",
+      "notes": "A PC port of Downhill Domination (PS2), built on a matching decompilation. Bring your own disc.",
+      "website": "https://downhill-revived.pages.dev",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -3209,6 +3520,21 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "OverkillLabs3/driveclub-recomp",
+      "title": "DriveClub",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.3",
+      "status": "latest",
+      "updatedAt": "2026-10-18T06:13:35Z",
+      "notes": "DriveClub (PS4, version 1.28) running natively on Windows",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "TheFlyingFoool/DuckGameRebuilt",
       "title": "Duck Game",
       "console": "PC (Windows)",
@@ -3235,6 +3561,38 @@
       "website": "https://discord.gg/Ad9BwSzctP",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "OMKR/DuckTales-The-Quest-for-Gold-Dos-Recompilation",
+      "title": "DuckTales: The Quest for Gold",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Windows",
+        "Linux",
+        "macOS"
+      ],
+      "version": "v.0.95",
+      "status": "latest",
+      "updatedAt": "2026-10-17T16:25:44Z",
+      "notes": "Small recompilation project for Ducktales Dos using Cloud",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "Team-Beef-Studios/RazeXR",
+      "title": "Duke Nukem 3D, Blood and Shadow Warrior (RazeXR)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2023-09-30T15:30:26Z",
+      "notes": "OpenXR Build of the Raze engine",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "lethal-guitar/RigelEngine",
@@ -3396,6 +3754,21 @@
       "via": "Maddie's Brave tabs, 14 Oct 2026"
     },
     {
+      "repo": "schans-arg/UFC4-PC-Port",
+      "title": "EA Sports UFC 4",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "ufc4-v0.0.11-preview.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-17T21:39:58Z",
+      "notes": "Experimental PS4-to-PC port of EA SPORTS UFC 4. Community source project; game files are not included.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "OpenE2140/OpenE2140",
       "title": "Earth 2140 (OpenE2140)",
       "console": "PC (Windows)",
@@ -3517,6 +3890,21 @@
       "notes": "Byte-matched decompilation of Elf Bowling (1999) with native macOS/Windows/Linux/Android/iOS/web ports. Bring your own original exe.",
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "maxgraf96/ee-macos",
+      "title": "Empire Earth (ee-macos)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v0.8.2",
+      "status": "latest",
+      "updatedAt": "2026-10-16T17:34:19Z",
+      "notes": "Empire Earth (2001) natively on Apple Silicon Macs: static recompilation of your own GOG copy, LAN play with Windows players",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -3734,6 +4122,21 @@
       "website": "https://discord.gg/Ad9BwSzctP",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "jM5557/ailu-puzzle",
+      "title": "Felyne Puzzle (ailu-puzzle)",
+      "console": "PlayStation Portable",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "v0.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T12:16:53Z",
+      "notes": "Experimental/WIP static recompilation of Felyne Puzzle for PSP",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "samuelit0davila/fifa-street-pc-port",
@@ -4040,6 +4443,21 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "nikolaygorb/FuseRecomp",
+      "title": "Fuse",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T07:40:48Z",
+      "notes": "Fuse game (2013) [Xbox360] game static recompilation project based on RexGlue-SDK",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "frankyfife/futurama_recomp",
       "title": "Futurama (FuturamaPC)",
       "console": "Xbox",
@@ -4068,6 +4486,22 @@
       "notes": "F-Zero recompiled",
       "website": "",
       "addedAt": "2026-09-18T11:06:22.201Z"
+    },
+    {
+      "repo": "HerbFargus/galaga94-port",
+      "title": "Galaga '94",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-17T14:01:06Z",
+      "notes": "Native Windows/Linux port of Galaga '94 (APSS Austria, 1994): GALAGA.EXE statically recompiled to C on SDL2",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "JoppieToppie/Galaxy-on-Fire-2-Unity-Remake",
@@ -4162,6 +4596,37 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "keeganatorr/gex-decomp",
+      "title": "Gex (gex-decomp)",
+      "console": "PC (Windows)",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T08:09:10.064Z",
+      "via": "Discover queue (unsure, settled by hand) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "Release",
+      "status": "latest",
+      "updatedAt": "2026-09-30T14:31:21Z"
+    },
+    {
+      "repo": "omegakatana92/Gigawing-Recomp-",
+      "title": "Giga Wing",
+      "console": "Arcade",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.0-beta.1",
+      "status": "latest",
+      "updatedAt": "2026-10-18T04:31:23Z",
+      "notes": "A native PC port of Giga Wing (Takumi/Capcom, CPS-2), made by static recompilation with cps2recomp — no emulator. Windows, Linux and Steam Deck builds. Bring your own ROM set; no game data included. Not affiliated with Capcom.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "elasota/Aerofoil",
@@ -4346,6 +4811,36 @@
       "via": "Lists: backloggd"
     },
     {
+      "repo": "couchk1ng/GoldenEye-Recomp-SteamDeck",
+      "title": "GoldenEye 007",
+      "console": "Xbox 360",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "V1.0",
+      "status": "latest",
+      "updatedAt": "2026-06-25T22:25:10Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "MrSco/goldeneye-vr",
+      "title": "GoldenEye 007 (GoldenEye VR)",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v0.5.8",
+      "status": "latest",
+      "updatedAt": "2026-10-18T19:20:15Z",
+      "notes": "",
+      "website": "https://goldeneyevr.com",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "ysrdevs/goldeneye-metal",
       "title": "GoldenEye 007 (goldeneye-metal)",
       "console": "Nintendo 64",
@@ -4507,6 +5002,21 @@
       "website": "",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "wigwoo1/Grand-Theft-Auto-Advance-PC-Portq",
+      "title": "Grand Theft Auto Advance (GTA Advance Native)",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "preview-2026-10-18",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T11:48:03Z",
+      "notes": "A Native Recompiled PC port of GTA Advance with enhanced FOV, Resolution, framerate, and overall visual presentation",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "Cai1Hsu/re3",
@@ -4688,6 +5198,21 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "andrewnakas/openhalo2",
+      "title": "Halo 2 (Open Halo 2)",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T00:42:33Z",
+      "notes": "Open Halo 2: tools, runtime patches and web port scripts for a static recompilation of Halo 2 (original Xbox). No game files.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "twist84/halo3_cache_release_recomp",
       "title": "Halo 3 Delta",
       "console": "Xbox 360",
@@ -4765,6 +5290,21 @@
       "website": "https://halo.milenko.org",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "moistman42069/HaloCE-DecompRemix-VR-PC-Android",
+      "title": "Halo: Combat Evolved (Halo CE VR)",
+      "console": "Xbox",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v1.0.37",
+      "status": "latest",
+      "updatedAt": "2026-10-15T11:48:10Z",
+      "notes": "Unofficial OpenCE-based Halo CE port for standalone Meta Quest VR/Steam Frame/Pico Headsets alongside PCVR/Flat PC and Android",
+      "website": "https://www.paypal.me/moistman69",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "bnunu/halo-ce-universal",
@@ -5022,6 +5562,37 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "omegakatana92/Hyper-Street-Fighter-II-Recomp-",
+      "title": "Hyper Street Fighter II: The Anniversary Edition (Hyper Street Fighter II Recomp)",
+      "console": "Arcade",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.0-beta.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-17T03:14:05Z",
+      "notes": "A native PC port of Hyper Street Fighter II: The Anniversary Edition (Capcom, 2004), built with the cps2recomp toolkit.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "zach2good/hyperblade-20XX",
+      "title": "HyperBlade",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-16T20:04:05Z",
+      "notes": "A modernised, portable version of HyperBlade (1996)",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "sonsegajp/HWDER",
       "title": "Hyrule Warriors: Definitive Edition (HWDER)",
       "console": "Nintendo Switch",
@@ -5069,6 +5640,21 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "erikomis/infamous2-recomp",
+      "title": "inFAMOUS 2",
+      "console": "PlayStation 3",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v0.2.0",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T14:56:03Z",
+      "notes": "Recompilação estática do inFAMOUS 2 (PS3) para macOS nativo com ps3recomp e o fork do inFAMOUS 1",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "HayatoG/iss_pc",
       "title": "inFAMOUS Second Son",
       "console": "PlayStation 4",
@@ -5096,6 +5682,21 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "ericodeoliveira/international-rally-championship-recomp",
+      "title": "International Rally Championship",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-08T21:17:43Z",
+      "notes": "Static recompiler that turns International Rally Championship (1997) into a native 64-bit Windows game - no emulator, no CD. / Recompilador estático: IRC nativo no Windows moderno.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "Mabec-games/iss2000-recomp",
@@ -5302,6 +5903,21 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "jcarr710/OG-Xbox-pc-ports-",
+      "title": "Jet Set Radio Future and Midnight Club 3: DUB Edition Remix (Xbox PC Ports)",
+      "console": "Xbox",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "mc3-v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-14T07:17:53Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "elprogramadorloco-arch/jim2-recomp",
       "title": "jim2 recomp",
       "console": "Unknown",
@@ -5331,6 +5947,21 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "EDGX73/KOn-Houkago-Live-Recompiled",
+      "title": "K-On! Houkago Live!! (K-On! Houkago Live Recompiled)",
+      "console": "PlayStation Portable",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-10T06:33:45Z",
+      "notes": "Native Windows port of K-On! Houkago Live!! (PSP) — bring your own ISO",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "Yokimitsuro/khdays-port",
       "title": "khdays port",
       "console": "Nintendo DS",
@@ -5355,6 +5986,22 @@
       "notes": "A static recompilation of the NES game Kickle Cubicle.",
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "thefixinhixon/UltraCombo",
+      "title": "Killer Instinct",
+      "console": "Arcade",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v1.0.0",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T14:15:16Z",
+      "notes": "Native PC ports of the Killer Instinct arcade games - bring your own game files",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -5542,6 +6189,36 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "AgitationSkeleton/legobattles-pc",
+      "title": "LEGO Battles (LEGO Battles PC port)",
+      "console": "Nintendo DS",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-beta.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-17T01:20:28Z",
+      "notes": "A native Windows port of LEGO Battles (Nintendo DS), recompiled from the game's own code. Bring your own ROM.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "vascon-es/lego-dimensions-pc",
+      "title": "LEGO Dimensions",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.2",
+      "status": "latest",
+      "updatedAt": "2026-10-17T18:58:50Z",
+      "notes": "Unofficial native port of LEGO Dimensions (PS4) to Windows - requires your own dump of the game",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "isledecomp/isle",
       "title": "Lego Island",
       "console": "PC (Windows)",
@@ -5588,6 +6265,21 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "AgitationSkeleton/lsw2ds-pc",
+      "title": "LEGO Star Wars II: The Original Trilogy",
+      "console": "Nintendo DS",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.3.0",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T16:11:58Z",
+      "notes": "PC port of LEGO Star Wars II: The Original Trilogy (Nintendo DS) by static recompilation, with online play for 2-4 players. Bring your own ROM.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "harrysof/LegoToypad",
@@ -5776,6 +6468,21 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "waifoof/MagiciansQuest-Recomp",
+      "title": "Magician's Quest: Mysterious Times",
+      "console": "Nintendo DS",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "latest",
+      "status": "prerelease",
+      "updatedAt": "2026-10-17T23:49:23Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "sonicnext-dev/MarathonRecomp",
       "title": "MarathonRecomp",
       "console": "Xbox 360",
@@ -5865,6 +6572,21 @@
       "updatedAt": "2026-10-14T10:26:06Z"
     },
     {
+      "repo": "wigwoo1/Mario-Party-4-PC-Download-Play-Edition",
+      "title": "Mario Party 4",
+      "console": "GameCube",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "dev-2026-10-18-ae3300c2-texture-lifetime",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T16:03:21Z",
+      "notes": "A Mario Party 4 PC port with DS Download Play style multiplayer for easy partying in a web browser. Only 1 person needs the game downloaded",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "iirg4x/mp6-native-port",
       "title": "Mario Party 6",
       "console": "GameCube",
@@ -5895,6 +6617,39 @@
       "website": "",
       "addedAt": "2026-10-12T19:42:08.577Z",
       "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
+      "repo": "previouslevelgames/recharged",
+      "title": "Mario Strikers Charged (Recharged)",
+      "console": "Wii",
+      "platforms": [
+        "macOS",
+        "Windows",
+        "Linux"
+      ],
+      "version": "test-pr69-174f2c0eba1b",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T16:46:17Z",
+      "notes": "Mario Strikers Charged for PC, Mac & Linux. Ported from decompiled code. Not a recompilation.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "omegakatana92/Marvel-vs-Capcom-Clash-of-Super-Heroes-Recomp",
+      "title": "Marvel vs. Capcom: Clash of Super Heroes",
+      "console": "Arcade",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.0-beta.1",
+      "status": "latest",
+      "updatedAt": "2026-10-18T13:30:13Z",
+      "notes": "Native PC recomp of Marvel vs. Capcom: Clash of Super Heroes (Capcom 1998, CPS-2; MAME set mvsc, Europe 980123), built with cps2recomp. Playable beta: Windows, Linux and Steam Deck builds with a launcher. No game data included - bring your own ROM set. GPL-3.0.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "jbalcomb/ReMoM",
@@ -6101,6 +6856,21 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "omegakatana92/Mega-Man-7-Recomp",
+      "title": "Mega Man 7",
+      "console": "SNES",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-17T22:17:52Z",
+      "notes": "An unofficial native Windows recompilation of Mega Man 7 (USA) for the SNES on modern PCs using your own legally obtained ROM. Features native gameplay, graphics, audio, and controls. No copyrighted game ROMs are included.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "VuloB1/MegaManLegendsRecomp",
       "title": "Mega Man Legends",
       "console": "PlayStation",
@@ -6221,6 +6991,22 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "coccofresco/mgsone-recomp",
+      "title": "Metal Gear Solid (Midnight Ghost Stone)",
+      "console": "PlayStation",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "alpha.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-10T12:33:08Z",
+      "notes": "Midnight Ghost Stone: a native Metal Gear Solid PS1 recompilation with original-asset Vulkan presentation. Experimental alpha.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "msantana-01/Metal-Gear-Ghost-Babel-Recomp",
       "title": "Metal Gear Solid: Ghost Babel (Recomp)",
       "console": "Game Boy Color",
@@ -6233,6 +7019,36 @@
       "notes": "Run Metal Gear Solid: Ghost Babel (Game Boy Color) as a native PC program. You supply your own ROM; this ships tools only.",
       "website": "",
       "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "correo415415/mslug-decompiled",
+      "title": "Metal Slug",
+      "console": "Arcade",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "matcher-genspark_ai_developer-374-50cc627",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T16:55:53Z"
+    },
+    {
+      "repo": "AlmazProud/metal-slug-3-recomp",
+      "title": "Metal Slug 3",
+      "console": "Arcade",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T00:16:38Z",
+      "notes": "Native Windows port of Metal Slug 3 (Neo Geo) by static 68000 recompilation, verified against MAME. Bring your own copy: no game data included.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -6315,6 +7131,21 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "Nanikoss/MZM-Reprimed",
+      "title": "Metroid: Zero Mission (MZM: Reprimed)",
+      "console": "Game Boy Advance",
+      "notes": "MZM: Reprimed — A native PC port of Metroid: Zero Misson",
+      "website": "",
+      "addedAt": "2026-10-18T08:02:57.878Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v.0.0.1-poc",
+      "status": "prerelease",
+      "updatedAt": "2026-09-17T13:27:43Z"
+    },
+    {
       "repo": "Zaxaerith/MetroidZeroMissionRecomp",
       "title": "Metroid: Zero Mission (Recomp)",
       "console": "Game Boy Advance",
@@ -6345,6 +7176,21 @@
       "via": "Maddie, 15 Oct 2026"
     },
     {
+      "repo": "3bdull4h2008/mcla-pc",
+      "title": "Midnight Club: Los Angeles (mcla-pc)",
+      "console": "Xbox 360",
+      "notes": "Native PC renderer rebuild for Midnight Club Los Angeles - D3D12 backend, PPC recompilation, GPU emulation, and pipeline cache",
+      "website": "",
+      "addedAt": "2026-10-18T08:02:57.878Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-beta",
+      "status": "latest",
+      "updatedAt": "2026-09-05T20:12:52Z"
+    },
+    {
       "repo": "holdmysocks/rusty-mcla",
       "title": "Midnight Club: Los Angeles (Rusty MCLA)",
       "console": "Xbox 360",
@@ -6372,6 +7218,21 @@
       "notes": "Midtown Madness 3 PC Native: an improved and modded MM3 PC port for Windows 10/11 x64. Xbox static recompilation with Direct3D 11, keyboard controls, widescreen, custom cars, gameplay fixes and performance improvements. Build from your own game disc.",
       "website": "",
       "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "opimuusikat/Might-and-Magic-IX-MacOS",
+      "title": "Might and Magic IX (Might-and-Magic-IX-MacOS)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T12:43:28Z",
+      "notes": "Bring-your-own-game native build of Might and Magic IX (2002) for Apple Silicon Macs: static recompilation with Ghidra, Direct3D 7 on Metal, Miles on CoreAudio. No game files included.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -6407,6 +7268,21 @@
       "website": "https://pangeasoft.net/mightymike",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "yanm1103/mikisworld",
+      "title": "Miki's World 1 and 2 (Miki's World PC Collection)",
+      "console": "Java ME (J2ME) mobile phone",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-10T17:41:00Z",
+      "notes": "Decomp and PC port of J2ME games \"Miki's World 1\" and \"Miki's World 2\"",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "ludovic111/horizon",
@@ -6482,6 +7358,21 @@
       "notes": "Native recompilation of MLB Power Pros 2008 (Wii) on Wiicompiled. No game data included.",
       "website": "",
       "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "Adoregabriel2005/monica-no-castelo-do-dragao-recomp",
+      "title": "Mônica no Castelo do Dragão",
+      "console": "Master System",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.10.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T15:49:28Z",
+      "notes": "Estudo de recompilação de Mônica no Castelo do Dragão para Windows; requer ROM própria.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -7545,6 +8436,21 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "Alex-LeTux/perfect_dark_VR",
+      "title": "Perfect Dark (Perfect Dark VR)",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v2.1",
+      "status": "latest",
+      "updatedAt": "2026-10-11T15:49:31Z",
+      "notes": "PCVR and Standalone Meta Quest VR port!! Work in progress port of n64decomp/perfect_dark to modern platforms",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "MikeHazeJr/perfect-dark-2",
       "title": "Perfect Dark (perfect-dark-2)",
       "console": "Nintendo 64",
@@ -7603,6 +8509,22 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "TekRantGaming/king-kong-recompiled-beta",
+      "title": "Peter Jackson's King Kong (King Kong PC Port)",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v2.0.0-beta.9",
+      "status": "latest",
+      "updatedAt": "2026-10-18T06:49:06Z",
+      "notes": "Beta builds of the King Kong PC Port (releases only, no code). Switch to the beta from the launcher: About > Change version.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "TheRunaway5/Phase-Distorter",
@@ -7922,6 +8844,21 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "Team-Beef-Studios/PreyVR",
+      "title": "Prey (PreyVR)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v1.2.4",
+      "status": "latest",
+      "updatedAt": "2026-03-24T17:18:41Z",
+      "notes": "PreyVR based on a combination of the excellent projects created by opensource community",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "NagyD/SDLPoP",
       "title": "Prince of Persia",
       "console": "IBM PC (MS-DOS)",
@@ -7963,6 +8900,22 @@
       "website": "",
       "addedAt": "2026-10-18T08:09:10.064Z",
       "via": "Discover queue (unsure, settled by hand)"
+    },
+    {
+      "repo": "omegakatana92/Progear-Recomp",
+      "title": "Progear",
+      "console": "Arcade",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T03:09:13Z",
+      "notes": "A native PC port of Progear (Capcom/Cave, 2001, CPS-2), statically recompiled with cps2recomp. No game data: bring your own ROM set.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "GenryTheFox0/Project-2099",
@@ -8163,6 +9116,21 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "Team-Beef-Studios/QuakeQuest",
+      "title": "Quake (QuakeQuest)",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v1.6.0",
+      "status": "latest",
+      "updatedAt": "2026-09-29T18:33:22Z",
+      "notes": "The first (and only I think!) 6DoF implementation of Quake, using the DarkPlaces Engine for the OpenXR Standalone VR HMDs",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "themuffinator/openQ4",
       "title": "Quake 4 (openQ4)",
       "console": "PC (Windows)",
@@ -8193,6 +9161,36 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Team-Beef-Studios/Quake2Quest",
+      "title": "Quake II (Quake2Quest)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v1.1.1",
+      "status": "latest",
+      "updatedAt": "2026-09-29T20:43:23Z",
+      "notes": "Quake 2 on the Oculus Quest",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "Team-Beef-Studios/ioq3quest",
+      "title": "Quake III Arena (ioq3quest)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "1.2.0",
+      "status": "latest",
+      "updatedAt": "2026-09-29T18:21:34Z",
+      "notes": "This is a port of the quake 3 engine to Oculus Quest.",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "ec-/Quake3e",
@@ -8289,6 +9287,22 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "jjmhalew/RampageRE",
+      "title": "Rampage: Total Destruction",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.10.8",
+      "status": "latest",
+      "updatedAt": "2026-10-18T16:09:25Z",
+      "notes": "A native PC port of Rampage: Total Destruction (PS2)",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "skynettx/raptor",
       "title": "Raptor: Call of the Shadows (skynettx raptor)",
       "console": "IBM PC (MS-DOS)",
@@ -8334,6 +9348,21 @@
       "notes": "A matching decompilation and PC port for the Ratchet & Clank series.",
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "AsobiCodes/rac-rs",
+      "title": "Ratchet & Clank (rac-rs)",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.2",
+      "status": "latest",
+      "updatedAt": "2026-10-17T06:09:52Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -8504,6 +9533,22 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "aikatore/recvx-enhanced-port",
+      "title": "Resident Evil Code: Veronica X (recvx-enhanced-port)",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.6.2",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T12:19:03Z",
+      "notes": "A enhanced RE CVX port/recompilation including online co-op and enhanced rendering options",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "aikatore/recvx-enhanced-recomp",
       "title": "Resident Evil Code: Veronica X (recvx-enhanced-recomp)",
       "console": "PlayStation 2",
@@ -8566,6 +9611,21 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Team-Beef-Studios/RTCWQuest",
+      "title": "Return to Castle Wolfenstein (RTCWQuest)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v1.4.1",
+      "status": "latest",
+      "updatedAt": "2026-09-29T20:49:29Z",
+      "notes": "Return to Castle Wolfenstein for the Oculus Quest",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "Sirhalo23/RidgeRacer6-Recompilation",
@@ -8702,6 +9762,22 @@
       "notes": "Static recompilation of Rock n' Roll Racing (SNES) for Windows 10 and 11. ROM not included.",
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "mstan/RocketKnightAdventuresRecomp",
+      "title": "Rocket Knight Adventures",
+      "console": "Mega Drive",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.1.14",
+      "status": "latest",
+      "updatedAt": "2026-10-18T14:30:45Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -8966,6 +10042,21 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "ZynChroMaTiK/ss-advance-decomp",
+      "title": "Serious Sam Advance",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.8.0-alpha.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T01:19:15Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "tx00100xt/SeriousSamClassic",
       "title": "Serious Sam: The First Encounter (SeriousSamClassic (tx00100xt) + CecilBotMod)",
       "console": "PC (Windows)",
@@ -9045,6 +10136,21 @@
       "notes": "Native Windows port of Shadow of the Colossus (PS4, CUSA08809) - bring your own game dump. Port nativo para PC.",
       "website": "",
       "addedAt": "2026-10-16T14:23:14.391Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "nakaionyt/ShadowOfTheColossus-PC-FrameGen",
+      "title": "Shadow of the Colossus (PC FrameGen)",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.57-fg2",
+      "status": "latest",
+      "updatedAt": "2026-10-17T17:08:26Z",
+      "notes": "Shadow of the Colossus (PS4) native PC port with DLSS-G / FSR 3 frame generation: 30 FPS locked, 60 shown. F7 uncaps live. Bring your own game files.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -9128,6 +10234,21 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "MatyMeatBoy/SS2Recomp",
+      "title": "Shining Soul II (SS2Recomp)",
+      "console": "Game Boy Advance",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.4",
+      "status": "latest",
+      "updatedAt": "2026-10-12T20:04:46Z",
+      "notes": "Shining Soul II static recompilation with adaptive 16:9 widescreen and 2–4 player GBA link-cable netplay.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "krazyjakee/ninja-master",
@@ -10076,6 +11197,22 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "Team-Beef-Studios/JKXR",
+      "title": "Star Wars Jedi Knight II and Jedi Academy (JKXR)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Meta Quest",
+        "Windows"
+      ],
+      "version": "v1.2.0",
+      "status": "latest",
+      "updatedAt": "2026-09-29T20:37:24Z",
+      "notes": "Jedi Knight games on OpenXR devices (Meta Quest, Pico 4, and PCVR)",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "elyosh/OpenTIE",
       "title": "Star Wars: TIE Fighter (OpenTIE)",
       "console": "IBM PC (MS-DOS)",
@@ -10190,6 +11327,22 @@
       "notes": "Unofficial native PC port of Street Fighter Alpha 2 (CPS-2 arcade) via static recompilation, with a training mode: macOS, Linux, Steam Deck, Windows. Requires your own copy of the game. Beta.",
       "website": "",
       "addedAt": "2026-10-16T14:23:14.391Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "omegakatana92/Street-Fighter-Alpha-Recomp-",
+      "title": "Street Fighter Alpha: Warriors' Dreams",
+      "console": "Arcade",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.0-beta.2",
+      "status": "prerelease",
+      "updatedAt": "2026-10-17T00:33:56Z",
+      "notes": "A native PC port of Street Fighter Alpha: Warriors' Dreams (CPS-2), recompiled from the arcade board's code with cps2recomp - no emulator. Bring your own sfa ROM set.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -10397,6 +11550,21 @@
       "via": "Lists: resetera, backloggd"
     },
     {
+      "repo": "fulldivegames/sm64coopdx-VR-Standalone-Physics-based",
+      "title": "Super Mario 64 (SM64 Co-Op DX VR)",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "v0.9.21",
+      "status": "latest",
+      "updatedAt": "2026-09-13T12:18:59Z",
+      "notes": "Native standalone SM64 Co-Op DX VR port for Meta Quest, with motion controls and physical climbing.",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "SCOPIC64/sm64ds-coop-port",
       "title": "Super Mario 64 DS (Co-op Port)",
       "console": "Nintendo DS",
@@ -10488,6 +11656,21 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "Zaxaerith/SuperMarioKartRecomp",
+      "title": "Super Mario Kart (SuperMarioKartRecomp)",
+      "console": "SNES",
+      "notes": "Super Mario Kart for the Super Nintendo using snesrecomp",
+      "website": "",
+      "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-preview",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T05:20:56Z"
+    },
+    {
       "repo": "mstan/SuperMarioLand2Recomp",
       "title": "Super Mario Land 2: 6 Golden Coins (SuperMarioLand2Recomp)",
       "console": "Game Boy",
@@ -10536,6 +11719,21 @@
       "via": "Lists: gamingemporium"
     },
     {
+      "repo": "ZomZed/SMSPC",
+      "title": "Super Mario Sunshine",
+      "console": "GameCube",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.5",
+      "status": "latest",
+      "updatedAt": "2026-10-18T03:59:28Z",
+      "notes": "A PC port for mario sunshine",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "snesrev/smw",
       "title": "Super Mario World",
       "console": "SNES",
@@ -10563,6 +11761,21 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Zaxaerith/SuperMarioWorld2YoshisIslandRecomp",
+      "title": "Super Mario World 2: Yoshi's Island (SuperMarioWorld2YoshisIslandRecomp)",
+      "console": "SNES",
+      "notes": "Super Mario World 2 Yoshi's Island for the Super Nintendo using snesrecomp",
+      "website": "",
+      "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-preview",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T05:30:47Z"
     },
     {
       "repo": "snesrev/sm",
@@ -11362,6 +12575,22 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "fulldivegames/Majoras-Mask-VR",
+      "title": "The Legend of Zelda: Majora's Mask (Majora's Mask VR)",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Meta Quest",
+        "Windows"
+      ],
+      "version": "v0.36",
+      "status": "prerelease",
+      "updatedAt": "2026-10-11T16:50:45Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "Volpe34/MM3D-PC",
       "title": "The Legend of Zelda: Majora's Mask 3D (MM3D-PC)",
       "console": "Nintendo 3DS",
@@ -11389,6 +12618,22 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: resetera"
+    },
+    {
+      "repo": "ShinyWindow/Shipwright-VR",
+      "title": "The Legend of Zelda: Ocarina of Time (Ship of Harkinian VR)",
+      "console": "Nintendo 64",
+      "platforms": [
+        "Meta Quest",
+        "Windows"
+      ],
+      "version": "v1.4.2",
+      "status": "prerelease",
+      "updatedAt": "2026-10-08T05:42:31Z",
+      "notes": "Mod to implement OpenVR into the renderer",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "ZakyPew/epoch-equinox",
@@ -11564,6 +12809,21 @@
       "notes": "Windows static recompilation of \"The New Adventures of Sonic the Hedgehog\" GB Studio fangame using GB Recompiled.",
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "IgorAugustoHH/The-Order-1886-PC-Port",
+      "title": "The Order: 1886 (TOport)",
+      "console": "PlayStation 4",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-15T11:52:52Z",
+      "notes": "The Order: 1886 rodando nativo no Windows 10/11: câmera cinematográfica original do PS4, NVIDIA DLSS, até 120 FPS, 23 idiomas e um launcher próprio.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -11818,6 +13078,22 @@
       "via": "The Gaming Emporium, 8 Oct 2026"
     },
     {
+      "repo": "giuseppegr/FoxRV",
+      "title": "Titus the Fox: To Marrakech and Back",
+      "console": "IBM PC (MS-DOS)",
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-17T11:29:13Z",
+      "notes": "🦊 A new engine for Titus the Fox: To Marrakech and Back (DOS, 1992), in C + SDL3. Original levels and rules, 🖥️ 16:9 widescreen, 🎮 gamepads, 🎵 AdLib music (Nuked-OPL3) or PC speaker. Runs on Windows, Linux, Nintendo 3DS/2DS and 📱 Android (Winlator, GameNative, GameHub). Bring your own copy of the game.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "IraFunesto/TomJerryRecomp",
       "title": "Tom and Jerry in House Trap",
       "console": "PlayStation",
@@ -11846,6 +13122,21 @@
       "website": "https://discord.gg/8dAn4ZSsap",
       "addedAt": "2026-10-12T19:42:08.577Z",
       "via": "Maddie's Brave tabs, 12 Oct 2026"
+    },
+    {
+      "repo": "Team-Beef-Studios/BeefRaiderXR",
+      "title": "Tomb Raider (BeefRaiderXR)",
+      "console": "PlayStation",
+      "platforms": [
+        "Meta Quest"
+      ],
+      "version": "1.0.0",
+      "status": "latest",
+      "updatedAt": "2024-09-29T21:37:18Z",
+      "notes": "OpenXR build of XProger's OpenLara",
+      "website": "",
+      "addedAt": "2026-10-18T20:11:14.694Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "XProger/OpenLara",
@@ -12628,6 +13919,21 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "DonSlopenberg/VF2reKOmped",
+      "title": "Virtua Fighter 2 (VF2reKOmped)",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.3.2",
+      "status": "latest",
+      "updatedAt": "2026-10-18T14:39:42Z",
+      "notes": "Recomp of VF2's 2012 edition for Xbox360 Arcade. Lots of extras including widescreen support, custom fights, randomized Arcade mode, upscaled backgrounds.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "PokaMilkTea/VirtuaRacingDeluxeEnhanced",
       "title": "Virtua Racing Deluxe (Enhanced)",
       "console": "Others",
@@ -12641,6 +13947,37 @@
       "notes": "Virtua Racing Deluxe (32X) with enhanced graphics, for Windows, macOS and Linux",
       "website": "",
       "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "TanookiStudios/VPW64DeluxeRecomp",
+      "title": "Virtual Pro Wrestling 64 Deluxe",
+      "console": "Nintendo 64",
+      "platforms": [
+        "macOS",
+        "Linux"
+      ],
+      "version": "v0.1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T07:22:18Z",
+      "notes": "Virtual Pro Wrestling 64 Deluxe (N64) rebuilt as a native Mac, Windows and Linux program. Bring your own ROM.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "txdim25-del/Viva-Pinata-Recompiled-port",
+      "title": "Viva Piñata",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-beta",
+      "status": "latest",
+      "updatedAt": "2026-10-18T16:13:39Z",
+      "notes": "Viva Pinata Xbox360 Recompiled port",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -12671,6 +14008,23 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "rzrbld/vurus",
+      "title": "Vyruz: Destruction of the Untel Empire (Vurus)",
+      "console": "PC (Windows)",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "version": "v0.1.2",
+      "status": "latest",
+      "updatedAt": "2026-10-18T14:00:41Z",
+      "notes": "unofficial port of Vyruz: Destruction of the Untel Empire",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "Wargus/wargus",
@@ -13017,6 +14371,21 @@
       "via": "Maddie's Brave tabs, 12 Oct 2026"
     },
     {
+      "repo": "KaikoClanworth1/wwe-crush-hour-pc",
+      "title": "WWE Crush Hour",
+      "console": "PlayStation 2",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.0.1-alpha",
+      "status": "prerelease",
+      "updatedAt": "2026-10-13T10:47:57Z",
+      "notes": "Unofficial native PC port of WWE Crush Hour (PS2) by static recompilation. Bring your own disc.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "Gadge64/WWFNoMercyRecomp",
       "title": "WWFNoMercyRecomp",
       "console": "Nintendo 64",
@@ -13218,6 +14587,21 @@
       "website": "",
       "addedAt": "2026-09-29T13:10:08.682Z",
       "via": "Discover: GitHub search"
+    },
+    {
+      "repo": "Artknighty/tagforcerecomp-preview",
+      "title": "Yu-Gi-Oh! GX Tag Force (Tag Force Recomp)",
+      "console": "PlayStation Portable",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.0",
+      "status": "latest",
+      "updatedAt": "2026-10-17T13:09:17Z",
+      "notes": "Static recompilation of Yu-Gi-Oh! GX Tag Force (PSP) to native Windows - early preview",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "mstan/ZeldaAlttPSNESRecomp",

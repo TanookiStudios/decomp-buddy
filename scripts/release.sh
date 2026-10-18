@@ -56,7 +56,10 @@ echo "→ uploading ${#ASSETS[@]} files to github.com/$REL_REPO release v$V…"
 if GH_TOKEN=$GH_TOKEN_REL gh release view "v$V" --repo "$REL_REPO" >/dev/null 2>&1; then
   run env GH_TOKEN=$GH_TOKEN_REL gh release upload "v$V" "${ASSETS[@]}" --repo "$REL_REPO" --clobber
 else
-  run env GH_TOKEN=$GH_TOKEN_REL gh release create "v$V" "${ASSETS[@]}" --repo "$REL_REPO" --title "Decomp Buddy $V" --notes "Download from https://decompbuddy.com/download - Mac (Apple Silicon + Intel, signed and notarized), Windows (installer or portable), Linux (AppImage or .deb)."
+  # docs/releases/<version>.md, when there is one, is what the GitHub release page says (what's new).
+  NOTES="Download from https://decompbuddy.com/download - Mac (Apple Silicon + Intel, signed and notarized), Windows (installer or portable), Linux (AppImage or .deb)."
+  if [[ -f docs/releases/$V.md ]]; then run env GH_TOKEN=$GH_TOKEN_REL gh release create "v$V" "${ASSETS[@]}" --repo "$REL_REPO" --title "Decomp Buddy $V" --notes-file "docs/releases/$V.md"
+  else run env GH_TOKEN=$GH_TOKEN_REL gh release create "v$V" "${ASSETS[@]}" --repo "$REL_REPO" --title "Decomp Buddy $V" --notes "$NOTES"; fi
 fi
 
 echo "→ writing $SITE_DIR/latest.json"

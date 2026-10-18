@@ -26,6 +26,8 @@ export const GameFile = z.object({
   })).describe("Checksums the docs publish for this file. ONLY values literally present in the repo docs/files - never invent one. Empty if none"),
   expected_size: z.number().nullable().describe("Exact size in bytes if the docs state it, else null"),
   expected_serial: z.string().nullable().describe("Disc serial the project requires (e.g. 'SLUS-01156' for PlayStation), copied exactly from the docs or catalog, else null"),
+  // default(null): plans written before devices existed still parse.
+  push_to: z.string().nullable().default(null).describe("Phone/headset targets only: the folder on the device's shared storage this file must be copied into, relative to /sdcard, exactly as the docs name it (e.g. 'QuestZDoom/wads'). null for computer targets or when the docs don't say"),
 });
 
 export const Plan = z.object({
@@ -40,6 +42,7 @@ export const Plan = z.object({
     build_steps: z.array(z.string()).describe("Ordered steps to build on the target machine when method is source; empty otherwise"),
     required_tools: z.array(z.string()).describe("Tools the target machine needs (e.g. 'Visual Studio 2022', 'CMake 3.25+'); empty if none beyond the download"),
     executable: z.string().nullable().describe("Name of the program to run once set up (exe, .app, or binary), if known"),
+    package_id: z.string().nullable().default(null).describe("Phone/headset targets only: the Android package name of the .apk (e.g. 'com.drbeef.questzdoom') when the docs or file tree state it, else null"),
   }),
   game_files: z.array(GameFile).describe("Every file the user must supply from their own copy of the game. At least one unless truly none"),
   first_run: z.array(z.string()).describe("What to do the first time, in order, after game files are in place"),
@@ -60,7 +63,8 @@ export const Analysis = z.object({
   games: z.array(Plan).describe("One entry per distinct game this repo ships. Most repos have exactly one; a repo with separate packages/executables for several games gets one entry each"),
 });
 
-export const PLAN_JSON_SCHEMA = z.toJSONSchema(Analysis);
+// Without the "default" keywords: OpenAI's strict mode rejects them, and every field stays required anyway.
+export const PLAN_JSON_SCHEMA = JSON.parse(JSON.stringify(z.toJSONSchema(Analysis), (k, v) => (k === "default" ? undefined : v)));
 
 export const SYSTEM = `You are Decomp Buddy. You read the GitHub repository of a game decompilation, recompilation, or native port and produce a precise, honest setup plan for the TARGET PLATFORM named in the request.
 
@@ -75,7 +79,8 @@ Rules:
 - If the project needs console system files (BIOS, firmware), list each as its own game file with kind "bios", with the exact filename it must have.
 - mods_*: report exactly what the docs say about mods and texture packs - method, folder, formats; put any mod/texture-pack URLs from the docs in mods_notes. If they say nothing, mods_method="none".
 - "artwork_url": pick one image the README shows for this game (logo first, else a gameplay screenshot), copying its path/URL exactly. Badges, shields, and GIFs don't count.
-- If this repo is only a web build, mirror, or launcher and the README points at the real project repo, set redirect_repo to that owner/repo.`;
+- If this repo is only a web build, mirror, or launcher and the README points at the real project repo, set redirect_repo to that owner/repo.
+- Phone/handheld (Android) and Meta Quest targets: the download must be an Android app (.apk) from the release lists; with no .apk, method is "unsupported" (an .apk is never built from source here). For a Meta Quest, when several .apks are released pick the one whose name says quest, oculus, or vr; for an Android phone never pick a Quest/VR/OpenXR build. Set build.package_id to the app's package name only if the docs or file tree state it. For each game file the docs say goes on the device's storage, set push_to to that folder relative to /sdcard (e.g. "QuestZDoom/wads" for /sdcard/QuestZDoom/wads) - never an absolute path, "..", or backslashes; drop_into stays the folder it waits in on this computer (use "Game Files"). For computer targets package_id and every push_to are null.`;
 
 export function renderContext(ctx, { preferredTag, preferredAsset, target = "windows", hints } = {}) {
   const t = targetOf(target);

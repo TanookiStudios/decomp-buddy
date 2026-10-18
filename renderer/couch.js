@@ -3,7 +3,6 @@
 // Works with any pad the browser maps as "standard" (Xbox, PlayStation, Switch Pro, Steam Deck).
 // Shares app.js/more.js globals ($, esc, library, renderLibrary, fmtDate, playButton, TARGET_LABEL).
 
-const PAD = { A: 0, B: 1, X: 2, Y: 3, LB: 4, RB: 5, BACK: 8, START: 9, UP: 12, DOWN: 13, LEFT: 14, RIGHT: 15 };
 let couchOn = false, couchRaf = null, couchPrev = [], couchRepeat = { dir: null, next: 0 }, couchReturn = null;
 
 async function openCouch() {
@@ -18,6 +17,7 @@ async function openCouch() {
 }
 function closeCouch() {
   if (!couchOn) return;
+  if (kioskLocked) return askKioskPin(); // Kiosk Mode (kiosk.js): only the PIN leaves
   couchOn = false; cancelAnimationFrame(couchRaf);
   $("couch").hidden = true; $("couchDetail").hidden = true;
   for (const el of document.querySelectorAll("body > nav, body > main")) el.inert = false;
@@ -27,7 +27,7 @@ function closeCouch() {
 
 const couchPlayable = (g) => (g.runsHere && g.exe) || (g.canWine && g.wineReady && g.exe);
 function couchTile(g) {
-  const why = couchPlayable(g) ? (g.runsHere ? "Ready to play" : "Plays through Wine (experimental)") : g.canWine ? "Windows version - set up Wine in Settings to try it" : `Built for ${TARGET_LABEL[g.target] || g.target}`;
+  const why = couchPlayable(g) ? (g.runsHere ? "Ready to play" : g.compatName === "Proton" ? "Plays through Proton" : "Plays through Wine (experimental)") : g.canWine ? (settings.platform === "linux" ? "Windows version - install Proton in Steam to play it" : "Windows version - set up Wine in Settings to try it") : `Built for ${TARGET_LABEL[g.target] || g.target}`;
   return `<button class="ctile${couchPlayable(g) ? "" : " dim"}" type="button" data-couch="${esc(g.key)}" aria-label="${esc(g.title)}. ${esc(why)}">
     ${g.art ? `<img src="${g.art}" alt="">` : `<span class="cnocover" translate="no">${esc(g.title)}</span>`}
     <span class="ctitle" translate="no">${esc(g.title)}</span></button>`;
@@ -41,21 +41,11 @@ function drawCouch() {
   $("couchStatus").textContent = "";
 }
 
-// Spatial move between tiles: the nearest tile in that direction, preferring the same row / column.
+// Spatial move between tiles (pad.js moveFocus: the nearest tile in that direction, same row / column first).
 function couchMove(dir) {
-  const tiles = [...$("couchRows").querySelectorAll(".ctile")]; if (!tiles.length) return;
-  const cur = document.activeElement?.classList?.contains("ctile") ? document.activeElement : null;
-  if (!cur) return tiles[0].focus();
-  const r = cur.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-  let best = null, bestD = Infinity;
-  for (const t of tiles) {
-    if (t === cur) continue;
-    const b = t.getBoundingClientRect(), x = b.left + b.width / 2 - cx, y = b.top + b.height / 2 - cy;
-    const ok = dir === "left" ? x < -4 : dir === "right" ? x > 4 : dir === "up" ? y < -4 : y > 4; if (!ok) continue;
-    const along = dir === "left" || dir === "right" ? Math.abs(x) : Math.abs(y), across = dir === "left" || dir === "right" ? Math.abs(y) : Math.abs(x);
-    const d = along + across * 3; if (d < bestD) { bestD = d; best = t; }
-  }
-  if (best) { best.focus(); best.scrollIntoView({ block: "nearest", inline: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
+  const tiles = [...$("couchRows").querySelectorAll(".ctile")];
+  if (tiles.length && !document.activeElement?.classList?.contains("ctile")) return tiles[0].focus();
+  moveFocus(tiles, dir);
 }
 function couchJumpRow(step) {
   const rows = [...$("couchRows").querySelectorAll(".crow")]; if (!rows.length) return;
@@ -65,7 +55,7 @@ function couchJumpRow(step) {
 const couchGame = () => library.find((g) => g.key === document.activeElement?.dataset?.couch);
 async function couchPlay() {
   const g = couchGame(); if (!g) return;
-  if (!couchPlayable(g)) { $("couchStatus").textContent = g.canWine ? `${g.title} is the Windows version - set up Wine in Settings to try it on this Mac.` : `${g.title} is built for ${TARGET_LABEL[g.target] || g.target}.`; return; }
+  if (!couchPlayable(g)) { $("couchStatus").textContent = g.canWine ? (settings.platform === "linux" ? `${g.title} is the Windows version - install Proton from your Steam Library to play it here.` : `${g.title} is the Windows version - set up Wine in Settings to try it on this Mac.`) : `${g.title} is built for ${TARGET_LABEL[g.target] || g.target}.`; return; }
   try { $("couchStatus").textContent = `Starting ${g.title}…`; await window.buddy.gamePlay(g.folder); $("couchStatus").textContent = `${g.title} is starting.`; }
   catch (err) { $("couchStatus").textContent = err.message.replace(/^.*Error: /, ""); }
 }
@@ -82,6 +72,7 @@ function couchDetails() {
 }
 function couchBack() { if (!$("couchDetail").hidden) { $("couchDetail").hidden = true; document.querySelector(`[data-couch="${CSS.escape($("couchDetail").dataset.key || "")}"]`)?.focus(); } else closeCouch(); }
 function couchAction(a) {
+  if (!$("kioskPad").hidden) return kioskAction(a);
   if (a === "up" || a === "down" || a === "left" || a === "right") { if ($("couchDetail").hidden) couchMove(a); }
   else if (a === "a") { if (!$("couchDetail").hidden) { $("couchDetail").hidden = true; document.querySelector(`[data-couch="${CSS.escape($("couchDetail").dataset.key)}"]`)?.focus(); } couchPlay(); }
   else if (a === "y") couchDetails();
@@ -98,9 +89,9 @@ function pollPad(t) {
   if (pad) {
     const btn = (i) => !!pad.buttons[i]?.pressed;
     const pressed = (i) => btn(i) && !couchPrev[i];
-    for (const [i, a] of [[PAD.A, "a"], [PAD.B, "b"], [PAD.Y, "y"], [PAD.LB, "lb"], [PAD.RB, "rb"], [PAD.START, "start"]]) if (pressed(i)) couchAction(a);
+    for (const [n, a] of [["A", "a"], ["B", "b"], ["Y", "y"], ["LB", "lb"], ["RB", "rb"], ["START", "start"]]) if (pressed(padIndex(n))) couchAction(a);
     const ax = pad.axes[0] || 0, ay = pad.axes[1] || 0;
-    const dir = btn(PAD.UP) || ay < -0.5 ? "up" : btn(PAD.DOWN) || ay > 0.5 ? "down" : btn(PAD.LEFT) || ax < -0.5 ? "left" : btn(PAD.RIGHT) || ax > 0.5 ? "right" : null;
+    const dir = btn(padIndex("UP")) || ay < -0.5 ? "up" : btn(padIndex("DOWN")) || ay > 0.5 ? "down" : btn(padIndex("LEFT")) || ax < -0.5 ? "left" : btn(padIndex("RIGHT")) || ax > 0.5 ? "right" : null;
     if (dir && (dir !== couchRepeat.dir || t >= couchRepeat.next)) { couchAction(dir); couchRepeat = { dir, next: t + (dir !== couchRepeat.dir ? 400 : 120) }; }
     if (!dir) couchRepeat = { dir: null, next: 0 };
     couchPrev = pad.buttons.map((b) => b.pressed);

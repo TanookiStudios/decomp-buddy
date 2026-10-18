@@ -13,8 +13,8 @@ import { BrowserWindow, dialog } from "electron";
 import { gameFolderName, DownloadCtrl } from "../setup.js";
 import { resolveProvider } from "../providers.js";
 import { status as appleStatus } from "../appleai.js";
-import { fetchRepoContext as fetchGitHub } from "../github.js";
-import { fetchRepoContext as fetchGitLab } from "../gitlab.js";
+import { fetchContextFor } from "../hosts.js";
+import { matchAsset } from "../follow.js";
 import { sortDiscs } from "../discs.js";
 import { readIndex, findInLibrary } from "../romindex.js";
 import { checkAgainstDats } from "../dat.js";
@@ -22,6 +22,7 @@ import { dumpKind } from "../dump.js";
 import { romIndexFile, datDir, savesOf } from "./files.js";
 import { backupSaves } from "../saves.js";
 import { countSetups } from "./setupcount.js";
+import { kiosk } from "./window.js";
 import { vaultDir, logTo, loadSettings, saveSettings, activeProvider, outDirFor, plansFileFor, currentTarget, state, diskCache, isNetworkError } from "./core.js";
 
 ipcMain.handle("verify", async (e, { path: file, gameFile, outDir }) => {
@@ -71,7 +72,7 @@ ipcMain.handle("analyze", async (e, { urls }) => {
     const ctxCache = diskCache("repo");
     const fetchContext = async (ref) => {
       const key = `${ref.host || "github"}:${ref.owner}/${ref.repo}`;
-      try { const c = await (ref.host === "gitlab" ? fetchGitLab(ref) : fetchGitHub(ref)); ctxCache.set(key, c); return c; }
+      try { const c = await fetchContextFor(ref); ctxCache.set(key, c); return c; }
       catch (err) { const hit = isNetworkError(err) && ctxCache.get(key); if (!hit) throw isNetworkError(err) ? new Error("You're offline and this repo hasn't been read on this computer before.") : err; log(`Offline - using what was read on ${hit.at.slice(0, 10)}.`); return hit.v; }
     };
     const items = await analyzeBatch(urls, { provider, log, target, published, fetchContext });
@@ -103,6 +104,7 @@ ipcMain.handle("analyze", async (e, { urls }) => {
 });
 
 ipcMain.handle("setup", async (e, { items }) => {
+  if (kiosk.locked) throw new Error("That is switched off in Kiosk Mode.");
   if (state.busy) throw new Error("Already working.");
   state.busy = true;
   const log = (m) => logTo(e.sender, m);
@@ -157,3 +159,36 @@ let setupCtrl = null;
 ipcMain.handle("setup:pause", () => { setupCtrl?.pause(); return !!setupCtrl; });
 ipcMain.handle("setup:resume", () => { setupCtrl?.resume(); return !!setupCtrl; });
 ipcMain.handle("setup:cancel", () => { setupCtrl?.cancel(); return !!setupCtrl; });
+
+// Update installed games without the Set Up screen: Auto Update in the background, and Pick A Version.
+// Published install steps only - nothing here spends your AI key. Saves are backed up first, the folder stays
+// the same, and a file that doesn't match its malware scan is refused by setup as usual.
+// list: [{ folder, repoUrl, target, tag? }] (tag: install that release instead of the published one).
+export async function updateInstalled(list, { log = () => {} } = {}) {
+  if (state.busy) throw new Error("Already working.");
+  state.busy = true;
+  try {
+    const s = loadSettings(), mode = s.moveFiles === false ? "copy" : "move";
+    const published = await fetchPublished({ file: plansFileFor(s), cacheDir: app.getPath("userData") });
+    const results = [];
+    for (const u of list) {
+      try {
+        const items = await analyzeBatch([u.repoUrl], { provider: null, log, target: u.target, published, fetchContext: fetchContextFor });
+        const ok = items.filter((x) => x.ok);
+        const it = ok.find((x) => gameFolderName(x.plan) === path.basename(u.folder)) || (ok.length === 1 ? ok[0] : null);
+        if (!it) throw new Error(items.find((x) => !x.ok)?.error || "Couldn't match this game to its published install steps.");
+        it.plan.folder_name = path.basename(u.folder);
+        if (u.tag && u.tag !== it.plan.build.release_tag) {
+          const rel = (it.ctx.releases || []).find((r) => r.tag === u.tag), asset = rel && matchAsset(it.plan.build.release_asset, it.plan.build.release_tag, rel.assets);
+          if (!asset) throw new Error(`${u.tag} has no download like ${it.plan.build.release_asset}.`);
+          Object.assign(it.plan.build, { release_tag: u.tag, release_asset: asset.name }); delete it.plan.build.scanned; // an older file Decomp Buddy hasn't scanned
+          log(`${it.plan.game_title}: installing ${u.tag} (${asset.name}) - not scanned by Decomp Buddy.`);
+        }
+        try { const sv = await savesOf(u.folder); if (sv.paths.length) await backupSaves(u.folder, sv.paths, { reason: "before-update", log }); } catch (err) { log(`  couldn't back up saves: ${err.message}`); }
+        const out = await setupBatch([{ ...it, picks: {}, verifications: {} }], { outDir: path.dirname(u.folder), mode, log, keep: [...(s.romFolders || []), vaultDir()] });
+        results.push({ folder: u.folder, ok: !!out.results[0]?.ok, error: out.results[0]?.error || null, tag: it.plan.build.release_tag });
+      } catch (err) { results.push({ folder: u.folder, ok: false, error: err.message }); }
+    }
+    return results;
+  } finally { state.busy = false; }
+}

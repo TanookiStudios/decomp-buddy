@@ -7,15 +7,18 @@ import { writeInstallHtml } from "../installhtml.js";
 import { PRESETS, resolveProvider } from "../providers.js";
 import { listModels } from "../plan.js";
 import { cleanStaging } from "../archive.js";
-import { TARGETS, targetIsHost, defaultInstallDir, defaultTransferDir } from "../targets.js";
+import { TARGETS, targetIsHost, defaultInstallDir, defaultTransferDir, inGamingMode } from "../targets.js";
 import { BUILTIN } from "../catalog.js";
 import { UPDATE_URL } from "../updates.js";
 import { FINDS_URL } from "../sources/finds.js";
 import { readVault } from "../vault.js";
 import { steamDir } from "../steam.js";
 import { fetchSharedSources, sourceKey, validateSourceEntry, normalizeUser, SOURCES_URL } from "../sources/shared-sources.js";
-import { VERSION, vaultDir, logFile, encrypt, decrypt, loadSettings, saveSettings, outDirFor, defaultFindsFile, sourcesFileFor, currentTarget, githubToken, applyGitHubToken, here } from "./core.js";
+import { VERSION, vaultDir, logFile, encrypt, decrypt, loadSettings, saveSettings, outDirFor, defaultFindsFile, sourcesFileFor, currentTarget, githubToken, applyGitHubToken, here, githubRate } from "./core.js";
 import { REDDIT_SUBS } from "../discover.js";
+import { cleanLook } from "../look.js";
+import { saveLook } from "./look.js";
+import { kiosk } from "./window.js";
 
 ipcMain.handle("settings:get", async () => {
   const s = loadSettings();
@@ -25,13 +28,15 @@ ipcMain.handle("settings:get", async () => {
   const target = currentTarget(s);
   return {
     installDir: s.installDir || defaultInstallDir(), transferDir: s.transferDir || s.outDir || defaultTransferDir(),
-    outDir: outDirFor(s, target), targetIsHost: targetIsHost(target),
+    outDir: outDirFor(s, target), targetIsHost: targetIsHost(target), targetKind: TARGETS[target].kind,
     moveFiles: s.moveFiles !== false, platform: process.platform,
     provider: id, model: saved.model || PRESETS[id]?.defaultModel || "", baseUrl: saved.baseUrl || PRESETS[id]?.baseUrl || "",
     hasKey: !!decrypt(saved), version: VERSION, hasGithubToken: !!githubToken(s), lang: s.lang || "system", langs: LANGS, osLang: app.getLocale(),
-    theme: s.theme || "system", preferBoxart: !!s.preferBoxart, sawLegal: !!s.sawLegal, sawWhere: !!s.sawWhere, setupCount: s.setupCount || 0, nudgedAt: s.nudgedAt || [], collapsedGroups: s.collapsedGroups || [], vault: readVault(vaultDir()),
+    theme: s.theme || "system", preferBoxart: !!s.preferBoxart, showAdultMods: !!s.showAdultMods, sawLegal: !!s.sawLegal, sawWhere: !!s.sawWhere, setupCount: s.setupCount || 0, nudgedAt: s.nudgedAt || [], collapsedGroups: s.collapsedGroups || [], vault: readVault(vaultDir()),
     wishlist: s.wishlist || {}, mine: s.mine || {}, digest: s.digest || null, startCouch: !!s.startCouch, countSetups: s.countSetups ?? null, libraryFolders: s.libraryFolders || [], steamAvailable: !!steamDir(),
     discoverSubs: s.discoverSubs || REDDIT_SUBS, discoverChannels: s.discoverChannels || [],
+    githubRate: githubRate.limit ? { ...githubRate } : null, uiScale: s.uiScale || 1, shareStats: s.shareStats === true, padMap: s.padMap || {}, padNintendo: !!s.padNintendo, updateSchedule: s.updateSchedule || "off", autoUpdateAll: !!s.autoUpdateAll, runInBackground: !!s.runInBackground, startAtLogin: !!s.startAtLogin, look: cleanLook(s.look),
+    kiosk: { on: !!s.kiosk?.on, hasPin: !!s.kiosk?.hash, locked: kiosk.locked },
     target: TARGETS[s.target] ? s.target : "windows", targets: Object.fromEntries(Object.entries(TARGETS).map(([k, t]) => [k, t.label])),
     sources: {
       builtin: BUILTIN.map((b) => ({ id: b.SOURCE.id, label: b.SOURCE.label, url: b.SOURCE.url, enabled: s.sources?.builtin?.[b.SOURCE.id] !== false })),
@@ -46,9 +51,21 @@ ipcMain.handle("settings:get", async () => {
     presets: Object.fromEntries(Object.entries(PRESETS).filter(([k]) => k !== "apple").map(([k, p]) => [k, { label: p.label, baseUrl: p.baseUrl, noKey: !!p.noKey, custom: k === "custom" }])),
   };
 });
-ipcMain.handle("settings:set", (_e, { appleAI, apiKey, installDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, githubToken, lang, preferBoxart, mine, digest, startCouch }) => {
+ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSchedule, autoUpdateAll, runInBackground, startAtLogin, uiScale, appleAI, apiKey, installDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, githubToken, lang, preferBoxart, showAdultMods, mine, digest, startCouch, look }) => {
   const s = loadSettings();
+  // Make It Yours: patch-merged; null resets it (and deletes the copied picture and music).
+  if (look !== undefined) saveLook(s, look && { ...s.look, ...look });
   if (appleAI !== undefined) s.appleAI = !!appleAI;
+  // Auto Update (src/main/background.js applies them after the renderer saves: autoupdate:apply).
+  if (shareStats !== undefined) s.shareStats = !!shareStats;
+  // Controller remapping: button name -> the controller's button number.
+  if (padMap) s.padMap = Object.fromEntries(Object.entries(padMap).filter(([k, v]) => ["A", "B", "X", "Y", "LB", "RB", "BACK", "START"].includes(k) && Number.isInteger(v) && v >= 0 && v < 32));
+  if (padNintendo !== undefined) s.padNintendo = !!padNintendo;
+  if (updateSchedule !== undefined) s.updateSchedule = ["off", "15m", "1h", "6h", "daily"].includes(updateSchedule) ? updateSchedule : "off";
+  if (autoUpdateAll !== undefined) s.autoUpdateAll = !!autoUpdateAll;
+  if (runInBackground !== undefined) s.runInBackground = !!runInBackground;
+  if (startAtLogin !== undefined) s.startAtLogin = !!startAtLogin;
+  if (uiScale !== undefined) { s.uiScale = Math.round(Math.max(0.5, Math.min(2, Number(uiScale) || 1)) * 100) / 100; for (const w of BrowserWindow.getAllWindows()) w.webContents.setZoomFactor(s.uiScale); }
   if (lang !== undefined) s.lang = lang === "system" || LANGS[lang] ? lang : "system";
   if (githubToken !== undefined) { if (githubToken) s.github = encrypt(githubToken); else delete s.github; applyGitHubToken(githubToken); }
   if (nudgedAt) s.nudgedAt = nudgedAt;
@@ -57,6 +74,7 @@ ipcMain.handle("settings:set", (_e, { appleAI, apiKey, installDir, transferDir, 
   if (wishlist) s.wishlist = wishlist;
   if (libraryFolders) s.libraryFolders = libraryFolders.filter(Boolean);
   if (preferBoxart !== undefined) s.preferBoxart = !!preferBoxart;
+  if (showAdultMods !== undefined) s.showAdultMods = !!showAdultMods;
   if (startCouch !== undefined) s.startCouch = !!startCouch;
   if (countSetups !== undefined) s.countSetups = !!countSetups;
   if (digest) s.digest = digest; // weekly What's New: { at, seen: { [id]: version }, items: [...] }
@@ -117,8 +135,20 @@ ipcMain.handle("chooseFile", async (e, { title, filters } = {}) => {
   return r.canceled ? null : r.filePath;
 });
 ipcMain.handle("openLog", () => { try { fs.appendFileSync(logFile(), ""); } catch {} return shell.openPath(logFile()); });
-ipcMain.handle("openExternal", (_e, url) => (/^https?:\/\//.test(url) ? shell.openExternal(url) : Promise.resolve()));
+ipcMain.handle("openExternal", (_e, url) => (/^https?:\/\//.test(url) && !kiosk.locked ? shell.openExternal(url) : Promise.resolve()));
 ipcMain.handle("open", (_e, p) => shell.openPath(p));
+// Steam Deck: Steam's on-screen keyboard for a text box (only in Gaming Mode or on a Deck; nowhere else does steam:// make sense).
+ipcMain.handle("deck:keyboard", () => (process.env.SteamDeck === "1" || inGamingMode() ? shell.openExternal("steam://open/keyboard") : null));
+ipcMain.handle("news:get", async () => {
+  if (process.env.DECOMP_HEADLESS && !process.env.DECOMP_NEWS_FILE) return null;
+  const { NEWS_URL, pickNews } = await import("../updates.js");
+  try {
+    const doc = process.env.DECOMP_NEWS_FILE ? JSON.parse(fs.readFileSync(process.env.DECOMP_NEWS_FILE, "utf8"))
+      : await (await fetch(NEWS_URL, { headers: { "User-Agent": `decomp-buddy/${VERSION}` }, signal: AbortSignal.timeout(10_000), cache: "no-store" })).json();
+    return pickNews(doc, { version: VERSION, dismissed: loadSettings().newsDismissed || [] });
+  } catch { return null; }
+});
+ipcMain.handle("news:dismiss", (_e, id) => { const s = loadSettings(); s.newsDismissed = [...new Set([...(s.newsDismissed || []), String(id).slice(0, 60)])].slice(-50); saveSettings(s); return true; });
 ipcMain.handle("clean", (_e, outDir) => {
   outDir = outDir || outDirFor(loadSettings(), currentTarget(loadSettings()));
   cleanStaging(outDir);

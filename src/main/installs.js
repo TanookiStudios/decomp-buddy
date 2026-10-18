@@ -8,6 +8,7 @@ import { findConfig, readConfig, writeConfig } from "../gameconfig.js";
 import { PRESETS, presetValues } from "../presets.js";
 import { backupSaves, savePathsFor } from "../saves.js";
 import { fetchPublished, planKey } from "../plans.js";
+import { parseRepoUrl } from "../github.js";
 import { upgradeManifest, writeInstallHtml } from "../installhtml.js";
 import { DownloadCtrl, listFiles } from "../setup.js";
 import { logTo, loadSettings, plansFileFor } from "./core.js";
@@ -63,7 +64,8 @@ ipcMain.handle("nightly:cancel", () => { nightlyCtrl?.cancel(); return true; });
 async function configOf(folder) {
   const m = readM(folder);
   const pub = await fetchPublished({ file: plansFileFor(loadSettings()), cacheDir: app.getPath("userData") }).catch(() => null);
-  const facts = pub?.plans?.[planKey("github", ...String(m.repo).split("/"))]?.facts;
+  let host = "github"; try { host = parseRepoUrl(m.repoUrl).host; } catch {}
+  const facts = pub?.plans?.[planKey(host, ...String(m.repo).split("/"))]?.facts;
   const cfg = facts?.config;
   if (!cfg?.file) return { known: false };
   const extra = savePathsFor(facts, { gameDir: folder }).map((p) => path.dirname(p.path));
