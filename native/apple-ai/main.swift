@@ -10,8 +10,7 @@ import FoundationModels
     let args = CommandLine.arguments.dropFirst()
     let model = SystemLanguageModel.default
     if args.first == "--status" {
-      if case .available = model.availability { print(#"{"available":true,"contextSize":\#(model.contextSize)}"#) }
-      else { print(#"{"available":false,"reason":"\#(String(describing: model.availability).replacingOccurrences(of: "\"", with: "'"))"}"#) }
+      print(statusLine(model.availability, contextSize: model.contextSize))
       return
     }
     guard case .available = model.availability else { fail(2, "Apple Intelligence isn't available on this Mac (\(model.availability)).") }

@@ -5,5 +5,5 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p build/apple-ai
-xcrun swiftc -parse-as-library -O -target arm64-apple-macos26.0 -o build/apple-ai/decomp-buddy-ai native/apple-ai/main.swift
+xcrun swiftc -parse-as-library -O -target arm64-apple-macos26.0 -o build/apple-ai/decomp-buddy-ai native/apple-ai/main.swift native/apple-ai/status.swift
 echo "✓ build/apple-ai/decomp-buddy-ai"
