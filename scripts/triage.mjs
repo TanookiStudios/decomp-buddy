@@ -1,6 +1,6 @@
 // Sorts the Discover queue with Claude Code agents instead of by hand (or the paid API).
 //
-//   node scripts/triage.mjs prep   [--site <TanookiStudios-Site>] [--queue <settings.json> | --repos <list.txt>] [--no-reddit] [--batch 25]
+//   node scripts/triage.mjs prep   [--site <TanookiStudios-Site>] [--queue <settings.json> | --repos <list.txt>] [--no-reddit] [--scan] [--batch 25]
 //   (--repos lines: owner/repo, a github.com link, or a gitlab.com link)
 //   node scripts/triage.mjs check  <batch id>
 //   node scripts/triage.mjs import [--site <TanookiStudios-Site>]
@@ -17,7 +17,7 @@ import os from "node:os";
 import path from "node:path";
 import { enrichMany, enrichFromGitLab, publishFinds } from "../src/sources/finds.js";
 import { readWaiting, excludedKeys } from "../src/waiting.js";
-import { scanReddit } from "../src/discover.js";
+import { scanReddit, scanBluesky, scanGitHub, scanGitHubTopics } from "../src/discover.js";
 
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
 const SITE = arg("--site") || path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site");
@@ -102,6 +102,13 @@ async function prep() {
   // --repos <file>: sort a hand-picked list (one owner/repo per line, e.g. from browser tabs) instead of the app's queue.
   const list = arg("--repos");
   const have = known(), queue = list ? fs.readFileSync(list, "utf8").split("\n").map((l) => l.trim()).filter(Boolean).map((l) => ({ repo: queueKey(l) })) : Object.values(readJSON(QUEUE).discovered || {});
+  // --scan: run every Discover scanner right here (Bluesky, GitHub topics, GitHub search 3 pages deep), so a full
+  // scan doesn't wait for someone to press Discover in the app. Reddit is added just below.
+  if (arg("--scan") !== null || process.argv.includes("--scan")) {
+    for (const [name, fn] of [["Bluesky", () => scanBluesky()], ["GitHub topics", () => scanGitHubTopics({ pages: 3, log: console.log })], ["GitHub search", () => scanGitHub({ pages: 3, log: console.log })]]) {
+      try { const r = await fn(); console.log(`${name}: ${r.length} candidate(s)`); queue.push(...r); } catch (err) { console.log(`${name} failed: ${err.message}`); }
+    }
+  }
   // The queue sort also reads Reddit's newest posts itself (--no-reddit skips it; a --repos list never does).
   if (!list && !process.argv.includes("--no-reddit")) {
     const r = await scanReddit();
@@ -110,7 +117,8 @@ async function prep() {
     queue.push(...r, ...leads);
   }
   const listed = new Map([...have].map((r) => [r.split("/")[1], r]));
-  const todo = queue.map((c) => c.repo).filter((r) => r && !have.has(r.toLowerCase()));
+  // Several sources often find the same repo; sort it once.
+  const todo = [...new Map(queue.map((c) => c.repo).filter((r) => r && !have.has(r.toLowerCase())).map((r) => [r.toLowerCase(), r])).values()];
   console.log(`queue ${queue.length}, already filed ${queue.length - todo.length}, to sort ${todo.length}`);
   // GitHub facts 40 repos per request (GraphQL); READMEs come from raw.githubusercontent.com, which has no quota.
   const need = todo.filter((r) => !fs.existsSync(J("ctx", `${idOf(r)}.json`)) && !r.startsWith("gitlab:"));

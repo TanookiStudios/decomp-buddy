@@ -53,17 +53,23 @@ export async function scanReddit(subs = REDDIT_SUBS, { gap = 10000, retryAfter =
 const JUNK = /recompra|dashboard|wordpress|npm|react|angular|laravel|docker|kubernetes|terraform|tutorial|course|homework|assignment|bootcamp|whatsapp|\bapk\b|mod-index|mod index/i;
 const QUERIES = ['recomp in:name', 'recompiled in:name,description', 'decomp in:name', '"pc port" in:name,description', 'recompilation in:description', 'decompilation game in:description'];
 
-export async function scanGitHub({ queries = QUERIES, log = () => {} } = {}) {
+// pages > 1 (the deep scan) walks further back than the 50 most recently updated per query; with a token
+// GitHub allows 30 searches a minute, so pages go 2.2s apart.
+export async function scanGitHub({ queries = QUERIES, log = () => {}, pages = 1 } = {}) {
   const out = new Map();
-  for (const q of queries) {
-    const res = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=updated&order=desc&per_page=50`, { headers: { "User-Agent": UA, Accept: "application/vnd.github+json" }, signal: AbortSignal.timeout(30_000) });
-    if (res.status === 403 || res.status === 429) { log("GitHub search rate limit hit - partial results"); break; }
-    if (!res.ok) { log(`GitHub search "${q}" answered ${res.status}`); continue; }
-    for (const r of (await res.json()).items || []) {
+  const auth = process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {};
+  for (const q of queries) for (let page = 1; page <= pages; page++) {
+    if (pages > 1) await new Promise((r) => setTimeout(r, 2200));
+    const res = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=updated&order=desc&per_page=${pages > 1 ? 100 : 50}&page=${page}`, { headers: { "User-Agent": UA, Accept: "application/vnd.github+json", ...auth }, signal: AbortSignal.timeout(30_000) });
+    if (res.status === 403 || res.status === 429) { log("GitHub search rate limit hit - partial results"); return [...out.values()]; }
+    if (!res.ok) { log(`GitHub search "${q}" answered ${res.status}`); break; }
+    const items = (await res.json()).items || [];
+    for (const r of items) {
       if (r.fork || r.archived || JUNK.test(`${r.name} ${r.description || ""}`)) continue;
       if (!/recomp|decomp|port|native/i.test(`${r.name} ${r.description || ""}`)) continue;
       out.set(r.full_name.toLowerCase(), { repo: r.full_name, title: r.description || r.name, via: "GitHub search", url: r.html_url, seen: r.pushed_at, stars: r.stargazers_count });
     }
+    if (items.length < (pages > 1 ? 100 : 50)) break; // that query has no more pages
   }
   return [...out.values()];
 }
@@ -115,6 +121,6 @@ export async function scanYouTube(channels, { resolve = youtubeChannelId } = {})
 }
 
 // ---- GitHub topics: people who tag their repo are usually shipping something.
-export async function scanGitHubTopics({ topics = ["recompilation", "decompilation", "n64recomp", "static-recompilation", "pc-port"], log = () => {} } = {}) {
-  return scanGitHub({ queries: topics.map((t) => `topic:${t}`), log });
+export async function scanGitHubTopics({ topics = ["recompilation", "decompilation", "n64recomp", "static-recompilation", "pc-port"], log = () => {}, pages = 1 } = {}) {
+  return scanGitHub({ queries: topics.map((t) => `topic:${t}`), log, pages });
 }
