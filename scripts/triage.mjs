@@ -1,6 +1,7 @@
 // Sorts the Discover queue with Claude Code agents instead of by hand (or the paid API).
 //
 //   node scripts/triage.mjs prep   [--site <TanookiStudios-Site>] [--queue <settings.json> | --repos <list.txt>] [--no-reddit] [--batch 25]
+//   (--repos lines: owner/repo, a github.com link, or a gitlab.com link)
 //   node scripts/triage.mjs check  <batch id>
 //   node scripts/triage.mjs import [--site <TanookiStudios-Site>]
 //
@@ -14,7 +15,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { enrichMany, publishFinds } from "../src/sources/finds.js";
+import { enrichMany, enrichFromGitLab, publishFinds } from "../src/sources/finds.js";
 import { readWaiting, excludedKeys } from "../src/waiting.js";
 import { scanReddit } from "../src/discover.js";
 
@@ -56,11 +57,17 @@ Answer file: out/<batch id>.json, raw JSON only:
 Then run: node ~/Documents/GitHub/DecompBuddy/scripts/triage.mjs check <batch id>   and fix anything it reports.
 `;
 
+// GitLab projects travel through the sorter as "gitlab:owner/repo"; GitHub ones stay plain "owner/repo".
+const GITLAB_LIST = () => path.join(DIR, "gitlab.json");
+export const queueKey = (s) => { const m = String(s).match(/gitlab\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$/i); return m ? `gitlab:${m[1]}` : String(s).replace(/^https?:\/\/github\.com\//i, "").replace(/\.git$/, ""); };
 function known() {
   const k = new Set();
-  for (const g of readJSON(path.join(DIR, "catalog.json")).games) if (g.repo) k.add(g.repo.toLowerCase());
+  for (const g of readJSON(path.join(DIR, "catalog.json")).games) if (g.repo) k.add((g.host === "gitlab" ? `gitlab:${g.repo}` : g.repo).toLowerCase());
   for (const g of readJSON(path.join(DIR, "finds.json")).games) k.add(g.repo.toLowerCase());
-  for (const r of excludedKeys(readWaiting(path.join(DIR, "waiting.json")))) k.add(r);
+  try { for (const g of readJSON(GITLAB_LIST()).games) k.add(queueKey(g.repoUrl).toLowerCase()); } catch {}
+  const w = readWaiting(path.join(DIR, "waiting.json"));
+  for (const r of excludedKeys(w)) k.add(r);
+  for (const g of [...w.games, ...w.hidden]) if (g.host === "gitlab") k.add(`gitlab:${g.repo}`.toLowerCase());
   return k;
 }
 
@@ -80,8 +87,9 @@ async function titleLeads(posts) {
 }
 
 async function readme(repo) {
+  const gl = repo.startsWith("gitlab:"), key = gl ? repo.slice(7) : repo;
   for (const f of ["README.md", "readme.md", "README.MD", "Readme.md", "README"]) {
-    const r = await fetch(`https://raw.githubusercontent.com/${repo}/HEAD/${f}`, { signal: AbortSignal.timeout(15_000) }).catch(() => null);
+    const r = await fetch(gl ? `https://gitlab.com/${key}/-/raw/HEAD/${f}` : `https://raw.githubusercontent.com/${key}/HEAD/${f}`, { signal: AbortSignal.timeout(15_000) }).catch(() => null);
     if (r?.ok) return (await r.text()).slice(0, 2500);
   }
   return "";
@@ -93,7 +101,7 @@ async function prep() {
   fs.writeFileSync(J("RULES.md"), RULES);
   // --repos <file>: sort a hand-picked list (one owner/repo per line, e.g. from browser tabs) instead of the app's queue.
   const list = arg("--repos");
-  const have = known(), queue = list ? fs.readFileSync(list, "utf8").split("\n").map((l) => l.trim()).filter(Boolean).map((repo) => ({ repo })) : Object.values(readJSON(QUEUE).discovered || {});
+  const have = known(), queue = list ? fs.readFileSync(list, "utf8").split("\n").map((l) => l.trim()).filter(Boolean).map((l) => ({ repo: queueKey(l) })) : Object.values(readJSON(QUEUE).discovered || {});
   // The queue sort also reads Reddit's newest posts itself (--no-reddit skips it; a --repos list never does).
   if (!list && !process.argv.includes("--no-reddit")) {
     const r = await scanReddit();
@@ -105,8 +113,13 @@ async function prep() {
   const todo = queue.map((c) => c.repo).filter((r) => r && !have.has(r.toLowerCase()));
   console.log(`queue ${queue.length}, already filed ${queue.length - todo.length}, to sort ${todo.length}`);
   // GitHub facts 40 repos per request (GraphQL); READMEs come from raw.githubusercontent.com, which has no quota.
-  const need = todo.filter((r) => !fs.existsSync(J("ctx", `${idOf(r)}.json`)));
+  const need = todo.filter((r) => !fs.existsSync(J("ctx", `${idOf(r)}.json`)) && !r.startsWith("gitlab:"));
   let failed = 0;
+  // GitLab: one project at a time from its public API (a handful per run, no key needed).
+  for (const r of todo.filter((r) => r.startsWith("gitlab:") && !fs.existsSync(J("ctx", `${idOf(r)}.json`)))) {
+    try { const e = await enrichFromGitLab(r.slice(7)); fs.writeFileSync(J("ctx", `${idOf(r)}.json`), JSON.stringify({ queued: r, ...e, host: "gitlab", repo: `gitlab:${e.repo}`, readme: e.exists ? await readme(`gitlab:${e.repo}`) : "" })); }
+    catch { failed++; }
+  }
   for (let b = 0; b < need.length; b += 200) {
     const infos = await enrichMany(need.slice(b, b + 200));
     const got = [...infos].filter(([, e]) => !(e instanceof Error));
@@ -197,7 +210,18 @@ function importAnswers() {
     }
     fs.renameSync(J("out", f), J("done", f));
   }
-  if (finds.length) publishFinds(path.join(DIR, "finds.json"), finds);
+  // GitLab games go into gitlab.json (a shared "list" source every copy of the app already reads), not finds.json.
+  const gitlab = finds.filter((g) => g.repo.startsWith("gitlab:"));
+  if (gitlab.length) {
+    let doc = { games: [] }; try { doc = readJSON(GITLAB_LIST()); } catch {}
+    const byUrl = new Map(doc.games.map((g) => [g.repoUrl.toLowerCase(), g]));
+    for (const g of gitlab) byUrl.set(`https://gitlab.com/${g.repo.slice(7)}`.toLowerCase(), { name: g.title, repoUrl: `https://gitlab.com/${g.repo.slice(7)}`, console: g.console, platforms: g.platforms, version: g.version, description: g.notes });
+    fs.writeFileSync(GITLAB_LIST(), JSON.stringify({ updatedAt: now, note: "Decomp Buddy finds hosted on GitLab", games: [...byUrl.values()] }, null, 2) + "\n");
+    console.log(`gitlab.json: +${gitlab.length} - deploy the site BEFORE rebuilding the catalog (the catalog reads the live list)`);
+  }
+  const github = finds.filter((g) => !g.repo.startsWith("gitlab:"));
+  if (github.length) publishFinds(path.join(DIR, "finds.json"), github);
+  for (const g of [...soon, ...hide]) if (g.repo.startsWith("gitlab:")) { g.repo = g.repo.slice(7); g.host = "gitlab"; }
   const wf = path.join(DIR, "waiting.json"), w = readJSON(wf);
   w.games.push(...soon); w.hidden.push(...hide);
   w.games.sort((a, b) => a.title.localeCompare(b.title)); w.updatedAt = now;

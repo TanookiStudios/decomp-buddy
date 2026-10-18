@@ -35,3 +35,11 @@ test("triage: a Reddit title becomes a short GitHub search", async () => {
   assert.equal(titleQuery("[WIP] Genesis Road Rash 3 native-port and remaster"), "Genesis Road Rash 3 remaster");
   assert.equal(titleQuery("Project Shaolin: Mortal Kombat: Shaolin Monks (original Xbox) static recomp"), "Project Shaolin Mortal Kombat Shaolin");
 });
+
+test("triage: GitLab links become gitlab:owner/repo, GitHub links stay owner/repo", async () => {
+  const { queueKey } = await import("../scripts/triage.mjs");
+  assert.equal(queueKey("https://gitlab.com/sonicdcer/MarioKart64Recomp"), "gitlab:sonicdcer/MarioKart64Recomp");
+  assert.equal(queueKey("gitlab.com/bighead.0/ladxhd_updated/-/releases"), "gitlab:bighead.0/ladxhd_updated");
+  assert.equal(queueKey("https://github.com/HarbourMasters/Shipwright.git"), "HarbourMasters/Shipwright");
+  assert.equal(queueKey("mstan/SuperMarioRPGRecomp"), "mstan/SuperMarioRPGRecomp");
+});

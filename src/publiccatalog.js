@@ -25,6 +25,8 @@ export async function buildCatalog({ site = path.join(os.homedir(), "Documents/G
   const seenSlugs = new Map();
   const out = games.map((g) => {
     let s = slug(`${g.title}-${g.console}`); const n = (seenSlugs.get(s) || 0) + 1; seenSlugs.set(s, n); if (n > 1) s = `${s}-${slug(g.owner || g.project)}`;
+    // Same game, same owner, two repos: the repo name keeps the page addresses apart.
+    if (n > 1 && seenSlugs.has(s)) s = `${s}-${slug(g.repo || g.project)}`; if (n > 1) seenSlugs.set(s, 1);
     const entry = g.owner && pub.plans?.[planKey(g.repoHost || "github", g.owner, g.repo)];
     return {
       id: g.id, slug: s, title: g.title, console: g.console, project: g.project || null,

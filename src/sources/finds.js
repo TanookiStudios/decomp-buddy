@@ -69,6 +69,17 @@ export async function enrichFromGitHub(key) {
   return infoFrom(key, meta, Array.isArray(releases) ? releases.filter((r) => !r.draft) : []);
 }
 
+// The same facts for a GitLab project, from GitLab's public API (no key needed for public projects).
+export async function enrichFromGitLab(key) {
+  const api = `https://gitlab.com/api/v4/projects/${encodeURIComponent(key)}`, h = { "User-Agent": "decomp-buddy" };
+  const get = async (u) => { const r = await fetch(u, { headers: h, signal: AbortSignal.timeout(20_000) }); if (r.status === 429) throw new Error("GitLab rate limit hit."); return r.ok ? r.json() : null; };
+  const meta = await get(api);
+  if (!meta) return infoFrom(key, {}, []);
+  const rel = (await get(`${api}/releases?per_page=30`)) || [];
+  return infoFrom(key, { full_name: meta.path_with_namespace, name: meta.path, description: meta.description, homepage: "", pushed_at: meta.last_activity_at, topics: meta.topics || [], stargazers_count: meta.star_count, fork: !!meta.forked_from_project },
+    rel.filter((r) => !r.upcoming_release).map((r) => ({ name: r.name, tag_name: r.tag_name, prerelease: false, published_at: r.released_at, assets: (r.assets?.links || []).map((l) => ({ name: l.name })) })));
+}
+
 // The same facts for many repos at once: GraphQL answers ~40 repos per request from its own hourly
 // allowance, where REST spends 2 requests per repo. Returns Map(key -> info, or the Error for its batch).
 // Without a token (GraphQL needs one) it falls back to one REST lookup at a time.
