@@ -43,11 +43,12 @@ ipcMain.handle("settings:get", async () => {
     updateUrl: process.env.DECOMP_UPDATE_URL || UPDATE_URL,
     localFinds: s.localFinds || [], findsFile: s.findsFile || defaultFindsFile(), findsUrl: FINDS_URL,
     admin: s.admin === true,
-    presets: Object.fromEntries(Object.entries(PRESETS).map(([k, p]) => [k, { label: p.label, baseUrl: p.baseUrl, noKey: !!p.noKey, custom: k === "custom" }])),
+    presets: Object.fromEntries(Object.entries(PRESETS).filter(([k]) => k !== "apple").map(([k, p]) => [k, { label: p.label, baseUrl: p.baseUrl, noKey: !!p.noKey, custom: k === "custom" }])),
   };
 });
-ipcMain.handle("settings:set", (_e, { apiKey, installDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, githubToken, lang, preferBoxart, mine, digest, startCouch }) => {
+ipcMain.handle("settings:set", (_e, { appleAI, apiKey, installDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, githubToken, lang, preferBoxart, mine, digest, startCouch }) => {
   const s = loadSettings();
+  if (appleAI !== undefined) s.appleAI = !!appleAI;
   if (lang !== undefined) s.lang = lang === "system" || LANGS[lang] ? lang : "system";
   if (githubToken !== undefined) { if (githubToken) s.github = encrypt(githubToken); else delete s.github; applyGitHubToken(githubToken); }
   if (nudgedAt) s.nudgedAt = nudgedAt;

@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer, webUtils } = require("electron");
 contextBridge.exposeInMainWorld("buddy", {
   pathForFile: (file) => webUtils.getPathForFile(file),
   localStatus: () => ipcRenderer.invoke("local:status"),
+  appleStatus: () => ipcRenderer.invoke("apple:status"),
   localPull: (model) => ipcRenderer.invoke("local:pull", { model }),
   localCancel: () => ipcRenderer.invoke("local:cancel"),
   localTest: (model) => ipcRenderer.invoke("local:test", { model }),

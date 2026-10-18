@@ -378,9 +378,19 @@ window.buddy.onDeepLink(async (link) => {
   status(`Added ${link.game || link.repo} from the website - press Read Repos when you're ready.`, "ok"); $("analyze").focus();
 });
 
+// ---- Apple Intelligence (Macs with Apple silicon, macOS 26+, Apple Intelligence on)
+async function renderApple() {
+  const st = await window.buddy.appleStatus().catch(() => ({ available: false }));
+  $("appleBox").hidden = !st.available;
+  $("appleState").textContent = st.enabled ? "Available on this Mac and switched on." : "Available on this Mac, switched off.";
+  $("appleEnable").checked = !!st.enabled;
+}
+$("appleEnable").onchange = async () => { await window.buddy.setSettings({ appleAI: $("appleEnable").checked }); renderApple(); };
+
 // ---- Local model (Ollama)
 let localModel = null;
 async function renderLocal() {
+  renderApple();
   const st = await window.buddy.localStatus();
   localModel = st.setting?.model || st.models?.[0]?.name || st.suggested;
   const has = st.models?.some((m) => m.name === localModel);

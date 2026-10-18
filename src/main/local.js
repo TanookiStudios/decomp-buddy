@@ -2,7 +2,10 @@
 import { ipcMain } from "electron";
 import { detect, pull, testModel, SUGGESTED } from "../localmodel.js";
 import { logTo, safeSend, loadSettings, saveSettings } from "./core.js";
+import { status as appleStatus } from "../appleai.js";
 
+// Apple Intelligence: on by default where the Mac has it; the switch only turns it off.
+ipcMain.handle("apple:status", async () => ({ ...(await appleStatus()), enabled: loadSettings().appleAI !== false }));
 ipcMain.handle("local:status", async () => ({ ...(await detect()), suggested: SUGGESTED, setting: loadSettings().localModel || null }));
 let pulling = null;
 ipcMain.handle("local:pull", async (e, { model }) => {

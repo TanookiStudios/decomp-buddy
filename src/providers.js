@@ -11,6 +11,7 @@ export const PRESETS = {
   xai:        { label: "xAI (Grok)",                kind: "compatible",  baseUrl: "https://api.x.ai/v1", keyEnv: "XAI_API_KEY" },
   mistral:    { label: "Mistral",                   kind: "compatible",  baseUrl: "https://api.mistral.ai/v1", keyEnv: "MISTRAL_API_KEY" },
   ollama:     { label: "Ollama (local, no key)",    kind: "compatible",  baseUrl: "http://localhost:11434/v1", noKey: true },
+  apple:      { label: "Apple Intelligence (on this Mac, free)", kind: "apple", baseUrl: "on-device", noKey: true, defaultModel: "on-device" },
   custom:     { label: "Other OpenAI-compatible…",  kind: "compatible",  baseUrl: "", keyEnv: "DECOMP_API_KEY" },
 };
 

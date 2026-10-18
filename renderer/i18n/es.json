@@ -848,6 +848,10 @@
   "Games people are decompiling or porting that don't have a Windows, Mac or Linux download yet. When one does, it moves to Browse Games by itself.": "Juegos que la gente está descompilando o portando y que aún no tienen descarga para Windows, Mac o Linux. Cuando uno la tenga, pasará solo a Explorar juegos.",
   "Loading the list…": "Cargando la lista…",
   "Open {0} on GitHub": "Abrir {0} en GitHub",
-  "{0} of {1} game(s){2}.": "{0} de {1} juego(s){2}."
+  "{0} of {1} game(s){2}.": "{0} de {1} juego(s){2}.",
+  "Apple Intelligence": "Apple Intelligence",
+  "Available on this Mac and switched on.": "Disponible en este Mac y activado.",
+  "Available on this Mac, switched off.": "Disponible en este Mac, desactivado.",
+  "For repos without a published plan when you have no AI key: Apple's model on this Mac writes the install steps. Free, private and offline, with no download. It reads the start of each README, so its steps are simpler than a full AI key's.": "Para repositorios sin un plan publicado cuando no tienes clave de IA: el modelo de Apple en este Mac escribe los pasos de instalación. Gratis, privado y sin conexión, sin descargas. Lee el principio de cada README, así que sus pasos son más sencillos que los de una clave de IA completa."
  }
 }

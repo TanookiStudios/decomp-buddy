@@ -11,6 +11,7 @@ OUT=$(mktemp -d)
 cleanup() { sign_cleanup; rm -rf "$OUT"; }
 trap cleanup EXIT
 sign_setup
+scripts/build-apple-ai.sh  # the Apple Intelligence bridge ships inside the Mac app
 npx electron-builder --mac dir --arm64 -c.mac.notarize=false -c.directories.output="$OUT" >"$OUT.log" 2>&1 || { tail -30 "$OUT.log" >&2; exit 1; }
 BUILT="$OUT/mac-arm64/Decomp Buddy.app"
 who=$(codesign -dvv "$BUILT" 2>&1 | sed -n 's/^Authority=//p' | head -1)

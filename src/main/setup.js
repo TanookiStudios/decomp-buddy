@@ -12,6 +12,7 @@ import { fetchPublished } from "../plans.js";
 import { BrowserWindow, dialog } from "electron";
 import { gameFolderName, DownloadCtrl } from "../setup.js";
 import { resolveProvider } from "../providers.js";
+import { status as appleStatus } from "../appleai.js";
 import { fetchRepoContext as fetchGitHub } from "../github.js";
 import { fetchRepoContext as fetchGitLab } from "../gitlab.js";
 import { sortDiscs } from "../discs.js";
@@ -60,8 +61,9 @@ ipcMain.handle("analyze", async (e, { urls }) => {
     let provider = null;
     try { provider = activeProvider(settings); }
     catch (err) {
-      // Fallback order: published plan -> your own key -> a local model you've tested.
+      // Fallback order: published plan -> your own key -> a local model you've tested -> Apple Intelligence on this Mac.
       if (settings.localModel?.enabled && settings.localModel.model) { provider = resolveProvider("ollama", { model: settings.localModel.model }); log(`No AI key - repos without a published plan use your local model (${settings.localModel.model}).`); }
+      else if (settings.appleAI !== false && (await appleStatus()).available) { provider = resolveProvider("apple"); log("No AI key - repos without a published plan use Apple Intelligence on this Mac (free, on-device)."); }
       else log(`No AI key set - published plans only (${err.message})`);
     }
     const target = TARGETS[settings.target] ? settings.target : "windows";

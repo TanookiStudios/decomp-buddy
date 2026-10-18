@@ -62,15 +62,20 @@ ipcMain.handle("finds:addMany", async (e, { text }) => {
   planNewFinds(e.sender, result.added);
   return result;
 });
+// Every repo already on a catalog, in Individual Finds, pending, or filed in waiting.json (Coming Soon or hidden).
+function knownRepos(s) {
+  const known = new Set(state.catalogGames.filter((g) => g.owner).map((g) => `${g.owner}/${g.repo}`.toLowerCase()));
+  for (const p of s.localFinds || []) known.add((repoKey(p.repo) || "").toLowerCase());
+  try { const f = s.findsFile || defaultFindsFile(); for (const g of JSON.parse(fs.readFileSync(f, "utf8")).games) known.add((repoKey(g.repo) || "").toLowerCase()); } catch {}
+  for (const k of waitingKeys(waitingFileNextTo(s.findsFile || defaultFindsFile()))) known.add(k);
+  return known;
+}
 // Discover: scan Reddit + GitHub search, keep only repos not already anywhere, remember dismissals.
 ipcMain.handle("discover:scan", async (e) => {
   const log = (m) => logTo(e.sender, m);
   log("--- Discover scan");
   const s = loadSettings();
-  const known = new Set(state.catalogGames.filter((g) => g.owner).map((g) => `${g.owner}/${g.repo}`.toLowerCase()));
-  for (const p of s.localFinds || []) known.add((repoKey(p.repo) || "").toLowerCase());
-  try { const f = s.findsFile || defaultFindsFile(); for (const g of JSON.parse(fs.readFileSync(f, "utf8")).games) known.add((repoKey(g.repo) || "").toLowerCase()); } catch {}
-  for (const k of waitingKeys(waitingFileNextTo(s.findsFile || defaultFindsFile()))) known.add(k);
+  const known = knownRepos(s);
   const dismissed = s.discoverDismissed || {};
   const found = new Map(Object.entries(s.discovered || {}));
   const errors = [];
@@ -97,7 +102,11 @@ ipcMain.handle("discover:scan", async (e) => {
   log(`discover: ${found.size} candidate(s)${errors.length ? ` (${errors.join("; ")})` : ""}`);
   return { candidates: [...found.values()].sort((a, b) => String(b.seen || "").localeCompare(String(a.seen || ""))), errors, at: s.lastDiscover };
 });
-ipcMain.handle("discover:list", () => { const s = loadSettings(); return { candidates: Object.values(s.discovered || {}).sort((a, b) => String(b.seen || "").localeCompare(String(a.seen || ""))), at: s.lastDiscover || null }; });
+// Repos filed since the last scan (sorted by the AI, added from tabs) drop out of the list as soon as it opens.
+ipcMain.handle("discover:list", () => {
+  const s = loadSettings(), known = knownRepos(s);
+  return { candidates: Object.values(s.discovered || {}).filter((c) => !known.has(String(c.repo).toLowerCase())).sort((a, b) => String(b.seen || "").localeCompare(String(a.seen || ""))), at: s.lastDiscover || null };
+});
 ipcMain.handle("discover:dismiss", (_e, { repo }) => { const s = loadSettings(); const k = String(repo).toLowerCase(); s.discoverDismissed = { ...(s.discoverDismissed || {}), [k]: true }; if (s.discovered) delete s.discovered[k]; saveSettings(s); return true; });
 ipcMain.handle("discover:forget", (_e, { repo }) => { const s = loadSettings(); if (s.discovered) delete s.discovered[String(repo).toLowerCase()]; saveSettings(s); return true; });
 ipcMain.handle("finds:remove", (_e, { repo }) => {

@@ -12,6 +12,7 @@ source scripts/mac-signing.zsh
 trap sign_cleanup EXIT
 sign_setup
 bundle_site_data
+scripts/build-apple-ai.sh  # the Apple Intelligence bridge ships inside the Mac app
 npx electron-builder --mac
 # Every Mac app we just built must carry the Tanooki signature - fail the release otherwise.
 for app in dist/mac*/*.app; do

@@ -194,6 +194,7 @@ export async function askStructured(provider, { system, user, schema, name = "an
 }
 
 export async function planFromContext(ctx, { provider, log = () => {}, ...opts } = {}) {
+  if (provider.kind === "apple") { const { planViaApple } = await import("./appleai.js"); return planViaApple(ctx, { target: opts.target, log }); }
   log(`Asking ${provider.label} (${provider.model}) to read the repo for ${targetOf(opts.target).label}…${opts.preferredTag ? ` (catalog says ${opts.preferredTag})` : ""}`);
   return provider.kind === "claude" ? planViaClaude(ctx, provider, log, opts) : planViaOpenAICompatible(ctx, provider, log, opts);
 }
