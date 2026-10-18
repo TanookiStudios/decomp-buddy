@@ -42,8 +42,8 @@ test("apple: every Mac that can't run it reports 'not available' instead of brea
   // Apple Intelligence switched off (or still downloading): the helper says so.
   const off = await status({ bin: fake("off", `#!/bin/sh\necho '{"available":false,"reason":"appleIntelligenceNotEnabled"}'\n`) });
   assert.equal(off.available, false); assert.match(off.reason, /NotEnabled/);
-  // Older macOS: the loader refuses a binary built for macOS 26 before main() runs.
-  const old = await status({ bin: fake("old", `#!/bin/sh\necho "dyld: Symbol not found: FoundationModels" >&2\nexit 134\n`) });
+  // Older macOS: no FoundationModels framework, so the loader stops the helper before main() (exit 134).
+  const old = await status({ bin: fake("old", `#!/bin/sh\necho "dyld[1]: Library not loaded: /System/Library/Frameworks/FoundationModels.framework/Versions/A/FoundationModels" >&2\nexit 134\n`) });
   assert.equal(old.available, false); assert.match(old.reason, /Apple silicon and macOS 26/);
   // Intel Mac: an arm64-only file the kernel won't run (a non-executable stands in for "Bad CPU type").
   const intel = await status({ bin: fake("intel", "\x7fELF not a mac binary", 0o644) });

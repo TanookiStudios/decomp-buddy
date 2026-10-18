@@ -1,6 +1,7 @@
 #!/bin/zsh
 # Builds the Apple Intelligence bridge (native/apple-ai) into build/apple-ai/decomp-buddy-ai.
-# Apple Silicon only and macOS 26+: older Macs can't launch it, and the app treats that as "not available".
+# Apple Silicon only. Before macOS 26 the FoundationModels framework doesn't exist, so the loader stops it with
+# "Library not loaded" (the minos stamp alone does NOT stop it - checked 18 Oct 2026); the app reads any failure as "not available".
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p build/apple-ai
