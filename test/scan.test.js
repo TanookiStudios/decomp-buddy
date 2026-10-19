@@ -31,6 +31,9 @@ test("applyScans marks clean files with their fingerprint, blocks flagged ones, 
   assert.equal(none.scanned, undefined);
   // A flagged file reviewed by hand and cleared counts as clean.
   applyScans(plans, scans, { bb: { reason: "false positive: libc++ thread symbols" } }); assert.equal(bad.scanned.sha256, "bb");
+  // Ran out of time: not a verdict, so not flagged and not pinned.
+  scans.files[scanKey("github:a/b", none)] = { sha256: "dd", clean: false, signature: "Heuristics.Limits.Exceeded.MaxScanTime" };
+  applyScans(plans, scans); assert.equal(none.scanned, undefined);
   // Reviewed by fingerprint: a different file under the same name stays blocked.
   scans.files[scanKey("github:a/b", bad)].sha256 = "cc";
   applyScans(plans, scans, { bb: { reason: "x" } }); assert.equal(bad.scanned.flagged, true);

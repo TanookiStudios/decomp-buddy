@@ -6,10 +6,11 @@ import { fetchCatalog, artUrl } from "./catalog.js";
 import { enrichBoxart } from "./boxart.js";
 import { fetchPublished, planKey } from "./plans.js";
 import { fetchSharedSources } from "./sources/shared-sources.js";
-import { expandMultiGame, attachFacts, slug } from "./expand.js";
+import { expandMultiGame, attachFacts, slug, artworkUrl } from "./expand.js";
 import { promoteReady, readWaiting, waitingFileNextTo, withoutExcluded } from "./waiting.js";
 
 export const SCHEMA_VERSION = 1;
+const projectArt = (entry, g) => { for (const t of Object.values(entry?.targets || {})) for (const pg of t?.games || []) { const u = pg.artwork_url && artworkUrl(pg.artwork_url, g); if (u) return u; } return null; };
 
 export async function buildCatalog({ site = path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site"), log = console.log, recheck = false } = {}) {
   const dir = path.join(site, "public", "decomp-buddy");
@@ -31,7 +32,8 @@ export async function buildCatalog({ site = path.join(os.homedir(), "Documents/G
     return {
       id: g.id, slug: s, title: g.title, console: g.console, project: g.project || null,
       repo: g.owner ? `${g.owner}/${g.repo}` : null, repoUrl: g.repoUrl || null, host: g.repoHost || (g.owner ? "github" : null),
-      website: g.website || null, iconUrl: artUrl(g, false) || null, boxartUrl: g.boxartUrl || null,
+      // No icon and no box art: the project's own artwork from its install steps (what the app shows too).
+      website: g.website || null, iconUrl: artUrl(g, false) || projectArt(entry, g) || null, boxartUrl: g.boxartUrl || null,
       platforms: g.platforms || [], version: g.version || null, latestVersion: g.latestVersion || null, status: g.status || "unknown", updatedAt: g.updatedAt || null,
       sources: g.sources || [g.source].filter(Boolean), description: g.description || null, repoGames: g.repoGames || null,
       plan: entry ? { targets: Object.keys(entry.targets || {}), generatedAt: entry.generatedAt || null } : null,

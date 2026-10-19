@@ -52,3 +52,25 @@ test("resolveProvider fills preset defaults and refuses missing key/model", () =
   assert.throws(() => resolveProvider("custom", { apiKey: "k", model: "m" }), /base URL/);
   assert.equal(PRESETS.gemini.baseUrl, "https://generativelanguage.googleapis.com/v1beta/openai");
 });
+
+test("Claude refusing the schema as too large falls back to plain JSON, checked here (the error a user hit on 0.30)", async () => {
+  const http = await import("node:http");
+  const { planFromContext } = await import("../src/plan.js");
+  const seen = [];
+  const server = http.createServer((req, res) => {
+    let b = ""; req.on("data", (c) => (b += c)); req.on("end", () => {
+      const body = JSON.parse(b); seen.push(body.output_config ? "schema" : "plain");
+      res.setHeader("content-type", "application/json");
+      if (body.output_config) { res.statusCode = 400; return res.end(JSON.stringify({ type: "error", error: { type: "invalid_request_error", message: "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools." } })); }
+      res.end(JSON.stringify({ id: "m", type: "message", role: "assistant", model: "x", stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify({ redirect_repo: null, games: [goodPlan] }) }], usage: { input_tokens: 1, output_tokens: 1 } }));
+    });
+  });
+  await new Promise((r) => server.listen(0, "127.0.0.1", r));
+  try {
+    const provider = resolveProvider("claude", { apiKey: "k", model: "claude-sonnet-5-5", baseUrl: `http://127.0.0.1:${server.address().port}/v1` });
+    const out = await planFromContext(ctx, { provider, log: () => {} });
+    const games = out.games || [out];
+    assert.equal(games[0].game_title, "Skate 3");
+    assert.deepEqual(seen, ["schema", "plain"]);
+  } finally { server.close(); }
+});

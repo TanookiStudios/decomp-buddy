@@ -34,7 +34,8 @@ export function applyScans(plans, scans, reviewed = {}) {
   for (const { planKey, build } of releaseBuilds(plans, { next: true })) {
     const r = scans?.files?.[scanKey(planKey, build)];
     delete build.scanned;
-    if (!r) continue;
+    // A scan that ran out of time or size limits isn't a verdict: the file counts as not scanned yet.
+    if (!r || r.incomplete || /^Heuristics\.Limits\.Exceeded/.test(r.signature || "")) continue;
     build.scanned = r.clean || reviewed[r.sha256]
       ? { sha256: r.sha256, at: r.at, engine: r.engine }
       : { flagged: true, signature: r.signature || "unknown", at: r.at, engine: r.engine };

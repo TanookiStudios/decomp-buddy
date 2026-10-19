@@ -37,7 +37,7 @@ const CONSOLE_HINTS = [
   [/game ?boy ?advance|\bgba\b/i, "Game Boy Advance"], [/game ?boy ?color|\bgbc\b/i, "Game Boy Color"], [/game ?boy|\bgb\b/i, "Game Boy"], [/nintendo ?ds|\bnds\b/i, "Nintendo DS"],
   [/\bsnes\b|super nintendo/i, "SNES"], [/\bnes\b|famicom/i, "NES"], [/dreamcast/i, "Dreamcast"], [/mega ?drive|genesis/i, "Mega Drive"], [/\bxbox\b/i, "Xbox"],
 ];
-const PLATFORM_OF_ASSET = [[/win(dows|64|32)?[-_.]|\.exe$|\.msi$|-win\b/i, "Windows"], [/mac(os)?|darwin|\.dmg$|\.pkg$/i, "macOS"], [/linux|\.appimage$|\.deb$|\.tar\.zst$/i, "Linux"], [/^(?!.*(quest|oculus|openxr|(^|[^a-z])vr([^a-z]|$))).*(android.*|\.apk)$/i, "Android"], [/^(?=.*(quest|oculus|openxr|(^|[^a-z])vr([^a-z]|$))).*\.apk$/i, "Meta Quest"]]; // a Quest .apk isn't a phone app
+const PLATFORM_OF_ASSET = [[/win(dows|64|32)?[-_.]|\.exe$|\.msi$|-win\b|^(?!.*(linux|mac|osx|darwin|android|\.apk)).*[-_.]pc[-_.]/i, "Windows"], [/mac(os)?|darwin|\.dmg$|\.pkg$/i, "macOS"], [/linux|\.appimage$|\.deb$|\.tar\.zst$/i, "Linux"], [/^(?!.*(quest|oculus|openxr|(^|[^a-z])vr([^a-z]|$))).*(android.*|\.apk)$/i, "Android"], [/^(?=.*(quest|oculus|openxr|(^|[^a-z])vr([^a-z]|$))).*\.apk$/i, "Meta Quest"]]; // a Quest .apk isn't a phone app
 
 // One repo's facts, from either API: meta = { full_name, description, homepage, pushed_at, topics,
 // stargazers_count, fork }, live = non-draft releases newest first, each { tag_name, prerelease, published_at, assets: [{ name }] }.

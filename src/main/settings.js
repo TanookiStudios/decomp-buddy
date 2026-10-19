@@ -14,7 +14,7 @@ import { FINDS_URL } from "../sources/finds.js";
 import { readVault } from "../vault.js";
 import { steamDir } from "../steam.js";
 import { fetchSharedSources, sourceKey, validateSourceEntry, normalizeUser, SOURCES_URL } from "../sources/shared-sources.js";
-import { VERSION, vaultDir, logFile, encrypt, decrypt, loadSettings, saveSettings, outDirFor, defaultFindsFile, sourcesFileFor, currentTarget, githubToken, applyGitHubToken, here, githubRate } from "./core.js";
+import { VERSION, vaultDir, logFile, encrypt, decrypt, loadSettings, saveSettings, outDirFor, defaultFindsFile, sourcesFileFor, currentTarget, githubToken, applyGitHubToken, here, githubRate, canAdmin } from "./core.js";
 import { REDDIT_SUBS } from "../discover.js";
 import { cleanLook } from "../look.js";
 import { saveLook } from "./look.js";
@@ -47,7 +47,7 @@ ipcMain.handle("settings:get", async () => {
     sourcesUrl: SOURCES_URL,
     updateUrl: process.env.DECOMP_UPDATE_URL || UPDATE_URL,
     localFinds: s.localFinds || [], findsFile: s.findsFile || defaultFindsFile(), findsUrl: FINDS_URL,
-    admin: s.admin === true,
+    admin: s.admin === true && canAdmin(s), canAdmin: canAdmin(s),
     presets: Object.fromEntries(Object.entries(PRESETS).filter(([k]) => k !== "apple").map(([k, p]) => [k, { label: p.label, baseUrl: p.baseUrl, noKey: !!p.noKey, custom: k === "custom" }])),
   };
 });
@@ -85,7 +85,7 @@ ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSch
   if (sawWhere !== undefined) s.sawWhere = !!sawWhere;
   if (collapsedGroups) s.collapsedGroups = collapsedGroups;
   if (findsFile !== undefined) s.findsFile = findsFile;
-  if (admin !== undefined) s.admin = !!admin;
+  if (admin !== undefined) s.admin = !!admin && canAdmin(s);
   if (sources) {
     for (const c of sources.custom || []) { const why = validateSourceEntry(c); if (why) throw new Error(why); }
     s.sources = { builtin: sources.builtin || {}, disabledShared: sources.disabledShared || {}, custom: (sources.custom || []).filter((c) => c.value).map((c) => ({ type: c.type === "list" ? "list" : "github-user", value: c.type === "list" ? String(c.value).trim() : normalizeUser(c.value), enabled: c.enabled !== false })) };

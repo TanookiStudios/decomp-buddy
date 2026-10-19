@@ -140,29 +140,46 @@ async function chatCompletion(provider, messages, { responseFormat, fetchImpl = 
   return content;
 }
 
+// Anthropic compiles a strict output schema into a grammar and refuses ones it finds too large ("The compiled
+// grammar is too large") - the plan schema grew past that limit for newer models. Then: plain JSON, checked here.
+export const schemaTooLarge = (err) => /grammar is too large|schema is too (large|complex)|too many (strict tools|properties)/i.test(String(err?.message || err));
+async function claudeText(client, provider, messages, maxTokens) {
+  const r = await client.messages.create({ model: provider.model, max_tokens: maxTokens, system: messages[0].content, messages: messages.slice(1) });
+  if (r.stop_reason === "refusal") throw new Error("Claude declined to analyse this repo.");
+  return r.content.filter((b) => b.type === "text").map((b) => b.text).join("");
+}
+
 async function planViaClaude(ctx, provider, log, opts) {
   const client = new Anthropic({ apiKey: provider.apiKey, baseURL: provider.baseUrl.replace(/\/v1$/, "") });
-  const response = await client.messages.parse({
-    model: provider.model,
-    max_tokens: 16000,
-    system: SYSTEM,
-    messages: [{ role: "user", content: renderContext(ctx, opts) }],
-    output_config: { format: zodOutputFormat(Analysis) },
-  });
-  if (response.stop_reason === "refusal") throw new Error("Claude declined to analyse this repo.");
-  if (!response.parsed_output) throw new Error("Claude's plan did not match the expected shape.");
-  return response.parsed_output;
+  try {
+    const response = await client.messages.parse({
+      model: provider.model,
+      max_tokens: 16000,
+      system: SYSTEM,
+      messages: [{ role: "user", content: renderContext(ctx, opts) }],
+      output_config: { format: zodOutputFormat(Analysis) },
+    });
+    if (response.stop_reason === "refusal") throw new Error("Claude declined to analyse this repo.");
+    if (!response.parsed_output) throw new Error("Claude's plan did not match the expected shape.");
+    return response.parsed_output;
+  } catch (err) {
+    if (!schemaTooLarge(err)) throw err;
+    log("  Claude can't take the plan's answer format as a strict schema - asking for plain JSON and checking it here.");
+    return planViaPromptedJSON(ctx, provider, log, { ...opts, send: (messages) => claudeText(client, provider, messages, 16000) });
+  }
 }
 
 // OpenAI: strict JSON schema. Compatible: schema in the prompt, validate, retry once with the errors.
 export async function planViaOpenAICompatible(ctx, provider, log, { fetchImpl, ...opts } = {}) {
   const strict = provider.kind === "openai";
+  return planViaPromptedJSON(ctx, provider, log, { ...opts, strict, send: (messages) => chatCompletion(provider, messages, { responseFormat: strict ? { type: "json_schema", json_schema: { name: "plan", strict: true, schema: PLAN_JSON_SCHEMA } } : undefined, fetchImpl }) });
+}
+// The plan as JSON text from any model (send(messages) -> text), validated with zod, one retry with the problems.
+export async function planViaPromptedJSON(ctx, provider, log, { send, strict = false, ...opts }) {
   const system = strict ? SYSTEM : `${SYSTEM}\n\nReply with ONLY a JSON object matching this JSON Schema, no prose, no code fences:\n${JSON.stringify(PLAN_JSON_SCHEMA)}`;
   const messages = [{ role: "system", content: system }, { role: "user", content: renderContext(ctx, opts) }];
-  const responseFormat = strict ? { type: "json_schema", json_schema: { name: "plan", strict: true, schema: PLAN_JSON_SCHEMA } } : undefined;
-
   for (let attempt = 0; attempt < 2; attempt++) {
-    const text = await chatCompletion(provider, messages, { responseFormat, fetchImpl });
+    const text = await send(messages);
     let parsed;
     try { parsed = Analysis.safeParse(extractJson(text)); }
     catch (err) { parsed = { success: false, error: { message: err.message } }; }
@@ -176,18 +193,24 @@ export async function planViaOpenAICompatible(ctx, provider, log, { fetchImpl, .
 
 // Any structured question, any provider: Claude via parse(), OpenAI strict schema, others schema-in-prompt + one retry.
 export async function askStructured(provider, { system, user, schema, name = "answer", maxTokens = 4000, log = () => {} }) {
+  let send = null;
   if (provider.kind === "claude") {
     const client = new Anthropic({ apiKey: provider.apiKey, baseURL: provider.baseUrl.replace(/\/v1$/, "") });
-    const r = await client.messages.parse({ model: provider.model, max_tokens: maxTokens, system, messages: [{ role: "user", content: user }], output_config: { format: zodOutputFormat(schema) } });
-    if (r.stop_reason === "refusal") throw new Error("Claude declined.");
-    if (!r.parsed_output) throw new Error(`Claude's ${name} did not match the expected shape.`);
-    return r.parsed_output;
+    try {
+      const r = await client.messages.parse({ model: provider.model, max_tokens: maxTokens, system, messages: [{ role: "user", content: user }], output_config: { format: zodOutputFormat(schema) } });
+      if (r.stop_reason === "refusal") throw new Error("Claude declined.");
+      if (!r.parsed_output) throw new Error(`Claude's ${name} did not match the expected shape.`);
+      return r.parsed_output;
+    } catch (err) {
+      if (!schemaTooLarge(err)) throw err;
+      send = (messages) => claudeText(client, provider, messages, maxTokens); // plain JSON, checked below
+    }
   }
   const json = z.toJSONSchema(schema);
-  const strict = provider.kind === "openai";
+  const strict = !send && provider.kind === "openai";
   const messages = [{ role: "system", content: strict ? system : `${system}\n\nReply with ONLY a JSON object matching this JSON Schema, no prose, no code fences:\n${JSON.stringify(json)}` }, { role: "user", content: user }];
   for (let attempt = 0; attempt < 2; attempt++) {
-    const text = await chatCompletion(provider, messages, { responseFormat: strict ? { type: "json_schema", json_schema: { name, strict: true, schema: json } } : undefined });
+    const text = send ? await send(messages) : await chatCompletion(provider, messages, { responseFormat: strict ? { type: "json_schema", json_schema: { name, strict: true, schema: json } } : undefined });
     let parsed;
     try { parsed = schema.safeParse(extractJson(text)); } catch (err) { parsed = { success: false, error: { message: err.message } }; }
     if (parsed.success) return parsed.data;

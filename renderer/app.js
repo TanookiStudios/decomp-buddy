@@ -1004,6 +1004,7 @@ document.addEventListener("keydown", async (e) => {
   typed = (typed + e.key.toLowerCase()).slice(-ADMIN_CODE.length);
   if (typed !== ADMIN_CODE) return;
   typed = "";
+  if (!settings.canAdmin) return; // not Maddie's computer: nothing happens, no hint
   const on = !settings.admin;
   await window.buddy.setSettings({ admin: on });
   await refresh();

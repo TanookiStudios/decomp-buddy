@@ -43,8 +43,12 @@ export function outDirFor(s, target) {
   return targetIsHost(id) || TARGETS[id].kind === "device" ? (s.installDir || defaultInstallDir()) : (s.transferDir || s.outDir || defaultTransferDir());
 }
 // On Maddie's Mac the site repo is right there; everyone else fills the path in by hand.
+// Admin only exists on Maddie's computer: the one with the website's project folder (or her saved admin key).
+// Anywhere else the Admin screen stays hidden, whatever is typed.
+export const canAdmin = (s) => !!defaultFindsFile() || !!s.suggestKey;
 export function defaultFindsFile() {
-  const site = path.join(app.getPath("home"), "Documents", "GitHub", "TanookiStudios-Site", "public");
+  // DECOMP_SITE_DIR: test harness only, to stand in for a computer without the site.
+  const site = (process.env.DECOMP_HEADLESS && process.env.DECOMP_SITE_DIR) || path.join(app.getPath("home"), "Documents", "GitHub", "TanookiStudios-Site", "public");
   return fs.existsSync(site) ? path.join(site, "decomp-buddy", "finds.json") : "";
 }
 export const plansFileFor = (s) => { const f = s.findsFile || defaultFindsFile(); return f ? path.join(path.dirname(f), "plans.json") : ""; };

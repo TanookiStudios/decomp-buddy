@@ -21,3 +21,12 @@ test("matchBoxart: accents and the 'Version' suffix", () => {
   assert.equal(matchBoxart(names, "Pokémon LeafGreen", "").f, "Pokemon - LeafGreen Version (USA)");
   assert.equal(matchBoxart(names, "Pokémon Emerald", ""), null);
 });
+
+test("matchBoxart: project names in brackets and subtitles match; same-name games from different years don't", async () => {
+  const { matchBoxart } = await import("../src/boxart.js");
+  const names = ["Legend of Zelda, The - Ocarina of Time (USA)", "Metal Slug 3 (World)", "Fallout (1990)", "Fallout", "Mega Man 7 (USA)"];
+  assert.equal(matchBoxart(names, "The Legend of Zelda: Ocarina of Time").f, "Legend of Zelda, The - Ocarina of Time (USA)");
+  assert.equal(matchBoxart(names, "Metal Slug 3 (Recomp)").f, "Metal Slug 3 (World)");
+  assert.equal(matchBoxart(names, "Fallout (F1DP)"), null);
+  assert.equal(matchBoxart(names, "Mega Man"), null);
+});

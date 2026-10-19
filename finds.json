@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-18T20:11:14.752Z",
+  "updatedAt": "2026-10-19T03:41:04.511Z",
   "games": [
     {
       "repo": "thefixinhixon/SplosionManRecomp",
@@ -445,6 +445,21 @@
       "via": "List: SamidyFR/Game-Decompilations"
     },
     {
+      "repo": "Bitsandbreakpoints/american-pool-psx-pc-recomp",
+      "title": "American Pool",
+      "console": "PlayStation",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T15:29:03Z",
+      "notes": "Native Windows port of the PlayStation game American Pool - bring your own disc. No game files included.",
+      "website": "",
+      "addedAt": "2026-10-18T21:10:13.420Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "minty-hippo/amped3revamped",
       "title": "Amped 3 (Amped 3 Revamped)",
       "console": "Xbox 360",
@@ -885,6 +900,38 @@
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
       "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "K0NL/B2recomp",
+      "title": "Bayonetta 2",
+      "console": "Nintendo Switch",
+      "notes": "Unofficial static recompilation of Bayonetta 2 (Switch) for Windows. Builds the game on your PC from your own legally dumped copy. No game files, keys or SDK code included.",
+      "website": "",
+      "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "v0.2.4",
+      "status": "latest",
+      "updatedAt": "2026-10-19T03:02:42Z"
+    },
+    {
+      "repo": "yannicksuter/beachlife-recomp",
+      "title": "Beach Life",
+      "console": "PC (Windows)",
+      "notes": "Native Windows, Linux and macOS build of Beach Life / Virtual Resort: Spring Break, recompiled from the reconstructed source of beachlife-decomp. No emulator, no wrapper. No game assets included; an original copy of the game is required.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "macOS",
+        "Linux",
+        "Windows"
+      ],
+      "version": "test-pr3-fc57511ba03b",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T10:25:52Z"
     },
     {
       "repo": "8street/Bedlam2",
@@ -1503,6 +1550,22 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: quiver"
+    },
+    {
+      "repo": "SmokeDoggy044/CoD2-BRO-Native-Loader",
+      "title": "Call of Duty 2: Big Red One (Native Loader)",
+      "console": "Xbox",
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "version": "v0.1.4",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T15:37:46Z",
+      "notes": "Native loader that runs the original Xbox Call of Duty 2: Big Red One on Linux and Windows PCs (bring your own game). Proof of concept for a full native build.",
+      "website": "",
+      "addedAt": "2026-10-18T21:10:13.420Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "crazyriddler/FinestHourRemastered",
@@ -5322,6 +5385,21 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "joojofc13-wq/HappyWarsRecompiled",
+      "title": "Happy Wars",
+      "console": "Xbox 360",
+      "notes": "An unofficial native PC port of Happy Wars for Xbox 360 using static recompilation. Offline play is under development.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.1.0-alpha.2",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T20:41:30Z"
+    },
+    {
       "repo": "saulob/hard-corps-uprising-recompiled",
       "title": "Hard Corps: Uprising",
       "console": "Xbox 360",
@@ -5431,6 +5509,23 @@
       "notes": "",
       "website": "",
       "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "davidkalil10/Heroes-Lore-Wind-Of-Soltia-Recomp",
+      "title": "Heroes Lore: Wind of Soltia",
+      "console": "Others",
+      "platforms": [
+        "Android",
+        "Windows",
+        "Linux"
+      ],
+      "version": "v1.2.6",
+      "status": "latest",
+      "updatedAt": "2026-10-18T20:15:07Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T21:10:13.420Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -5962,6 +6057,21 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "CalenCyr/SlugfestRecompiled",
+      "title": "Ken Griffey Jr.'s Slugfest (SlugfestRecompiled)",
+      "console": "Nintendo 64",
+      "notes": "Native PC port of Ken Griffey Jr.'s Slugfest (N64) via static recompilation",
+      "website": "",
+      "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Linux"
+      ],
+      "version": "v0.1.0-beta.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-19T00:54:54Z"
+    },
+    {
       "repo": "Yokimitsuro/khdays-port",
       "title": "khdays port",
       "console": "Nintendo DS",
@@ -6265,6 +6375,23 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "Spaggel/lr2",
+      "title": "LEGO Racers 2",
+      "console": "PC (Windows)",
+      "platforms": [
+        "macOS",
+        "Linux",
+        "Windows"
+      ],
+      "version": "v1.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T18:38:33Z",
+      "notes": "Lego Racers 2 recompiled for Mac, Linux and Windows",
+      "website": "",
+      "addedAt": "2026-10-18T21:10:13.420Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "AgitationSkeleton/lsw2ds-pc",
@@ -7672,6 +7799,21 @@
       "via": "List: SubmitGame/awesome-decomp-games"
     },
     {
+      "repo": "Sampreeth004/nfs-carbon-recomp",
+      "title": "Need for Speed: Carbon (NFS Carbon Recomp)",
+      "console": "Xbox 360",
+      "platforms": [
+        "Android"
+      ],
+      "version": "v0.3.12",
+      "status": "latest",
+      "updatedAt": "2026-10-08T05:42:47Z",
+      "notes": "Static recompilation of Need for Speed: Carbon (Xbox 360) to native C++ via the ReXGlue SDK",
+      "website": "",
+      "addedAt": "2026-10-19T03:41:04.485Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "vasist15-source/nfs-carbon-mac",
       "title": "Need for Speed: Carbon (nfs-carbon-mac)",
       "console": "PC (Windows)",
@@ -7840,6 +7982,21 @@
       "website": "",
       "addedAt": "2026-10-14T22:09:13.049Z",
       "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "schans-arg/NHL24-PC-Port",
+      "title": "NHL 24",
+      "console": "PlayStation 4",
+      "notes": "Experimental PS4-to-PC port of NHL 24. Community source project; game files are not included.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "nhl24-v0.1.0-preview.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-17T21:41:01Z"
     },
     {
       "repo": "leoxcho/nicktoons-racing-recomp",
@@ -8885,6 +9042,22 @@
       "website": "",
       "addedAt": "2026-10-13T18:57:18.372Z",
       "via": "List: SubmitGame/awesome-decomp-games"
+    },
+    {
+      "repo": "dmucli/pop2-port",
+      "title": "Prince of Persia 2: The Shadow and the Flame (pop2-port)",
+      "console": "Others",
+      "platforms": [
+        "Linux",
+        "macOS"
+      ],
+      "version": "v0.2",
+      "status": "latest",
+      "updatedAt": "2026-10-17T11:03:45Z",
+      "notes": "Native port of the 1993 Macintosh Prince of Persia 2: macOS, Linux, Recalbox, retro handhelds (no game data included)",
+      "website": "",
+      "addedAt": "2026-10-18T21:10:13.420Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "dekamaru/openjade",
@@ -10556,6 +10729,23 @@
       "via": "Discover: GitHub search"
     },
     {
+      "repo": "bgyss/snatcher-port",
+      "title": "Snatcher (snatcher-port)",
+      "console": "Sega CD",
+      "platforms": [
+        "Linux",
+        "macOS",
+        "Windows"
+      ],
+      "version": "v0.1.0-rc1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-05T19:11:25Z",
+      "notes": "Reverse-engineering Konami's Snatcher (Sega CD, 1994) into a native Mac/Windows build. Bring your own disc: no game data included.",
+      "website": "",
+      "addedAt": "2026-10-19T03:41:04.485Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
       "repo": "cdlewis/snowboardkids-recomp",
       "title": "Snowboard Kids",
       "console": "Nintendo 64",
@@ -10659,6 +10849,21 @@
       "website": "https://sa2.dev",
       "addedAt": "2026-10-04T12:50:30.459Z",
       "via": "List: SamidyFR/Game-Decompilations"
+    },
+    {
+      "repo": "wigwoo1/Sonic-Adventure-DC-Decomp",
+      "title": "Sonic Adventure",
+      "console": "Dreamcast",
+      "notes": "A Full Decompile of the USA Dreamcast version of Sonic Adventure. Eventual Android/3DS Ports",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "research-ad88ae05e302-c7348013",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T10:06:05Z"
     },
     {
       "repo": "sonicfreak1337/SARecomp",
@@ -11054,6 +11259,21 @@
       "website": "",
       "addedAt": "2026-10-05T18:24:49.314Z",
       "via": "Lists: gamingemporium"
+    },
+    {
+      "repo": "b4ttycre4se/Spider-Man-3-Recomp",
+      "title": "Spider-Man 3",
+      "console": "Xbox 360",
+      "notes": "Unofficial Spider-Man 3 Xbox 360 recompilation using ReXGlue. Early Windows test build; full-game compatibility still being tested.",
+      "website": "",
+      "addedAt": "2026-10-17T23:22:33.716Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v0.2.1",
+      "status": "prerelease",
+      "updatedAt": "2026-10-19T02:23:19Z"
     },
     {
       "repo": "toowasmir/WebOfShadowsRecomp",
@@ -11498,6 +11718,21 @@
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
+      "repo": "omegakatana92/Super-Dimension-Fortress-Macross-Scrambled-Valkyrie-Recomp",
+      "title": "Super Dimension Fortress Macross: Scrambled Valkyrie",
+      "console": "SNES",
+      "notes": "An unofficial native Windows recompilation of Super Dimension Fortress Macross Scrambled Valkyire (Japan) for the SNES  on modern PCs using your own legally obtained ROM. Features native gameplay, graphics, audio, and controls. No copyrighted game ROMs are included.",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "macOS"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-17T20:43:47Z"
+    },
+    {
       "repo": "MorsGames/sm64plus",
       "title": "Super Mario 64",
       "console": "Nintendo 64",
@@ -11563,6 +11798,21 @@
       "website": "",
       "addedAt": "2026-10-18T20:11:14.694Z",
       "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "wigwoo1/Super-Mario-64-DS-Enhanced-PC-Port",
+      "title": "Super Mario 64 DS",
+      "console": "Nintendo DS",
+      "notes": "A full PC port of Super Mario 64 DS with DS Download play styled multiplayer in a browser, and enhanced features like a Radar system, higher frame rates, Resolution, and overall presentation",
+      "website": "",
+      "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code) → released",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "dev-2026-10-18",
+      "status": "prerelease",
+      "updatedAt": "2026-10-18T10:28:28Z"
     },
     {
       "repo": "SCOPIC64/sm64ds-coop-port",
@@ -12091,6 +12341,21 @@
       "website": "",
       "addedAt": "2026-10-15T15:20:58.057Z",
       "via": "Maddie's Brave tabs, 15 Oct 2026"
+    },
+    {
+      "repo": "TheWishin/T5DROnline",
+      "title": "Tekken 5: Dark Resurrection (T5DR Online)",
+      "console": "PlayStation 3",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "v1.0.0",
+      "status": "latest",
+      "updatedAt": "2026-10-18T17:18:58Z",
+      "notes": "Tekken 5 Dark Resurrection Online Native Port",
+      "website": "",
+      "addedAt": "2026-10-18T21:10:13.420Z",
+      "via": "Discover queue (sorted by Claude Code)"
     },
     {
       "repo": "GenryTheFox0/Project-Iron-6",
@@ -13091,6 +13356,21 @@
       "notes": "🦊 A new engine for Titus the Fox: To Marrakech and Back (DOS, 1992), in C + SDL3. Original levels and rules, 🖥️ 16:9 widescreen, 🎮 gamepads, 🎵 AdLib music (Nuked-OPL3) or PC speaker. Runs on Windows, Linux, Nintendo 3DS/2DS and 📱 Android (Winlator, GameNative, GameHub). Bring your own copy of the game.",
       "website": "",
       "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "dotGrx/TNA-IMPACT-Recomp",
+      "title": "TNA iMPACT! (TNA-IMPACT-Recomp)",
+      "console": "Xbox 360",
+      "platforms": [
+        "Windows"
+      ],
+      "version": "recomp",
+      "status": "latest",
+      "updatedAt": "2026-10-18T20:39:25Z",
+      "notes": "",
+      "website": "",
+      "addedAt": "2026-10-18T21:10:13.420Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {
@@ -14383,6 +14663,22 @@
       "notes": "Unofficial native PC port of WWE Crush Hour (PS2) by static recompilation. Bring your own disc.",
       "website": "",
       "addedAt": "2026-10-18T17:12:22.858Z",
+      "via": "Discover queue (sorted by Claude Code)"
+    },
+    {
+      "repo": "KaikoClanworth1/wwe-svr2011-pc",
+      "title": "WWE SmackDown vs. Raw 2011",
+      "console": "Xbox 360",
+      "platforms": [
+        "Android",
+        "Windows"
+      ],
+      "version": "v2.1.3",
+      "status": "latest",
+      "updatedAt": "2026-10-15T21:00:48Z",
+      "notes": "Unofficial native PC port of WWE SmackDown vs. Raw 2011 (Xbox 360). Bring your own disc.",
+      "website": "",
+      "addedAt": "2026-10-19T03:41:04.485Z",
       "via": "Discover queue (sorted by Claude Code)"
     },
     {

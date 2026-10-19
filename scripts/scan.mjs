@@ -28,6 +28,11 @@ const readJSON = (f, d) => { try { return JSON.parse(fs.readFileSync(f, "utf8"))
 const writeJSON = (f, v, pretty = true) => { const t = `${f}.tmp`; fs.writeFileSync(t, JSON.stringify(v, null, pretty ? 1 : 0)); fs.renameSync(t, f); };
 const gb = (n) => `${(n / 1e9).toFixed(1)} GB`;
 
+// One scan at a time: a daily run finds the long first pass still going and leaves it be.
+const LOCK = path.join(HOME, "scan.lock");
+try { const pid = Number(fs.readFileSync(LOCK, "utf8")); process.kill(pid, 0); console.log(`another scan is running (pid ${pid}) - not starting a second one`); process.exit(0); } catch {}
+fs.mkdirSync(HOME, { recursive: true }); fs.writeFileSync(LOCK, String(process.pid));
+process.on("exit", () => { try { if (fs.readFileSync(LOCK, "utf8") === String(process.pid)) fs.rmSync(LOCK); } catch {} });
 const plans = readJSON(PLANS, null);
 if (!plans) { console.log(`no plans.json at ${PLANS}`); process.exit(1); }
 const scans = readJSON(SCANS, { files: {} });
@@ -49,7 +54,7 @@ await Promise.all(Array.from({ length: 6 }, async () => {
       if (!asset) { gone++; continue; }
       const had = scans.files[k];
       // Already scanned and GitHub still serves the same bytes (or can't say otherwise): nothing to do.
-      const same = had && (asset.digest ? asset.digest === `sha256:${had.sha256}` : had.size === asset.size && had.tag === release.tag);
+      const same = had && !/^Heuristics\.Limits\.Exceeded/.test(had.signature || "") && (asset.digest ? asset.digest === `sha256:${had.sha256}` : had.size === asset.size && had.tag === release.tag);
       if (!same || rescan) todo.set(k, { key: k, repo: full, tag: release.tag, asset });
     }
   }
@@ -109,7 +114,7 @@ await Promise.all(Array.from({ length: 4 }, async () => {
     try {
       // A dropped connection gets three more tries, a minute apart; anything else is reported once.
       let sig;
-      for (let n = 0; ; n++) { try { sig = await scanOne(t); break; } catch (err) { if (n >= 3 || !/fetch failed|terminated|ECONNRESET|ETIMEDOUT|download 5\d\d/.test(err.message)) throw err; await new Promise((r) => setTimeout(r, 60000)); } }
+      for (let n = 0; ; n++) { try { sig = await scanOne(t); break; } catch (err) { if (n >= 3 || !/fetch failed|terminated|ECONNRESET|ETIMEDOUT|download 5\d\d|didn't match GitHub's checksum/.test(err.message)) throw err; await new Promise((r) => setTimeout(r, 60000)); } }
       if (sig) { flagged++; console.log(`  FLAGGED ${t.repo} ${t.asset.name}: ${sig}`); }
     }
     catch (err) { failed++; console.log(`  could not scan ${t.repo} ${t.asset.name}: ${err.message}`); }

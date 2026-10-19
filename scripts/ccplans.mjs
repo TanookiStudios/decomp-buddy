@@ -34,6 +34,7 @@ const idOf = (key) => key.replace(/[^a-z0-9]+/g, "_");
 const readJSON = (f) => JSON.parse(fs.readFileSync(f, "utf8"));
 
 // Same rules as the app's workFor(): every platform the catalog says the game has (Windows if none), plus facts.
+const REPLAN = new Set((() => { try { return fs.readFileSync(arg("--replan") || "/nonexistent", "utf8"); } catch { return ""; } })().split("\n").map((l) => l.split(":")[0].trim().toLowerCase()).filter(Boolean));
 function work() {
   const cat = readJSON(path.join(DIR, "catalog.json")), pub = readJSON(path.join(DIR, "plans.json"));
   const seen = new Set(), out = [];
@@ -43,7 +44,8 @@ function work() {
     const key = planKey(host, owner, repo); if (seen.has(key)) continue; seen.add(key);
     const entry = pub.plans?.[key] || {};
     const targets = [...new Set((g.platforms || []).flatMap((p) => TARGET_OF_PLATFORM[p] || []))]; if (!targets.length) targets.push("windows");
-    const missing = targets.filter((t) => !entry.targets?.[t]);
+    // --replan <file>: repos whose newest release no longer fits their steps (scripts/follow.mjs lists them) are redone.
+    const missing = REPLAN.has(`${owner}/${repo}`.toLowerCase()) ? [...new Set([...targets, ...Object.keys(entry.targets || {})])] : targets.filter((t) => !entry.targets?.[t]);
     const facts = !entry.facts;
     if (missing.length || facts) out.push({ key, id: idOf(key), host, owner, repo, title: g.title, version: g.version || null, targets: missing, facts, hasAnyPlan: !!entry.targets });
   }
