@@ -30,6 +30,9 @@ const clean = (planKey, b) => { const r = scans.files[scanKey(planKey, b)]; retu
 const byRepo = new Map();
 for (const b of releaseBuilds(plans)) if (!only || b.planKey.endsWith(`:${only}`)) (byRepo.get(b.planKey) || byRepo.set(b.planKey, []).get(b.planKey)).push(b);
 const tally = { current: 0, advanced: 0, waiting: 0, review: 0, replan: 0, unreachable: 0 }, replan = [], review = [];
+// Each release gets one re-plan: when the new steps still use an older release (the new one is only a patch or extras),
+// the same mismatch would otherwise be listed again every day.
+const ASKED = path.join(OUT, "replan-asked.json"), asked = readJSON(ASKED, {});
 let i = 0; const keys = [...byRepo.keys()];
 await Promise.all(Array.from({ length: 6 }, async () => {
   while (i < keys.length) {
@@ -42,7 +45,7 @@ await Promise.all(Array.from({ length: 6 }, async () => {
     for (const { build } of byRepo.get(key)) {
       const step = nextStep(build, releases, { owner, knownUploaders, collection });
       if (step.action === "current") { delete build.next; tally.current++; continue; }
-      if (step.action === "replan") { delete build.next; tally.replan++; replan.push(`${full}: ${step.why}`); continue; }
+      if (step.action === "replan") { delete build.next; const k = `${full}: ${step.why}`; if (asked[k]) { tally.current++; continue; } asked[k] = new Date().toISOString().slice(0, 10); tally.replan++; replan.push(k); continue; }
       build.next = { release_tag: step.release.tag, release_asset: step.asset.name, publishedAt: step.release.publishedAt, uploader: step.asset.uploader || null, ...(build.next?.scanned ? { scanned: build.next.scanned } : {}) };
       if (step.action === "advance" && clean(key, build.next)) {
         const from = build.release_tag;
@@ -56,8 +59,11 @@ await Promise.all(Array.from({ length: 6 }, async () => {
 
 console.log(`follow: ${tally.current} current, ${tally.advanced} moved to a newer release, ${tally.waiting} waiting (hold or scan), ${tally.review} need a look, ${tally.replan} need new steps${tally.unreachable ? `, ${tally.unreachable} skipped (GitHub didn't answer)` : ""}`);
 fs.mkdirSync(OUT, { recursive: true });
+if (!only) {
 fs.writeFileSync(path.join(OUT, "follow-replan.txt"), replan.join("\n") + (replan.length ? "\n" : ""));
+fs.writeFileSync(ASKED, JSON.stringify(asked, null, 1));
 fs.writeFileSync(path.join(OUT, "follow-review.txt"), review.join("\n") + (review.length ? "\n" : ""));
 if (replan.length || review.length) console.log(`lists: ${path.join(OUT, "follow-replan.txt")}, ${path.join(OUT, "follow-review.txt")}`);
+}
 saveReleases();
 if (!dry) { plans.updatedAt = new Date().toISOString(); const t = `${PLANS}.tmp`; fs.writeFileSync(t, JSON.stringify(plans)); fs.renameSync(t, PLANS); }

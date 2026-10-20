@@ -1202,14 +1202,19 @@ function installedFor(g) {
 }
 const updateAvailable = (g, inst) => !!(inst && g.version && inst.some((i) => i.tag !== g.version));
 
+// Search words: no accents or punctuation, any order, and Roman numerals the same as digits ("God of War 3" finds "III").
+// shortcut: V and X stay letters (Mega Man X, Ultima V would collide), add them if people search that way.
+const ROMAN = { ii: "2", iii: "3", iv: "4", vi: "6", vii: "7", viii: "8", ix: "9" };
+const searchWords = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, " and ").split(/[^a-z0-9]+/).filter(Boolean).map((w) => ROMAN[w] || w);
 function visibleGames() {
-  const q = $("catSearch").value.trim().toLowerCase();
+  const q = $("catSearch").value.trim().toLowerCase(), qw = searchWords(q), qs = qw.join(" ");
+  const hay = new Map(), hayOf = (g) => hay.get(g) ?? hay.set(g, { t: searchWords(g.title).join(" "), all: ` ${searchWords(`${g.title} ${g.project}`).join(" ")} ` }).get(g);
   const con = catCon, st = $("catStatus").value, srcF = $("catSource").value;
   const plat = PLATFORM_OF_TARGET[$("target").value] || "Windows";
   const runsOn = $("catRunsOn").value, instOnly = $("catInstalled").checked, wishOnly = $("catWish").checked, playOnly = $("catPlayable").checked, wellOnly = $("catRunsWell").checked, aiWant = $("catAI").value;
   const runsOk = (g) => !runsOn || (runsOn === "Steam Deck" ? ["verified", "works"].includes(g.facts?.steam_deck) : g.platforms.includes(runsOn) || !g.platforms.length);
   let list = catalog.games.filter((g) =>
-    (!q || `${g.title} ${g.project}`.toLowerCase().includes(q)) &&
+    (!qw.length || qw.every((w) => hayOf(g).all.includes(` ${w}`))) &&
     (!con || g.console === con) && (!st || g.status === st) && (!srcF || (g.sources || [g.source]).includes(srcF)) &&
     runsOk(g) && (!playOnly || ["playable", "mostly"].includes(g.facts?.completeness)) && (!instOnly || installedFor(g)) && (!wishOnly || isWished(g)) && (!wellOnly || reportsFor(g)?.well) && (!aiWant || (g.facts?.ai_use || "unsaid") === aiWant));
   const sort = $("catSort").value;
@@ -1220,7 +1225,9 @@ function visibleGames() {
   else if (sort === "title") list.sort(byTitle);
   else list.sort((a, b) => a.console.localeCompare(b.console) || byTitle(a, b));
   if (instOnly) list.sort((a, b) => updateAvailable(b, installedFor(b)) - updateAvailable(a, installedFor(a)));
-  return { list, grouped: (sort === "console" && !con) || sort === "platforms", groupBy: sort === "platforms" ? plats : (g) => g.console };
+  // Searching: best matches first (the exact title, then titles that start with the words, then have them in order), one flat list.
+  if (qw.length) { const rank = (g) => { const t = hayOf(g).t; return t === qs ? 0 : t.startsWith(`${qs} `) ? 1 : t.startsWith(qs) ? 2 : t.includes(qs) ? 3 : 4; }; list.sort((a, b) => rank(a) - rank(b)); }
+  return { list, grouped: !qw.length && ((sort === "console" && !con) || sort === "platforms"), groupBy: sort === "platforms" ? plats : (g) => g.console };
 }
 
 // One game as a tile: box art, title, one line about it, one button. Everything else is on its page.
