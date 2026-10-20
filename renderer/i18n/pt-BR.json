@@ -1156,6 +1156,7 @@
     "Wireless Debugging (no cable) isn't supported yet.": "A Depuração Sem Fio (sem cabo) ainda não é compatível.",
     "Yes, remove {0}": "Sim, remover {0}",
     "the device": "o aparelho",
-    "with Build For set to Android Phone Or Handheld or Meta Quest, then install it here.": "com Gerar Para definido como Celular Ou Portátil Android ou Meta Quest, depois instale aqui."
+    "with Build For set to Android Phone Or Handheld or Meta Quest, then install it here.": "com Gerar Para definido como Celular Ou Portátil Android ou Meta Quest, depois instale aqui.",
+    "{0} box art": "Capa de {0}"
  }
 }

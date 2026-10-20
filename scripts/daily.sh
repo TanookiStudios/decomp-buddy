@@ -22,13 +22,13 @@ need() { [[ -f ~/.decomp-buddy-scan/daily-$DAY.$1 ]] || { say "✗ run '$1' firs
 case "${1:-}" in
   find)
     say "== $DAY find"
-    node scripts/triage.mjs prep --scan 2>&1 | grep -E "^(queue|prep|reddit|bluesky|github)" | tee -a "$LOG"
+    node scripts/triage.mjs prep --scan 2>&1 | grep -E "^(queue|prep|reddit|bluesky|github|recomphaven|unbaked)" | tee -a "$LOG"
     ls ~/.decomp-buddy-triage/jobs/*.md 2>/dev/null | sed 's#.*/##;s#\.md$##' | tr '\n' ' ' | sed 's/^/batches: /' | tee -a "$LOG"; echo | tee -a "$LOG"
     mark find ;;
   steps)
     need find; say "== $DAY steps"
     node scripts/triage.mjs import --site "$SITE" 2>&1 | grep -E "^import" | tee -a "$LOG"
-    node scripts/build-catalog.mjs --site "$SITE" 2>&1 | grep -E "^catalog" | tee -a "$LOG"
+    node scripts/build-catalog.mjs --site "$SITE" 2>&1 | grep -E "^(catalog|waiting.json|steamgriddb|✗ steamgriddb)" | tee -a "$LOG"
     touch ~/.decomp-buddy-scan/follow-replan.txt
     node scripts/ccplans.mjs prep --site "$SITE" --replan ~/.decomp-buddy-scan/follow-replan.txt 2>&1 | grep -E "^prep" | tee -a "$LOG"
     # New jobs (the ones without an answer yet) into batches of 10 for the plan agents.
@@ -52,7 +52,7 @@ PY
   publish)
     need gates; say "== $DAY publish"
     [[ -f ~/.decomp-buddy-ailabel/answers.json ]] && node scripts/ailabel.mjs import --site "$SITE" 2>&1 | grep -E "^ailabel" | tee -a "$LOG"
-    node scripts/build-catalog.mjs --site "$SITE" 2>&1 | grep -E "^catalog" | tee -a "$LOG"
+    node scripts/build-catalog.mjs --site "$SITE" 2>&1 | grep -E "^(catalog|waiting.json|steamgriddb|✗ steamgriddb)" | tee -a "$LOG"
     npm --prefix "$SITE" run deploy 2>&1 | grep -E "Deployment complete|✘|ERROR" | tee -a "$LOG"
     npm --prefix "$WEB" run deploy 2>&1 | grep -E "^built|Deployment complete|✘|ERROR" | tee -a "$LOG"
     python3 ~/Documents/Tanooki-Business/tools/indexnow.py decompbuddy.com 2>&1 | tail -1 | tee -a "$LOG"
@@ -66,12 +66,8 @@ PY
     for r in "$SITE" "$WEB"; do git -C "$r" diff --cached --quiet || git -C "$r" commit -qm "Daily Decomp Buddy update $DAY
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"; done
-    # Each repo pushes as the GitHub account its own remote names.
-    for r in "$SITE" "$WEB"; do
-      gh auth switch -u "$(git -C "$r" remote get-url origin | sed -E 's#.*github\.com[/:]([^/]+)/.*#\1#')" >/dev/null 2>&1 || true
-      git -C "$r" push -q 2>&1 | tail -1 || say "push failed: $r"
-    done
-    gh auth switch -u TanookiStudios >/dev/null 2>&1 || true
+    # Everything lives on the Tanooki Studios account; push as it, whichever gh account is active.
+    for r in "$SITE" "$WEB"; do git -C "$r" -c credential.helper= -c "credential.helper=!GH_TOKEN=$GITHUB_TOKEN gh auth git-credential" push -q 2>&1 | tail -1 || say "push failed: $r"; done
     mark publish; say "✓ $DAY published" ;;
   *) echo "usage: scripts/daily.sh find|steps|gates|publish"; exit 2 ;;
 esac

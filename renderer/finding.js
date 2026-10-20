@@ -114,7 +114,7 @@ function renderSoon() {
   const q = $("soonSearch").value.trim().toLowerCase(), con = $("soonConsole").value;
   const list = soon.games.filter((g) => (!con || (g.console || "Unknown") === con) && (!q || `${g.title} ${g.repo}`.toLowerCase().includes(q)));
   $("soonMeta").textContent = `${list.length} of ${soon.games.length} game(s)${soon.stale ? " - offline, showing the last copy" : ""}.`;
-  $("soonList").innerHTML = list.map((g) => `<div class="srcRow"><span></span><div><div class="lab" translate="no">${esc(g.title)}</div><div class="u wrap"><span translate="no">${esc(g.console || "Unknown")} · ${esc(g.repo)}</span>${g.notes ? ` - <span translate="no">${esc(g.notes)}</span>` : ""}</div></div><button class="small" type="button" data-soon="${esc(repoPage(g))}" aria-label="${esc(`Open ${g.title} on GitHub`)}">Open</button></div>`).join("")
+  $("soonList").innerHTML = list.map((g) => `<div class="srcRow">${g.boxartUrl ? `<img class="soonArt" src="${esc(g.boxartUrl)}" alt="${esc(`${g.title} box art`)}" loading="lazy" width="40" height="40">` : "<span></span>"}<div><div class="lab" translate="no">${esc(g.title)}</div><div class="u wrap"><span translate="no">${esc(g.console || "Unknown")} · ${esc(g.repo)}</span>${g.notes ? ` - <span translate="no">${esc(g.notes)}</span>` : ""}</div></div><button class="small" type="button" data-soon="${esc(repoPage(g))}" aria-label="${esc(`Open ${g.title} on GitHub`)}">Open</button></div>`).join("")
     || `<p class="sub">Nothing matches.</p>`;
   $("soonList").querySelectorAll("[data-soon]").forEach((b) => (b.onclick = () => window.buddy.openExternal(b.dataset.soon)));
 }

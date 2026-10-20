@@ -32,3 +32,33 @@ test("reddit: posts without a GitHub link keep their title as a lead; a 429 gets
     assert.equal(calls, 2); assert.deepEqual(s.errors, []); assert.equal(s.unlinked.length, 1);
   } finally { globalThis.fetch = real; }
 });
+
+test("recomphaven.com: repo links from its data file, GitHub and GitLab", async () => {
+  const { parseRecompHaven } = await import("../src/discover.js");
+  const js = `window.RECOMPS = [
+  {"id": "ac6", "title": "Ace Combat 6: Fires of Liberation", "project": "AC6_recomp", "repo": "https://github.com/sal063/AC6_recomp", "website": null},
+  {"id": "mk64", "title": "Mario Kart 64", "repo": "https://gitlab.com/sonicdcer/mariokart64recomp", "website": null},
+  {"id": "x", "title": "No Repo Yet", "repo": null}
+];`;
+  assert.deepEqual(parseRecompHaven(js).map((r) => [r.repo, r.title]), [["sal063/AC6_recomp", "Ace Combat 6: Fires of Liberation"], ["gitlab:sonicdcer/mariokart64recomp", "Mario Kart 64"]]);
+});
+
+test("unbaked.games: only projects whose own downloads run on a system we install for", async () => {
+  const { unbakedProjects } = await import("../src/discover.js");
+  const game = { title: "Super Metroid", url: "https://unbaked.games/games/super-metroid/", projects: [
+    { url: "https://github.com/snesrev/sm", runs_on: [] },                                   // decomp with no builds
+    { url: "https://github.com/a/sm-pc", runs_on: ["Windows", "Linux"] },
+    { url: "https://github.com/b/sm-switch", runs_on: ["Switch"] },                           // a system we don't do
+    { url: "https://github.com/c/toolkit", runs_on: ["Windows"], general_tool: true },        // a tool, not the game
+    { url: "https://gitlab.com/d/sm-recomp", runs_on: ["macOS"] },
+  ] };
+  assert.deepEqual(unbakedProjects(game).map((p) => p.repo), ["a/sm-pc", "gitlab:d/sm-recomp"]);
+});
+
+test("unbaked.games: open-source PC originals are left out, ports of PC games stay", async () => {
+  const { openSourceOriginal } = await import("../src/discover.js");
+  assert.equal(openSourceOriginal({ platform: "PC", methods: ["Source release"] }), true);          // Battle for Wesnoth
+  assert.equal(openSourceOriginal({ platform: "PC", methods: ["Reimplementation"] }), false);       // OpenRCT2
+  assert.equal(openSourceOriginal({ platform: "DOS", methods: ["Source release"] }), false);        // Doom
+  assert.equal(openSourceOriginal({ platform: "PS1", methods: ["Static recomp"] }), false);
+});

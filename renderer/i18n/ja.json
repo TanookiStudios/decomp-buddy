@@ -1156,6 +1156,7 @@
     "Wireless Debugging (no cable) isn't supported yet.": "ワイヤレスデバッグ（ケーブルなし）にはまだ対応していません。",
     "Yes, remove {0}": "はい、{0} を削除",
     "the device": "デバイス",
-    "with Build For set to Android Phone Or Handheld or Meta Quest, then install it here.": "で「ビルド先」を Android スマホ・携帯機か Meta Quest にして準備し、ここでインストールします。"
+    "with Build For set to Android Phone Or Handheld or Meta Quest, then install it here.": "で「ビルド先」を Android スマホ・携帯機か Meta Quest にして準備し、ここでインストールします。",
+    "{0} box art": "{0} のパッケージ画像"
  }
 }

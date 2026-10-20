@@ -43,7 +43,10 @@ Up to 4 batch files per agent:
 same-uploader check and the scan, scans new files (skipped while a long scan is already running), and prepares AI
 labels. If it prints `FLAGGED`, look at that file the way docs say in scripts/scan.mjs and src/scan.js: a false alarm
 goes into `~/Documents/GitHub/TanookiStudios-Site/public/decomp-buddy/scans-reviewed.json` **by sha256 only**, with the
-reason; a real hit stays held and goes in the final reply.
+reason; a real hit stays held and goes in the final reply. An upload that "needs a look" (a new uploader) is in
+`~/.decomp-buddy-scan/follow-review.txt`: if the uploader is clearly part of the project (a known collaborator, the
+framework's author), add them to `uploaders-reviewed.json` next to scans-reviewed.json (`"owner/repo": ["login"]`);
+otherwise leave it held and say so in the final reply.
 
 ## 6. AI labels (agent, only if `ailabel prep` found READMEs to decide)
 > Read ~/.decomp-buddy-ailabel/RULES.md fully and follow it exactly. Do batch ~/.decomp-buddy-ailabel/batch.md ->

@@ -2,7 +2,7 @@
  "_meta": {
   "language": "English",
   "source": true,
-  "strings": 1147
+  "strings": 1148
  },
  "strings": {
   "(a CI build)": "(a CI build)",
@@ -1065,6 +1065,7 @@
   "{0} added to Pending.": "{0} added to Pending.",
   "{0} added{1}.": "{0} added{1}.",
   "{0} and {1}": "{0} and {1}",
+  "{0} box art": "{0} box art",
   "{0} bytes": "{0} bytes",
   "{0} digit(s) entered": "{0} digit(s) entered",
   "{0} disc image(s) found, {1} placed{2}.": "{0} disc image(s) found, {1} placed{2}.",

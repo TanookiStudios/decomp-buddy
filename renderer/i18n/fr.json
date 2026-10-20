@@ -1156,6 +1156,7 @@
     "Wireless Debugging (no cable) isn't supported yet.": "Le Débogage Sans Fil (sans câble) n'est pas encore pris en charge.",
     "Yes, remove {0}": "Oui, retirer {0}",
     "the device": "l'appareil",
-    "with Build For set to Android Phone Or Handheld or Meta Quest, then install it here.": "avec Construire Pour réglé sur Téléphone Ou Console Portable Android ou Meta Quest, puis installez-le ici."
+    "with Build For set to Android Phone Or Handheld or Meta Quest, then install it here.": "avec Construire Pour réglé sur Téléphone Ou Console Portable Android ou Meta Quest, puis installez-le ici.",
+    "{0} box art": "Jaquette de {0}"
  }
 }

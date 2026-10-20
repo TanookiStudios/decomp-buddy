@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { fetchCatalog, artUrl } from "./catalog.js";
 import { enrichBoxart } from "./boxart.js";
+import { enrichSteamGrid } from "./steamgriddb.js";
 import { fetchPublished, planKey } from "./plans.js";
 import { fetchSharedSources } from "./sources/shared-sources.js";
 import { expandMultiGame, attachFacts, slug, artworkUrl } from "./expand.js";
@@ -12,7 +13,7 @@ import { promoteReady, readWaiting, waitingFileNextTo, withoutExcluded } from ".
 export const SCHEMA_VERSION = 1;
 const projectArt = (entry, g) => { for (const t of Object.values(entry?.targets || {})) for (const pg of t?.games || []) { const u = pg.artwork_url && artworkUrl(pg.artwork_url, g); if (u) return u; } return null; };
 
-export async function buildCatalog({ site = path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site"), log = console.log, recheck = false } = {}) {
+export async function buildCatalog({ site = path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site"), log = console.log, recheck = false, steamGridKey = null } = {}) {
   const dir = path.join(site, "public", "decomp-buddy");
   const findsFile = path.join(dir, "finds.json");
   const cacheDir = path.join(os.homedir(), ".decomp-buddy", "catalog-build"); fs.mkdirSync(cacheDir, { recursive: true });
@@ -23,6 +24,8 @@ export async function buildCatalog({ site = path.join(os.homedir(), "Documents/G
   const cat = await fetchCatalog({ cacheDir, refresh: true, config: { shared, findsFile } });
   const games = attachFacts(expandMultiGame(withoutExcluded(cat.games, readWaiting(waitingFileNextTo(findsFile))), pub), pub); // waiting + hidden stay out, whichever source lists them
   await enrichBoxart(games, { cacheDir });
+  // A SteamGridDB outage must not stop a publish: the games just keep the art they had.
+  if (steamGridKey) await enrichSteamGrid(games, { cacheDir, key: steamGridKey, log }).catch((err) => log(`✗ steamgriddb skipped: ${err.message}`));
   const seenSlugs = new Map();
   let out = games.map((g) => {
     let s = slug(`${g.title}-${g.console}`); const n = (seenSlugs.get(s) || 0) + 1; seenSlugs.set(s, n); if (n > 1) s = `${s}-${slug(g.owner || g.project)}`;
@@ -48,6 +51,16 @@ export async function buildCatalog({ site = path.join(os.homedir(), "Documents/G
   const doc = { schema: SCHEMA_VERSION, generatedAt: new Date().toISOString(), count: out.length, sources: Object.fromEntries(Object.entries(cat.perSource || {}).map(([k, v]) => [k, { label: v.label || k, url: v.url || null, count: v.count || 0 }])), games: out };
   const file = path.join(dir, "catalog.json");
   const tmp = `${file}.tmp`; fs.writeFileSync(tmp, JSON.stringify(doc)); fs.renameSync(tmp, file);
+  // Coming Soon gets covers from the same matchers, kept on each waiting.json entry so the website and the app can show them.
+  const wfile = waitingFileNextTo(findsFile);
+  if (fs.existsSync(wfile)) {
+    const wdoc = JSON.parse(fs.readFileSync(wfile, "utf8")), had = wdoc.games.filter((g) => g.boxartUrl).length;
+    await enrichBoxart(wdoc.games, { cacheDir });
+    if (steamGridKey) await enrichSteamGrid(wdoc.games, { cacheDir, key: steamGridKey, log }).catch((err) => log(`✗ steamgriddb skipped: ${err.message}`));
+    const has = wdoc.games.filter((g) => g.boxartUrl).length;
+    if (has !== had) { const t = `${wfile}.tmp`; fs.writeFileSync(t, JSON.stringify(wdoc, null, 2) + "\n"); fs.renameSync(t, wfile); }
+    log(`waiting.json: ${has} of ${wdoc.games.length} Coming Soon games have box art`);
+  }
   log(`catalog.json: ${out.length} games (${out.filter((g) => g.plan).length} with published plans, ${out.filter((g) => g.facts).length} with facts) -> ${file}`);
   return { file, count: out.length };
 }

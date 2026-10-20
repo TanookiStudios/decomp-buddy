@@ -23,6 +23,8 @@ const readJSON = (f, d) => { try { return JSON.parse(fs.readFileSync(f, "utf8"))
 
 const plans = readJSON(PLANS, null); if (!plans) { console.log(`no plans.json at ${PLANS}`); process.exit(1); }
 const scans = readJSON(SCANS, { files: {} }), reviewed = readJSON(REVIEWED, {});
+// Uploaders a person looked at and cleared for one project ("owner/repo": ["login", ...]) after a "needs a look".
+const cleared = readJSON(path.join(DIR, "uploaders-reviewed.json"), {});
 const clean = (planKey, b) => { const r = scans.files[scanKey(planKey, b)]; return !!r && (r.clean || !!reviewed[r.sha256]); };
 
 const byRepo = new Map();
@@ -35,7 +37,7 @@ await Promise.all(Array.from({ length: 6 }, async () => {
     let releases;
     try { releases = await releasesOf(host, owner, repo); } catch (err) { if (/rate limit/i.test(err.message)) { console.log(err.message); process.exit(1); } tally.unreachable += byRepo.get(key).length; continue; }
     // Everyone who uploaded an older release of this project counts as one of its usual uploaders.
-    const knownUploaders = [...new Set(releases.slice(1).flatMap((r) => r.assets.map((a) => a.uploader)).filter(Boolean))];
+    const knownUploaders = [...new Set([...releases.slice(1).flatMap((r) => r.assets.map((a) => a.uploader)), ...(cleared[full] || [])].filter(Boolean))];
     const collection = new Set(byRepo.get(key).map((b) => b.build.release_tag)).size > 1;
     for (const { build } of byRepo.get(key)) {
       const step = nextStep(build, releases, { owner, knownUploaders, collection });

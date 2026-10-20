@@ -21,7 +21,7 @@ export const REPO_FOR_CONSOLE = {
   "Wii U": "Nintendo_-_Wii_U", "Virtual Boy": "Nintendo_-_Virtual_Boy", "Amiga": "Commodore_-_Amiga", "Commodore 64": "Commodore_-_64",
 };
 
-const norm = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, " ").trim();
+export const norm = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, " ").trim();
 const regionOf = (r) => (/usa|canada|america/i.test(r) ? "USA" : /europe|pal/i.test(r) ? "Europe" : /japan/i.test(r) ? "Japan" : null);
 
 // Names in Named_Boxarts/ for one console, cached a week. null when GitHub says no.

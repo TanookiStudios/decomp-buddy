@@ -1,5 +1,6 @@
 // Finding projects nobody has listed yet: Reddit (RSS - Reddit's JSON needs OAuth, the feed
 // doesn't) and GitHub search. Both return raw candidates; the admin decides what's real.
+import fs from "node:fs";
 
 const UA = "decomp-buddy/discover (by /u/tanookistudios)";
 const REPO_RE = /github\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?(?=[\/#?"'<>\s),\]]|$)/g;
@@ -123,4 +124,60 @@ export async function scanYouTube(channels, { resolve = youtubeChannelId } = {})
 // ---- GitHub topics: people who tag their repo are usually shipping something.
 export async function scanGitHubTopics({ topics = ["recompilation", "decompilation", "n64recomp", "static-recompilation", "pc-port"], log = () => {}, pages = 1 } = {}) {
   return scanGitHub({ queries: topics.map((t) => `topic:${t}`), log, pages });
+}
+
+// ---- recomphaven.com: a hand-kept list of recomps (MIT), one object per project in data/recomps.js with its repo link.
+export function parseRecompHaven(js) {
+  const out = [];
+  for (const m of String(js).matchAll(/"title":\s*"((?:[^"\\]|\\.)*)"[^\n]*?"repo":\s*"([^"]+)"/g)) {
+    const [, title, url] = m, gl = url.match(/^https?:\/\/gitlab\.com\/([^?#]+?)\/?$/);
+    const repo = gl ? `gitlab:${gl[1]}` : [...reposIn(url).values()][0];
+    if (repo) out.push({ repo, title, via: "recomphaven.com", url });
+  }
+  return out;
+}
+export async function scanRecompHaven({ fetch = globalThis.fetch } = {}) {
+  const r = await fetch("https://recomphaven.com/data/recomps.js", { headers: { "User-Agent": UA } });
+  if (!r.ok) throw new Error(`recomphaven.com answered ${r.status}`);
+  const out = parseRecompHaven(await r.text());
+  if (!out.length) throw new Error("recomphaven.com's list had no repo links - its format may have changed");
+  return out;
+}
+
+// ---- unbaked.games: a registry of every game with public code (decomps, disassemblies, source releases...). Most of it
+// isn't playable, so only projects whose own release files run on a system we install for (its `runs_on`) come through.
+// Per-game records are cached by their last push, so a daily run only asks about games that changed.
+const UNBAKED = "https://unbaked.games/api";
+const OUR_SYSTEMS = new Set(["windows", "macos", "linux", "android"]);
+const runsHere = (r) => (r || []).some((s) => OUR_SYSTEMS.has(String(s).toLowerCase()));
+// An open-source game made for the PC in the first place (Wesnoth, Angband) is the game itself, not a port of one.
+const PORT_METHODS = new Set(["Static recomp", "Reimplementation", "Decomp", "Matching decomp", "AI-assisted decomp", "Source port", "Runtime port"]);
+export const openSourceOriginal = (g) => ["PC", "Mac", "Mobile", "Web/Flash", "Other"].includes(g.platform) && !(g.methods || []).some((m) => PORT_METHODS.has(m));
+export function unbakedProjects(game) {
+  const out = [];
+  for (const p of game.projects || []) {
+    if (p.general_tool || !runsHere(p.runs_on)) continue;
+    const gl = String(p.url).match(/^https?:\/\/gitlab\.com\/([^?#]+?)\/?$/), cb = String(p.url).match(/^https?:\/\/codeberg\.org\/([^/]+\/[^/?#]+)/);
+    const repo = gl ? `gitlab:${gl[1]}` : cb ? `codeberg:${cb[1]}` : [...reposIn(p.url).values()][0];
+    if (repo) out.push({ repo, title: game.title, via: "unbaked.games", url: game.url });
+  }
+  return out;
+}
+export async function scanUnbaked({ cacheFile, fetch = globalThis.fetch, gap = 200, log = () => {} } = {}) {
+  const get = async (u) => { const r = await fetch(u, { headers: { "User-Agent": UA } }); if (!r.ok) throw new Error(`unbaked.games answered ${r.status} for ${u}`); return r.json(); };
+  let cache = {}; try { cache = JSON.parse(fs.readFileSync(cacheFile, "utf8")); } catch {}
+  const games = (await get(`${UNBAKED}/games.json`)).games.filter((g) => g.has_public_code && runsHere(g.runs_on) && !openSourceOriginal(g));
+  const out = []; let asked = 0;
+  try {
+    for (const g of games) {
+      let hit = cache[g.slug];
+      if (!hit || hit.last_push !== g.last_push) {
+        hit = cache[g.slug] = { last_push: g.last_push, found: unbakedProjects(await get(g.json)) };
+        asked++; await pause(gap);
+      }
+      out.push(...hit.found);
+    }
+  } finally { if (cacheFile) fs.writeFileSync(cacheFile, JSON.stringify(cache)); }
+  log(`unbaked.games: ${games.length} game(s) run on our systems, ${asked} looked up`);
+  return out;
 }
