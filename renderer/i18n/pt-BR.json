@@ -1161,6 +1161,24 @@
     "Games I Have Files For": "Jogos Para Os Quais Tenho Arquivos",
     "None of the catalog's games match these files yet.": "Nenhum jogo do catálogo corresponde a esses arquivos ainda.",
     "Show Them": "Mostrar",
-    "Your files can play {0} game(s) in the catalog on this computer.": "Com seus arquivos você pode jogar {0} jogo(s) do catálogo neste computador."
+    "Your files can play {0} game(s) in the catalog on this computer.": "Com seus arquivos você pode jogar {0} jogo(s) do catálogo neste computador.",
+    "Control Decomp Buddy from the Decomp Buddy Remote app on your iPhone: browse the catalog on the couch, install games to this computer, update them and start them. It only works on your home network, and only phones that scanned this code can connect. Nothing goes through the internet.": "Controle o Decomp Buddy pelo app Decomp Buddy Remote no seu iPhone: explore o catálogo no sofá, instale jogos neste computador, atualize e abra. Só funciona na sua rede de casa, e só os celulares que escanearam este código podem se conectar. Nada passa pela internet.",
+    "Couldn't start - another app may be using the connection. Restart Decomp Buddy and try again.": "Não foi possível iniciar - outro app pode estar usando a conexão. Reinicie o Decomp Buddy e tente de novo.",
+    "Forget Paired Phones": "Esquecer Celulares Pareados",
+    "Its install steps couldn't be read on the computer - see Set Up there.": "Não foi possível ler as etapas de instalação no computador - veja Configurar lá.",
+    "Let My Phone Control Decomp Buddy": "Deixar Meu Celular Controlar O Decomp Buddy",
+    "Open Decomp Buddy Remote on your iPhone, tap Pair, and point it at this code.": "Abra o Decomp Buddy Remote no seu iPhone, toque em Parear e aponte para este código.",
+    "Paired phones were forgotten. Scan the new code to pair again.": "Os celulares pareados foram esquecidos. Escaneie o novo código para parear de novo.",
+    "Pairing code for Decomp Buddy Remote": "Código de pareamento do Decomp Buddy Remote",
+    "Phone": "Celular",
+    "Reading {0}'s install steps on the computer…": "Lendo as etapas de instalação de {0} no computador…",
+    "Ready on {0} ({1}).": "Pronto em {0} ({1}).",
+    "Set Up didn't finish - see the computer.": "A configuração não terminou - veja o computador.",
+    "Setting up {0}…": "Configurando {0}…",
+    "That game isn't in this computer's catalog yet. Open Browse there to refresh it, then try again.": "Esse jogo ainda não está no catálogo deste computador. Abra Explorar lá para atualizar e tente de novo.",
+    "Waiting on the computer: choose the game file in Set Up there, then press Set Up Games.": "Aguardando o computador: escolha o arquivo do jogo em Configurar lá e toque em Configurar Jogos.",
+    "no network": "sem rede",
+    "{0} is ready to play on the computer.": "{0} está pronto para jogar no computador.",
+    "Name On The Phone": "Nome No Celular"
  }
 }

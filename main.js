@@ -25,6 +25,7 @@ import "./src/main/game.js";
 import "./src/main/finding.js";
 import "./src/main/look.js";
 import "./src/main/devices.js";
+import { startPhoneLink } from "./src/main/phonelink.js";
 import { createWindow } from "./src/main/window.js";
 import { BrowserWindow } from "electron";
 import { parseDeepLink } from "./src/deeplink.js";
@@ -51,7 +52,7 @@ if (app.isPackaged) {
   const first = process.argv.find((a) => a.startsWith("decompbuddy://")); if (first) pendingLink = parseDeepLink(first);
 }
 
-app.whenReady().then(() => { try { backupSettingsOnUpgrade(); } catch {} const s = loadSettings(); if (!process.env.GITHUB_TOKEN) applyGitHubToken(githubToken(s)); nativeTheme.themeSource = ["light", "dark"].includes(s.theme) ? s.theme : "system"; startBackground(); setTimeout(() => sendStatsIfDue(), 60_000); if (process.argv.includes("--background") && keepRunning()) return; const win = createWindow(); if (pendingLink) { const l = pendingLink; pendingLink = null; win.webContents.once("did-finish-load", () => (l.play ? playFromShortcut(win, l) : win.webContents.send("deeplink", l))); } });
+app.whenReady().then(() => { try { backupSettingsOnUpgrade(); } catch {} const s = loadSettings(); if (!process.env.GITHUB_TOKEN) applyGitHubToken(githubToken(s)); nativeTheme.themeSource = ["light", "dark"].includes(s.theme) ? s.theme : "system"; startBackground(); startPhoneLink(); setTimeout(() => sendStatsIfDue(), 60_000); if (process.argv.includes("--background") && keepRunning()) return; const win = createWindow(); if (pendingLink) { const l = pendingLink; pendingLink = null; win.webContents.once("did-finish-load", () => (l.play ? playFromShortcut(win, l) : win.webContents.send("deeplink", l))); } });
 // Keep Running In The Background (Settings → Updates): the window closes, the tray icon and Auto Update stay.
 app.on("window-all-closed", () => { if (keepRunning()) { if (process.platform === "darwin") app.dock?.hide(); } else app.quit(); });
 app.on("activate", () => { if (!BrowserWindow.getAllWindows().length) createWindow(); if (process.platform === "darwin") app.dock?.show(); });

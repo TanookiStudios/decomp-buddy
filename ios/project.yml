@@ -1,0 +1,59 @@
+name: DecompBuddyRemote
+
+options:
+  bundleIdPrefix: com.tanookistudios
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: NPT8NXJ7C8
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_STRICT_CONCURRENCY: complete
+
+targets:
+  DecompBuddyRemote:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      - path: Support/Assets.xcassets
+        buildPhase: resources
+      - path: Support/PrivacyInfo.xcprivacy
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tanookistudios.decompbuddy.remote
+        PRODUCT_NAME: DecompBuddyRemote
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTS_MACCATALYST: NO
+    info:
+      path: Support/Info.plist
+      properties:
+        CFBundleDisplayName: DB Remote
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        ITSAppUsesNonExemptEncryption: false
+        NSCameraUsageDescription: Scans the pairing code that Decomp Buddy shows on your computer.
+        NSLocalNetworkUsageDescription: Connects to Decomp Buddy on your computer over your home Wi-Fi so you can browse, install and start games there.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        CFBundleURLTypes:
+          - CFBundleURLName: com.tanookistudios.decompbuddy.remote.pair
+            CFBundleURLSchemes: [decompbuddy]
+
+  DecompBuddyRemoteTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: DecompBuddyRemote

@@ -24,7 +24,8 @@ import { vaultDir, logTo, loadSettings, libraryDirs, state, diskCache, isNetwork
 
 // ---------- Library ----------
 const ART_NAMES = ["artwork.png", "artwork.jpg", "folder.ico"];
-ipcMain.handle("library:list", async () => {
+// Every installed game, newest-played first (the Installed screen, and Phone Link).
+export async function listLibrary() {
   const s = loadSettings();
   const out = [];
   let ready = null; // phone/headset serials plugged in, looked up once and only when there's a device game
@@ -44,7 +45,8 @@ ipcMain.handle("library:list", async () => {
       ...(onDevice ? { onDevice: true, device: m.device || null, packageId: m.package_id || null, deviceReady: !!m.device && ready.has(m.device.serial) } : {}) });
   }
   return out.sort((a, b) => (b.lastPlayed || b.setUpAt || "").localeCompare(a.lastPlayed || a.setUpAt || ""));
-});
+}
+ipcMain.handle("library:list", () => listLibrary());
 function stampManifest(folder, patch) {
   const file = path.join(folder, "decomp-buddy.json");
   const m = upgradeManifest(JSON.parse(fs.readFileSync(file, "utf8")));

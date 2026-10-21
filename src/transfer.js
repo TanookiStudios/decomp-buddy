@@ -23,7 +23,7 @@ export function startReceiver(destRoot, { onLog = () => {}, onDone = () => {}, p
     const ip = req.socket.remoteAddress || "";
     if (!isPrivate(ip)) { res.writeHead(403); return res.end("LAN only"); }
     const url = new URL(req.url, "http://x");
-    if (req.method === "GET" && url.pathname === "/ping") { res.writeHead(200, { "content-type": "application/json" }); return res.end(JSON.stringify({ app: "decomp-buddy", host: os.hostname() })); }
+    if (req.method === "GET" && url.pathname === "/ping") { res.writeHead(200, { "content-type": "application/json" }); return res.end(JSON.stringify({ app: "decomp-buddy", host: { darwin: "Mac", win32: "Windows PC", linux: "Linux PC" }[process.platform] || "Computer" })); }
     if (req.method !== "POST" || url.pathname !== "/send") { res.writeHead(404); return res.end(); }
     if (url.searchParams.get("code") !== code) { res.writeHead(401); return res.end("Wrong code"); }
     if (busy) { res.writeHead(409); return res.end("Another transfer is running"); }

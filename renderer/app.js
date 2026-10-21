@@ -1102,6 +1102,7 @@ $("analyze").onclick = async () => {
   } finally { $("analyze").disabled = false; }
 };
 
+let lastSetupResults = null; // what the last Set Up did - Phone Link reports it back to the phone
 $("setup").onclick = async () => {
   const active = games.filter((g) => g.ok && !skipped.has(g.id));
   const items = active.map((g) => ({
@@ -1113,6 +1114,7 @@ $("setup").onclick = async () => {
   $("setupPause").hidden = false; $("setupCancel").hidden = false; $("setupPause").textContent = "Pause Downloads";
   try {
     const { results, setupCount, nudgedAt, outDir } = await window.buddy.setup({ items });
+    lastSetupResults = results;
     const onDevice = await installAfterSetup(results, outDir);
     showResults(results, active, warn);
     if (onDevice) $("resultsSummary").textContent += ` ${onDevice}`;
@@ -1386,3 +1388,38 @@ $("openFolder").onclick = () => window.buddy.open($("outDir").value.trim());
 
 window.buddy.onLog(log);
 refresh();
+
+// ---- Phone Link: Settings → Phone, and Install requests from Decomp Buddy Remote.
+async function renderPhone() {
+  const st = await window.buddy.phoneStatus();
+  $("phoneOn").checked = st.enabled; $("phonePair").hidden = !st.enabled;
+  if (document.activeElement !== $("phoneName")) $("phoneName").value = st.computer;
+  if (st.qr) $("phoneQr").src = st.qr;
+  $("phoneInfo").textContent = !st.enabled ? "" : st.running ? `Ready on ${st.computer} (${st.addresses.join(", ") || "no network"}).` : "Couldn't start - another app may be using the connection. Restart Decomp Buddy and try again.";
+}
+$("phoneName").onchange = async () => { await window.buddy.phoneName($("phoneName").value); renderPhone(); };
+$("phoneOn").onchange = async () => { await window.buddy.phoneSet($("phoneOn").checked); renderPhone(); };
+$("phoneForget").onclick = async () => { await window.buddy.phoneForget(); renderPhone(); $("phoneInfo").textContent = "Paired phones were forgotten. Scan the new code to pair again."; };
+document.querySelector('nav.side button[data-nav="settings"]')?.addEventListener("click", renderPhone);
+// The phone's Install goes through the normal Set Up flow: add, read its install steps, use your game-file library.
+// When the links box was empty and every game file was found, it sets up by itself; otherwise it waits for you here.
+window.buddy.onPhoneInstall(async ({ id, job }) => {
+  const report = (state, message) => window.buddy.phoneJob({ id: job, state, message });
+  try {
+    if (!catalog.games.length) await loadCatalog({ refresh: false }).catch(() => {});
+    const g = catalog.games.find((x) => x.id === id);
+    if (!g) return report("failed", "That game isn't in this computer's catalog yet. Open Browse there to refresh it, then try again.");
+    const alone = !$("urls").value.trim();
+    await addToLinks([id]);
+    report("working", `Reading ${g.title}'s install steps on the computer…`);
+    await $("analyze").onclick();
+    const ok = games.filter((x) => x.ok), ready = () => ok.length && ok.every((x) => x.game_files.every((_, i) => (picks.get(x.id) || {})[i]));
+    for (let i = 0; i < 40 && !ready(); i++) await new Promise((r) => setTimeout(r, 250));
+    if (!ok.length) return report("failed", "Its install steps couldn't be read on the computer - see Set Up there.");
+    if (!alone || !ready()) return report("waiting", "Waiting on the computer: choose the game file in Set Up there, then press Set Up Games.");
+    report("working", `Setting up ${g.title}…`);
+    lastSetupResults = null; await $("setup").onclick();
+    const r = (lastSetupResults || [])[0];
+    report(r?.ok ? "done" : "failed", r?.ok ? `${g.title} is ready to play on the computer.` : r?.error || "Set Up didn't finish - see the computer.");
+  } catch (err) { report("failed", err.message.replace(/^.*Error: /, "")); }
+});

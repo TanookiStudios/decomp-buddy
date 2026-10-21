@@ -575,6 +575,13 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
         <div class="row" style="margin-top:8px"><span class="sub" id="vaultState" style="flex:1"></span><button id="vaultAdd" type="button">Add System File…</button></div>
       </div>
       <div>
+        <label>Phone</label>
+        <p class="sub">Control Decomp Buddy from the Decomp Buddy Remote app on your iPhone: browse the catalog on the couch, install games to this computer, update them and start them. It only works on your home network, and only phones that scanned this code can connect. Nothing goes through the internet.</p>
+        <label class="check"><input id="phoneOn" type="checkbox"> Let My Phone Control Decomp Buddy</label>
+        <div class="row" style="margin-top:6px"><label for="phoneName" style="margin:0">Name On The Phone</label><input id="phoneName" type="text" maxlength="40" placeholder="Mac" autocomplete="off" spellcheck="false" style="flex:1"></div>
+        <div id="phonePair" hidden><p class="sub">Open Decomp Buddy Remote on your iPhone, tap Pair, and point it at this code.</p><img id="phoneQr" alt="Pairing code for Decomp Buddy Remote" width="220" height="220"><p class="sub" id="phoneInfo" role="status" aria-live="polite"></p><button id="phoneForget" type="button">Forget Paired Phones</button></div>
+      </div>
+      <div>
         <label>Game File Library</label>
         <p class="sub">Folders where you keep your own dumps. Decomp Buddy fingerprints every file once (header, serial, hashes) and, after Read Repos, fills in any Choose… it can match with confidence - a published hash, the disc serial, or the exact file name. Files are copied out, never moved.</p>
         <div class="srcList" id="romFolderList"></div>

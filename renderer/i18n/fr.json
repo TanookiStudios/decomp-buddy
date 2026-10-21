@@ -1161,6 +1161,24 @@
     "Games I Have Files For": "Jeux Dont J'ai Les Fichiers",
     "None of the catalog's games match these files yet.": "Aucun jeu du catalogue ne correspond encore à ces fichiers.",
     "Show Them": "Les Afficher",
-    "Your files can play {0} game(s) in the catalog on this computer.": "Vos fichiers permettent de jouer à {0} jeu(x) du catalogue sur cet ordinateur."
+    "Your files can play {0} game(s) in the catalog on this computer.": "Vos fichiers permettent de jouer à {0} jeu(x) du catalogue sur cet ordinateur.",
+    "Control Decomp Buddy from the Decomp Buddy Remote app on your iPhone: browse the catalog on the couch, install games to this computer, update them and start them. It only works on your home network, and only phones that scanned this code can connect. Nothing goes through the internet.": "Contrôlez Decomp Buddy depuis l'app Decomp Buddy Remote sur votre iPhone : parcourez le catalogue depuis le canapé, installez des jeux sur cet ordinateur, mettez-les à jour et lancez-les. Cela ne fonctionne que sur votre réseau domestique, et seuls les téléphones qui ont scanné ce code peuvent se connecter. Rien ne passe par Internet.",
+    "Couldn't start - another app may be using the connection. Restart Decomp Buddy and try again.": "Impossible de démarrer - une autre app utilise peut-être la connexion. Redémarrez Decomp Buddy et réessayez.",
+    "Forget Paired Phones": "Oublier Les Téléphones Associés",
+    "Its install steps couldn't be read on the computer - see Set Up there.": "Ses étapes d'installation n'ont pas pu être lues sur l'ordinateur - voir Configuration là-bas.",
+    "Let My Phone Control Decomp Buddy": "Laisser Mon Téléphone Contrôler Decomp Buddy",
+    "Open Decomp Buddy Remote on your iPhone, tap Pair, and point it at this code.": "Ouvrez Decomp Buddy Remote sur votre iPhone, touchez Associer et visez ce code.",
+    "Paired phones were forgotten. Scan the new code to pair again.": "Les téléphones associés ont été oubliés. Scannez le nouveau code pour les associer à nouveau.",
+    "Pairing code for Decomp Buddy Remote": "Code d'association pour Decomp Buddy Remote",
+    "Phone": "Téléphone",
+    "Reading {0}'s install steps on the computer…": "Lecture des étapes d'installation de {0} sur l'ordinateur…",
+    "Ready on {0} ({1}).": "Prêt sur {0} ({1}).",
+    "Set Up didn't finish - see the computer.": "La configuration n'a pas abouti - voir l'ordinateur.",
+    "Setting up {0}…": "Configuration de {0}…",
+    "That game isn't in this computer's catalog yet. Open Browse there to refresh it, then try again.": "Ce jeu n'est pas encore dans le catalogue de cet ordinateur. Ouvrez Parcourir là-bas pour l'actualiser, puis réessayez.",
+    "Waiting on the computer: choose the game file in Set Up there, then press Set Up Games.": "En attente de l'ordinateur : choisissez le fichier du jeu dans Configuration là-bas, puis appuyez sur Configurer Les Jeux.",
+    "no network": "pas de réseau",
+    "{0} is ready to play on the computer.": "{0} est prêt à jouer sur l'ordinateur.",
+    "Name On The Phone": "Nom Sur Le Téléphone"
  }
 }

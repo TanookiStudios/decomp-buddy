@@ -1161,6 +1161,24 @@
     "Games I Have Files For": "ファイルを持っているゲーム",
     "None of the catalog's games match these files yet.": "カタログのゲームで、これらのファイルに一致するものはまだありません。",
     "Show Them": "表示する",
-    "Your files can play {0} game(s) in the catalog on this computer.": "あなたのファイルで、このコンピューターでカタログの {0} 本のゲームを遊べます。"
+    "Your files can play {0} game(s) in the catalog on this computer.": "あなたのファイルで、このコンピューターでカタログの {0} 本のゲームを遊べます。",
+    "Control Decomp Buddy from the Decomp Buddy Remote app on your iPhone: browse the catalog on the couch, install games to this computer, update them and start them. It only works on your home network, and only phones that scanned this code can connect. Nothing goes through the internet.": "iPhone の Decomp Buddy Remote アプリから Decomp Buddy を操作できます。ソファでカタログを見て、このコンピューターにゲームをインストール、アップデート、起動できます。家のネットワーク内でのみ動作し、このコードを読み取ったスマートフォンだけが接続できます。インターネットは経由しません。",
+    "Couldn't start - another app may be using the connection. Restart Decomp Buddy and try again.": "起動できませんでした。別のアプリが接続を使っている可能性があります。Decomp Buddy を再起動してもう一度お試しください。",
+    "Forget Paired Phones": "ペアリングしたスマートフォンを削除",
+    "Its install steps couldn't be read on the computer - see Set Up there.": "コンピューターでインストール手順を読み込めませんでした。コンピューターのセットアップ画面を確認してください。",
+    "Let My Phone Control Decomp Buddy": "スマートフォンから Decomp Buddy を操作する",
+    "Open Decomp Buddy Remote on your iPhone, tap Pair, and point it at this code.": "iPhone で Decomp Buddy Remote を開き、ペアリングをタップして、このコードに向けてください。",
+    "Paired phones were forgotten. Scan the new code to pair again.": "ペアリングしたスマートフォンを削除しました。もう一度ペアリングするには新しいコードを読み取ってください。",
+    "Pairing code for Decomp Buddy Remote": "Decomp Buddy Remote のペアリングコード",
+    "Phone": "スマートフォン",
+    "Reading {0}'s install steps on the computer…": "コンピューターで {0} のインストール手順を読み込んでいます…",
+    "Ready on {0} ({1}).": "{0} で準備完了（{1}）。",
+    "Set Up didn't finish - see the computer.": "セットアップが完了しませんでした。コンピューターを確認してください。",
+    "Setting up {0}…": "{0} をセットアップしています…",
+    "That game isn't in this computer's catalog yet. Open Browse there to refresh it, then try again.": "このゲームはまだこのコンピューターのカタログにありません。コンピューターで「ゲームを探す」を開いて更新してから、もう一度お試しください。",
+    "Waiting on the computer: choose the game file in Set Up there, then press Set Up Games.": "コンピューター待ち：コンピューターのセットアップ画面でゲームファイルを選び、「ゲームをセットアップ」を押してください。",
+    "no network": "ネットワークなし",
+    "{0} is ready to play on the computer.": "{0} はコンピューターで遊べる状態です。",
+    "Name On The Phone": "スマートフォンに表示する名前"
  }
 }
