@@ -22,7 +22,7 @@ need() { [[ -f ~/.decomp-buddy-scan/daily-$DAY.$1 ]] || { say "✗ run '$1' firs
 case "${1:-}" in
   find)
     say "== $DAY find"
-    node scripts/triage.mjs prep --scan 2>&1 | grep -E "^(queue|prep|reddit|bluesky|github|recomphaven|unbaked)" | tee -a "$LOG"
+    node scripts/triage.mjs prep --scan 2>&1 | grep -E "^(queue|prep|reddit|bluesky|github|recomphaven|unbaked|awesome)" | tee -a "$LOG"
     ls ~/.decomp-buddy-triage/jobs/*.md 2>/dev/null | sed 's#.*/##;s#\.md$##' | tr '\n' ' ' | sed 's/^/batches: /' | tee -a "$LOG"; echo | tee -a "$LOG"
     mark find ;;
   steps)

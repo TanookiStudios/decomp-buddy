@@ -5,6 +5,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { identify, hashFile } from "./verify.js";
+import { PLAN_FALLBACK } from "./targets.js";
+import { slug } from "./expand.js";
 
 export const ROM_EXT = /\.(z64|n64|v64|gba|gb|gbc|nds|3ds|nes|fds|sfc|smc|md|gen|sms|gg|32x|pce|iso|gcm|bin|cue|chd|rvz|ciso|gcz|wbfs|wia|pbp|cso|img|ccd|mds|xiso|xex|xci|nsp)$/i;
 
@@ -54,9 +56,11 @@ export async function scanLibrary(folders, indexFile, { onProgress = () => {}, s
 const norm = (s) => String(s || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 // Only confident matches auto-fill: a published hash, the disc serial, or the exact expected file name
 // with a matching format. A title that merely looks similar never picks a file for you.
-export function findInLibrary(idx, gameFile) {
+// entries: the index's files that still exist, when the caller already listed them (checking many games at once).
+const liveEntries = (idx) => Object.entries(idx.files || {}).filter(([p]) => fs.existsSync(p));
+
+export function findInLibrary(idx, gameFile, entries = liveEntries(idx)) {
   if (gameFile.kind === "bios") return null;
-  const entries = Object.entries(idx.files || {}).filter(([p]) => fs.existsSync(p));
   for (const h of gameFile.expected_hashes || []) {
     const v = String(h.value || "").toLowerCase().trim();
     const hit = entries.find(([, e]) => e[h.algo] === v);
@@ -73,4 +77,23 @@ export function findInLibrary(idx, gameFile) {
     if (hit) return { path: hit[0], why: `named ${gameFile.expected_filename}` };
   }
   return null;
+}
+
+// Game File Finder: every published game whose own game files (BIOS and add-ons aside) are all in the library,
+// for one target. ids are the catalog's card ids (collections get "#<game slug>"), so Browse can filter on them.
+export function playableFromLibrary(published, idx, target) {
+  const entries = liveEntries(idx), out = [];
+  if (!entries.length) return out;
+  for (const [key, e] of Object.entries(published?.plans || {})) {
+    const t = e.targets?.[target] || (PLAN_FALLBACK[target] ? e.targets?.[PLAN_FALLBACK[target]] : null);
+    const games = t?.games || [];
+    for (const g of games) {
+      const need = (g.game_files || []).filter((f) => (f.kind || "game") === "game");
+      if (!need.length) continue;                      // needs none of your files: nothing for the library to unlock
+      const found = need.map((f) => findInLibrary(idx, f, entries));
+      if (!found.every(Boolean)) continue;
+      out.push({ id: games.length > 1 ? `${key}#${slug(g.game_title)}` : key, title: g.game_title, files: need.map((f, i) => ({ label: f.label, file: path.basename(found[i].path), why: found[i].why })) });
+    }
+  }
+  return out;
 }

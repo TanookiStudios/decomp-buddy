@@ -502,6 +502,12 @@ async function renderRomLibrary() {
   const st = await window.buddy.romStatus();
   $("romFolderList").innerHTML = st.folders.length ? st.folders.map((f) => `<div class="srcRow"><span></span><div class="lab">${esc(f)}</div><button class="small" type="button" data-romrm="${esc(f)}" aria-label="Remove ${esc(f)}">Remove</button></div>`).join("") : `<p class="sub">No folders yet.</p>`;
   if (!st.scanning) $("romState").textContent = st.files ? `${st.files} file(s) indexed${st.scannedAt ? `, last scan ${fmtDate(st.scannedAt)}` : ""}.` : st.folders.length ? "Not scanned yet." : "";
+  // What those files unlock: the Game File Finder count, with a shortcut to the list.
+  // Only games that are in the catalog count (a plan can outlive its listing, e.g. a hidden mod).
+  const ids = new Set(catalog.games.map((g) => g.id));
+  const found = (st.files && !st.scanning ? await loadMine().catch(() => []) : []).filter((x) => !ids.size || ids.has(x.id));
+  $("romFound").textContent = !st.files || st.scanning ? "" : found.length ? `Your files can play ${found.length} game(s) in the catalog on this computer.` : "None of the catalog's games match these files yet.";
+  $("romShow").hidden = !found.length;
   $("romScan").disabled = !st.folders.length || st.scanning; $("romCancel").hidden = !st.scanning;
   const dats = await window.buddy.datList();
   $("datList").innerHTML = dats.length ? dats.map((d) => `<div class="srcRow"><span></span><div><div class="lab">${esc(d.name)}</div><div class="u">${d.games} games · ${esc(d.file)}</div></div><button class="small" type="button" data-datrm="${esc(d.id)}" aria-label="Remove ${esc(d.name)}">Remove</button></div>`).join("") : `<p class="sub">None.</p>`;
@@ -515,6 +521,7 @@ $("romScan").onclick = async () => {
   finally { renderRomLibrary(); }
 };
 $("romCancel").onclick = () => window.buddy.romCancel();
+$("romShow").onclick = () => { $("catMine").checked = true; showView("browse"); renderCatalog(); };
 window.buddy.onRomProgress((p) => { $("romState").textContent = `Scanning… ${p.done} of ${p.total} (${p.file})`; });
 $("datAdd").onclick = async () => { const r = await window.buddy.datAdd(); const bad = r.filter((x) => x.error); $("datState").textContent = r.length ? `${r.length - bad.length} added${bad.length ? `; ${bad.map((x) => x.error).join("; ")}` : ""}.` : ""; renderRomLibrary(); };
 $("datList").onclick = async (e) => { const b = e.target.closest("[data-datrm]"); if (!b) return; await window.buddy.datRemove(b.dataset.datrm); renderRomLibrary(); };
@@ -1206,17 +1213,20 @@ const updateAvailable = (g, inst) => !!(inst && g.version && inst.some((i) => i.
 // shortcut: V and X stay letters (Mega Man X, Ultima V would collide), add them if people search that way.
 const ROMAN = { ii: "2", iii: "3", iv: "4", vi: "6", vii: "7", viii: "8", ix: "9" };
 const searchWords = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, " and ").split(/[^a-z0-9]+/).filter(Boolean).map((w) => ROMAN[w] || w);
+// Game File Finder: card ids of the catalog games the files in your Game File Library can play (null until asked).
+let mineIds = null;
+async function loadMine() { const r = await window.buddy.romPlayable($("target").value); mineIds = new Set(r.map((x) => x.id)); return r; }
 function visibleGames() {
   const q = $("catSearch").value.trim().toLowerCase(), qw = searchWords(q), qs = qw.join(" ");
   const hay = new Map(), hayOf = (g) => hay.get(g) ?? hay.set(g, { t: searchWords(g.title).join(" "), all: ` ${searchWords(`${g.title} ${g.project}`).join(" ")} ` }).get(g);
   const con = catCon, st = $("catStatus").value, srcF = $("catSource").value;
   const plat = PLATFORM_OF_TARGET[$("target").value] || "Windows";
-  const runsOn = $("catRunsOn").value, instOnly = $("catInstalled").checked, wishOnly = $("catWish").checked, playOnly = $("catPlayable").checked, wellOnly = $("catRunsWell").checked, aiWant = $("catAI").value;
+  const runsOn = $("catRunsOn").value, instOnly = $("catInstalled").checked, wishOnly = $("catWish").checked, playOnly = $("catPlayable").checked, mineOnly = $("catMine").checked, wellOnly = $("catRunsWell").checked, aiWant = $("catAI").value;
   const runsOk = (g) => !runsOn || (runsOn === "Steam Deck" ? ["verified", "works"].includes(g.facts?.steam_deck) : g.platforms.includes(runsOn) || !g.platforms.length);
   let list = catalog.games.filter((g) =>
     (!qw.length || qw.every((w) => hayOf(g).all.includes(` ${w}`))) &&
     (!con || g.console === con) && (!st || g.status === st) && (!srcF || (g.sources || [g.source]).includes(srcF)) &&
-    runsOk(g) && (!playOnly || ["playable", "mostly"].includes(g.facts?.completeness)) && (!instOnly || installedFor(g)) && (!wishOnly || isWished(g)) && (!wellOnly || reportsFor(g)?.well) && (!aiWant || (g.facts?.ai_use || "unsaid") === aiWant));
+    runsOk(g) && (!mineOnly || mineIds?.has(g.id)) && (!playOnly || ["playable", "mostly"].includes(g.facts?.completeness)) && (!instOnly || installedFor(g)) && (!wishOnly || isWished(g)) && (!wellOnly || reportsFor(g)?.well) && (!aiWant || (g.facts?.ai_use || "unsaid") === aiWant));
   const sort = $("catSort").value;
   const byTitle = (a, b) => a.title.localeCompare(b.title) || a.project.localeCompare(b.project);
   const plats = (g) => ["Windows", "macOS", "Linux"].filter((p) => g.platforms.includes(p)).join(" · ") || "No builds";
@@ -1275,7 +1285,7 @@ function renderCatalog() {
   $("catCount").textContent = `${list.length} shown · ${catSelected.size} selected${updates ? ` · ${updates} update(s) available` : ""}`;
   document.querySelectorAll(".pickAdd").forEach((b) => (b.disabled = !catSelected.size));
   document.querySelectorAll(".pickCount").forEach((n) => (n.textContent = catSelected.size ? `${catSelected.size} selected` : ""));
-  const extra = [$("catStatus").value, $("catSource").value, $("catPlayable").checked, $("catRunsWell").checked, $("catAI").value, $("catInstalled").checked, $("catWish").checked].filter(Boolean).length;
+  const extra = [$("catStatus").value, $("catSource").value, $("catPlayable").checked, $("catMine").checked, $("catRunsWell").checked, $("catAI").value, $("catInstalled").checked, $("catWish").checked].filter(Boolean).length;
   $("moreFiltersBtn").textContent = extra ? `More Filters (${extra})` : "More Filters";
   const allUpd = catalog.games.filter((g) => updateAvailable(g, installedFor(g))).length;
   $("catUpdateAll").hidden = !allUpd; $("catUpdateAll").textContent = `Update All (${allUpd})`;
@@ -1317,6 +1327,8 @@ $("catalogRefresh").onclick = () => loadCatalog({ refresh: true });
 document.querySelectorAll("[data-ext]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); window.buddy.openExternal(a.dataset.ext); }));
 document.getElementById("aboutSources").onclick = (e) => { const a = e.target.closest("a[data-url]"); if (a) { e.preventDefault(); window.buddy.openExternal(a.dataset.url); } };
 for (const id of ["catSearch", "catStatus", "catSource", "catSort", "catRunsOn", "catPlayable", "catRunsWell", "catAI", "catInstalled", "catWish"]) $(id).oninput = renderCatalog;
+$("catMine").oninput = async () => { if ($("catMine").checked) await loadMine(); renderCatalog(); };
+$("target").addEventListener("change", () => { mineIds = null; if ($("catMine").checked) loadMine().then(renderCatalog); });
 $("conBar").onclick = (e) => {
   const b = e.target.closest("[data-con]"); if (!b) return;
   catCon = b.dataset.con;
@@ -1324,7 +1336,7 @@ $("conBar").onclick = (e) => {
   renderCatalog(); $("catalogList").scrollTop = 0;
 };
 $("moreFiltersBtn").onclick = () => { const open = $("moreFilters").hidden; $("moreFilters").hidden = !open; $("moreFiltersBtn").setAttribute("aria-expanded", String(open)); };
-$("clearFilters").onclick = () => { $("catStatus").value = ""; $("catSource").value = ""; $("catAI").value = ""; for (const id of ["catPlayable", "catRunsWell", "catInstalled", "catWish"]) $(id).checked = false; renderCatalog(); };
+$("clearFilters").onclick = () => { $("catStatus").value = ""; $("catSource").value = ""; $("catAI").value = ""; for (const id of ["catPlayable", "catMine", "catRunsWell", "catInstalled", "catWish"]) $(id).checked = false; renderCatalog(); };
 $("catUpdateAll").onclick = () => updateAll(catalog.games.filter((g) => updateAvailable(g, installedFor(g))));
 $("libUpdateAll").onclick = async () => { if (!catalog.games.length) await loadCatalog({ refresh: true, checkInstalled: true }); updateAll(catalog.games.filter((g) => updateAvailable(g, installedFor(g)))); };
 $("catRunsOn").onchange = () => { runsOnTouched = true; renderCatalog(); };

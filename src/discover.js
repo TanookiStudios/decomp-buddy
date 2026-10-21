@@ -181,3 +181,16 @@ export async function scanUnbaked({ cacheFile, fetch = globalThis.fetch, gap = 2
   log(`unbaked.games: ${games.length} game(s) run on our systems, ${asked} looked up`);
   return out;
 }
+
+// ---- Community lists we're listed on, read daily: SubmitGame/awesome-decomp-games (its generated data/games.json) and
+// Sebastrion/awesome-unofficial-pc-ports (repo links in its README). Tools and browser ports are left out.
+const RAW = "https://raw.githubusercontent.com";
+export async function scanAwesomeLists({ fetch = globalThis.fetch } = {}) {
+  const get = async (u, as) => { const r = await fetch(u, { headers: { "User-Agent": UA } }); if (!r.ok) throw new Error(`${u} answered ${r.status}`); return as === "json" ? r.json() : r.text(); };
+  const out = [];
+  const adg = await get(`${RAW}/SubmitGame/awesome-decomp-games/main/data/games.json`, "json");
+  for (const g of adg.games || []) if (g.repo && !["tool", "browser-port"].includes(g.type)) out.push({ repo: g.repo, title: g.title, via: "awesome-decomp-games" });
+  const pcp = await get(`${RAW}/Sebastrion/awesome-unofficial-pc-ports/main/README.md`);
+  for (const [, repo] of reposIn(pcp)) out.push({ repo, title: "", via: "awesome-unofficial-pc-ports" });
+  return out.filter((c) => !/^(sebastrion\/awesome|submitgame\/awesome|tanookistudios\/)/i.test(c.repo));
+}

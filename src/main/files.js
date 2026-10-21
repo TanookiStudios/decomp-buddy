@@ -2,7 +2,7 @@
 import { app, ipcMain, dialog, BrowserWindow } from "electron";
 import fs from "node:fs";
 import path from "node:path";
-import { scanLibrary, readIndex } from "../romindex.js";
+import { scanLibrary, readIndex, playableFromLibrary } from "../romindex.js";
 import { addDat, listDats, removeDat } from "../dat.js";
 import { savePathsFor, listBackups, backupSaves, restoreSaves } from "../saves.js";
 import { detectDrives, rip } from "../dump.js";
@@ -38,6 +38,11 @@ export async function runScan(sender) {
   } finally { scanState = null; }
 }
 ipcMain.handle("romindex:scan", (e) => runScan(e.sender));
+// Game File Finder: the catalog games your indexed files can play, for the computer picked in Build For.
+ipcMain.handle("romindex:playable", async (_e, { target } = {}) => {
+  const pub = await fetchPublished({ file: plansFileFor(loadSettings()), cacheDir: app.getPath("userData") }).catch(() => null);
+  return playableFromLibrary(pub, readIndex(romIndexFile()), target || currentTarget(loadSettings()));
+});
 ipcMain.handle("romindex:cancel", () => { if (scanState) scanState.cancelled = true; return true; });
 
 // ---- DAT files

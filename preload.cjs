@@ -30,6 +30,7 @@ contextBridge.exposeInMainWorld("buddy", {
   romFolders: (x) => ipcRenderer.invoke("romindex:folders", x),
   romScan: () => ipcRenderer.invoke("romindex:scan"),
   romCancel: () => ipcRenderer.invoke("romindex:cancel"),
+  romPlayable: (target) => ipcRenderer.invoke("romindex:playable", { target }),
   onRomProgress: (cb) => ipcRenderer.on("romindex:progress", (_e, p) => cb(p)),
   datList: () => ipcRenderer.invoke("dat:list"),
   datAdd: () => ipcRenderer.invoke("dat:add"),

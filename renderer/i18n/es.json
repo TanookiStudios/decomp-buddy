@@ -1157,6 +1157,10 @@
     "Yes, remove {0}": "Sí, quitar {0}",
     "the device": "el dispositivo",
     "with Build For set to Android Phone Or Handheld or Meta Quest, then install it here.": "con Compilar Para en Teléfono O Portátil Android o Meta Quest, y luego instálalo aquí.",
-    "{0} box art": "Carátula de {0}"
+    "{0} box art": "Carátula de {0}",
+    "Games I Have Files For": "Juegos Para Los Que Tengo Archivos",
+    "None of the catalog's games match these files yet.": "Ningún juego del catálogo coincide todavía con estos archivos.",
+    "Show Them": "Mostrarlos",
+    "Your files can play {0} game(s) in the catalog on this computer.": "Con tus archivos puedes jugar {0} juego(s) del catálogo en este equipo."
  }
 }

@@ -1157,6 +1157,10 @@
     "Yes, remove {0}": "はい、{0} を削除",
     "the device": "デバイス",
     "with Build For set to Android Phone Or Handheld or Meta Quest, then install it here.": "で「ビルド先」を Android スマホ・携帯機か Meta Quest にして準備し、ここでインストールします。",
-    "{0} box art": "{0} のパッケージ画像"
+    "{0} box art": "{0} のパッケージ画像",
+    "Games I Have Files For": "ファイルを持っているゲーム",
+    "None of the catalog's games match these files yet.": "カタログのゲームで、これらのファイルに一致するものはまだありません。",
+    "Show Them": "表示する",
+    "Your files can play {0} game(s) in the catalog on this computer.": "あなたのファイルで、このコンピューターでカタログの {0} 本のゲームを遊べます。"
  }
 }

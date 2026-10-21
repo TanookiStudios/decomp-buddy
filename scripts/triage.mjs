@@ -17,7 +17,7 @@ import os from "node:os";
 import path from "node:path";
 import { enrichMany, enrichFromGitLab, enrichFromCodeberg, publishFinds } from "../src/sources/finds.js";
 import { readWaiting, excludedKeys } from "../src/waiting.js";
-import { scanReddit, scanBluesky, scanGitHub, scanGitHubTopics, scanRecompHaven, scanUnbaked } from "../src/discover.js";
+import { scanReddit, scanBluesky, scanGitHub, scanGitHubTopics, scanRecompHaven, scanUnbaked, scanAwesomeLists } from "../src/discover.js";
 
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
 const SITE = arg("--site") || path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site");
@@ -111,7 +111,7 @@ async function prep() {
   // --scan: run every Discover scanner right here (Bluesky, GitHub topics, GitHub search 3 pages deep, recomphaven.com, unbaked.games), so a full
   // scan doesn't wait for someone to press Discover in the app. Reddit is added just below.
   if (arg("--scan") !== null || process.argv.includes("--scan")) {
-    for (const [name, fn] of [["Bluesky", () => scanBluesky()], ["GitHub topics", () => scanGitHubTopics({ pages: 3, log: console.log })], ["GitHub search", () => scanGitHub({ pages: 3, log: console.log })], ["recomphaven.com", () => scanRecompHaven()], ["unbaked.games", () => scanUnbaked({ cacheFile: J("unbaked-cache.json"), log: console.log })]]) {
+    for (const [name, fn] of [["Bluesky", () => scanBluesky()], ["GitHub topics", () => scanGitHubTopics({ pages: 3, log: console.log })], ["GitHub search", () => scanGitHub({ pages: 3, log: console.log })], ["recomphaven.com", () => scanRecompHaven()], ["unbaked.games", () => scanUnbaked({ cacheFile: J("unbaked-cache.json"), log: console.log })], ["awesome lists", () => scanAwesomeLists()]]) {
       try { const r = await fn(); console.log(`${name}: ${r.length} candidate(s)`); queue.push(...r); } catch (err) { console.log(`${name} failed: ${err.message}`); }
     }
   }

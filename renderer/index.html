@@ -374,6 +374,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <select id="catStatus" aria-label="Status"><option value="">All Statuses</option><option value="latest">Latest</option><option value="prerelease">Pre-release</option></select>
       <select id="catSource" aria-label="Source"><option value="">All Sources</option><option value="portsdr">portsdr.com</option><option value="alexbeav">alexbeav.github.io</option><option value="finds">Individual Finds</option><option value="local-finds">Added By You</option></select>
       <label class="check"><input id="catPlayable" type="checkbox"> Playable Only</label>
+      <label class="check"><input id="catMine" type="checkbox"> Games I Have Files For</label>
       <label class="check"><input id="catRunsWell" type="checkbox"> Runs Well On Computers Like Mine</label>
       <label for="catAI">AI Use</label><select id="catAI" style="width:auto"><option value="">Any</option><option value="none">No AI Used</option><option value="assisted">AI-Assisted</option><option value="generated">Made With AI</option><option value="unsaid">Doesn't Say</option></select>
       <label class="check"><input id="catInstalled" type="checkbox"> Installed Only</label>
@@ -578,6 +579,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
         <p class="sub">Folders where you keep your own dumps. Decomp Buddy fingerprints every file once (header, serial, hashes) and, after Read Repos, fills in any Choose… it can match with confidence - a published hash, the disc serial, or the exact file name. Files are copied out, never moved.</p>
         <div class="srcList" id="romFolderList"></div>
         <div class="row" style="margin-top:8px"><span class="sub" id="romState" style="flex:1" role="status" aria-live="polite"></span><button id="romAdd" type="button">Add Folder…</button><button id="romScan" type="button">Scan Now</button><button id="romCancel" type="button" hidden>Stop</button></div>
+        <div class="row" style="margin-top:6px"><span class="sub" id="romFound" style="flex:1" role="status" aria-live="polite"></span><button id="romShow" type="button" hidden>Show Them</button></div>
       </div>
       <div>
         <label>DAT Files</label>

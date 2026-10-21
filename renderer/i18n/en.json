@@ -2,7 +2,7 @@
  "_meta": {
   "language": "English",
   "source": true,
-  "strings": 1148
+  "strings": 1152
  },
  "strings": {
   "(a CI build)": "(a CI build)",
@@ -316,6 +316,7 @@
   "Game title (optional)": "Game title (optional)",
   "GameBanana": "GameBanana",
   "GameBanana: {0}": "GameBanana: {0}",
+  "Games I Have Files For": "Games I Have Files For",
   "Games You May Like": "Games You May Like",
   "Games found": "Games found",
   "Games people are decompiling or porting that don't have a Windows, Mac or Linux download yet. When one does, it moves to Browse Games by itself.": "Games people are decompiling or porting that don't have a Windows, Mac or Linux download yet. When one does, it moves to Browse Games by itself.",
@@ -531,6 +532,7 @@
   "None": "None",
   "None added.": "None added.",
   "None given.": "None given.",
+  "None of the catalog's games match these files yet.": "None of the catalog's games match these files yet.",
   "None published yet.": "None published yet.",
   "None.": "None.",
   "Not Playable Yet": "Not Playable Yet",
@@ -790,6 +792,7 @@
   "Show Adult Mods": "Show Adult Mods",
   "Show Game Box Art Instead Of Project Icons": "Show Game Box Art Instead Of Project Icons",
   "Show Hidden ({0})": "Show Hidden ({0})",
+  "Show Them": "Show Them",
   "Show everything": "Show everything",
   "Showing the last saved catalog - couldn't refresh: {0}": "Showing the last saved catalog - couldn't refresh: {0}",
   "Showing the {0} most downloaded of {1}. Search to find the others.": "Showing the {0} most downloaded of {1}. Search to find the others.",
@@ -979,6 +982,7 @@
   "Your AI provider and how picked game files are handled.": "Your AI provider and how picked game files are handled.",
   "Your Computer": "Your Computer",
   "Your Setup": "Your Setup",
+  "Your files can play {0} game(s) in the catalog on this computer.": "Your files can play {0} game(s) in the catalog on this computer.",
   "Your own accent color, background picture and music, and how Installed Games is laid out. The picture and music are copied into Decomp Buddy's own folder, so moving the originals is fine.": "Your own accent color, background picture and music, and how Installed Games is laid out. The picture and music are copied into Decomp Buddy's own folder, so moving the originals is fine.",
   "Your version isn't among the last {0} releases; here are the newest.": "Your version isn't among the last {0} releases; here are the newest.",
   "alexbeav.github.io": "alexbeav.github.io",
