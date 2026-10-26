@@ -1,7 +1,7 @@
 // Moved out of main.js unchanged (2026-09-23): updater IPC handlers.
 import { app, ipcMain } from "electron";
 import { checkForUpdate, UPDATE_URL } from "../updates.js";
-import { VERSION, logTo, loadSettings } from "./core.js";
+import { VERSION, logTo } from "./core.js";
 import electronUpdater from "electron-updater";
 const { autoUpdater } = electronUpdater;
 
@@ -33,10 +33,12 @@ export function setupAutoUpdater(win) {
   setTimeout(() => autoUpdater.checkForUpdates().catch(() => {}), 5000);
   setInterval(() => autoUpdater.checkForUpdates().catch(() => {}), 6 * 3600 * 1000);
 }
+const inFlatpak = () => !!(process.env.DECOMP_FLATPAK || process.env.FLATPAK_ID);
 ipcMain.handle("update:check", async () => {
-  if (app.isPackaged) { try { await autoUpdater.checkForUpdates(); } catch {} }
-  const s = loadSettings();
-  return checkForUpdate(VERSION, { url: process.env.DECOMP_UPDATE_URL || UPDATE_URL, target: process.platform === "win32" ? "windows" : process.platform === "linux" ? "linux" : process.arch === "arm64" ? "macos-arm64" : "macos-x64" });
+  if (app.isPackaged && !inFlatpak()) { try { await autoUpdater.checkForUpdates(); } catch {} }
+  const r = await checkForUpdate(VERSION, { url: process.env.DECOMP_UPDATE_URL || UPDATE_URL, target: process.platform === "win32" ? "windows" : process.platform === "linux" ? "linux" : process.arch === "arm64" ? "macos-arm64" : "macos-x64" });
+  // There's no Flatpak repository to update from, so the banner sends Flatpak (Steam Deck) users to the newest .flatpak.
+  return inFlatpak() ? { ...r, url: "https://decompbuddy.com/download#steam-deck" } : r;
 });
 ipcMain.handle("update:state", () => updaterState);
 ipcMain.handle("update:install", () => { autoUpdater.quitAndInstall(false, true); return true; });

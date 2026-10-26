@@ -1179,6 +1179,8 @@
     "Waiting on the computer: choose the game file in Set Up there, then press Set Up Games.": "コンピューター待ち：コンピューターのセットアップ画面でゲームファイルを選び、「ゲームをセットアップ」を押してください。",
     "no network": "ネットワークなし",
     "{0} is ready to play on the computer.": "{0} はコンピューターで遊べる状態です。",
-    "Name On The Phone": "スマートフォンに表示する名前"
+    "Name On The Phone": "スマートフォンに表示する名前",
+    "Get More Games": "ゲームを追加",
+    "Nothing set up yet. Choose Get More Games to pick some - the controller works everywhere.": "まだ何もセットアップされていません。「ゲームを追加」を選んでゲームを選びましょう。コントローラーはどこでも使えます。"
  }
 }

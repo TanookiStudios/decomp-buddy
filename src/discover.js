@@ -194,3 +194,14 @@ export async function scanAwesomeLists({ fetch = globalThis.fetch } = {}) {
   for (const [, repo] of reposIn(pcp)) out.push({ repo, title: "", via: "awesome-unofficial-pc-ports" });
   return out.filter((c) => !/^(sebastrion\/awesome|submitgame\/awesome|tanookistudios\/)/i.test(c.repo));
 }
+
+// ---- recomp.fyi: a big tracker of recomps, decomps and ports; every project's repo is linked from its front page.
+export async function scanRecompFyi({ fetch = globalThis.fetch } = {}) {
+  const r = await fetch("https://recomp.fyi/", { headers: { "User-Agent": UA } });
+  if (!r.ok) throw new Error(`recomp.fyi answered ${r.status}`);
+  const html = await r.text(), out = new Map();
+  for (const [, repo] of reposIn(html)) out.set(repo.toLowerCase(), { repo, title: "", via: "recomp.fyi" });
+  for (const m of html.matchAll(/https?:\/\/gitlab\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)/g)) out.set(`gitlab:${m[1]}`.toLowerCase(), { repo: `gitlab:${m[1]}`, title: "", via: "recomp.fyi" });
+  if (out.size < 100) throw new Error(`recomp.fyi listed only ${out.size} repos - its page may have changed`);
+  return [...out.values()];
+}

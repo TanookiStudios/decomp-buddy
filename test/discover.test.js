@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseRedditRss, reposIn } from "../src/discover.js";
+import { parseRedditRss, reposIn, scanRecompFyi } from "../src/discover.js";
 
 test("reddit rss: repos pulled from post bodies and links", () => {
   const xml = `<feed><entry><title>Mega Man X2 Recomp is Out NOW!</title><link href="https://www.reddit.com/r/decomps/comments/x/"/><updated>2026-09-15T00:00:00+00:00</updated><content type="html">&lt;p&gt;get it at &lt;a href="https://github.com/mstan/MegaManX2Recomp/releases"&gt;here&lt;/a&gt; and https://github.com/sponsors/nope&lt;/p&gt;</content></entry>
@@ -68,4 +68,14 @@ test("awesome lists: games from the decomp list's data and the PC-ports README; 
   const fetch = async (u) => ({ ok: true, json: async () => ({ games: [{ repo: "a/port", type: "source-port", title: "A" }, { repo: "b/tool", type: "tool" }, { repo: "c/web", type: "browser-port" }] }),
     text: async () => "see https://github.com/d/recomp and https://github.com/Sebastrion/awesome-unofficial-pc-ports and https://github.com/TanookiStudios/decomp-buddy" });
   assert.deepEqual((await scanAwesomeLists({ fetch })).map((c) => c.repo), ["a/port", "d/recomp"]);
+});
+
+test("recomp.fyi: every GitHub and GitLab repo on the page, once; a near-empty page is an error", async () => {
+  const links = Array.from({ length: 120 }, (_, i) => `<a href="https://github.com/dev${i}/game${i}">x</a>`).join("");
+  const html = links + '<a href="https://github.com/Dev0/Game0/releases">dup</a><a href="https://gitlab.com/team/port">gl</a>';
+  const fetch = async () => ({ ok: true, text: async () => html });
+  const got = await scanRecompFyi({ fetch });
+  assert.equal(got.length, 121);
+  assert.ok(got.some((g) => g.repo === "gitlab:team/port"));
+  await assert.rejects(scanRecompFyi({ fetch: async () => ({ ok: true, text: async () => "<html></html>" }) }), /only 0 repos/);
 });

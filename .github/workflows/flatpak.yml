@@ -1,0 +1,22 @@
+# Builds decomp-buddy.flatpak (Steam Deck / any Linux) on GitHub's Linux machines - Flatpaks don't build on a Mac.
+# Run by hand (Actions -> Flatpak -> Run workflow, or `gh workflow run flatpak.yml`); the bundle is a workflow
+# artifact that scripts/release.sh attaches to the GitHub release. Not Flathub: see docs/STEAM-DECK-AND-FLATPAK.md.
+name: Flatpak
+on: workflow_dispatch
+jobs:
+  flatpak:
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with: { node-version: 24 }
+      - run: npm ci
+      - run: npx electron-builder --linux dir --publish never
+      - uses: flathub-infra/flatpak-github-actions/flatpak-builder@933e9e8ca36e85046ebca8e211f0785c6becac40
+        with:
+          bundle: decomp-buddy.flatpak
+          manifest-path: packaging/flatpak/com.tanookistudios.DecompBuddy.yml
+          cache-key: flatpak-builder-${{ github.sha }}

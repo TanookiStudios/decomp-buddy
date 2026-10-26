@@ -33,3 +33,23 @@ test("Steam Deck Gaming Mode is detected from gamescope's environment", async ()
   assert.equal(inGamingMode({ SteamDeck: "1", XDG_CURRENT_DESKTOP: "KDE" }), false);
   assert.equal(inGamingMode({ XDG_CURRENT_DESKTOP: "gamescope" }), false);
 });
+
+test("Decomp Buddy's own Steam shortcut: flatpak run from the Flatpak, no overlay preload on Linux, the program elsewhere", async () => {
+  const { selfSteamLaunch } = await import("../src/steam.js");
+  assert.deepEqual(selfSteamLaunch({ env: { FLATPAK_ID: "com.tanookistudios.DecompBuddy" }, platform: "linux", home: "/home/deck" }),
+    { exe: "/usr/bin/flatpak", launchOptions: "run com.tanookistudios.DecompBuddy --couch", startDir: "/home/deck" });
+  assert.deepEqual(selfSteamLaunch({ env: { APPIMAGE: "/home/deck/Apps/Decomp Buddy.AppImage" }, platform: "linux" }),
+    { exe: "/usr/bin/env", launchOptions: '-u LD_PRELOAD "/home/deck/Apps/Decomp Buddy.AppImage" --couch', startDir: "/home/deck/Apps" });
+  assert.equal(selfSteamLaunch({ env: {}, platform: "darwin", execPath: "/Applications/Decomp Buddy.app/Contents/MacOS/Decomp Buddy" }).launchOptions, "--couch");
+});
+
+test("installShortcut with replaceName swaps an old Decomp Buddy entry instead of adding a second one", async () => {
+  const { installShortcut, parseVdf } = await import("../src/steam.js");
+  const fs = await import("node:fs"), os = await import("node:os"), path = await import("node:path");
+  const cfg = fs.mkdtempSync(path.join(os.tmpdir(), "vdf-"));
+  installShortcut({ configDir: cfg, appName: "Decomp Buddy", exe: "/app/bin/decomp-buddy", startDir: "/app", launchOptions: "--couch" });
+  installShortcut({ configDir: cfg, appName: "Decomp Buddy", exe: "/usr/bin/flatpak", startDir: "/home/deck", launchOptions: "run x --couch", replaceName: true });
+  const all = Object.values(parseVdf(fs.readFileSync(path.join(cfg, "shortcuts.vdf"))).shortcuts);
+  assert.equal(all.length, 1);
+  assert.equal(all[0].Exe, '"/usr/bin/flatpak"');
+});

@@ -1,3 +1,4 @@
 build/
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
+screenshots/*.mp4

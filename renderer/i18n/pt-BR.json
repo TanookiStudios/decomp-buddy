@@ -1179,6 +1179,8 @@
     "Waiting on the computer: choose the game file in Set Up there, then press Set Up Games.": "Aguardando o computador: escolha o arquivo do jogo em Configurar lá e toque em Configurar Jogos.",
     "no network": "sem rede",
     "{0} is ready to play on the computer.": "{0} está pronto para jogar no computador.",
-    "Name On The Phone": "Nome No Celular"
+    "Name On The Phone": "Nome No Celular",
+    "Get More Games": "Obter Mais Jogos",
+    "Nothing set up yet. Choose Get More Games to pick some - the controller works everywhere.": "Nada configurado ainda. Escolha Obter Mais Jogos para escolher alguns - o controle funciona em todo lugar."
  }
 }

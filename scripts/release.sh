@@ -106,3 +106,5 @@ if [ "$DRY" != 1 ]; then
   done
 fi
 echo "✓ Decomp Buddy $V is live at $BASE_URL/"
+# The Steam Deck Flatpak follows every release (built on GitHub; the website links the newest one).
+[ "$DRY" = 1 ] || scripts/flatpak-release.sh "v$V" || echo "⚠ the Steam Deck Flatpak for $V didn't attach - run scripts/flatpak-release.sh v$V" >&2

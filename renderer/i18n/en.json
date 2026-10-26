@@ -2,7 +2,7 @@
  "_meta": {
   "language": "English",
   "source": true,
-  "strings": 1170
+  "strings": 1171
  },
  "strings": {
   "(a CI build)": "(a CI build)",
@@ -330,6 +330,7 @@
   "Generate {0} plans on your AI key? That's about ${1}.": "Generate {0} plans on your AI key? That's about ${1}.",
   "Generating {0} plan(s)… this costs about ${1} on your key.": "Generating {0} plan(s)… this costs about ${1} on your key.",
   "Generating… {0} of {1} ({2} failed)": "Generating… {0} of {1} ({2} failed)",
+  "Get More Games": "Get More Games",
   "Get Texture Pack": "Get Texture Pack",
   "GitHub Links (One Per Line)": "GitHub Links (One Per Line)",
   "GitHub Token": "GitHub Token",
@@ -560,9 +561,9 @@
   "Nothing new. Scan Now to look again.": "Nothing new. Scan Now to look again.",
   "Nothing pending.": "Nothing pending.",
   "Nothing plugged in yet. Follow the steps above, then plug it in.": "Nothing plugged in yet. Follow the steps above, then plug it in.",
-  "Nothing set up yet - leave Couch Mode (Start) and set some games up first.": "Nothing set up yet - leave Couch Mode (Start) and set some games up first.",
   "Nothing set up yet.": "Nothing set up yet.",
   "Nothing set up yet. Browse Games → pick some → Set Up Games, and they'll appear here.": "Nothing set up yet. Browse Games → pick some → Set Up Games, and they'll appear here.",
+  "Nothing set up yet. Choose Get More Games to pick some - the controller works everywhere.": "Nothing set up yet. Choose Get More Games to pick some - the controller works everywhere.",
   "Nothing synced for this game yet.": "Nothing synced for this game yet.",
   "Nothing to choose - hit Set Up Games.": "Nothing to choose - hit Set Up Games.",
   "Nothing to clear - no old versions, spare save backups or leftover downloads.": "Nothing to clear - no old versions, spare save backups or leftover downloads.",

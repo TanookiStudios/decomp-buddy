@@ -35,8 +35,10 @@ function couchTile(g) {
 function drawCouch() {
   const recent = library.filter((g) => g.lastPlayed).slice(0, 8);
   const rows = [recent.length && ["Continue Playing", recent], ["All Games", [...library].sort((a, b) => a.title.localeCompare(b.title))]].filter(Boolean);
-  $("couchRows").innerHTML = rows.map(([t, list], r) => `<section class="crow" data-row="${r}" aria-label="${esc(t)}"><h2>${esc(t)}</h2><div class="ctiles">${list.map(couchTile).join("")}</div></section>`).join("")
-    || `<p class="chint">Nothing set up yet - leave Couch Mode (Start) and set some games up first.</p>`;
+  // Always a way to more games: Couch Mode is where Steam's shortcut lands, and a new library would otherwise be a dead end.
+  const more = `<button class="ctile" type="button" data-couchbrowse="1" aria-label="Get More Games: browse the catalog and set games up"><span class="cnocover">+</span><span class="ctitle">Get More Games</span></button>`;
+  $("couchRows").innerHTML = (library.length ? "" : `<p class="chint">Nothing set up yet. Choose Get More Games to pick some - the controller works everywhere.</p>`)
+    + rows.map(([t, list], r) => `<section class="crow" data-row="${r}" aria-label="${esc(t)}"><h2>${esc(t)}</h2><div class="ctiles">${list.map(couchTile).join("")}${t === "All Games" ? more : ""}</div></section>`).join("");
   $("couchRows").querySelector(".ctile")?.focus();
   $("couchStatus").textContent = "";
 }
@@ -54,6 +56,7 @@ function couchJumpRow(step) {
 }
 const couchGame = () => library.find((g) => g.key === document.activeElement?.dataset?.couch);
 async function couchPlay() {
+  if (document.activeElement?.dataset?.couchbrowse) { closeCouch(); showView("browse"); setTimeout(() => padTargets()[0]?.focus(), 300); return; }
   const g = couchGame(); if (!g) return;
   if (!couchPlayable(g)) { $("couchStatus").textContent = g.canWine ? (settings.platform === "linux" ? `${g.title} is the Windows version - install Proton from your Steam Library to play it here.` : `${g.title} is the Windows version - set up Wine in Settings to try it on this Mac.`) : `${g.title} is built for ${TARGET_LABEL[g.target] || g.target}.`; return; }
   try { $("couchStatus").textContent = `Starting ${g.title}…`; await window.buddy.gamePlay(g.folder); $("couchStatus").textContent = `${g.title} is starting.`; }

@@ -68,14 +68,26 @@ export function userConfigDir(root) {
 }
 
 // Add or update one shortcut. artwork: { portrait, square, hero } PNG buffers (optional).
-export function installShortcut({ configDir, appName, exe, startDir, iconPath = "", launchOptions = "", tags = ["Decomp Buddy"], artwork = {} }) {
+// How Steam - which runs outside any sandbox - starts this copy of Decomp Buddy in Couch Mode.
+// Flatpak: the program file only exists inside the sandbox, so Steam goes through `flatpak run`.
+// Other Linux (AppImage, .deb): without LD_PRELOAD, so Steam's overlay isn't injected into Electron (that's a black screen
+// in Gaming Mode on a Steam Deck). Mac / Windows: the program itself.
+export function selfSteamLaunch({ env = process.env, platform = process.platform, execPath = process.execPath, home = os.homedir() } = {}) {
+  if (env.FLATPAK_ID || env.DECOMP_FLATPAK) return { exe: "/usr/bin/flatpak", launchOptions: `run ${env.FLATPAK_ID || "com.tanookistudios.DecompBuddy"} --couch`, startDir: home };
+  const self = env.APPIMAGE || env.PORTABLE_EXECUTABLE_FILE || execPath;
+  if (platform === "linux") return { exe: "/usr/bin/env", launchOptions: `-u LD_PRELOAD "${self}" --couch`, startDir: path.dirname(self) };
+  return { exe: self, launchOptions: "--couch", startDir: path.dirname(self) };
+}
+
+// replaceName: also replace an older entry with the same name whose program path was different (a fixed launch).
+export function installShortcut({ configDir, appName, exe, startDir, iconPath = "", launchOptions = "", tags = ["Decomp Buddy"], artwork = {}, replaceName = false }) {
   const file = path.join(configDir, "shortcuts.vdf");
   const data = fs.existsSync(file) ? parseVdf(fs.readFileSync(file)) : { shortcuts: {} };
   data.shortcuts ||= {};
   const quoted = `"${exe}"`;
   const appid = shortcutAppId(quoted, appName);
   const entries = Object.values(data.shortcuts);
-  const existingKey = Object.keys(data.shortcuts).find((k) => data.shortcuts[k].appid === (appid | 0) || (data.shortcuts[k].AppName === appName && data.shortcuts[k].Exe === quoted));
+  const existingKey = Object.keys(data.shortcuts).find((k) => data.shortcuts[k].appid === (appid | 0) || (data.shortcuts[k].AppName === appName && (replaceName || data.shortcuts[k].Exe === quoted)));
   const key = existingKey ?? String(entries.length);
   data.shortcuts[key] = {
     appid: appid | 0, AppName: appName, Exe: quoted, StartDir: `"${startDir}"`, icon: iconPath, ShortcutPath: "", LaunchOptions: launchOptions,

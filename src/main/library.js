@@ -5,7 +5,7 @@ import path from "node:path";
 import { iconFor } from "../catalog.js";
 import { targetIsHost, TARGETS } from "../targets.js";
 import { addToVault, removeFromVault } from "../vault.js";
-import { steamDir, steamRunning, userConfigDir, installShortcut } from "../steam.js";
+import { steamDir, steamRunning, userConfigDir, installShortcut, selfSteamLaunch } from "../steam.js";
 import { renderMarkdown, imagesIn } from "../readme.js";
 import { readManifests, upgradeManifest } from "../installhtml.js";
 import { spawn } from "node:child_process";
@@ -192,21 +192,18 @@ ipcMain.handle("wine:remove", async () => { const { shell } = await import("elec
 
 // Decomp Buddy itself in Steam, opening in Couch Mode: on a Steam Deck that makes it a tile in Gaming
 // Mode you drive with the controller. The installed app only (a dev run would add Electron).
-export function selfExecutable(env = process.env) {
-  if (env.APPIMAGE) return env.APPIMAGE;                                      // Linux AppImage (Steam Deck)
-  if (env.PORTABLE_EXECUTABLE_FILE) return env.PORTABLE_EXECUTABLE_FILE;      // Windows portable
-  return process.execPath;                                                    // installed Mac / Windows / .deb
-}
 ipcMain.handle("steam:addSelf", async (e) => {
   if (!app.isPackaged) throw new Error("Only the installed Decomp Buddy can add itself to Steam.");
   const root = steamDir(); if (!root) throw new Error("Steam isn't installed on this computer (or has never been signed in).");
   if (steamRunning()) throw new Error("Quit Steam first - it overwrites its shortcuts file when it exits.");
   const cfg = userConfigDir(root); if (!cfg) throw new Error("No Steam user folder found - sign in to Steam once, quit it, then try again.");
-  const exe = selfExecutable();
-  const icon = path.join(app.getAppPath(), "renderer", "icon.png");
-  const img = nativeImage.createFromPath(icon);
+  const launch = selfSteamLaunch();
+  // The icon is copied out of the app: an AppImage or Flatpak path is gone (or invisible to Steam) once the app closes.
+  const img = nativeImage.createFromPath(path.join(app.getAppPath(), "renderer", "icon.png"));
+  const icon = path.join(app.getPath("userData"), "steam-icon.png");
+  if (!img.isEmpty()) fs.writeFileSync(icon, img.resize({ width: 256, height: 256 }).toPNG());
   const artwork = img.isEmpty() ? {} : { square: img.resize({ width: 512, height: 512 }).toPNG(), portrait: img.resize({ width: 600, height: 600 }).toPNG() };
-  const r = installShortcut({ configDir: cfg, appName: "Decomp Buddy", exe, startDir: path.dirname(exe), iconPath: fs.existsSync(icon) ? icon : "", launchOptions: "--couch", tags: ["Decomp Buddy"], artwork });
+  const r = installShortcut({ configDir: cfg, appName: "Decomp Buddy", ...launch, iconPath: img.isEmpty() ? "" : icon, tags: ["Decomp Buddy"], artwork, replaceName: true });
   logTo(e.sender, `--- Steam: Decomp Buddy (Couch Mode) → ${r.file} (appid ${r.appid})`);
   return { updated: r.updated };
 });

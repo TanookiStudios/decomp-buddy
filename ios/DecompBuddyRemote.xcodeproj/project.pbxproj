@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0601A202F1E23B82D58B8CDB /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482969ABB8C7788D2DD726B2 /* Views.swift */; };
+		2F29DA335A0DFE86B840F047 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B895D4DD02878DDD7891DC3E /* ScreenshotTests.swift */; };
 		350A97B9DCAC0DB9CD4C521D /* Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C5178F68FC15CA9C964A4D /* Catalog.swift */; };
 		38D5AB55E5BF1342D65C64C5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2D505231831336CB638919EC /* PrivacyInfo.xcprivacy */; };
 		45ED384F5B732C1F65CEEAD9 /* PhoneLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEDA551B88A82DF7B66809F /* PhoneLink.swift */; };
@@ -20,6 +21,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		62B1C44100E28BEC72BF4262 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5BBFB628CC69298ECB5C478 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 38293644CF6EBEADE5B13327;
+			remoteInfo = DecompBuddyRemote;
+		};
 		C0326DDE9D91314DC8664C40 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D5BBFB628CC69298ECB5C478 /* Project object */;
@@ -36,15 +44,25 @@
 		32D75CA3286CF90F95E6B2DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4126DEE06868D95798E56F57 /* PhoneLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLinkTests.swift; sourceTree = "<group>"; };
 		482969ABB8C7788D2DD726B2 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
+		5088BEE9BEFDC6B99A27B04C /* DecompBuddyRemoteUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DecompBuddyRemoteUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		52C5178F68FC15CA9C964A4D /* Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catalog.swift; sourceTree = "<group>"; };
 		89FA76D92F4C8DC0A59A4371 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		95A749B57DA00CF6DBDCBEA1 /* SearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTests.swift; sourceTree = "<group>"; };
 		9B15F3DBB14B0DA984DF8A8A /* DecompBuddyRemoteTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DecompBuddyRemoteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B673B2BC46F79A75FB590D9A /* DecompBuddyRemote.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DecompBuddyRemote.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B895D4DD02878DDD7891DC3E /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		DDEDA551B88A82DF7B66809F /* PhoneLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLink.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		5301E8CC2F4876A2BA1E3CB5 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				B895D4DD02878DDD7891DC3E /* ScreenshotTests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
 		959D26502F16FC9828DEB3AE /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -59,6 +77,7 @@
 			children = (
 				B673B2BC46F79A75FB590D9A /* DecompBuddyRemote.app */,
 				9B15F3DBB14B0DA984DF8A8A /* DecompBuddyRemoteTests.xctest */,
+				5088BEE9BEFDC6B99A27B04C /* DecompBuddyRemoteUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -82,6 +101,7 @@
 				B24872E9E54FC3D6E4A624EC /* Sources */,
 				C4A1BAD6AF5C2CE094FFB09F /* Support */,
 				959D26502F16FC9828DEB3AE /* Tests */,
+				5301E8CC2F4876A2BA1E3CB5 /* UITests */,
 				95E0C565954B52E93AAD31FC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -134,6 +154,24 @@
 			productReference = 9B15F3DBB14B0DA984DF8A8A /* DecompBuddyRemoteTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		D8B30E804566F74DA4B2A98D /* DecompBuddyRemoteUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 661DC9101C25CD8C1412C66E /* Build configuration list for PBXNativeTarget "DecompBuddyRemoteUITests" */;
+			buildPhases = (
+				83FDAAA74F29B2DA12C2ABCB /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3B3B795594F98AB4D0BDBD36 /* PBXTargetDependency */,
+			);
+			name = DecompBuddyRemoteUITests;
+			packageProductDependencies = (
+			);
+			productName = DecompBuddyRemoteUITests;
+			productReference = 5088BEE9BEFDC6B99A27B04C /* DecompBuddyRemoteUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -150,6 +188,11 @@
 					3D0E8155D6B66A9A22872AC1 = {
 						DevelopmentTeam = NPT8NXJ7C8;
 						ProvisioningStyle = Automatic;
+					};
+					D8B30E804566F74DA4B2A98D = {
+						DevelopmentTeam = NPT8NXJ7C8;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 38293644CF6EBEADE5B13327;
 					};
 				};
 			};
@@ -169,6 +212,7 @@
 			targets = (
 				38293644CF6EBEADE5B13327 /* DecompBuddyRemote */,
 				3D0E8155D6B66A9A22872AC1 /* DecompBuddyRemoteTests */,
+				D8B30E804566F74DA4B2A98D /* DecompBuddyRemoteUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -186,6 +230,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		83FDAAA74F29B2DA12C2ABCB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2F29DA335A0DFE86B840F047 /* ScreenshotTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		880AAC7A3DDD1027F428721A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -211,6 +263,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3B3B795594F98AB4D0BDBD36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 38293644CF6EBEADE5B13327 /* DecompBuddyRemote */;
+			targetProxy = 62B1C44100E28BEC72BF4262 /* PBXContainerItemProxy */;
+		};
 		CC8BC98F0BA439555679D31E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 38293644CF6EBEADE5B13327 /* DecompBuddyRemote */;
@@ -223,6 +280,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Support/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -241,6 +299,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Support/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -254,6 +313,23 @@
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
+		};
+		410E83A9731673484D7A7D3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tanookistudios.DecompBuddyRemoteUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DecompBuddyRemote;
+			};
+			name = Debug;
 		};
 		60E753C4821BB94555B52EF5 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -320,6 +396,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -336,6 +413,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -416,9 +494,35 @@
 			};
 			name = Debug;
 		};
+		E77AA6A051A1636AE52DF170 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tanookistudios.DecompBuddyRemoteUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DecompBuddyRemote;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		661DC9101C25CD8C1412C66E /* Build configuration list for PBXNativeTarget "DecompBuddyRemoteUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				410E83A9731673484D7A7D3E /* Debug */,
+				E77AA6A051A1636AE52DF170 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		7F578F41F220A3227305A6C8 /* Build configuration list for PBXNativeTarget "DecompBuddyRemoteTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
