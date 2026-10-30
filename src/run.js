@@ -22,14 +22,34 @@ export function defaultOutDir() {
 }
 
 // Returns one item per game the repo ships (usually one).
-export async function analyzeOne(url, { provider, log, planner = planFromContext, preferredTag, preferredAsset, artworkPath, target = "windows", hints, published = null, fetchContext = fetchRepoContext, onlyGames = null } = {}) {
+// The details setup needs, built from a published plan alone (GitHub only: its download links follow a fixed
+// pattern). null when any release build lacks a clean scan, so setup still checks every file it installs.
+export function planContext(ref, published, target) {
+  if ((ref.host || "github") !== "github" || !published) return null;
+  const pub = lookupPlan(published, planKey(ref.host, ref.owner, ref.repo), target);
+  const builds = (pub?.analysis.games || []).map((g) => g.build).filter(Boolean);
+  if (!builds.length || pub.analysis.redirect_repo || builds.some((b) => b.method === "release" && !(b.release_tag && b.scanned?.sha256))) return null;
+  const base = `https://github.com/${ref.owner}/${ref.repo}`, releases = new Map();
+  for (const b of builds.filter((b) => b.method === "release")) {
+    const tag = encodeURIComponent(b.release_tag);
+    if (!releases.has(b.release_tag)) releases.set(b.release_tag, { tag: b.release_tag, name: b.release_tag, url: `${base}/releases/tag/${tag}`, assets: [] });
+    releases.get(b.release_tag).assets.push({ name: b.release_asset, size: b.scanned.size || 0, url: `${base}/releases/download/${tag}/${encodeURIComponent(b.release_asset)}`, digest: `sha256:${b.scanned.sha256}` });
+  }
+  return { host: "github", owner: ref.owner, repo: ref.repo, fullName: `${ref.owner}/${ref.repo}`, url: base, homepage: "", defaultBranch: "HEAD",
+    rawBase: `https://raw.githubusercontent.com/${ref.owner}/${ref.repo}/HEAD/`, zipballUrl: `${base}/archive/HEAD.zip`, releases: [...releases.values()], fromPlan: true };
+}
+
+export async function analyzeOne(url, { provider, log, planner = planFromContext, preferredTag, preferredAsset, artworkPath, target = "windows", hints, published = null, fetchContext = fetchRepoContext, onlyGames = null, fullContext = false } = {}) {
   let ref = parseRepoUrl(url);
-  log(`Reading ${ref.owner}/${ref.repo}…`);
-  let ctx = await fetchContext(ref);
+  // A published, scanned plan already names the release and its exact file: no need to re-read the project
+  // (that spent a fresh PC's 60 GitHub lookups an hour before a single download). fullContext: picking another version.
+  let ctx = !fullContext && planContext(ref, published, target);
+  if (!ctx) { log(`Reading ${ref.owner}/${ref.repo}…`); ctx = await fetchContext(ref); }
   let planSource = "ai";
   const analyze = async () => {
     // A plan Maddie already published for this repo + target? Use it - free, instant, and the same answer everyone gets.
     const pub = published && lookupPlan(published, planKey(ref.host, ref.owner, ref.repo), target);
+    if (pub && ctx.fromPlan) { planSource = "published"; log(`Using the published install steps (${pub.tag || "no tag"}).`); return pub.analysis; }
     if (pub) {
       const stillThere = pub.analysis.games.every((g) => g.build?.method !== "release" || (ctx.releases || []).some((r) => r.assets.some((a) => a.name === g.build.release_asset)));
       if (stillThere) { planSource = "published"; log(`Using the published plan (${pub.tag || "no tag"}, generated ${String(pub.generatedAt).slice(0, 10)}).`); return pub.analysis; }
@@ -71,12 +91,12 @@ export async function analyzeOne(url, { provider, log, planner = planFromContext
 }
 
 // entries: url strings, or { url, preferredTag, artworkPath } from the catalog browser
-export async function analyzeBatch(entries, { provider, log = () => {}, planner, target = "windows", published = null, fetchContext } = {}) {
+export async function analyzeBatch(entries, { provider, log = () => {}, planner, target = "windows", published = null, fetchContext, fullContext = false } = {}) {
   const items = [];
   for (const e of entries.map((x) => (typeof x === "string" ? { url: x.trim() } : { ...x, url: String(x.url || "").trim() })).filter((x) => x.url)) {
     const { url } = e;
     try {
-      for (const item of await analyzeOne(url, { provider, log, planner, preferredTag: e.preferredTag, preferredAsset: e.preferredAsset, artworkPath: e.artworkPath, target: e.target || target, hints: e.hints, published, onlyGames: e.onlyGames, ...(fetchContext ? { fetchContext } : {}) })) items.push({ ok: true, ...item });
+      for (const item of await analyzeOne(url, { provider, log, planner, preferredTag: e.preferredTag, preferredAsset: e.preferredAsset, artworkPath: e.artworkPath, target: e.target || target, hints: e.hints, published, onlyGames: e.onlyGames, fullContext, ...(fetchContext ? { fetchContext } : {}) })) items.push({ ok: true, ...item });
     } catch (err) {
       log(`✗ ${url}: ${err.message}`);
       items.push({ ok: false, id: randomUUID(), url, error: err.message });

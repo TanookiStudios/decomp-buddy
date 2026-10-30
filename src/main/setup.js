@@ -178,7 +178,7 @@ export async function updateInstalled(list, { log = () => {} } = {}) {
     const results = [];
     for (const u of list) {
       try {
-        const items = await analyzeBatch([u.repoUrl], { provider: null, log, target: u.target, published, fetchContext: fetchContextFor });
+        const items = await analyzeBatch([u.repoUrl], { provider: null, log, target: u.target, published, fetchContext: fetchContextFor, fullContext: !!u.tag }); // another version: its release list
         const ok = items.filter((x) => x.ok);
         const it = ok.find((x) => gameFolderName(x.plan) === path.basename(u.folder)) || (ok.length === 1 ? ok[0] : null);
         if (!it) throw new Error(items.find((x) => !x.ok)?.error || "Couldn't match this game to its published install steps.");

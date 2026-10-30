@@ -2,9 +2,9 @@
 cask "decomp-buddy" do
   arch arm: "arm64", intel: "x64"
 
-  version "0.30.7"
-  sha256 arm:   "4fc4df319fa315f51fd5e493e4fbfec8d1e8d386ffa0aa1b8e98dcbde79bc2dc",
-         intel: "768b85e32a14750932f9ba64f04e83805c854e8b88d3948cbc66dbd6d0c4fc18"
+  version "0.31.0"
+  sha256 arm:   "33fb15dc02511d8f1a1df7d63ed1a8819ec5057275486db9d58587046ecd5e1a",
+         intel: "2dc347f7f68b44cd145a7e61e6d3aa5a63e763294599029969d2bc648c3d24d7"
 
   url "https://github.com/TanookiStudios/decomp-buddy/releases/download/v#{version}/Decomp.Buddy-#{version}-#{arch}.dmg",
       verified: "github.com/TanookiStudios/decomp-buddy/"

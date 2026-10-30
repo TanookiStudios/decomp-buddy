@@ -22,11 +22,11 @@ test("applyScans marks clean files with their fingerprint, blocks flagged ones, 
   none.scanned = { sha256: "old" }; // a previous result that no longer has a record
   const plans = plansOf(ok, bad, none);
   const scans = { files: {
-    [scanKey("github:a/b", ok)]: { sha256: "aa", clean: true, at: "2026-10-18", engine: "ClamAV" },
+    [scanKey("github:a/b", ok)]: { sha256: "aa", size: 7, clean: true, at: "2026-10-18", engine: "ClamAV" },
     [scanKey("github:a/b", bad)]: { sha256: "bb", clean: false, signature: "Win.Trojan.X", at: "2026-10-18", engine: "ClamAV" },
   } };
   assert.equal(applyScans(plans, scans), 2);
-  assert.deepEqual(ok.scanned, { sha256: "aa", at: "2026-10-18", engine: "ClamAV" });
+  assert.deepEqual(ok.scanned, { sha256: "aa", size: 7, at: "2026-10-18", engine: "ClamAV" });
   assert.equal(bad.scanned.flagged, true); assert.equal(bad.scanned.signature, "Win.Trojan.X");
   assert.equal(none.scanned, undefined);
   // A flagged file reviewed by hand and cleared counts as clean.

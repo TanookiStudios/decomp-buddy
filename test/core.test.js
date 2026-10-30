@@ -10,7 +10,7 @@ import { sweepMacJunk } from "../src/junk.js";
 import { extractZip, gameFolderName, setupGame, placeFile, cueCompanions, aboutText } from "../src/setup.js";
 import { readManifests, renderInstallHtml } from "../src/installhtml.js";
 import { Plan } from "../src/plan.js";
-import { setupBatch } from "../src/run.js";
+import { setupBatch, analyzeOne } from "../src/run.js";
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), "buddy-"));
 
@@ -269,4 +269,18 @@ test("two games in one batch sharing a picked file both get it, and the original
   assert.ok(fs.existsSync(path.join(out, "Skate 3 - Xbox 360", "Game Files", "shared.iso")));
   assert.ok(fs.existsSync(path.join(out, "Skate 3 Other Port - Xbox 360", "Game Files", "shared.iso")));
   assert.ok(fs.existsSync(iso), "a shared pick is copied, not moved");
+});
+
+test("a published, scanned game sets up without reading its project on GitHub", async () => {
+  const sha = "ab".repeat(32);
+  const plan = structuredClone(fakePlan); plan.build.release_tag = "v1 beta"; plan.build.scanned = { sha256: sha, size: 5, at: "2026-10-30", engine: "ClamAV" };
+  const published = { plans: { "github:x/y": { tag: "v1 beta", generatedAt: "2026-10-30", targets: { windows: { redirect_repo: null, games: [plan] } } } } };
+  const fetchContext = async () => { throw new Error("read GitHub"); };
+  const [it] = await analyzeOne("https://github.com/x/y", { published, fetchContext, log() {} });
+  assert.equal(it.planSource, "published");
+  assert.deepEqual(it.ctx.releases[0].assets[0], { name: "Skate3Recomp-Windows.zip", size: 5, url: "https://github.com/x/y/releases/download/v1%20beta/Skate3Recomp-Windows.zip", digest: `sha256:${sha}` });
+  // Picking another version still reads the release list; so does a plan whose file has no clean scan.
+  await assert.rejects(analyzeOne("https://github.com/x/y", { published, fetchContext, log() {}, fullContext: true }), /read GitHub/);
+  delete plan.build.scanned;
+  await assert.rejects(analyzeOne("https://github.com/x/y", { published, fetchContext, log() {} }), /read GitHub/);
 });
