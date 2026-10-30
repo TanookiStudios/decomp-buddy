@@ -13,16 +13,17 @@ async function gl(pathname) {
 }
 
 // Package-file links have no extension in their name; the redirect's Content-Disposition does.
+// A refused or failed answer (GitLab rate-limits these) fails the whole lookup: guessing the bare name instead made
+// the real file look deleted, and the game left the catalog (Star Fox 64: Recompiled, 27 Oct 2026).
 async function assetName(link) {
   if (/\.[a-z0-9]{2,5}$/i.test(link.name)) return link.name;
-  try {
-    const res = await fetch(link.direct_asset_url || link.url, { method: "HEAD", redirect: "follow", headers: h, signal: AbortSignal.timeout(15_000) });
-    const cd = res.headers.get("content-disposition") || "";
-    const m = cd.match(/filename\*?=(?:UTF-8'')?"?([^";]+)/i);
-    if (m) return decodeURIComponent(m[1]);
-    const ct = res.headers.get("content-type") || "";
-    if (/zip/.test(ct)) return `${link.name}.zip`;
-  } catch {}
+  const res = await fetch(link.direct_asset_url || link.url, { method: "HEAD", redirect: "follow", headers: h, signal: AbortSignal.timeout(15_000) });
+  if (!res.ok) throw new Error(`GitLab ${res.status} for the file behind ${link.name}`);
+  const cd = res.headers.get("content-disposition") || "";
+  const m = cd.match(/filename\*?=(?:UTF-8'')?"?([^";]+)/i);
+  if (m) return decodeURIComponent(m[1]);
+  const ct = res.headers.get("content-type") || "";
+  if (/zip/.test(ct)) return `${link.name}.zip`;
   return link.name;
 }
 

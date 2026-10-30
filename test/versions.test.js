@@ -12,14 +12,14 @@ const w = (dir, p, t) => { fs.mkdirSync(path.dirname(path.join(dir, p)), { recur
 const r = (dir, p) => fs.readFileSync(path.join(dir, p), "utf8");
 function zipOf(files) { const src = mk(); for (const [p, t] of Object.entries(files)) w(src, p, t); const z = path.join(mk(), "r.zip"); execFileSync("zip", ["-qr", z, "."], { cwd: src }); return z; }
 
-test("update then roll back: the ROM you dropped inside a release folder never moves, whatever the manifest says", () => {
+test("update then roll back: the ROM you dropped inside a release folder never moves, whatever the manifest says", async () => {
   const dir = mk();
-  const v1 = []; extractZip(zipOf({ "game.exe": "v1", "assets/data.bin": "v1data" }), dir, { entries: v1 });
+  const v1 = []; await extractZip(zipOf({ "game.exe": "v1", "assets/data.bin": "v1data" }), dir, { entries: v1 });
   assert.deepEqual(v1.sort(), ["assets/data.bin", "game.exe"]);
   w(dir, "assets/rom.z64", "MY ROM"); w(dir, "Game Files/x", "mine");
   // update to v2: keep v1's files, extract v2 (merging into assets/, not replacing it)
   keepVersion(dir, "v1", v1);
-  const v2 = []; extractZip(zipOf({ "game.exe": "v2", "assets/data.bin": "v2data", "assets/new.bin": "n" }), dir, { entries: v2 });
+  const v2 = []; await extractZip(zipOf({ "game.exe": "v2", "assets/data.bin": "v2data", "assets/new.bin": "n" }), dir, { entries: v2 });
   assert.equal(r(dir, "assets/rom.z64"), "MY ROM"); assert.equal(r(dir, "game.exe"), "v2");
   assert.equal(r(dir, "Versions/v1/game.exe"), "v1"); assert.equal(fs.existsSync(path.join(dir, "Versions/v1/assets/rom.z64")), false);
   // roll back with NO knowledge of the ROM (placed: []) - it still stays put
@@ -44,9 +44,9 @@ test("two versions kept at most", () => {
   assert.deepEqual(listVersions(dir).map((v) => v.tag).sort(), ["b", "c"]);
 });
 
-test("a .dmg unpacks (the app inside is copied out)", { skip: process.platform !== "darwin" }, () => {
+test("a .dmg unpacks (the app inside is copied out)", { skip: process.platform !== "darwin" }, async () => {
   const src = mk(); w(src, "Game.app/Contents/MacOS/game", "bin");
   const dmg = path.join(mk(), "g.dmg"); execFileSync("hdiutil", ["create", "-quiet", "-fs", "HFS+", "-srcfolder", src, "-volname", "G", dmg]);
-  const out = mk(); const files = []; extractZip(dmg, out, { entries: files });
+  const out = mk(); const files = []; await extractZip(dmg, out, { entries: files });
   assert.equal(r(out, "Game.app/Contents/MacOS/game"), "bin"); assert.ok(files.includes(path.join("Game.app", "Contents", "MacOS", "game")));
 });

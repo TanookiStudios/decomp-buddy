@@ -2,6 +2,7 @@
 // game folder, and writes the manifest install.html is built from.
 
 import { hashFile } from "./verify.js";
+import { isStoreInstallPath } from "./stores.js";
 import { keepVersion, stashPlaced } from "./versions.js";
 import fs from "node:fs";
 import os from "node:os";
@@ -14,12 +15,13 @@ import { applyFolderArtwork } from "./icons.js";
 import { targetOf, assetMismatch, armSibling } from "./targets.js";
 import { pickRelease } from "./scan.js";
 import { upgradeManifest } from "./installhtml.js";
-import { execFileSync } from "node:child_process";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 // Manifest fields owned by the player (or stamped after set-up): an update copies them over.
-export const USER_FIELDS = ["lastPlayed", "steamAppId", "launchArgs", "modOrder", "modSources", "adopted", "saveSync", "displayName", "tags", "hidden", "runner", "autoUpdate", "skipTag", "device"];
+export const USER_FIELDS = ["lastPlayed", "steamAppId", "launchArgs", "modOrder", "modSources", "adopted", "saveSync", "displayName", "tags", "hidden", "runner", "autoUpdate", "skipTag", "device", "playMinutes", "thanked"];
 export const MANIFEST = "decomp-buddy.json";
 
 export function safeName(s) {
@@ -129,15 +131,19 @@ export function readAr(buf) {
   }
   return out;
 }
-function unpackDmg(dmg, tmp, seven) {
-  if (process.platform !== "darwin") { execFileSync(seven, ["x", "-y", "-bd", `-o${tmp}`, dmg], { stdio: "ignore" }); return; }
+// Unpacking runs as child processes the app waits on without blocking: a synchronous unpack of a large release froze
+// the whole window until it finished.
+const zstd = (buf) => promisify(require("node:zlib").zstdDecompress)(buf);
+const run = (cmd, args) => promisify(execFile)(cmd, args, { maxBuffer: 64 * 1024 * 1024 });
+async function unpackDmg(dmg, tmp, seven) {
+  if (process.platform !== "darwin") { await run(seven, ["x", "-y", "-bd", `-o${tmp}`, dmg]); return; }
   const mnt = fs.mkdtempSync(path.join(os.tmpdir(), "db-dmg-"));
-  try { execFileSync("hdiutil", ["attach", "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mnt, dmg], { stdio: "ignore" }); }
+  try { await run("hdiutil", ["attach", "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mnt, dmg]); }
   catch { fs.rmSync(mnt, { recursive: true, force: true }); throw new Error(`${path.basename(dmg)} wouldn't open - if it asks you to accept a license, open it once in Finder, then Update.`); }
-  try { for (const n of fs.readdirSync(mnt)) if (!/^\.|^Applications$/.test(n)) execFileSync("cp", ["-R", path.join(mnt, n), tmp]); }
-  finally { execFileSync("hdiutil", ["detach", mnt, "-force"], { stdio: "ignore" }); fs.rmSync(mnt, { recursive: true, force: true }); }
+  try { for (const n of fs.readdirSync(mnt)) if (!/^\.|^Applications$/.test(n)) await run("cp", ["-R", path.join(mnt, n), tmp]); }
+  finally { await run("hdiutil", ["detach", mnt, "-force"]).catch(() => {}); fs.rmSync(mnt, { recursive: true, force: true }); }
 }
-export function extractZip(archive, dir, { entries: record } = {}) {
+export async function extractZip(archive, dir, { entries: record } = {}) {
   const tmp = `${dir}.extracting-${process.pid}`;
   fs.rmSync(tmp, { recursive: true, force: true });
   fs.mkdirSync(tmp, { recursive: true });
@@ -145,13 +151,12 @@ export function extractZip(archive, dir, { entries: record } = {}) {
   let input = archive;
   if (/\.zst$/i.test(archive)) {
     // 7-Zip has no zstd; Node does. .tar.zst -> .tar, then 7-Zip unpacks the tar.
-    const zlib = require("node:zlib");
     input = path.join(tmp, path.basename(archive).replace(/\.zst$/i, ""));
-    fs.writeFileSync(input, zlib.zstdDecompressSync(fs.readFileSync(archive)));
+    await fs.promises.writeFile(input, await zstd(await fs.promises.readFile(archive)));
   }
   // System tar keeps Unix modes (7-Zip's tar reader doesn't); gz/xz/bz2 tars go straight through it.
-  const untar = (file) => execFileSync("tar", ["-xf", file, "-C", tmp], { stdio: "ignore" });
-  if (/\.dmg$/i.test(input)) unpackDmg(input, tmp, seven);
+  const untar = (file) => run("tar", ["-xf", file, "-C", tmp]);
+  if (/\.dmg$/i.test(input)) await unpackDmg(input, tmp, seven);
   else if (/\.appimage$/i.test(input) || (/\.exe$/i.test(input) && !INSTALLER.test(input))) {
     const to = path.join(tmp, path.basename(input)); fs.copyFileSync(input, to); if (!/\.exe$/i.test(to)) fs.chmodSync(to, 0o755);
   } else if (/\.deb$/i.test(input)) {
@@ -159,14 +164,14 @@ export function extractZip(archive, dir, { entries: record } = {}) {
     const ar = path.join(tmp, ".deb-parts"); fs.mkdirSync(ar);
     for (const [name, bytes] of readAr(fs.readFileSync(input))) if (/^data\.tar/.test(name)) fs.writeFileSync(path.join(ar, name), bytes);
     let data = fs.readdirSync(ar).find((n) => /^data\.tar/.test(n)); if (!data) throw new Error(`${path.basename(input)} has no data.tar inside.`);
-    if (/\.zst$/i.test(data)) { const zlib = require("node:zlib"); fs.writeFileSync(path.join(ar, "data.tar"), zlib.zstdDecompressSync(fs.readFileSync(path.join(ar, data)))); data = "data.tar"; }
-    untar(path.join(ar, data)); fs.rmSync(ar, { recursive: true, force: true });
-  } else if (/\.run$/i.test(input)) execFileSync("sh", [input, "--noexec", "--target", tmp], { stdio: "ignore" }); // makeself: unpack only
-  else if (/\.msi$/i.test(input)) execFileSync("msiexec", ["/a", input, "/qn", `TARGETDIR=${tmp}`], { stdio: "ignore" }); // administrative unpack, no install
-  else if (/\.tar$/i.test(input) || /\.(tar\.(gz|xz|bz2)|tgz|txz|tbz2?)$/i.test(input)) untar(input);
+    if (/\.zst$/i.test(data)) { await fs.promises.writeFile(path.join(ar, "data.tar"), await zstd(await fs.promises.readFile(path.join(ar, data)))); data = "data.tar"; }
+    await untar(path.join(ar, data)); fs.rmSync(ar, { recursive: true, force: true });
+  } else if (/\.run$/i.test(input)) await run("sh", [input, "--noexec", "--target", tmp]); // makeself: unpack only
+  else if (/\.msi$/i.test(input)) await run("msiexec", ["/a", input, "/qn", `TARGETDIR=${tmp}`]); // administrative unpack, no install
+  else if (/\.tar$/i.test(input) || /\.(tar\.(gz|xz|bz2)|tgz|txz|tbz2?)$/i.test(input)) await untar(input);
   else {
-    execFileSync(seven, ["x", "-y", "-bd", `-o${tmp}`, input], { stdio: "ignore", maxBuffer: 16 * 1024 * 1024 });
-    for (const inner of fs.readdirSync(tmp).filter((n) => /\.tar$/i.test(n))) { untar(path.join(tmp, inner)); fs.rmSync(path.join(tmp, inner)); }
+    await run(seven, ["x", "-y", "-bd", `-o${tmp}`, input]);
+    for (const inner of fs.readdirSync(tmp).filter((n) => /\.tar$/i.test(n))) { await untar(path.join(tmp, inner)); fs.rmSync(path.join(tmp, inner)); }
   }
   if (input !== archive) fs.rmSync(input, { force: true });
   fs.rmSync(path.join(tmp, "__MACOSX"), { recursive: true, force: true });
@@ -232,6 +237,7 @@ export function placeFile(src, destDir, { name, mode = "move", outDir, keep = []
   if (/[\/\\]bios[\/\\][^\/\\]+$/i.test(src) && fs.existsSync(path.join(path.dirname(src), "vault.json"))) mode = "copy"; // vault files are never moved out
   // Files from the user's own game-file library are never moved out of it either.
   if (keep.some((k) => k && path.resolve(src).startsWith(path.resolve(k) + path.sep))) mode = "copy";
+  if (isStoreInstallPath(src)) mode = "copy"; // a Steam / GOG / Epic game folder: moving would break the game there
   const companions = cueCompanions(src);
   const placed = placeOne(src, destDir, { name, mode, outDir });
   for (const c of companions) placed.bytes += placeOne(c, destDir, { mode, outDir }).bytes;
@@ -335,7 +341,7 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
           else log(`(${previous.release.tag} was set up before versions were kept - it can't be rolled back to.)`);
         }
         log(`Extracting…`);
-        const n = extractZip(dest, dir, { entries: releaseEntries });
+        const n = await extractZip(dest, dir, { entries: releaseEntries });
         log(`Extracted ${n} entries.`);
       } finally { unstash(); fs.rmSync(dest, { force: true }); }
     }
@@ -347,7 +353,7 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
     const zipPath = path.join(dir, "source.zip");
     log(`No ${T.label} build published - downloading source…`);
     await download(ctx.zipballUrl, zipPath, log);
-    extractZip(zipPath, srcDir);
+    await extractZip(zipPath, srcDir);
     fs.rmSync(zipPath);
     const steps = w.build_steps.map((s, i) => `${i + 1}. ${s}`);
     fs.writeFileSync(path.join(dir, T.buildDoc), [
@@ -429,5 +435,24 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
     ...Object.fromEntries(USER_FIELDS.filter((k) => previous?.[k] !== undefined).map((k) => [k, previous[k]])),
   };
   fs.writeFileSync(path.join(dir, MANIFEST), JSON.stringify(manifest, null, 2));
+  fs.writeFileSync(path.join(dir, ABOUT), aboutText(manifest));
   return manifest;
+}
+
+// A plain-text card in every game folder, so a folder copied to another computer still says what it is,
+// which version, who made it and where updates come from.
+export const ABOUT = "About This Game.txt";
+export function aboutText(m) {
+  const day = new Date(m.setUpAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return [
+    m.plan?.game_title || m.folder,
+    ``,
+    `Version: ${m.release?.tag || "not from a release"} (set up ${day})`,
+    `Made by: ${m.repo?.split("/")[0] || "unknown"}`,
+    `Project page (updates and help): ${m.repoUrl}`,
+    m.release?.url ? `This version's page: ${m.release.url}` : "",
+    ``,
+    `Set up by Decomp Buddy (https://decompbuddy.com). To update, open Decomp Buddy, or look for a newer release on the project page.`,
+    `This file is rewritten on every update.`,
+  ].filter((l, i, a) => l || a[i - 1]).join("\n") + "\n";
 }

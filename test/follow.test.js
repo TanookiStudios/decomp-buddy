@@ -10,15 +10,16 @@ test("matchAsset follows the version in a file name, or the same name", () => {
   assert.equal(matchAsset("bh-0.1.0-linux-x64.zip", "v0.1.0", A("bh-0.2.1-windows-x64.zip", "bh-0.2.1-linux-x64.zip")).name, "bh-0.2.1-linux-x64.zip");
   assert.equal(matchAsset("Game-v1-win.zip", "v1", A("Other.zip")), null);
   assert.equal(matchAsset("g-1.0-win.zip", "1.0", A("g-2.0-win.zip", "g-2.0-win.zip.sha256")).name, "g-2.0-win.zip");
+  assert.equal(matchAsset("openomf_0.8.7-50-09b5b644_windows.zip", "latest", A("openomf_0.8.7-86-0d355faf_windows.zip", "openomf_0.8.7-86-0d355faf_macos14_arm.zip")).name, "openomf_0.8.7-86-0d355faf_windows.zip");
+  assert.equal(matchAsset("vera20k-0.1.0-windows-x64-20261021-075505-2a03746.zip", "v0.1.0", A("vera20k-0.2.1-windows-x64-setup.exe")), null);
   assert.equal(matchAsset("SoH-Ackbar-Delta-Win64.zip", "9.2.0", A("SoH-Blair-Alfa-Win64.zip", "SoH-Blair-Alfa-Linux.zip", "SoH-Blair-Alfa-Mac.zip")).name, "SoH-Blair-Alfa-Win64.zip");
 });
 
-test("nextStep holds a new release 48 hours, then checks who uploaded it", () => {
+test("nextStep moves to a new release at once when its usual uploader made it", () => {
   const now = Date.parse("2026-10-18T12:00:00Z"), build = { release_tag: "v1.0", release_asset: "G-v1.0-win.zip" };
   const rel = (tag, at, uploader = "owner") => ({ tag, publishedAt: at, assets: [{ name: `G-${tag}-win.zip`, uploader }] });
   assert.equal(nextStep(build, [rel("v1.0", "2026-01-01T00:00:00Z")], { owner: "owner", now }).action, "current");
-  const young = nextStep(build, [rel("v1.1", "2026-10-17T12:00:00Z"), rel("v1.0", "2026-01-01T00:00:00Z")], { owner: "owner", now });
-  assert.equal(young.action, "wait"); assert.match(young.why, /24 hours old/);
+  assert.equal(nextStep(build, [rel("v1.1", "2026-10-18T11:00:00Z"), rel("v1.0", "2026-01-01T00:00:00Z")], { owner: "owner", now }).action, "advance");   // an hour old: no waiting period
   assert.equal(nextStep(build, [rel("v1.1", "2026-10-15T00:00:00Z")], { owner: "Owner", now }).action, "advance");
   assert.equal(nextStep(build, [rel("v1.1", "2026-10-15T00:00:00Z", "github-actions[bot]")], { owner: "owner", now, knownUploaders: ["github-actions[bot]"] }).action, "advance");
   const stranger = nextStep(build, [rel("v1.1", "2026-10-15T00:00:00Z", "someone-new")], { owner: "owner", now, knownUploaders: ["owner"] });
@@ -51,4 +52,12 @@ test("updatesFor: real updates only, skipped versions stay quiet, per-game switc
   assert.equal(updatesFor([inst("a/soh", "9.2.0", { skipTag: "9.3.0" })], games).length, 0);
   assert.equal(updatesFor([inst("a/soh", "9.2.0", { autoUpdate: false })], games, { autoDefault: true })[0].auto, false);
   assert.equal(updatesFor([inst("a/soh", "9.2.0")], games, { autoDefault: true })[0].auto, true);
+});
+
+test("nextStep follows a rolling release that keeps its tag and renames its files", () => {
+  const build = { release_tag: "rolling", release_asset: "3SX-17d47de-windows.zip" };
+  const rolling = [{ tag: "rolling", prerelease: true, assets: [{ name: "3SX-6187364-windows.zip", uploader: "owner" }, { name: "3SX-6187364-macos.dmg", uploader: "owner" }] }];
+  const step = nextStep(build, rolling, { owner: "owner" });
+  assert.equal(step.action, "advance"); assert.equal(step.asset.name, "3SX-6187364-windows.zip");
+  assert.equal(nextStep(build, [{ tag: "rolling", assets: [{ name: "Unrelated.7z" }] }], { owner: "owner" }).action, "replan");
 });

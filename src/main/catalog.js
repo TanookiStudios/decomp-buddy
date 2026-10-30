@@ -11,6 +11,8 @@ import { expandMultiGame, attachFacts } from "../expand.js";
 import { sampleStat } from "./core.js";
 import { getWaiting } from "./finding.js";
 import { withoutExcluded } from "../waiting.js";
+import { pickGames } from "../pick.js";
+import { buildLists, LISTS } from "../lists.js";
 
 // --- portsdr.com catalog
 // A repo that ships several games (a "10 PSX games" collection) is one repo but ten games: once its
@@ -38,8 +40,14 @@ async function liveTagsFor(repoKeys) {
 }
 
 ipcMain.handle("catalog:get", (_e, opts = {}) => loadCatalog(opts));
+// Lists (src/lists.js) over the catalog Browse last loaded; the two that need the website's data are left out.
+ipcMain.handle("lists:get", () => { const l = buildLists(state.catalogGames); return LISTS.filter((x) => !x.needs).map((x) => ({ slug: x.slug, title: x.title, ids: l[x.slug].map((g) => g.id) })); });
+// What Should I Play? (src/pick.js) over the catalog Browse last loaded.
+ipcMain.handle("pick:games", (_e, answers = {}) => { const r = pickGames(state.catalogGames, answers); return { relaxed: r.relaxed, ids: r.picks.map((g) => g.id) }; });
 // The merged catalog as Browse shows it (also used by the background update check, with no window open).
-export async function loadCatalog({ refresh = true, checkInstalled = false } = {}) {
+export async function loadCatalog({ refresh = true, checkInstalled = false, savedOnly = false } = {}) {
+  // savedOnly: the list saved last time, or nothing - never a first full load (Browse shows that while the real one runs).
+  if (savedOnly && !fs.existsSync(path.join(app.getPath("userData"), "catalog.json"))) return { games: [], installed: {} };
   const st = loadSettings();
   const cfg = { ...(st.sources || {}), shared: await fetchSharedSources({ file: sourcesFileFor(st) }), localFinds: st.localFinds || [], findsFile: st.findsFile || defaultFindsFile() };
   const cat = await fetchCatalog({ cacheDir: app.getPath("userData"), refresh, config: cfg });

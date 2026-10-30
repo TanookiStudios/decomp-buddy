@@ -1,5 +1,6 @@
 // Moved out of main.js unchanged (2026-09-23): setup IPC handlers.
 import { app, ipcMain } from "electron";
+import { installedGames, storeFileFor } from "../stores.js";
 import fs from "node:fs";
 import path from "node:path";
 import { analyzeBatch, setupBatch } from "../run.js";
@@ -24,6 +25,8 @@ import { backupSaves } from "../saves.js";
 import { countSetups } from "./setupcount.js";
 import { kiosk } from "./window.js";
 import { vaultDir, logTo, loadSettings, saveSettings, activeProvider, outDirFor, plansFileFor, currentTarget, state, diskCache, isNetworkError } from "./core.js";
+// Store game folders (Steam, GOG, Epic) are only ever copied from, like the game-file library.
+const storeDirs = () => { try { return installedGames().map((g) => g.dir); } catch { return []; } };
 
 ipcMain.handle("verify", async (e, { path: file, gameFile, outDir }) => {
   const log = (m) => logTo(e.sender, m);
@@ -78,6 +81,7 @@ ipcMain.handle("analyze", async (e, { urls }) => {
     const items = await analyzeBatch(urls, { provider, log, target, published, fetchContext });
     const romIndex = readIndex(romIndexFile());
     state.pending.clear();
+    const installs = (() => { try { return installedGames(); } catch { return []; } })(); // Find My Steam And GOG Games
     return items.map((it) => {
       if (!it.ok) return { id: it.id, url: it.url, ok: false, error: it.error };
       state.pending.set(it.id, it);
@@ -96,7 +100,8 @@ ipcMain.handle("analyze", async (e, { urls }) => {
           const { label, description, accepted_formats, expected_filename, how_provided, drop_into, kind, expected_region, required_version, expected_hashes, expected_size, expected_serial } = f;
           const v = kind === "bios" ? vaultMatch(vaultDir(), f) : null;
           const lib = kind !== "bios" ? findInLibrary(romIndex, f) : null;
-          return { label, description, accepted_formats, expected_filename, how_provided, drop_into, kind, expected_region, required_version, expected_hashes, expected_size, expected_serial, vaultPath: v?.path || null, vaultIdentity: v?.identity || null, libraryPath: lib?.path || null, libraryWhy: lib?.why || null };
+          const owned = !v && !lib && kind !== "bios" ? storeFileFor(game_title, f, installs) : null, storePath = owned?.path || null;
+          return { label, description, accepted_formats, expected_filename, how_provided, drop_into, kind, expected_region, required_version, expected_hashes, expected_size, expected_serial, vaultPath: v?.path || null, vaultIdentity: v?.identity || null, libraryPath: lib?.path || null, libraryWhy: lib?.why || null, storePath, storeWhy: storePath ? `${owned.store} - ${owned.name}` : null };
         }),
       };
     });
@@ -135,7 +140,7 @@ ipcMain.handle("setup", async (e, { items }) => {
     }
     setupCtrl = new DownloadCtrl();
     const offline = () => new Error("You're offline - setting a game up downloads its build, so it needs the internet. Everything else (Installed Games, Play, Saves, Roll Back, Browse from cache) works now.");
-    const out = await setupBatch(jobs, { outDir, mode, log, keep: [...(s.romFolders || []), vaultDir()], ctrl: setupCtrl }).finally(() => { setupCtrl = null; });
+    const out = await setupBatch(jobs, { outDir, mode, log, keep: [...(s.romFolders || []), vaultDir(), ...storeDirs()], ctrl: setupCtrl }).finally(() => { setupCtrl = null; });
     for (const r of out.results) if (!r.ok && /fetch failed|ENOTFOUND|EAI_AGAIN|ECONNREFUSED/i.test(r.error || "")) r.error = offline().message;
     out.results.forEach((r, i) => { if (r.ok) state.pending.delete(jobs[i].id); });
     countSetups(jobs.filter((_j, i) => out.results[i]?.ok && isNew[i])); // new games only - an update isn't a new set-up
@@ -185,7 +190,7 @@ export async function updateInstalled(list, { log = () => {} } = {}) {
           log(`${it.plan.game_title}: installing ${u.tag} (${asset.name}) - not scanned by Decomp Buddy.`);
         }
         try { const sv = await savesOf(u.folder); if (sv.paths.length) await backupSaves(u.folder, sv.paths, { reason: "before-update", log }); } catch (err) { log(`  couldn't back up saves: ${err.message}`); }
-        const out = await setupBatch([{ ...it, picks: {}, verifications: {} }], { outDir: path.dirname(u.folder), mode, log, keep: [...(s.romFolders || []), vaultDir()] });
+        const out = await setupBatch([{ ...it, picks: {}, verifications: {} }], { outDir: path.dirname(u.folder), mode, log, keep: [...(s.romFolders || []), vaultDir(), ...storeDirs()] });
         results.push({ folder: u.folder, ok: !!out.results[0]?.ok, error: out.results[0]?.error || null, tag: it.plan.build.release_tag });
       } catch (err) { results.push({ folder: u.folder, ok: false, error: err.message }); }
     }

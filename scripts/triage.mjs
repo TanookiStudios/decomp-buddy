@@ -4,6 +4,7 @@
 //   (--repos lines: owner/repo, a github.com link, a gitlab.com link, or a codeberg.org link)
 //   node scripts/triage.mjs check  <batch id>
 //   node scripts/triage.mjs import [--site <TanookiStudios-Site>]
+//   node scripts/triage.mjs suggestions   players' pending suggestions: closes the filed ones, lists the rest
 //
 // prep: every repo in the app's Discover queue (settings.json "discovered") that isn't already in the
 // catalog, finds.json or waiting.json gets GitHub's facts (release files, stars, description) plus the
@@ -15,6 +16,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { enrichMany, enrichFromGitLab, enrichFromCodeberg, publishFinds } from "../src/sources/finds.js";
 import { readWaiting, excludedKeys } from "../src/waiting.js";
 import { scanReddit, scanBluesky, scanGitHub, scanGitHubTopics, scanRecompHaven, scanUnbaked, scanAwesomeLists, scanRecompFyi } from "../src/discover.js";
@@ -42,12 +44,16 @@ Decomp Buddy lists games people can PLAY from their own copy - on a computer, an
 - "soon": a decompilation, recompilation or PC port of one specific game that has no Windows/macOS/Linux/Android/Meta Quest download yet (including matching ROM decomps that rebuild the original cartridge or disc).
 - "hide": copies and copycats - forks, re-uploads, or a repo with the same name as a known project under an unrelated account (the job warns you when Decomp Buddy already lists that name), unless the README clearly says it's a distinct, maintained port with its own downloads. Also anything that looks like malware bait: a random-looking account name, a README pushing a download link, zip or archive password, "crack", "free download", or "full version". When in doubt about a copy, "hide".
 - "hide" also: tools, libraries, SDKs, emulators, launchers, mod managers, mods, ROM hacks, randomizers, texture or translation patches, save editors, ports that only run on a console or another VR headset (Switch, PS Vita, 3DS homebrew, PSVR...), homework and tutorials, empty or placeholder repos, forks with no changes, awesome-lists, piracy, and repos unrelated to games (search noise).
+- Never judge a project by how old its GitHub account or organization is, or by its star count alone: a new account is not a reason to hide, hold or doubt anything. Maddie's own account is new.
+- AI-made projects are judged exactly like any other: never hide, doubt or mark a project "unsure" because AI wrote some or all of it (that only becomes a neutral label later).
 - "unsure": only when the text really doesn't let you tell. Maddie reviews these by hand.
 
 Also give:
 - "title": the official game name (e.g. "The Legend of Zelda: Majora's Mask"). If the project has its own name, use "Game (Project)", e.g. "Heroes of Might and Magic II (fheroes2)". For hide, the repo name is fine.
 - "console": the ORIGINAL platform, exactly one of: ${CONSOLES.join(", ")}.
 - "reason": one short sentence saying why.
+
+Our own test: TanookiStudios/decomp-buddy-pipeline-test is Tanooki Test Run, Decomp Buddy's pipeline test game. When it has a desktop download it is always "play" (title "Tanooki Test Run", console "PC (Windows)").
 
 Use only what the job text says. Never guess a download exists: "play" requires the Desktop download line to name Windows, macOS, Linux, Android or Meta Quest.
 One exception: when the release has files but their names don't say the computer (e.g. "Game-v1.0.zip"), and the README clearly says which computer that download is for, you may answer "play" with "platforms": ["Windows"] (or macOS / Linux) and "platform_quote": the README sentence that says so, copied word for word (it must name that computer).
@@ -101,6 +107,45 @@ async function readme(repo) {
   return "";
 }
 
+// Games players suggested (decompbuddy.com/add-game and the app's Suggest A Decomp), read straight from the site's
+// database with the deploy login. A suggestion stays "pending" until it's filed, then it's marked "have" - so one
+// that fails to sort today is fetched again tomorrow instead of being dropped.
+const d1 = (sql) => JSON.parse(execFileSync("npx", ["--yes", "wrangler", "d1", "execute", "tanooki-site", "--remote", "--json", "--command", sql],
+  { cwd: SITE, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }))[0].results;
+function suggestions(have) {
+  const rows = d1("SELECT id, repo_url FROM decomp_suggestions WHERE status = 'pending'").map((r) => ({ id: Number(r.id), repo: queueKey(r.repo_url) }));
+  const filed = rows.filter((r) => have.has(r.repo.toLowerCase())).map((r) => r.id).filter(Number.isInteger);
+  if (filed.length) d1(`UPDATE decomp_suggestions SET status = 'have', updated_at = datetime('now') WHERE id IN (${filed.join(",")})`);
+  console.log(`player suggestions: ${rows.length} pending, ${filed.length} already filed and closed`);
+  return rows.filter((r) => !have.has(r.repo.toLowerCase()));
+}
+
+// Remove / Restore from the admin page (tanookistudios.com/admin/decomp-buddy). A removed game goes on the hidden list,
+// which keeps it out of the catalog, the app and Coming Soon; a Coming Soon entry is kept inside it so Restore can
+// put it back. Each action is stamped done once applied.
+export function applyAdminActions(w, rows) {
+  const same = (key) => (g) => `${g.host || "github"}:${g.repo}`.toLowerCase() === key;
+  for (const a of rows) {
+    const is = same(a.repo_key), [host, repo] = a.repo_key.split(":");
+    const removed = w.hidden.find((g) => is(g) && /^removed by maddie/i.test(g.reason || ""));
+    w.hidden = w.hidden.filter((g) => g !== removed);
+    if (a.action === "restore") { if (removed?.was) w.games.push(removed.was); continue; }
+    const was = w.games.find(is);
+    w.games = w.games.filter((g) => !is(g));
+    w.hidden.push({ repo, ...(host !== "github" ? { host } : {}), title: a.title || repo, reason: "Removed by Maddie", ...(was ? { was } : {}) });
+  }
+  return w;
+}
+function adminActions() {
+  const rows = d1("SELECT id, action, repo_key, title FROM decomp_admin_actions WHERE done_at IS NULL ORDER BY id");
+  if (!rows.length) return 0;
+  const file = path.join(SITE, "public", "decomp-buddy", "waiting.json");
+  fs.writeFileSync(file, JSON.stringify(applyAdminActions(readJSON(file), rows), null, 2) + "\n");
+  d1(`UPDATE decomp_admin_actions SET done_at = datetime('now') WHERE id IN (${rows.map((r) => Number(r.id)).filter(Number.isInteger).join(",")})`);
+  console.log(`admin actions: ${rows.map((r) => `${r.action} ${r.title || r.repo_key}`).join(", ")}`);
+  return rows.length;
+}
+
 async function prep() {
   const size = Number(arg("--batch")) || 25;
   for (const d of ["jobs", "ctx", "out", "done"]) fs.mkdirSync(J(d), { recursive: true });
@@ -111,7 +156,7 @@ async function prep() {
   // --scan: run every Discover scanner right here (Bluesky, GitHub topics, GitHub search 3 pages deep, recomphaven.com, unbaked.games), so a full
   // scan doesn't wait for someone to press Discover in the app. Reddit is added just below.
   if (arg("--scan") !== null || process.argv.includes("--scan")) {
-    for (const [name, fn] of [["Bluesky", () => scanBluesky()], ["GitHub topics", () => scanGitHubTopics({ pages: 3, log: console.log })], ["GitHub search", () => scanGitHub({ pages: 3, log: console.log })], ["recomphaven.com", () => scanRecompHaven()], ["unbaked.games", () => scanUnbaked({ cacheFile: J("unbaked-cache.json"), log: console.log })], ["awesome lists", () => scanAwesomeLists()], ["recomp.fyi", () => scanRecompFyi()]]) {
+    for (const [name, fn] of [["Bluesky", () => scanBluesky()], ["GitHub topics", () => scanGitHubTopics({ pages: 3, log: console.log })], ["GitHub search", () => scanGitHub({ pages: 3, log: console.log })], ["recomphaven.com", () => scanRecompHaven()], ["unbaked.games", () => scanUnbaked({ cacheFile: J("unbaked-cache.json"), log: console.log })], ["awesome lists", () => scanAwesomeLists()], ["recomp.fyi", () => scanRecompFyi()], ["player suggestions", () => (adminActions(), suggestions(have))]]) {
       try { const r = await fn(); console.log(`${name}: ${r.length} candidate(s)`); queue.push(...r); } catch (err) { console.log(`${name} failed: ${err.message}`); }
     }
   }
@@ -124,7 +169,9 @@ async function prep() {
   }
   const listed = new Map([...have].map((r) => [r.split("/")[1], r]));
   // Several sources often find the same repo; sort it once.
-  const todo = [...new Map(queue.map((c) => c.repo).filter((r) => r && !have.has(r.toLowerCase())).map((r) => [r.toLowerCase(), r])).values()];
+  // "unsure" ones wait for Maddie (unsure.jsonl); the hourly run must not re-sort them every hour. A --repos list still can.
+  const asked = new Set(list ? [] : fs.existsSync(J("unsure.jsonl")) ? fs.readFileSync(J("unsure.jsonl"), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l).repo.toLowerCase()) : []);
+  const todo = [...new Map(queue.map((c) => c.repo).filter((r) => r && !have.has(r.toLowerCase()) && !asked.has(r.toLowerCase())).map((r) => [r.toLowerCase(), r])).values()];
   console.log(`queue ${queue.length}, already filed ${queue.length - todo.length}, to sort ${todo.length}`);
   // GitHub facts 40 repos per request (GraphQL); READMEs come from raw.githubusercontent.com, which has no quota.
   const need = todo.filter((r) => !fs.existsSync(J("ctx", `${idOf(r)}.json`)) && !forgeOf(r));
@@ -254,5 +301,6 @@ function importAnswers() {
 const cmd = process.argv[2];
 if (import.meta.url === `file://${process.argv[1]}`) {
   if (cmd === "prep") await prep(); else if (cmd === "check") check(process.argv[3]); else if (cmd === "import") importAnswers();
-  else { console.log("usage: triage.mjs prep|check <batch>|import"); process.exit(1); }
+  else if (cmd === "suggestions") { adminActions(); for (const r of suggestions(known())) console.log(`  new: ${r.repo}`); }
+  else { console.log("usage: triage.mjs prep|check <batch>|import|suggestions"); process.exit(1); }
 }

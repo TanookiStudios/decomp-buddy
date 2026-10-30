@@ -1,13 +1,24 @@
 import SwiftUI
 import VisionKit
 
-// A plain title card instead of box art (no pictures of other companies' games on the phone).
-struct TitleCard: View {
-    let title: String; let console: String
+// A game's picture: its project's own artwork when it has some, else a title tile colored by console. Never
+// commercial box art (see CatalogGame.projectArtURL). Images load as rows scroll into view and stay cached.
+struct GameArt: View {
+    let title: String; let console: String; var url: URL? = nil; var size: CGFloat = 52
+    private static let colors: [Color] = [.purple, .blue, .teal, .green, .orange, .red, .pink, .indigo]
     var body: some View {
-        RoundedRectangle(cornerRadius: 10).fill(Color.accentColor.gradient).frame(width: 52, height: 52)
-            .overlay(Text(String(title.prefix(1))).font(.title2.bold()).foregroundStyle(.white))
-            .accessibilityHidden(true)
+        AsyncImage(url: url, transaction: .init(animation: .easeOut(duration: 0.2))) { phase in
+            if let image = phase.image { image.resizable().scaledToFill() } else { tile }
+        }
+        .frame(width: size, height: size)
+        .clipShape(RoundedRectangle(cornerRadius: size / 5))
+        .accessibilityHidden(true)
+    }
+    private var tile: some View {
+        let words = title.replacingOccurrences(of: #"\([^)]*\)"#, with: "", options: .regularExpression).split { !$0.isLetter && !$0.isNumber }
+        let initials = words.prefix(2).compactMap(\.first).map(String.init).joined().uppercased()
+        let color = Self.colors[console.unicodeScalars.reduce(0) { ($0 &* 31 &+ Int($1.value)) & 0xFFFF } % Self.colors.count]
+        return Rectangle().fill(color.gradient).overlay(Text(initials.isEmpty ? "?" : initials).font(.system(size: size * 0.38, weight: .bold, design: .rounded)).foregroundStyle(.white))
     }
 }
 
@@ -28,7 +39,7 @@ struct BrowseView: View {
                 ForEach(shown.prefix(400)) { g in
                     NavigationLink(value: g) {
                         HStack(spacing: 12) {
-                            TitleCard(title: g.title, console: g.console)
+                            GameArt(title: g.title, console: g.console, url: g.projectArtURL)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(g.title).font(.headline)
                                 Text([g.console, g.completeness].filter { !$0.isEmpty }.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary)
@@ -62,7 +73,7 @@ struct GameView: View {
     var body: some View {
         List {
             Section {
-                HStack(spacing: 14) { TitleCard(title: game.title, console: game.console); VStack(alignment: .leading) { Text(game.title).font(.title3.bold()); Text(game.console).foregroundStyle(.secondary) } }
+                HStack(spacing: 14) { GameArt(title: game.title, console: game.console, url: game.projectArtURL, size: 72); VStack(alignment: .leading) { Text(game.title).font(.title3.bold()); Text(game.console).foregroundStyle(.secondary) } }
                 if let d = game.description, !d.isEmpty { Text(d) }
             }
             Section("At A Glance") {
@@ -102,12 +113,32 @@ struct LibraryView: View {
                         ForEach(active) { j in VStack(alignment: .leading) { Text(j.game ?? j.kind).font(.headline); Text(j.message ?? j.state).font(.subheadline).foregroundStyle(j.state == "failed" ? .red : .secondary) }.accessibilityElement(children: .combine) }
                     }
                 }
+                // Continue Playing: the last few games played on that computer, one tap from starting again.
+                let recent = remote.library.filter { $0.lastPlayed != nil }.sorted { ($0.lastPlayed ?? "") > ($1.lastPlayed ?? "") }.prefix(3)
+                if !recent.isEmpty {
+                    Section("Continue Playing") {
+                        ForEach(recent) { g in
+                            HStack(spacing: 12) {
+                                GameArt(title: g.title, console: g.console ?? "", url: catalog.game(repo: g.repo)?.projectArtURL, size: 60)
+                                VStack(alignment: .leading, spacing: 2) { Text(g.title).font(.headline); Text(g.console ?? "").font(.subheadline).foregroundStyle(.secondary) }
+                                Spacer()
+                                Button { act("play", g) } label: { Label("Play", systemImage: "play.fill") }.buttonStyle(.borderedProminent).disabled(remote.busy)
+                            }
+                            .accessibilityElement(children: .contain)
+                        }
+                    }
+                }
                 if !remote.library.isEmpty {
                     Section("Installed On \(remote.selected?.name ?? "")") {
                         ForEach(remote.library) { g in
                             VStack(alignment: .leading, spacing: 6) {
-                                Text(g.title).font(.headline)
-                                Text([g.console, g.tag].compactMap { $0 }.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary)
+                                HStack(spacing: 12) {
+                                    GameArt(title: g.title, console: g.console ?? "", url: catalog.game(repo: g.repo)?.projectArtURL, size: 44)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(g.title).font(.headline)
+                                        Text([g.console, g.tag].compactMap { $0 }.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary)
+                                    }
+                                }
                                 HStack {
                                     Button("Play") { act("play", g) }.buttonStyle(.borderedProminent)
                                     if let v = remote.updateAvailable(g, in: catalog) { Button("Update To \(v)") { act("update", g) }.buttonStyle(.bordered) }

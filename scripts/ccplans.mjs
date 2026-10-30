@@ -37,8 +37,10 @@ const readJSON = (f) => JSON.parse(fs.readFileSync(f, "utf8"));
 const REPLAN = new Set((() => { try { return fs.readFileSync(arg("--replan") || "/nonexistent", "utf8"); } catch { return ""; } })().split("\n").map((l) => l.split(":")[0].trim().toLowerCase()).filter(Boolean));
 function work() {
   const cat = readJSON(path.join(DIR, "catalog.json")), pub = readJSON(path.join(DIR, "plans.json"));
+  // Games still waiting for their install steps aren't in catalog.json (they go live once done): they're in status.json.
+  let status = { games: [] }; try { status = readJSON(path.join(DIR, "status.json")); } catch {}
   const seen = new Set(), out = [];
-  for (const g of cat.games) {
+  for (const g of [...cat.games, ...status.games.filter((s) => s.outcome === "queued")]) {
     if (!g.repo) continue;
     const [owner, repo] = g.repo.split("/"); const host = g.host || "github";
     const key = planKey(host, owner, repo); if (seen.has(key)) continue; seen.add(key);
@@ -91,7 +93,9 @@ async function prep() {
       // work() only lists repos still missing something, so an old answer in done/ doesn't count - only one awaiting import does.
       if (fs.existsSync(J("out", `${w.id}.json`))) { skipped++; manifest.push(w); continue; }
       try {
-        const ctx = fs.existsSync(J("ctx", `${w.id}.json`)) ? readJSON(J("ctx", `${w.id}.json`)) : await fetchContextFor({ host: w.host, owner: w.owner, repo: w.repo });
+        // A replan is redone because the releases changed, so the saved copy of them is stale.
+        const fresh = REPLAN.has(`${w.owner}/${w.repo}`.toLowerCase()) || !fs.existsSync(J("ctx", `${w.id}.json`));
+        const ctx = fresh ? await fetchContextFor({ host: w.host, owner: w.owner, repo: w.repo }) : readJSON(J("ctx", `${w.id}.json`));
         fs.writeFileSync(J("ctx", `${w.id}.json`), JSON.stringify(ctx));
         const body = renderContext(ctx, { target: w.targets[0] || "windows", preferredTag: w.version || undefined }).split("\n").slice(1).join("\n");
         const head = [

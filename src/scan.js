@@ -34,8 +34,8 @@ export function applyScans(plans, scans, reviewed = {}) {
   for (const { planKey, build } of releaseBuilds(plans, { next: true })) {
     const r = scans?.files?.[scanKey(planKey, build)];
     delete build.scanned;
-    // A scan that ran out of time or size limits isn't a verdict: the file counts as not scanned yet.
-    if (!r || r.incomplete || /^Heuristics\.Limits\.Exceeded/.test(r.signature || "")) continue;
+    // A scan that ran out of time or size limits isn't a verdict: the file counts as not scanned yet, unless checked by hand.
+    if (!r || ((r.incomplete || /^Heuristics\.Limits\.Exceeded/.test(r.signature || "")) && !reviewed[r.sha256])) continue;
     build.scanned = r.clean || reviewed[r.sha256]
       ? { sha256: r.sha256, at: r.at, engine: r.engine }
       : { flagged: true, signature: r.signature || "unknown", at: r.at, engine: r.engine };
@@ -45,9 +45,10 @@ export function applyScans(plans, scans, reviewed = {}) {
 }
 
 // One line for a whole repo's published plan: every download scanned clean -> { at, engine, files }; any flagged -> { flagged };
-// anything not scanned yet (or no downloads at all) -> null.
+// anything not scanned yet (or no downloads at all) -> null. A build whose file left every release (build.gone,
+// scripts/follow.mjs) can't be installed, so it doesn't count either way.
 export function scanSummary(entry) {
-  const builds = releaseBuilds({ plans: { x: entry || {} } }).map((b) => b.build);
+  const builds = releaseBuilds({ plans: { x: entry || {} } }).map((b) => b.build).filter((b) => !b.gone);
   if (!builds.length) return null;
   if (builds.some((b) => b.scanned?.flagged)) return { flagged: true };
   if (!builds.every((b) => b.scanned?.sha256)) return null;

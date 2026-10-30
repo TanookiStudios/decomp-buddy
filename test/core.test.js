@@ -3,12 +3,14 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import crypto from "node:crypto";
 import AdmZip from "adm-zip";
 import { parseRepoUrl } from "../src/github.js";
 import { sweepMacJunk } from "../src/junk.js";
-import { extractZip, gameFolderName, setupGame, placeFile, cueCompanions } from "../src/setup.js";
+import { extractZip, gameFolderName, setupGame, placeFile, cueCompanions, aboutText } from "../src/setup.js";
 import { readManifests, renderInstallHtml } from "../src/installhtml.js";
 import { Plan } from "../src/plan.js";
+import { setupBatch } from "../src/run.js";
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), "buddy-"));
 
@@ -32,7 +34,7 @@ test("sweeps Mac junk and nothing else", () => {
   assert.deepEqual(fs.readdirSync(path.join(root, "Game - Wii")), ["game.exe"]);
 });
 
-test("extracts a zip and hoists a single root folder", () => {
+test("extracts a zip and hoists a single root folder", async () => {
   const root = tmp();
   const zip = new AdmZip();
   zip.addFile("Skate3Recomp-Windows/skate3.exe", Buffer.from("exe"));
@@ -40,19 +42,19 @@ test("extracts a zip and hoists a single root folder", () => {
   zip.addFile("__MACOSX/._skate3.exe", Buffer.from("junk"));
   const zipPath = path.join(root, "a.zip");
   zip.writeZip(zipPath);
-  extractZip(zipPath, path.join(root, "out"));
+  await extractZip(zipPath, path.join(root, "out"));
   assert.ok(fs.existsSync(path.join(root, "out", "skate3.exe")));
   assert.ok(fs.existsSync(path.join(root, "out", "data", "x.bin")));
   assert.ok(!fs.existsSync(path.join(root, "out", "__MACOSX")));
 });
 
-test("rejects zip entries that escape the target folder", () => {
+test("rejects zip entries that escape the target folder", async () => {
   const root = tmp();
   const zip = new AdmZip();
   zip.addFile("../../evil.txt", Buffer.from("x"));
   const zipPath = path.join(root, "evil.zip");
   zip.writeZip(zipPath);
-  extractZip(zipPath, path.join(root, "out"));
+  await extractZip(zipPath, path.join(root, "out"));
   assert.ok(!fs.existsSync(path.join(root, "evil.txt")), "file escaped the target folder");
   assert.ok(!fs.existsSync(path.join(path.dirname(root), "evil.txt")), "file escaped the temp dir");
 });
@@ -200,7 +202,7 @@ test("extracts .tar.zst (zstd via Node, tar via 7-Zip) and keeps exec bits", asy
   fs.writeFileSync(path.join(src, "data.bin"), "x");
   execFileSync(path7za, ["a", "-bd", "-ttar", path.join(d, "l.tar"), src], { stdio: "ignore" });
   fs.writeFileSync(path.join(d, "l.tar.zst"), zlib.zstdCompressSync(fs.readFileSync(path.join(d, "l.tar"))));
-  const n = extractZip(path.join(d, "l.tar.zst"), path.join(d, "out"));
+  const n = await extractZip(path.join(d, "l.tar.zst"), path.join(d, "out"));
   assert.ok(n >= 1);
   assert.ok(fs.existsSync(path.join(d, "out", "run.sh")), fs.readdirSync(path.join(d, "out")).join(","));
   assert.ok(fs.statSync(path.join(d, "out", "run.sh")).mode & 0o100, "exec bit kept");
@@ -235,4 +237,36 @@ test("download verifies GitHub's digest and refuses a bad one; disk check refuse
   const ctx = { fullName: "x/y", url: "u", homepage: "", zipballUrl: "", releases: [{ tag: "v1", url: "u", assets: [{ name: "big.zip", size: 5_000_000_000, url: "http://127.0.0.1:9/x" }] }] };
   const plan = structuredClone(fakePlan); plan.build.release_asset = "big.zip";
   await assert.rejects(setupGame({ plan, ctx, outDir: d, statfs: () => ({ bavail: 100n, bsize: 4096n }) }), /Not enough space/);
+});
+
+test("unpacking leaves the app responsive (it froze on large game updates)", async () => {
+  const root = tmp(), zip = new AdmZip();
+  zip.addFile("big.bin", crypto.randomBytes(24 * 1024 * 1024));
+  const zipPath = path.join(root, "big.zip"); zip.writeZip(zipPath);
+  let ticks = 0; const t = setInterval(() => ticks++, 1);
+  try { await extractZip(zipPath, path.join(root, "out")); } finally { clearInterval(t); }
+  assert.ok(ticks > 0, "nothing else could run while the archive unpacked");
+});
+
+test("every game folder says its version, maker and project page in plain text", async () => {
+  const out = tmp();
+  const ctx = { fullName: "x/y", url: "https://github.com/x/y", homepage: "", zipballUrl: "", releases: [{ tag: "v1.2", url: "https://github.com/x/y/releases/tag/v1.2", assets: [] }] };
+  await setupGame({ plan: structuredClone(fakePlan), ctx, outDir: out });
+  const about = fs.readFileSync(path.join(out, "Skate 3 - Xbox 360", "About This Game.txt"), "utf8");
+  assert.match(about, /^Skate 3\n/);
+  assert.match(about, /Version: not from a release/); // the fixture's download isn't in its release
+  assert.match(about, /Made by: x\n/);
+  assert.match(about, /Project page \(updates and help\): https:\/\/github\.com\/x\/y\n/);
+});
+
+test("two games in one batch sharing a picked file both get it, and the original stays", async () => {
+  const out = tmp(), src = tmp();
+  const iso = path.join(src, "shared.iso"); fs.writeFileSync(iso, "iso-bytes");
+  const ctx = { fullName: "x/y", url: "https://github.com/x/y", homepage: "", zipballUrl: "", releases: [{ tag: "v1", url: "u", assets: [] }] };
+  const a = structuredClone(fakePlan), b = structuredClone(fakePlan); b.game_title = "Skate 3 Other Port";
+  const { results } = await setupBatch([{ url: "a", ctx, plan: a, picks: { 0: iso } }, { url: "b", ctx, plan: b, picks: { 0: iso } }], { outDir: out, mode: "move" });
+  assert.ok(results.every((r) => r.ok), JSON.stringify(results));
+  assert.ok(fs.existsSync(path.join(out, "Skate 3 - Xbox 360", "Game Files", "shared.iso")));
+  assert.ok(fs.existsSync(path.join(out, "Skate 3 Other Port - Xbox 360", "Game Files", "shared.iso")));
+  assert.ok(fs.existsSync(iso), "a shared pick is copied, not moved");
 });

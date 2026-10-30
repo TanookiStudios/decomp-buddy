@@ -15,9 +15,9 @@ test("which release files setup opens itself, and which it leaves for you", () =
   assert.ok(unpackable("game.msi", "win32")); assert.ok(!unpackable("game.msi", "darwin"));
 });
 
-test("an AppImage lands in the folder and can run", () => {
+test("an AppImage lands in the folder and can run", async () => {
   const d = tmp(), src = path.join(d, "Game-x86_64.AppImage"); fs.writeFileSync(src, "#!/bin/sh\n");
-  extractZip(src, path.join(d, "out"));
+  await extractZip(src, path.join(d, "out"));
   const st = fs.statSync(path.join(d, "out", "Game-x86_64.AppImage")); assert.ok(st.mode & 0o100, "executable bit");
 });
 
@@ -26,12 +26,12 @@ const arOf = (members) => Buffer.concat([Buffer.from("!<arch>\n"), ...members.fl
   const h = `${`${name}/`.padEnd(16)}${"0".padEnd(12)}${"0".padEnd(6)}${"0".padEnd(6)}${"100644".padEnd(8)}${String(body.length).padEnd(10)}\x60\n`;
   return [Buffer.from(h, "latin1"), body, ...(body.length % 2 ? [Buffer.from("\n")] : [])];
 })]);
-test("a .deb is unpacked from its data.tar, nothing installed", () => {
+test("a .deb is unpacked from its data.tar, nothing installed", async () => {
   const d = tmp(), stage = path.join(d, "stage"); fs.mkdirSync(path.join(stage, "usr/games"), { recursive: true });
   fs.writeFileSync(path.join(stage, "usr/games/mygame"), "#!/bin/sh\n", { mode: 0o755 });
   execFileSync("tar", ["-czf", path.join(d, "data.tar.gz"), "-C", stage, "usr"]);
   fs.writeFileSync(path.join(d, "game.deb"), arOf([["debian-binary", Buffer.from("2.0\n")], ["control.tar.gz", Buffer.from("not used")], ["data.tar.gz", fs.readFileSync(path.join(d, "data.tar.gz"))]]));
-  const out = path.join(d, "out"); extractZip(path.join(d, "game.deb"), out);
+  const out = path.join(d, "out"); await extractZip(path.join(d, "game.deb"), out);
   const all = execFileSync("find", [out, "-type", "f"], { encoding: "utf8" });
   assert.match(all, /games\/mygame/); assert.doesNotMatch(all, /control\.tar|debian-binary/);
 });

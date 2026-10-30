@@ -7,7 +7,10 @@ import { targetIsHost, TARGETS } from "../targets.js";
 import { addToVault, removeFromVault } from "../vault.js";
 import { steamDir, steamRunning, userConfigDir, installShortcut, selfSteamLaunch } from "../steam.js";
 import { renderMarkdown, imagesIn } from "../readme.js";
+import { gh } from "../github.js";
 import { readManifests, upgradeManifest } from "../installhtml.js";
+import { updateQuickPlay, quickPlayItems } from "./quickplay.js";
+import { createWindow } from "./window.js";
 import { spawn } from "node:child_process";
 import { splitArgs, launchSpec, findExecutable } from "../gametools.js";
 export { findExecutable };
@@ -39,14 +42,17 @@ export async function listLibrary() {
     // A Windows copy on a Mac can still play through Wine (experimental) once Wine is set up.
     const canWine = compatHost(m);
     const exe = m.status === "ready" || m.status === "files_needed" ? findExecutable(folder, m.plan?.build?.executable, canWine ? "win32" : process.platform) : null;
-    out.push({ key: `${dir}|${m.folder}`, folder, dir, modsSupported: !!m.plan?.mods?.supported, canBuild: m.plan?.build?.method === "source" && runsHere && process.platform !== "win32", buildSteps: m.plan?.build?.build_steps || [], title: m.displayName || m.plan?.game_title || m.folder, originalTitle: m.plan?.game_title || m.folder, tags: Array.isArray(m.tags) ? m.tags : [], hidden: !!m.hidden, autoUpdate: m.autoUpdate ?? null, skipTag: m.skipTag || null, console: m.plan?.console || "", repo: m.repo, repoUrl: m.repoUrl, target: m.target || "windows", tag: m.release?.tag || null, status: m.status, setUpAt: m.setUpAt, lastPlayed: m.lastPlayed || null, steamAppId: m.steamAppId || null, adopted: !!m.adopted, launchArgs: m.launchArgs || "", exe, runsHere, canWine, wineReady: canWine && compatReady(), compatName: process.platform === "darwin" ? "Wine" : (pickRunner(linuxRunners(), m.runner)?.kind === "wine" ? "Wine" : "Proton"), runner: m.runner || null,
+    out.push({ key: `${dir}|${m.folder}`, folder, dir, modsSupported: !!m.plan?.mods?.supported, canBuild: m.plan?.build?.method === "source" && runsHere && process.platform !== "win32", buildSteps: m.plan?.build?.build_steps || [], title: m.displayName || m.plan?.game_title || m.folder, originalTitle: m.plan?.game_title || m.folder, tags: Array.isArray(m.tags) ? m.tags : [], hidden: !!m.hidden, autoUpdate: m.autoUpdate ?? null, skipTag: m.skipTag || null, console: m.plan?.console || "", repo: m.repo, repoUrl: m.repoUrl, target: m.target || "windows", tag: m.release?.tag || null, status: m.status, setUpAt: m.setUpAt, lastPlayed: m.lastPlayed || null, playMinutes: m.playMinutes || 0, thanked: !!m.thanked, steamAppId: m.steamAppId || null, adopted: !!m.adopted, launchArgs: m.launchArgs || "", exe, runsHere, canWine, wineReady: canWine && compatReady(), compatName: process.platform === "darwin" ? "Wine" : (pickRunner(linuxRunners(), m.runner)?.kind === "wine" ? "Wine" : "Proton"), runner: m.runner || null,
       art: art ? `data:${art.endsWith(".jpg") ? "image/jpeg" : art.endsWith(".ico") ? "image/x-icon" : "image/png"};base64,${fs.readFileSync(art).toString("base64")}` : null,
       filesNeeded: (m.plan?.game_files || []).filter((f) => !f.placed).length,
       ...(onDevice ? { onDevice: true, device: m.device || null, packageId: m.package_id || null, deviceReady: !!m.device && ready.has(m.device.serial) } : {}) });
   }
-  return out.sort((a, b) => (b.lastPlayed || b.setUpAt || "").localeCompare(a.lastPlayed || a.setUpAt || ""));
+  const sorted = out.sort((a, b) => (b.lastPlayed || b.setUpAt || "").localeCompare(a.lastPlayed || a.setUpAt || ""));
+  try { updateQuickPlay(sorted, { playGame, createWindow }); } catch {} // the Dock / taskbar menu of recent games
+  return sorted;
 }
 ipcMain.handle("library:list", () => listLibrary());
+ipcMain.handle("quickplay:items", () => quickPlayItems());
 function stampManifest(folder, patch) {
   const file = path.join(folder, "decomp-buddy.json");
   const m = upgradeManifest(JSON.parse(fs.readFileSync(file, "utf8")));
@@ -85,7 +91,7 @@ export function playGame(sender, folder) {
     const r = pickRunner(linuxRunners(), m.runner);
     if (!r) throw new Error("This is the Windows version. To play it here, install Proton from Steam (Library → search \"Proton\" → Install) or Wine, then try again.");
     spec = compatLaunchSpec(r, exe, { args, prefix: prefixFor(prefixesDir(), folder), steamRoot: steamDir(), umu: r.kind === "proton" ? umuPath() : null }); via = r.label;
-  } else spec = launchSpec(exe, { args, wait: sync });
+  } else spec = launchSpec(exe, { args, wait: sync || process.platform === "darwin" }); // Mac: wait for the app to quit, so play time counts
   const { cmd, argv, opts } = spec;
   // Test harness (scripts/smoke.sh): never start a real program on the machine running the tests.
   if (process.env.DECOMP_NO_LAUNCH) { logTo(e.sender, `(test run: would start ${cmd} ${argv.join(" ")})`); return { exe, dryRun: true, cmd, argv }; }
@@ -98,6 +104,11 @@ export function playGame(sender, folder) {
   if (typeof out === "number") fs.closeSync(out);
   const startedAt = Date.now();
   runningGames.add(folder); child.on("exit", () => runningGames.delete(folder));
+  // Play time: whole minutes per session, added up in the game's manifest (kept across updates).
+  child.on("exit", () => {
+    const mins = Math.round((Date.now() - startedAt) / 60000); if (mins < 1) return;
+    try { const mm = upgradeManifest(JSON.parse(fs.readFileSync(path.join(folder, "decomp-buddy.json"), "utf8"))); stampManifest(folder, { playMinutes: (mm.playMinutes || 0) + mins }); } catch {}
+  });
   child.on("error", (err) => logTo(e.sender, `Couldn't start ${path.basename(exe)}: ${err.message}`));
   child.on("exit", (code, signal) => {
     if ((code === 0 && !signal) || Date.now() - startedAt > 30_000) return;
@@ -108,6 +119,7 @@ export function playGame(sender, folder) {
   if (sync) child.on("exit", () => { import("./game.js").then((g) => g.pushSaves(folder, { reason: "after-play", log: (x) => logTo(e.sender, x) })).catch((err) => logTo(e.sender, `Save sync skipped: ${err.message}`)); });
   else child.unref();
   stampManifest(folder, { lastPlayed: new Date().toISOString() });
+  listLibrary().catch(() => {}); // moves it to the top of Quick Play
   return { exe };
 }
 ipcMain.handle("game:steam", async (e, { folder }) => {
@@ -153,12 +165,11 @@ async function gameDetailLive(owner, repo, host, key) {
     const out = { readme: renderMarkdown(ctx.readme, { base }), screenshots: imagesIn(ctx.readme, { base }).slice(0, 12), releases: ctx.releases.slice(0, 30).map((r) => ({ tag: r.tag, name: r.name, at: r.publishedAt, url: r.url, prerelease: false, notes: "" })), stars: 0, description: ctx.description, homepage: "", archived: false, pushedAt: "" };
     return out;
   }
-  const h = { "User-Agent": "decomp-buddy", Accept: "application/vnd.github+json" };
-  const meta = await (await fetch(`https://api.github.com/repos/${key}`, { headers: h })).json().catch(() => ({}));
+  const meta = (await gh(`/repos/${key}`)) || {};
   const branch = meta.default_branch || "main";
   const base = `https://github.com/${key}/blob/${branch}/README.md`;
-  const md = await (await fetch(`https://api.github.com/repos/${key}/readme`, { headers: { ...h, Accept: "application/vnd.github.raw+json" } })).text().catch(() => "");
-  const rels = await (await fetch(`https://api.github.com/repos/${key}/releases?per_page=30`, { headers: h })).json().catch(() => []);
+  const md = (await gh(`/repos/${key}/readme`, "application/vnd.github.raw+json")) || "";
+  const rels = (await gh(`/repos/${key}/releases?per_page=30`)) || [];
   const out = {
     readme: renderMarkdown(md, { base }), screenshots: imagesIn(md, { base }).slice(0, 12),
     releases: (Array.isArray(rels) ? rels : []).filter((r) => !r.draft).map((r) => ({ tag: r.tag_name, name: r.name || r.tag_name, at: r.published_at, url: r.html_url, prerelease: r.prerelease, notes: renderMarkdown(r.body || "", { base }) })),

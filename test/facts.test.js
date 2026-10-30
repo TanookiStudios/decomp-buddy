@@ -7,6 +7,14 @@ const ctx = { fullName: "a/b", description: "PC port", readme: "Fully playable f
 test("healthOf: archived, last push, and takedown language come from the host, not the model", () => {
   assert.deepEqual(healthOf(ctx), { archived: false, pushedAt: "2021-01-01T00:00:00Z", dmca: false });
   assert.equal(healthOf({ ...ctx, readme: "This repo was taken down following a DMCA notice." }).dmca, true);
+  assert.equal(healthOf({ ...ctx, readme: "We received a cease-and-desist letter from the publisher." }).dmca, true);
+  assert.equal(healthOf({ ...ctx, readme: "The original repo got DMCA'd, this is a mirror." }).dmca, true);
+  // What READMEs actually say that is NOT a takedown (each of these was wrongly flagged once).
+  for (const readme of ["## Legal notice\nThis is an unofficial fan project.", "A static recompilation of Burnout 3: Takedown for Windows.",
+    "Rights-holder requests (including DMCA notices): email me.", "Reverse engineering for interoperability falls under the DMCA exemption.",
+    "Or use [GitHub's DMCA process](https://docs.github.com/en/site-policy/content-removal-policies/dmca-takedown-policy).",
+    "Where do I report a bug or a takedown request? In this repository's issues.", "Eventually it's up to Bethesda to takedown the project or leave it be."])
+    assert.equal(healthOf({ ...ctx, readme }).dmca, false, readme);
   assert.equal(healthOf({ ...ctx, archived: true }).archived, true);
 });
 

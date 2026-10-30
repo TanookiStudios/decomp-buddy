@@ -85,16 +85,31 @@ const clamscan = (file) => new Promise((resolve) => {
   p.on("close", (code) => resolve({ code, out: out.trim() }));
 });
 
+// A download too big or slow for one pass is unpacked (bsdtar, else 7-Zip for installers, AppImages and APKs) and every
+// file inside is scanned on its own. An inner file that is itself over the limits still leaves the download unscanned.
+async function scanUnpacked(file) {
+  const dir = `${file}.d`; fs.mkdirSync(dir);
+  try {
+    const run = (cmd, args) => new Promise((res) => spawn(cmd, args, { stdio: "ignore" }).on("close", res));
+    if (await run("/usr/bin/bsdtar", ["-xf", file, "-C", dir]) !== 0 || !fs.readdirSync(dir).length)
+      if (await run(`${BREW}/bin/7zz`, ["x", "-y", "-bso0", `-o${dir}`, file]) !== 0) return null;
+    return await clamscan(dir);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+}
+
 async function scanOne(t) {
   const file = path.join(TMP, `${crypto.randomUUID()}-${t.asset.name.replace(/[^\w.-]+/g, "_")}`);
   try {
-    const res = await fetch(t.asset.url, { headers: { "User-Agent": "decomp-buddy" } });
+    // Signed in through the API when we can: GitHub refuses (429) anonymous downloads from busy projects far sooner.
+    const api = process.env.GITHUB_TOKEN && t.asset.apiUrl;
+    const res = await fetch(api || t.asset.url, { headers: { "User-Agent": "decomp-buddy", ...(api ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, Accept: "application/octet-stream" } : {}) } });
     if (!res.ok || !res.body) throw new Error(`download ${res.status}`);
     const hash = crypto.createHash("sha256"); let size = 0;
     await pipeline(Readable.fromWeb(res.body), async function* (src) { for await (const c of src) { hash.update(c); size += c.length; yield c; } }, fs.createWriteStream(file));
     const sha256 = hash.digest("hex");
     if (t.asset.digest && t.asset.digest !== `sha256:${sha256}`) throw new Error("download didn't match GitHub's checksum");
-    const { code, out } = await clamscan(file);
+    let { code, out } = await clamscan(file);
+    if (code === 1 && /Heuristics\.Limits\.Exceeded/.test(out)) ({ code, out } = (await scanUnpacked(file)) || { code, out });
     if (code === 2) throw new Error(`scanner error: ${out.split("\n").pop()}`);
     const signature = code === 1 ? out.match(/: (.+) FOUND$/m)?.[1] || "unknown" : null;
     scans.files[t.key] = { sha256, size, tag: t.tag, at: new Date().toISOString(), engine, clean: code === 0, ...(signature ? { signature } : {}) };
@@ -114,7 +129,14 @@ await Promise.all(Array.from({ length: 4 }, async () => {
     try {
       // A dropped connection gets three more tries, a minute apart; anything else is reported once.
       let sig;
-      for (let n = 0; ; n++) { try { sig = await scanOne(t); break; } catch (err) { if (n >= 3 || !/fetch failed|terminated|ECONNRESET|ETIMEDOUT|download 5\d\d|didn't match GitHub's checksum/.test(err.message)) throw err; await new Promise((r) => setTimeout(r, 60000)); } }
+      for (let n = 0; ; n++) {
+        try { sig = await scanOne(t); break; } catch (err) {
+          if (n >= 3 || !/fetch failed|terminated|ECONNRESET|ETIMEDOUT|download (429|5\d\d)|didn't match GitHub's checksum/.test(err.message)) throw err;
+          // A file replaced under the same name since the release list was read: read it again for the new checksum.
+          if (/checksum/.test(err.message)) { const [host, full] = t.key.split(":"), [owner, repo] = full.split("/"); t.asset = (await releasesOf(host, owner, repo, { fresh: true })).find((r) => r.tag === t.tag)?.assets.find((a) => a.name === t.asset.name) || t.asset; }
+          await new Promise((r) => setTimeout(r, 60000));
+        }
+      }
       if (sig) { flagged++; console.log(`  FLAGGED ${t.repo} ${t.asset.name}: ${sig}`); }
     }
     catch (err) { failed++; console.log(`  could not scan ${t.repo} ${t.asset.name}: ${err.message}`); }

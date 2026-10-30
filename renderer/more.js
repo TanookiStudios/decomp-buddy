@@ -9,8 +9,27 @@ function renderContinue(g) {
   el.innerHTML = `<div class="hero" data-key="${esc(g.key)}">
     ${g.art ? `<img src="${g.art}" alt="${esc(g.title)} artwork">` : `<div class="nocover" translate="no">${esc(g.title)}</div>`}
     <div style="flex:1"><div class="sub">Continue Playing</div><h2 translate="no">${esc(g.title)}</h2>
-      <div class="sub">Last played ${esc(fmtDate(g.lastPlayed))}${g.tag ? ` · ${esc(g.tag)}` : ""}</div>
+      <div class="sub">Last played ${esc(fmtDate(g.lastPlayed))}${playedText(g.playMinutes) ? ` · ${esc(playedText(g.playMinutes))}` : ""}${g.tag ? ` · ${esc(g.tag)}` : ""}</div>
       <div class="row">${playButton(g, `data-hero="play"`)}<button type="button" data-hero="more">More…</button></div></div></div>`;
+}
+// Play time in plain words (src/thanks.js playedText).
+function playedText(minutes) { const m = Math.round(minutes || 0); if (m < 1) return ""; if (m < 60) return m === 1 ? "1 minute played" : `${m} minutes played`; const h = Math.round(m / 60); return h === 1 ? "1 hour played" : `${h} hours played`; }
+
+// ---- Thank The Developer: once per game, after an hour of play (src/thanks.js thankDue). Quiet, never a pop-up.
+async function renderThanks(list) {
+  const el = $("thankBanner"), g = list.filter((x) => (x.playMinutes || 0) >= 60 && !x.thanked && x.repoUrl && !x.onDevice).sort((a, b) => (b.lastPlayed || "").localeCompare(a.lastPlayed || ""))[0];
+  if (!g) { el.hidden = true; return; }
+  const [owner, repo] = String(g.repo || "").split("/"), host = /gitlab\.com/.test(g.repoUrl) ? "gitlab" : /codeberg\.org/.test(g.repoUrl) ? "codeberg" : "github";
+  const fund = owner ? await window.buddy.gameFunding(owner, repo, host).catch(() => ({ links: [] })) : { links: [] };
+  el.innerHTML = `<p style="margin:0 0 4px"><strong translate="no">${esc(g.title)}</strong> · <span>${esc(playedText(g.playMinutes))}</span></p><p style="margin:0 0 8px">The people who made it did it for free, in their spare time. A star on their project page or a kind word goes a long way.</p>
+    <div class="row"><button type="button" class="primary" data-thx="star">${host === "github" ? "Star It On GitHub" : "Open Its Project Page"}</button>${fund.links.length ? `<button type="button" data-thx="support">Support Them</button>` : ""}<button type="button" data-thx="later">Not Now</button></div>`;
+  el.hidden = false;
+  el.onclick = async (e) => {
+    const b = e.target.closest("[data-thx]"); if (!b) return;
+    if (b.dataset.thx === "star") window.buddy.openExternal(g.repoUrl);
+    if (b.dataset.thx === "support") window.buddy.openExternal(fund.links[0].url);
+    await window.buddy.gameThanked(g.folder); g.thanked = true; el.hidden = true; // asked once per game, whichever button
+  };
 }
 $("continueHero").onclick = async (e) => {
   const b = e.target.closest("[data-hero]"); if (!b) return;
@@ -41,7 +60,7 @@ async function openMore(g) {
       <p class="sub">Extra words added after the program's name every time you press Play (and in Steam, if you add it there). The project's README lists what it accepts.</p>
       <div class="row"><input id="moreArgs" type="text" value="${esc(g.launchArgs || "")}" placeholder="for example: --fullscreen" aria-label="Launch options" spellcheck="false"><button id="moreArgsSave" type="button">Save</button></div></div>
     <div class="more-sec"><h4>Disk Space</h4><div id="moreUsage"><p class="sub">Measuring…</p></div></div>
-    <div class="more-sec"><h4>Check Game</h4><p class="sub">Makes sure every file the game came with is still there, your game files are still the right ones, and the program can be found.</p>
+    <div class="more-sec" id="moreDoctor"><h4>${DOCTOR_EMBLEM}Install Doctor</h4><p class="sub">Won't start? This checks the usual reasons: files that went missing, the wrong game file, a program that isn't allowed to run, missing Windows parts, and what the game printed last time. Every fix is a button - nothing changes until you press it.</p>
       <button id="moreCheck" type="button">Check Now</button><div id="moreCheckOut"></div></div>
     <div class="more-sec"><h4>Save Sync</h4><div id="moreSync"></div></div>
     ${g.canWine && settings.platform === "linux" ? `<div class="more-sec"><h4>Runs With</h4><p class="sub">The Proton (or Wine) this Windows version starts with. If a game won't start, another Proton often fixes it.</p>
@@ -139,6 +158,15 @@ async function renderUsage(g) {
   } catch (err) { $("moreUsage").innerHTML = `<p class="sub">${esc(err.message.replace(/^.*Error: /, ""))}</p>`; }
 }
 const CHECK_ICON = { match: "✓", mismatch: "✗", missing: "✗", unverified: "?" };
+// What the end of its launch log points at (src/doctor.js logHint).
+const HINT_TEXT = {
+  runtime: "✗ From what it printed: it's missing a Windows part it needs (a .dll file). Fix Windows Runtimes usually fixes this.",
+  graphics: "✗ From what it printed: it couldn't start its graphics. Updating your graphics driver usually fixes this; an older graphics card may not be able to run it at all.",
+  permission: "✗ From what it printed: something stopped it from opening a file. If the game is in a protected folder, move it somewhere in your home folder.",
+  gamefile: "✗ From what it printed: it couldn't find or read your game file. The list above shows whether your game file is there and is the right one.",
+};
+// A white cross on a teal circle: the Install Doctor's emblem (not the red-on-white one, which is protected).
+const DOCTOR_EMBLEM = `<svg class="emblem" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="#1f8a70"/><path d="M10 5h4v5h5v4h-5v5h-4v-5H5v-4h5z" fill="#fff"/></svg>`;
 async function runCheck(g) {
   $("moreCheck").disabled = true; $("moreCheckOut").innerHTML = `<p class="sub">Checking… large game files take a moment.</p>`;
   try {
@@ -149,9 +177,18 @@ async function runCheck(g) {
       ...r.placed.map((p) => `<li>${CHECK_ICON[p.status] || "?"} ${esc(p.label)}: ${esc(p.summary)}</li>`),
       ...r.needed.map((n) => `<li>✗ Still needed: ${esc(n)}</li>`),
       ...(r.runtimes ? [r.runtimes.missing.length ? `<li>✗ Windows is missing: ${esc(r.runtimes.missing.map((x) => x.label).join(", "))} - use Fix Windows Runtimes below.</li>` : `<li>✓ Windows runtimes are installed.</li>`] : []),
-    ];
-    $("moreCheckOut").innerHTML = `<ul class="sub" style="margin:8px 0 0 18px">${rows.join("")}</ul>${r.runtimes?.missing?.length ? `<button id="moreFixRt" type="button">Fix Windows Runtimes</button>` : ""}`;
+      r.cantRun && `<li>✗ The program isn't allowed to run on this computer. Let It Run below fixes that.</li>`,
+      r.quarantined && (r.scanned ? `<li>✗ Your Mac is blocking it because it came from the internet. Its download passed Decomp Buddy's malware scan, so Unblock On This Mac below is offered.</li>`
+        : `<li>✗ Your Mac is blocking it because it came from the internet. Decomp Buddy didn't scan this download, so it won't lift the block for you. If you trust it: System Settings › Privacy & Security › Open Anyway.</li>`),
+      r.hint && HINT_TEXT[r.hint.kind] && `<li>${esc(HINT_TEXT[r.hint.kind])}</li>`,
+    ].filter(Boolean);
+    const fixes = [r.runtimes?.missing?.length && `<button id="moreFixRt" type="button">Fix Windows Runtimes</button>`, r.cantRun && `<button id="moreFixRun" type="button">Let It Run</button>`, r.quarantined && r.scanned && `<button id="moreFixMac" type="button">Unblock On This Mac</button>`, r.logPath && `<button id="moreLog" type="button">Open The Full Log</button>`, r.logPath && `<button id="moreReport" type="button">Report It To The Developer</button>`].filter(Boolean);
+    $("moreCheckOut").innerHTML = `<ul class="sub" style="margin:8px 0 0 18px">${rows.join("")}</ul>${r.tail ? `<pre class="logTail" aria-label="The last lines the game printed">${esc(r.tail)}</pre>` : ""}${fixes.length ? `<div class="row">${fixes.join("")}</div>` : ""}`;
     $("moreFixRt")?.addEventListener("click", () => fixRuntimes());
+    for (const [id, what] of [["moreFixRun", "run"], ["moreFixMac", "letrun"]]) $(id)?.addEventListener("click", async () => { try { await window.buddy.doctorFix(g.folder, what); panelState("Fixed. Try Play again.", "ok"); runCheck(g); } catch (err) { panelState(err.message.replace(/^.*Error: /, ""), "bad"); } });
+    $("moreLog")?.addEventListener("click", () => window.buddy.open(r.logPath));
+    // Opens the project's new-issue page in the browser, filled in; the player reads it and sends it themselves.
+    $("moreReport")?.addEventListener("click", async () => { try { window.buddy.openExternal(await window.buddy.bugUrl(g.folder)); panelState("Opened the project's page in your browser. Read it over, then submit it there.", "ok"); } catch (err) { panelState(err.message.replace(/^.*Error: /, ""), "bad"); } });
     panelState(r.problems ? `${r.problems} problem(s) found.` : "All good.", r.problems ? "bad" : "ok");
   } catch (err) { $("moreCheckOut").innerHTML = ""; panelState(err.message.replace(/^.*Error: /, ""), "bad"); }
   finally { $("moreCheck").disabled = false; }

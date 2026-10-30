@@ -10,13 +10,13 @@ import { backupSaves, savePathsFor } from "../saves.js";
 import { fetchPublished, planKey } from "../plans.js";
 import { parseRepoUrl } from "../github.js";
 import { upgradeManifest, writeInstallHtml } from "../installhtml.js";
-import { DownloadCtrl, listFiles } from "../setup.js";
+import { DownloadCtrl, listFiles, ABOUT, aboutText } from "../setup.js";
 import { logTo, loadSettings, plansFileFor } from "./core.js";
 import { savesOf } from "./files.js";
 
 const MANIFEST = "decomp-buddy.json";
 const readM = (folder) => upgradeManifest(JSON.parse(fs.readFileSync(path.join(folder, MANIFEST), "utf8")));
-const writeM = (folder, m) => fs.writeFileSync(path.join(folder, MANIFEST), JSON.stringify(m, null, 2));
+const writeM = (folder, m) => { fs.writeFileSync(path.join(folder, MANIFEST), JSON.stringify(m, null, 2)); fs.writeFileSync(path.join(folder, ABOUT), aboutText(m)); };
 const placedOf = (folder, m) => (m.plan?.game_files || []).filter((f) => f.placed).map((f) => path.join(folder, f.drop_into || "Game Files", f.placed.name));
 async function savesFirst(folder, reason, log) { try { const s = await savesOf(folder); if (s.paths.length) await backupSaves(folder, s.paths, { reason, log }); } catch (err) { log(`  couldn't back up saves: ${err.message}`); } }
 

@@ -130,3 +130,10 @@ test("enrichMany: a release labeled NOT A RELEASE / test-only is not a download"
   try { const i = (await enrichMany(["a/b"], { post })).get("a/b"); assert.deepEqual(i.platforms, []); assert.equal(i.version, null); }
   finally { process.env.GITHUB_TOKEN = prev ?? ""; }
 });
+
+test("a hidden GitHub mirror doesn't hide the GitLab original of the same name, and a hidden GitLab entry stays hidden", () => {
+  const games = [{ id: "gitlab:sonicdcer/mk64", repoHost: "gitlab", owner: "sonicdcer", repo: "MK64" }, { id: "github:sonicdcer/mk64", owner: "sonicdcer", repo: "MK64" },
+    { id: "gitlab:x/y", repoHost: "gitlab", owner: "x", repo: "y" }];
+  const doc = { games: [], hidden: [{ repo: "sonicdcer/MK64", reason: "GitHub copy" }, { repo: "x/y", host: "gitlab", reason: "not a game" }] };
+  assert.deepEqual(withoutExcluded(games, doc).map((g) => g.id), ["gitlab:sonicdcer/mk64"]);
+});

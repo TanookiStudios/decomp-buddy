@@ -1,5 +1,6 @@
-// decompbuddy://add?repo=owner/name[&game=Title][&host=gitlab|codeberg] - from the website's "Open In Decomp Buddy".
-// Only ever fills in the links box; nothing is read, downloaded or run until the user presses Read Repos.
+// decompbuddy://add?repo=owner/name[&game=Title][&host=gitlab|codeberg] - the website's "Install With Decomp Buddy".
+// A catalog game opens at "pick your game file" (its published plan, no AI key); anything else only fills in the links
+// box. Nothing is downloaded or run until the user presses Set Up.
 // decompbuddy://play?folder=<installed game folder>&k=<this install's shortcut key> - a desktop shortcut for a game that
 // needs Decomp Buddy to start it (Wine or Proton). Without the key a web page could start your games.
 import { HOSTS } from "./hosts.js";

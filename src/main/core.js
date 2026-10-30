@@ -117,6 +117,8 @@ export function backupSettingsOnUpgrade() {
   fs.copyFileSync(file, out);
   const old = fs.readdirSync(dir).filter((f) => f.startsWith("settings-")).sort((a, b) => fs.statSync(path.join(dir, a)).mtimeMs - fs.statSync(path.join(dir, b)).mtimeMs);
   for (const f of old.slice(0, Math.max(0, old.length - 10))) fs.rmSync(path.join(dir, f));
+  // What's New shows every version since this one on the next window (null: an install older than this field).
+  s.whatsNewSince = s.lastVersion || null;
   s.lastVersion = VERSION; saveSettings(s);
   logTo(null, `Backed up settings before ${VERSION}: ${out}`);
   return out;

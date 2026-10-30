@@ -115,7 +115,7 @@ export async function installPlatformTools(toolsDir, { download, extract, fetchI
   await download(pt.url, zip, log, { digest: `sha1:${pt.sha1}`, ctrl });
   const dest = path.join(toolsDir, "platform-tools");
   fs.rmSync(dest, { recursive: true, force: true });
-  try { extract(zip, dest); } finally { fs.rmSync(zip, { force: true }); }
+  try { await extract(zip, dest); } finally { fs.rmSync(zip, { force: true }); }
   const bin = path.join(dest, EXE(platform));
   if (!fs.existsSync(bin)) throw new Error("Unpacked Platform-Tools, but adb wasn't inside.");
   if (platform !== "win32") fs.chmodSync(bin, 0o755);

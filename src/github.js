@@ -24,11 +24,12 @@ function headers(accept = "application/vnd.github+json") {
   return h;
 }
 
-async function gh(path, accept) {
+// A missing repo or file is null; GitHub's own error bodies never come back as content.
+export async function gh(path, accept) {
   const res = await fetch(`${API}${path}`, { headers: headers(accept) });
   if (res.status === 404) return null;
-  if (res.status === 403 && res.headers.get("x-ratelimit-remaining") === "0") {
-    throw new Error("GitHub rate limit hit. Wait an hour or set GITHUB_TOKEN.");
+  if (res.status === 429 || (res.status === 403 && res.headers.get("x-ratelimit-remaining") === "0")) {
+    throw new Error("GitHub is limiting lookups from your internet connection right now. Try again within the hour, or add a free GitHub token in Settings.");
   }
   if (!res.ok) throw new Error(`GitHub ${res.status} for ${path}`);
   return accept?.includes("raw") ? res.text() : res.json();
@@ -43,7 +44,7 @@ export async function fetchReleases({ owner, repo }) {
     publishedAt: r.published_at,
     prerelease: !!r.prerelease,
     url: r.html_url,
-    assets: (r.assets || []).map((a) => ({ name: a.name, size: a.size, url: a.browser_download_url, digest: a.digest || null, uploader: a.uploader?.login || null })),
+    assets: (r.assets || []).map((a) => ({ name: a.name, size: a.size, url: a.browser_download_url, apiUrl: a.url || null, digest: a.digest || null, uploader: a.uploader?.login || null })),
   }));
 }
 

@@ -32,3 +32,16 @@ export async function getWaiting(force = false) {
   }
 }
 ipcMain.handle("waiting:list", async (_e, { fresh: force } = {}) => { const w = await getWaiting(force); return { games: w.games || [], at: w.at, stale: !!w.stale }; });
+
+// Trending This Week: the games players who share counts set up most in the last 7 days (ranking only, at least 3
+// set-ups each - the site decides). Asked at most every 6 hours; offline or empty just means no shelf.
+const trendingCache = diskCache("trending"), BASE = () => (process.env.DECOMP_SUGGEST_BASE || "https://tanookistudios.com").replace(/\/$/, "");
+ipcMain.handle("trending:get", async () => {
+  const hit = trendingCache.get("week"); if (fresh(hit, 6 * 3600e3)) return hit.v;
+  try {
+    const r = await fetch(`${BASE()}/api/decomp-setups?days=7`, { headers: { "User-Agent": "decomp-buddy" }, signal: AbortSignal.timeout(15_000) });
+    const ids = r.ok ? (await r.json()).games || [] : [];
+    trendingCache.set("week", ids);
+    return ids;
+  } catch { return hit?.v || []; }
+});

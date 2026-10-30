@@ -34,6 +34,7 @@ test("applyScans marks clean files with their fingerprint, blocks flagged ones, 
   // Ran out of time: not a verdict, so not flagged and not pinned.
   scans.files[scanKey("github:a/b", none)] = { sha256: "dd", clean: false, signature: "Heuristics.Limits.Exceeded.MaxScanTime" };
   applyScans(plans, scans); assert.equal(none.scanned, undefined);
+  applyScans(plans, scans, { dd: { reason: "too big to scan, tested by hand" } }); assert.equal(none.scanned.sha256, "dd");
   // Reviewed by fingerprint: a different file under the same name stays blocked.
   scans.files[scanKey("github:a/b", bad)].sha256 = "cc";
   applyScans(plans, scans, { bb: { reason: "x" } }); assert.equal(bad.scanned.flagged, true);
@@ -50,6 +51,11 @@ test("scanSummary: badge only when every download in the plan is scanned clean",
   b.scanned = { flagged: true };
   assert.deepEqual(scanSummary(entry), { flagged: true });
   assert.equal(scanSummary({ targets: { windows: { games: [{ build: { method: "source" } }] } } }), null);
+  // A file that left every release can't be installed: the rest decide.
+  delete b.scanned; b.gone = "2026-10-26";
+  assert.deepEqual(scanSummary(entry), { at: "2026-10-18T02", engine: "ClamAV", files: 1 });
+  a.gone = "2026-10-26";
+  assert.equal(scanSummary(entry), null);
 });
 
 test("download refuses a file that changed after it was scanned", async () => {

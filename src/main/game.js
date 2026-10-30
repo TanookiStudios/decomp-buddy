@@ -17,6 +17,10 @@ import { UPDATE_URL } from "../updates.js";
 import { readManifests, upgradeManifest, writeInstallHtml } from "../installhtml.js";
 import { targetIsHost } from "../targets.js";
 import { findExecutable } from "./library.js";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { logHint, lacksExecBit } from "../doctor.js";
+import { reportBody, issueUrl } from "../bugreport.js";
 import { savesOf } from "./files.js";
 import { logTo, loadSettings, saveSettings, libraryDirs, state } from "./core.js";
 
@@ -58,6 +62,9 @@ ipcMain.handle("game:remove", async (e, { folder }) => {
   logTo(e.sender, `Removed ${m.displayName || m.plan?.game_title || path.basename(f)}: moved ${f} to the Trash.${m.steamAppId ? " Its Steam shortcut is still in Steam - remove it there." : ""}`);
   return { steam: !!m.steamAppId };
 });
+
+// Thank The Developer: shown once per game, after an hour of play (src/thanks.js); either button marks it done.
+ipcMain.handle("game:thanked", (_e, { folder }) => { stamp(libraryFolder(folder), { thanked: true }); return true; });
 
 // ---- Desktop Shortcut
 ipcMain.handle("game:shortcut", async (e, { folder }) => {
@@ -147,6 +154,44 @@ ipcMain.handle("game:adopt", (e, { folder, gameId, target }) => {
   return { title: g.title };
 });
 
+const run = promisify(execFile);
+// The files that actually run: a Mac app's programs inside Contents/MacOS, or the program itself.
+// The plan's program by name, even when it isn't allowed to run yet (findExecutable only sees runnable ones).
+function namedProgram(dir, hint) {
+  const want = String(hint || "").toLowerCase(); if (!want) return null;
+  const stack = [[dir, 0]];
+  while (stack.length) {
+    const [d, depth] = stack.pop(); let ents; try { ents = fs.readdirSync(d, { withFileTypes: true }); } catch { continue; }
+    for (const e of ents) { const p = path.join(d, e.name); if (e.name.toLowerCase() === want) return p; if (e.isDirectory() && depth < 3 && !/\.app$/i.test(e.name)) stack.push([p, depth + 1]); }
+  }
+  return null;
+}
+const programOf = (f, m) => findExecutable(f, m.plan?.build?.executable) || (targetIsHost(m.target || "windows") ? namedProgram(f, m.plan?.build?.executable) : null);
+const programFiles = (exe) => { const mac = path.join(exe, "Contents", "MacOS"); try { return fs.statSync(exe).isDirectory() ? fs.readdirSync(mac).map((n) => path.join(mac, n)) : [exe]; } catch { return [exe]; } };
+// Install Doctor fixes, each pressed by the player. "run": give the program permission to run. "letrun": lift Apple's
+// "downloaded from the internet" block, only on a game whose download Decomp Buddy scanned for malware.
+ipcMain.handle("doctor:fix", async (e, { folder, what }) => {
+  const f = libraryFolder(folder), m = readM(f), exe = programOf(f, m);
+  if (!exe) throw new Error("No program found in the folder - run Update to put it back.");
+  if (what === "run") { for (const p of programFiles(exe)) fs.chmodSync(p, fs.statSync(p).mode | 0o755); logTo(e.sender, `Install Doctor: ${path.basename(exe)} can run now.`); return true; }
+  if (what === "letrun" && process.platform === "darwin") {
+    if (!m.plan?.build?.scanned?.sha256) throw new Error("Decomp Buddy didn't scan this download, so it won't lift Apple's block. If you trust it: System Settings › Privacy & Security › Open Anyway.");
+    await run("xattr", ["-dr", "com.apple.quarantine", f]); logTo(e.sender, `Install Doctor: lifted Apple's block on ${path.basename(f)} (its download was scanned for malware).`); return true;
+  }
+  throw new Error("That fix isn't available here.");
+});
+
+// One-Click Bug Report (src/bugreport.js): the project's new-issue page, filled in, for the player to read and send.
+ipcMain.handle("bug:url", (_e, { folder, exit } = {}) => {
+  const f = libraryFolder(folder), m = readM(f);
+  let tail = ""; try { tail = fs.readFileSync(path.join(f, "decomp-buddy-launch.log"), "utf8"); } catch {}
+  const title = m.displayName || m.plan?.game_title || path.basename(f);
+  const body = reportBody({ title, tag: m.release?.tag, platform: process.platform, arch: process.arch, appVersion: app.getVersion(), exit: exit ? String(exit).slice(0, 60) : null, tail, home: app.getPath("home") });
+  const url = issueUrl(m.repoUrl, `${title} closes right away on ${{ darwin: "macOS", win32: "Windows", linux: "Linux" }[process.platform] || process.platform}`, body);
+  if (!url) throw new Error("This game's project isn't on GitHub, GitLab or Codeberg, so there's no page to report it on.");
+  return url;
+});
+
 // ---- Check Game: files still there, game files still the right ones, the program findable.
 ipcMain.handle("game:check", async (e, { folder }) => {
   const f = libraryFolder(folder); const m = readM(f);
@@ -159,11 +204,18 @@ ipcMain.handle("game:check", async (e, { folder }) => {
     try { const v = await verifyPick(p.path, spec, { log }); verified.push({ ...p, status: v.status, summary: v.summary }); }
     catch (err) { verified.push({ ...p, status: "unverified", summary: err.message }); }
   }
-  const exe = findExecutable(f, m.plan?.build?.executable);
+  const exe = programOf(f, m);
   const runtimes = process.platform === "win32" && (m.target || "windows") === "windows" ? await checkRuntimes(f).catch(() => null) : null;
-  const problems = r.missing.length + verified.filter((v) => v.status === "missing" || v.status === "mismatch").length + (exe ? 0 : 1) + (runtimes?.missing?.length || 0);
+  // Install Doctor: can the program run here, did Apple block it, and what did it print last time.
+  const here = targetIsHost(m.target || "windows");
+  const cantRun = !!exe && here && programFiles(exe).some((p) => { try { return lacksExecBit(fs.statSync(p).mode); } catch { return false; } });
+  const quarantined = !!exe && here && process.platform === "darwin" && await run("xattr", ["-p", "com.apple.quarantine", exe]).then(() => true, () => false);
+  const logPath = path.join(f, "decomp-buddy-launch.log");
+  const tail = (() => { try { return fs.readFileSync(logPath, "utf8").split(/\r?\n/).filter(Boolean).slice(-8).join("\n"); } catch { return ""; } })();
+  const problems = r.missing.length + verified.filter((v) => v.status === "missing" || v.status === "mismatch").length + (exe ? 0 : 1) + (runtimes?.missing?.length || 0) + cantRun + quarantined;
   log(`Check ${m.plan?.game_title}: ${problems ? `${problems} problem(s)` : "all good"}.`);
-  return { missingFiles: r.missing, placed: verified, needed: r.needed, exe: exe ? path.relative(f, exe) : null, runtimes, adopted: !!m.adopted, tag: m.release?.tag || null, problems };
+  return { missingFiles: r.missing, placed: verified, needed: r.needed, exe: exe ? path.relative(f, exe) : null, runtimes, adopted: !!m.adopted, tag: m.release?.tag || null, problems,
+    cantRun, quarantined, scanned: !!m.plan?.build?.scanned?.sha256, hint: logHint(tail), tail, logPath: tail ? logPath : null };
 });
 
 // ---- Save sync through a cloud folder

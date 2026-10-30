@@ -328,6 +328,7 @@ async function renderLibrary() {
   const shown = library.filter((g) => (libShowHidden || !g.hidden) && (!libTag || g.tags.includes(libTag)));
   const recent = shown.filter((g) => g.lastPlayed).slice(1, 9); // the newest one is the Continue Playing card
   renderContinue(shown.find((g) => g.lastPlayed));
+  renderThanks(shown);
   renderSyncBanner();
   renderDigest();
   renderPackUpdates();
@@ -349,9 +350,16 @@ window.buddy.onGameFailed((f) => {
   const el = $("launchFail"); el.hidden = false; el.dataset.log = f.logPath;
   el.innerHTML = `<strong translate="no">${esc(f.title)}</strong> <strong>closed right away</strong> <span class="sub">(${esc(f.signal || `exit code ${f.code}`)})</span>`
     + (f.tail ? `<pre class="logTail">${esc(f.tail)}</pre>` : `<p class="sub">It didn't print anything. Check the README for what it needs - often a missing game file or a graphics driver.</p>`)
-    + `<div class="row"><button type="button" data-lf="open">Open The Full Log</button><button type="button" data-lf="close">Dismiss</button></div>`;
+    + `<div class="row"><button type="button" class="primary" data-lf="doctor">Install Doctor</button><button type="button" data-lf="report">Report It To The Developer</button><button type="button" data-lf="open">Open The Full Log</button><button type="button" data-lf="close">Dismiss</button></div>`;
+  el.dataset.folder = f.folder; el.dataset.exit = f.signal || `exit code ${f.code}`;
 });
-$("launchFail").addEventListener("click", (e) => { const b = e.target.closest("[data-lf]"); if (!b) return; if (b.dataset.lf === "open") window.buddy.open($("launchFail").dataset.log); else $("launchFail").hidden = true; });
+$("launchFail").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-lf]"); if (!b) return;
+  if (b.dataset.lf === "open") window.buddy.open($("launchFail").dataset.log);
+  else if (b.dataset.lf === "report") window.buddy.bugUrl($("launchFail").dataset.folder, $("launchFail").dataset.exit).then((u) => window.buddy.openExternal(u)).catch((err) => status(err.message.replace(/^.*Error: /, ""), "bad"));
+  else if (b.dataset.lf === "doctor") { const g = library.find((x) => x.folder === $("launchFail").dataset.folder); if (g) { $("launchFail").hidden = true; openMore(g).then(() => { $("moreDoctor").scrollIntoView({ block: "start" }); runCheck(g); }); } }
+  else $("launchFail").hidden = true;
+});
 try { libTag = localStorage.getItem("libTag") || ""; } catch {}
 $("libTags").addEventListener("click", (e) => { const b = e.target.closest("[data-tag]"); if (!b) return; libTag = b.dataset.tag; try { localStorage.setItem("libTag", libTag); } catch {} renderLibrary(); });
 $("libTags").addEventListener("change", (e) => { if (e.target.id === "libShowHidden") { libShowHidden = e.target.checked; renderLibrary(); } });
@@ -419,12 +427,14 @@ async function openConfig(g) {
   $("cfgOpen")?.addEventListener("click", () => window.buddy.open(c.file));
 }
 
-// ---- "Open In Decomp Buddy" from the website: fill in the links box, nothing more.
+// ---- "Install With Decomp Buddy" from the website or a project's README. A catalog game goes straight to picking
+// your game file: its published, scanned plan is read (no AI key, nothing downloaded until you press Set Up).
+// Anything else only fills in the links box - reading it could spend your own AI key.
 window.buddy.onDeepLink(async (link) => {
   if (!catalog.games.length) await loadCatalog({ refresh: false }).catch(() => {});
   const g = catalog.games.find((x) => x.owner && `${x.owner}/${x.repo}`.toLowerCase() === link.repo.toLowerCase() && (!link.game || !x.gameTitle || normTitle(x.gameTitle) === normTitle(link.game)));
-  if (g) await addToLinks([g.id]);
-  else { const lines = $("urls").value.split("\n").map((l) => l.trim()).filter(Boolean); if (!lines.includes(link.repoUrl)) lines.push(link.repoUrl); $("urls").value = lines.join("\n"); showView("setup"); }
+  if (g) { await addToLinks([g.id], { andRead: true }); status(`Getting ${g.title} ready - pick your game file when it asks.`, "ok"); return; }
+  const lines = $("urls").value.split("\n").map((l) => l.trim()).filter(Boolean); if (!lines.includes(link.repoUrl)) lines.push(link.repoUrl); $("urls").value = lines.join("\n"); showView("setup");
   status(`Added ${link.game || link.repo} from the website - press Read Repos when you're ready.`, "ok"); $("analyze").focus();
 });
 
@@ -613,7 +623,8 @@ async function showDetail(g) {
   // What the tiles leave out: where it's listed, how it was read, and the disc details verification uses.
   const srcs = (g.sources || [g.source]).filter(Boolean).map((id) => catalog.perSource?.[id]?.label || id);
   $("detailMore").textContent = [srcs.length && `Listed on ${srcs.join(", ")}`, g.repoGames && `One of ${g.repoGames} games in this repository`, g.aiAssisted && "AI-assisted", g.region, g.serial && `Disc serial ${g.serial}`, g.bios && `BIOS ${g.bios}`, g.discs > 1 && `${g.discs} discs`].filter(Boolean).join(" · ");
-  $("detailFacts").innerHTML = factsBlock(g); $("detailSince").innerHTML = "";
+  $("detailFacts").innerHTML = factsBlock(g) + safetyBlock(g) + creditsBlock(g);
+  $("detailFacts").querySelectorAll(".credits [data-ext]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); window.buddy.openExternal(a.dataset.ext); })); $("detailSince").innerHTML = "";
   renderFunding(g);
   const ports = otherPorts(g);
   $("detailPorts").innerHTML = ports.length ? `<h3 style="margin:16px 0 6px">Other Ports Of This Game</h3>${ports.map((p) => `<div class="srcRow"><span></span><div><div class="lab"><a href="#" data-portid="${esc(p.id)}">${esc(p.project || p.repo)}</a> <span class="sub">${esc([p.owner, p.platforms.join(" · ") || "no builds", p.version && `Version ${p.version}`, p.updatedAt && `Updated ${fmtDate(p.updatedAt)}`, p.facts?.completeness && COMPLETE[p.facts.completeness]].filter(Boolean).join(" · "))}</span></div></div></div>`).join("")}` : "";
@@ -654,7 +665,7 @@ const AI_USE = { none: "No AI Used", assisted: "AI-Assisted", generated: "Made W
 function healthNotes(f) {
   const h = f?.health || {}; const out = [];
   if (h.archived) out.push(["warn", "Archived", "The author archived this repository - no more updates."]);
-  if (h.dmca) out.push(["warn", "Takedown Notice", "The README or description mentions a takedown or legal notice."]);
+  if (h.dmca) out.push(["warn", "Takedown Notice", "The project says it received a takedown notice."]);
   const quiet = h.pushedAt && (Date.now() - Date.parse(h.pushedAt)) / 86400000;
   if (!h.archived && quiet > 730) out.push(["muted", `Quiet Since ${new Date(h.pushedAt).getUTCFullYear()}`, `No commits since ${fmtDate(h.pushedAt)}.`]);
   return out;
@@ -671,19 +682,52 @@ function reportsFor(g) {
   return n >= 3 ? { runs, issues, no, n, well: runs > (issues + no) } : null;
 }
 const reportLine = (g) => { const r = reportsFor(g); return r ? `${r.runs} say it runs well, ${r.issues} had issues, ${r.no} couldn't get it running` : ""; };
+// Safety Report: neutral facts about where the download comes from (src/trust.js). Never "safe" - no scan can promise that.
+// Who uploaded it, in words that are true for every case: a team account (organization) never uploads itself, so a
+// person uploading for one isn't "not the owner".
+function uploadedText(t) {
+  const who = (t.uploaders || []).join(", ");
+  return t.uploadedBy === "owner" ? "The project's owner" : t.uploadedBy === "bot" ? "The project's own automatic build on GitHub"
+    : !who ? "" : t.uploadedBy === "regular" ? `${who}, who uploaded this project's earlier releases` : t.ownerIsOrg ? who : `${who}, not the project's owner`;
+}
+function trustRows(g) {
+  const t = g.trust || {}, rows = [];
+  if (g.scan?.at) rows.push(["Malware Scan", `Decomp Buddy scanned ${g.scan.files === 1 ? "this download" : `all ${g.scan.files} downloads`} with ${g.scan.engine.split("/")[0]} on ${fmtDate(g.scan.at)} and found no known malware. Setup only installs those exact files.`]);
+  const up = uploadedText(t); if (up) rows.push(["Uploaded By", up]);
+  if (t.license !== undefined) rows.push(["License", t.license || "Not stated by the project"]);
+  if (t.ownerSince) {
+    const since = new Date(t.ownerSince).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+    rows.push(["Account", `On GitHub since ${since}`]);
+  }
+  return rows;
+}
+// Made By: the project's own contributors from GitHub (scripts/credits.mjs), each linking to their profile.
+const creditsBlock = (g) => !g.credits?.length ? "" : `<hr class="sep"><h3 style="margin:0 0 6px">Made By</h3><div class="credits" role="list">${g.credits.map((p) => `<a href="#" role="listitem" data-ext="https://github.com/${encodeURIComponent(p.login)}" translate="no"><img src="${esc(p.avatar)}?s=64" alt="" width="28" height="28" loading="lazy">${esc(p.login)}</a>`).join("")}</div><p class="sub" style="margin-top:6px">The people who made ${esc(g.project || g.title)}. Go say thanks.</p>`;
+const safetyBlock = (g) => { const rows = trustRows(g); return rows.length ? `<hr class="sep"><h3 style="margin:0 0 6px">Safety Report</h3><dl class="facts">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""; };
+// Feature badges (src/features.js), each backed by a quote from the project's README.
+// Lists (src/lists.js, worked out in the main process): Browse's List filter. Refreshed after each catalog load.
+const listIds = new Map();
+const LIST_LABEL = { "best-nintendo-64": "Best Nintendo 64 Ports", "great-on-steam-deck": "Great On Steam Deck", "play-together": "Play Together", "looks-great": "Looks Great On Modern Screens" };
+async function loadLists() {
+  const ls = await window.buddy.listsGet().catch(() => []), keep = $("catList").value;
+  listIds.clear(); for (const l of ls) listIds.set(l.slug, new Set(l.ids));
+  $("catList").innerHTML = `<option value="">Any</option>` + ls.map((l) => `<option value="${esc(l.slug)}"${l.slug === keep ? " selected" : ""}>${esc(LIST_LABEL[l.slug] || l.title)}</option>`).join("");
+}
+const FEATURE_LABEL = { fps60: "60 FPS", widescreen: "Widescreen", hd: "HD", raytracing: "Ray Tracing", mods: "Mods", online: "Online Play", coop: "Local Multiplayer" };
 function factsBlock(g) {
   const f = g.facts; if (!f) return "";
   const rows = [
     COMPLETE[f.completeness] && [COMPLETE[f.completeness], f.completeness_quote, true],
+    g.recommended && ["Best Version", `Players say version ${g.recommended.badTag} doesn't start, so Decomp Buddy installs ${g.recommended.tag}, the last version that ran well. You can still pick ${g.recommended.badTag} with Pick A Version.`, false],
+    f.features && Object.keys(f.features).length && ["What It Adds", Object.keys(FEATURE_LABEL).filter((k) => f.features[k]).map((k) => FEATURE_LABEL[k]), false],
     AI_USE[f.ai_use] && ["AI Use", `${AI_USE[f.ai_use]}${f.ai_quote ? ` - “${f.ai_quote}”` : ""}`, false],
     reportsFor(g) && [`Players On ${SYS_LABEL[reports.sys] || "Your Computer"}`, reportLine(g), false],
-    g.scan?.at && ["Scanned For Malware", `Decomp Buddy scanned ${g.scan.files === 1 ? "this download" : `all ${g.scan.files} downloads`} with ${g.scan.engine.split("/")[0]} on ${fmtDate(g.scan.at)} and found no known malware. Setup only installs those exact files.`, false],
     DECK[f.steam_deck] && [DECK[f.steam_deck], f.deck_quote, true],
     ...healthNotes(f).map(([, label, why]) => [label, why, false]),
     f.save_paths?.length && ["Saves", f.save_paths.map((p) => `${p.platform === "any" ? "" : p.platform + ": "}${p.path}`).join(" · "), false],
     f.controller_notes?.length && ["Controllers", f.controller_notes.join(" · "), true],
   ].filter(Boolean);
-  return rows.length ? `<hr class="sep"><h3 style="margin:0 0 6px">At A Glance</h3><dl class="facts">${rows.map(([k, v, q]) => `<dt>${esc(k)}</dt><dd>${v ? (q ? `“${esc(v)}”` : esc(v)) : ""}</dd>`).join("")}</dl>` : "";
+  return rows.length ? `<hr class="sep"><h3 style="margin:0 0 6px">At A Glance</h3><dl class="facts">${rows.map(([k, v, q]) => `<dt>${esc(k)}</dt><dd>${Array.isArray(v) ? v.map((x) => `<span>${esc(x)}</span>`).join(" · ") : v ? (q ? `“${esc(v)}”` : esc(v)) : ""}</dd>`).join("")}</dl>` : "";
 }
 let portsIndex = null, portsFor = null;
 function otherPorts(g) {
@@ -1086,11 +1130,11 @@ $("analyze").onclick = async () => {
     drives = await window.buddy.dumpDrives().catch(() => []);
     fillSetupDevices(); // a phone or headset plugged in since the screen opened
     renderGames();
-    // Fill in what the BIOS vault and your game-file library can answer with confidence.
+    // Fill in what the BIOS vault, your game-file library and your Steam / GOG / Epic games can answer with confidence.
     (async () => {
       for (const g of games.filter((x) => x.ok)) for (const [i, f] of g.game_files.entries()) {
-        const p = f.vaultPath || f.libraryPath; if (!p || (picks.get(g.id) || {})[i]) continue;
-        autoFrom.set(`${g.id}:${i}`, f.vaultPath ? `from your BIOS vault (${f.vaultIdentity})` : `from your game-file library - ${f.libraryWhy}`);
+        const p = f.vaultPath || f.libraryPath || f.storePath; if (!p || (picks.get(g.id) || {})[i]) continue;
+        autoFrom.set(`${g.id}:${i}`, f.vaultPath ? `from your BIOS vault (${f.vaultIdentity})` : f.libraryPath ? `from your game-file library - ${f.libraryWhy}` : `from your games on this computer (${f.storeWhy}) - copied, never moved`);
         await usePick(g, i, p);
       }
     })();
@@ -1166,24 +1210,44 @@ const catalogPicks = new Map();         // repo url -> { preferredTag, artworkPa
 const iconCache = new Map();            // id -> dataUrl | null | "pending"
 const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "");
 
-async function loadCatalog({ refresh = true, checkInstalled = false } = {}) {
-  $("catalogStatus").textContent = refresh ? "Loading catalog…" : "";
+// While the first list loads the game pages say so, instead of sitting empty for 10-20 seconds (longer on a first run).
+let catalogLoading = null;
+const loadingGames = () => `<div class="loadingGames" role="status"><span class="spinner" aria-hidden="true"></span><p><strong>Loading games…</strong></p><p class="sub">The very first time can take a minute while Decomp Buddy checks every project. After that, your games show up right away.</p></div>`;
+function loadCatalog(opts) {
+  // Opening several game pages before the first list arrives shares one load.
+  if (catalogLoading && !catalog.games.length) return catalogLoading;
+  const p = catalogLoading = loadCatalogNow(opts).finally(() => { if (catalogLoading === p) catalogLoading = null; if (!catalog.games.length) renderCatalog(); });
+  if (!catalog.games.length) renderCatalog();
+  return p;
+}
+async function loadCatalogNow({ refresh = true, checkInstalled = false } = {}) {
+  if (!catalog.games.length) {
+    await null; // let loadCatalog mark the load as running first
+    // Show the games saved last time at once, then swap in the fresh list when it arrives.
+    if (refresh) try { const saved = await window.buddy.catalog({ refresh: false, checkInstalled, savedOnly: true }); if (saved.games.length) { catalog = saved; await applyCatalog(); renderCatalog(); } } catch {}
+  }
+  $("catalogStatus").textContent = refresh ? (catalog.games.length ? "Checking for new games…" : "") : "";
+  $("catalogStatus").className = "status";
   try {
     catalog = await window.buddy.catalog({ refresh, checkInstalled });
-    $("catalogMeta").textContent = `${catalog.games.length} projects · updated ${fmtDate(catalog.fetchedAt)}`;
-    $("catalogStatus").textContent = catalog.stale ? `Showing the last saved catalog - couldn't refresh: ${catalog.error}` : "";
-    $("catalogStatus").className = `status ${catalog.stale ? "bad" : ""}`;
-    const counts = {};
-    catalog.games.forEach((g) => { counts[g.console] = (counts[g.console] || 0) + 1; });
-    if (catCon && !counts[catCon]) catCon = "";
-    const last = (c) => ["Others", "Unknown"].includes(c); // the catch-alls go at the end
-    $("conBar").innerHTML = [["", "All", catalog.games.length], ...Object.keys(counts).sort((a, b) => last(a) - last(b) || a.localeCompare(b)).map((c) => [c, c, counts[c]])]
-      .map(([v, label, n]) => `<button type="button" data-con="${esc(v)}" aria-pressed="${v === catCon}">${esc(label)}<span class="n">${n}</span></button>`).join("");
+    await applyCatalog();
   } catch (err) {
-    catalog = { games: [], installed: {}, fetchedAt: null, stale: true, error: err.message };
+    if (!catalog.games.length) catalog = { games: [], installed: {}, fetchedAt: null, stale: true, error: err.message };
     $("catalogStatus").textContent = err.message.replace(/^.*Error: /, ""); $("catalogStatus").className = "status bad";
   }
   renderCatalog();
+}
+async function applyCatalog() {
+  await loadLists();
+  $("catalogMeta").textContent = `${catalog.games.length} projects · updated ${fmtDate(catalog.fetchedAt)}`;
+  $("catalogStatus").textContent = catalog.stale ? `Showing the last saved catalog - couldn't refresh: ${catalog.error}` : "";
+  $("catalogStatus").className = `status ${catalog.stale ? "bad" : ""}`;
+  const counts = {};
+  catalog.games.forEach((g) => { counts[g.console] = (counts[g.console] || 0) + 1; });
+  if (catCon && !counts[catCon]) catCon = "";
+  const last = (c) => ["Others", "Unknown"].includes(c); // the catch-alls go at the end
+  $("conBar").innerHTML = [["", "All", catalog.games.length], ...Object.keys(counts).sort((a, b) => last(a) - last(b) || a.localeCompare(b)).map((c) => [c, c, counts[c]])]
+    .map(([v, label, n]) => `<button type="button" data-con="${esc(v)}" aria-pressed="${v === catCon}">${esc(label)}<span class="n">${n}</span></button>`).join("");
 }
 
 const isWished = (g) => !!(settings.wishlist || {})[g.id];
@@ -1223,12 +1287,12 @@ function visibleGames() {
   const hay = new Map(), hayOf = (g) => hay.get(g) ?? hay.set(g, { t: searchWords(g.title).join(" "), all: ` ${searchWords(`${g.title} ${g.project}`).join(" ")} ` }).get(g);
   const con = catCon, st = $("catStatus").value, srcF = $("catSource").value;
   const plat = PLATFORM_OF_TARGET[$("target").value] || "Windows";
-  const runsOn = $("catRunsOn").value, instOnly = $("catInstalled").checked, wishOnly = $("catWish").checked, playOnly = $("catPlayable").checked, mineOnly = $("catMine").checked, wellOnly = $("catRunsWell").checked, aiWant = $("catAI").value;
+  const runsOn = $("catRunsOn").value, instOnly = $("catInstalled").checked, wishOnly = $("catWish").checked, playOnly = $("catPlayable").checked, mineOnly = $("catMine").checked, wellOnly = $("catRunsWell").checked, aiWant = $("catAI").value, featWant = $("catFeature").value, listWant = $("catList").value;
   const runsOk = (g) => !runsOn || (runsOn === "Steam Deck" ? ["verified", "works"].includes(g.facts?.steam_deck) : g.platforms.includes(runsOn) || !g.platforms.length);
   let list = catalog.games.filter((g) =>
     (!qw.length || qw.every((w) => hayOf(g).all.includes(` ${w}`))) &&
     (!con || g.console === con) && (!st || g.status === st) && (!srcF || (g.sources || [g.source]).includes(srcF)) &&
-    runsOk(g) && (!mineOnly || mineIds?.has(g.id)) && (!playOnly || ["playable", "mostly"].includes(g.facts?.completeness)) && (!instOnly || installedFor(g)) && (!wishOnly || isWished(g)) && (!wellOnly || reportsFor(g)?.well) && (!aiWant || (g.facts?.ai_use || "unsaid") === aiWant));
+    runsOk(g) && (!mineOnly || mineIds?.has(g.id)) && (!playOnly || ["playable", "mostly"].includes(g.facts?.completeness)) && (!instOnly || installedFor(g)) && (!wishOnly || isWished(g)) && (!wellOnly || reportsFor(g)?.well) && (!aiWant || (g.facts?.ai_use || "unsaid") === aiWant) && (!featWant || !!g.facts?.features?.[featWant]) && (!listWant || !!listIds.get(listWant)?.has(g.id)));
   const sort = $("catSort").value;
   const byTitle = (a, b) => a.title.localeCompare(b.title) || a.project.localeCompare(b.project);
   const plats = (g) => ["Windows", "macOS", "Linux"].filter((p) => g.platforms.includes(p)).join(" · ") || "No builds";
@@ -1264,7 +1328,7 @@ function portCard(g) {
   return `<div class="gtile${picked ? " picked" : ""}" tabindex="0" data-card="${esc(g.id)}" aria-label="${esc(g.title)} - ${esc(g.console)}">
     <div class="cover" data-cat="detail" data-id="${esc(g.id)}"><div data-icon="${esc(g.id)}">${art}</div>${tag}</div>
     <div class="t"><h4 translate="no"><a href="#" data-cat="detail" data-id="${esc(g.id)}">${esc(g.title)}</a></h4>
-      <div class="line${line.good ? " good" : ""}">${esc(line.text)}</div>${line.plats ? `<div class="line">${esc(line.plats)}</div>` : ""}</div>
+      <div class="line${line.good ? " good" : ""}">${esc(line.text)}</div>${line.plats ? `<div class="line">${esc(line.plats)}</div>` : ""}${g.facts?.features ? `<div class="line feat">${Object.keys(FEATURE_LABEL).filter((k) => g.facts.features[k]).slice(0, 3).map((k) => `<span>${FEATURE_LABEL[k]}</span>`).join(" · ")}</div>` : ""}</div>
     <div class="acts">${act}<button class="star${isWished(g) ? " on" : ""}" type="button" data-cat="wish" data-id="${esc(g.id)}" aria-pressed="${isWished(g)}" aria-label="${isWished(g) ? "Remove from" : "Add to"} wishlist: ${esc(g.title)}" title="Wishlist">${isWished(g) ? "★" : "☆"}</button></div>
   </div>`;
 }
@@ -1282,12 +1346,12 @@ function renderCatalog() {
     }
     if (html) html += "</div>";
   } else html = list.length ? `<div class="tiles">${list.map(portCard).join("")}</div>` : "";
-  $("catalogList").innerHTML = html || `<p class="muted">Nothing matches.</p>`;
+  $("catalogList").innerHTML = html || (catalogLoading && !catalog.games.length ? loadingGames() : `<p class="muted">Nothing matches.</p>`);
   const updates = list.filter((g) => updateAvailable(g, installedFor(g))).length;
   $("catCount").textContent = `${list.length} shown · ${catSelected.size} selected${updates ? ` · ${updates} update(s) available` : ""}`;
   document.querySelectorAll(".pickAdd").forEach((b) => (b.disabled = !catSelected.size));
   document.querySelectorAll(".pickCount").forEach((n) => (n.textContent = catSelected.size ? `${catSelected.size} selected` : ""));
-  const extra = [$("catStatus").value, $("catSource").value, $("catPlayable").checked, $("catMine").checked, $("catRunsWell").checked, $("catAI").value, $("catInstalled").checked, $("catWish").checked].filter(Boolean).length;
+  const extra = [$("catStatus").value, $("catSource").value, $("catPlayable").checked, $("catMine").checked, $("catRunsWell").checked, $("catAI").value, $("catFeature").value, $("catList").value, $("catInstalled").checked, $("catWish").checked].filter(Boolean).length;
   $("moreFiltersBtn").textContent = extra ? `More Filters (${extra})` : "More Filters";
   const allUpd = catalog.games.filter((g) => updateAvailable(g, installedFor(g))).length;
   $("catUpdateAll").hidden = !allUpd; $("catUpdateAll").textContent = `Update All (${allUpd})`;
@@ -1328,7 +1392,7 @@ $("updatesBtn").onclick = async () => {
 $("catalogRefresh").onclick = () => loadCatalog({ refresh: true });
 document.querySelectorAll("[data-ext]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); window.buddy.openExternal(a.dataset.ext); }));
 document.getElementById("aboutSources").onclick = (e) => { const a = e.target.closest("a[data-url]"); if (a) { e.preventDefault(); window.buddy.openExternal(a.dataset.url); } };
-for (const id of ["catSearch", "catStatus", "catSource", "catSort", "catRunsOn", "catPlayable", "catRunsWell", "catAI", "catInstalled", "catWish"]) $(id).oninput = renderCatalog;
+for (const id of ["catSearch", "catStatus", "catSource", "catSort", "catRunsOn", "catPlayable", "catRunsWell", "catAI", "catFeature", "catList", "catInstalled", "catWish"]) $(id).oninput = renderCatalog;
 $("catMine").oninput = async () => { if ($("catMine").checked) await loadMine(); renderCatalog(); };
 $("target").addEventListener("change", () => { mineIds = null; if ($("catMine").checked) loadMine().then(renderCatalog); });
 $("conBar").onclick = (e) => {
@@ -1338,7 +1402,7 @@ $("conBar").onclick = (e) => {
   renderCatalog(); $("catalogList").scrollTop = 0;
 };
 $("moreFiltersBtn").onclick = () => { const open = $("moreFilters").hidden; $("moreFilters").hidden = !open; $("moreFiltersBtn").setAttribute("aria-expanded", String(open)); };
-$("clearFilters").onclick = () => { $("catStatus").value = ""; $("catSource").value = ""; $("catAI").value = ""; for (const id of ["catPlayable", "catMine", "catRunsWell", "catInstalled", "catWish"]) $(id).checked = false; renderCatalog(); };
+$("clearFilters").onclick = () => { $("catStatus").value = ""; $("catSource").value = ""; $("catAI").value = ""; $("catFeature").value = ""; $("catList").value = ""; for (const id of ["catPlayable", "catMine", "catRunsWell", "catInstalled", "catWish"]) $(id).checked = false; renderCatalog(); };
 $("catUpdateAll").onclick = () => updateAll(catalog.games.filter((g) => updateAvailable(g, installedFor(g))));
 $("libUpdateAll").onclick = async () => { if (!catalog.games.length) await loadCatalog({ refresh: true, checkInstalled: true }); updateAll(catalog.games.filter((g) => updateAvailable(g, installedFor(g)))); };
 $("catRunsOn").onchange = () => { runsOnTouched = true; renderCatalog(); };
@@ -1387,7 +1451,25 @@ $("openHtml").onclick = () => window.buddy.open(`${$("outDir").value.trim()}/ins
 $("openFolder").onclick = () => window.buddy.open($("outDir").value.trim());
 
 window.buddy.onLog(log);
-refresh();
+refresh().then(() => showWhatsNew(false));
+
+// ---- What's New: once after an upgrade (every version since the one you had), and any time from the menu.
+// Dates are YYYY-MM-DD, read as a local day so the US never sees the day before.
+const dayOf = (d) => { const [y, m, n] = d.split("-").map(Number); return new Date(y, m - 1, n).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }); };
+async function showWhatsNew(all) {
+  const list = await window.buddy.whatsNew(appliedLang, all).catch(() => []);
+  if (!list.length) return;
+  $("whatsNewBody").innerHTML = list.map((v) => `<section class="relnotes" lang="${esc(appliedLang)}"><h3>${esc(`Version ${v.version}`)}${v.date ? ` · ${esc(dayOf(v.date))}` : ""}</h3>${v.html}</section>`).join("");
+  for (const el of document.querySelectorAll("body > nav, body > main")) el.inert = true;
+  $("whatsNew").hidden = false; $("whatsNewBody").scrollTop = 0; $("whatsNewClose").focus();
+}
+function closeWhatsNew() { $("whatsNew").hidden = true; for (const el of document.querySelectorAll("body > nav, body > main")) el.inert = false; window.buddy.whatsNewSeen(); $("whatsNewBtn").focus(); }
+$("whatsNewBtn").onclick = () => showWhatsNew(true);
+$("whatsNewClose").onclick = closeWhatsNew;
+$("whatsNew").addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { e.preventDefault(); closeWhatsNew(); }
+  else if (e.key === "Tab") { e.preventDefault(); (document.activeElement === $("whatsNewClose") ? $("whatsNewBody") : $("whatsNewClose")).focus(); }
+});
 
 // ---- Phone Link: Settings → Phone, and Install requests from Decomp Buddy Remote.
 async function renderPhone() {
@@ -1398,7 +1480,38 @@ async function renderPhone() {
   $("phoneInfo").textContent = !st.enabled ? "" : st.running ? `Ready on ${st.computer} (${st.addresses.join(", ") || "no network"}).` : "Couldn't start - another app may be using the connection. Restart Decomp Buddy and try again.";
 }
 $("phoneName").onchange = async () => { await window.buddy.phoneName($("phoneName").value); renderPhone(); };
-$("phoneOn").onchange = async () => { await window.buddy.phoneSet($("phoneOn").checked); renderPhone(); };
+$("phoneOn").onchange = async () => { await window.buddy.phoneSet($("phoneOn").checked); renderPhone(); renderPhoneApp(); };
+
+// ---- iPhone App page (menu), and the one pop-up about it on the second start.
+// The App Store link once Apple approves Decomp Buddy Remote. Empty: the page says "coming soon" and the pop-up stays off,
+// so nobody is shown an app they can't get yet.
+const APP_STORE_URL = "";
+async function renderPhoneApp() {
+  const st = await window.buddy.phoneStatus();
+  $("phoneOn2").checked = st.enabled; $("phonePair2").hidden = !st.enabled;
+  if (st.qr) $("phoneQr2").src = st.qr;
+  $("phoneInfo2").textContent = !st.enabled ? "" : st.running ? `Ready on ${st.computer}. Scan this from the app's Computers tab.` : "Couldn't start - another app may be using the connection. Restart Decomp Buddy and try again.";
+  $("phoneStore").hidden = !APP_STORE_URL; $("phoneStoreNote").textContent = APP_STORE_URL ? "Free on the App Store." : "Coming soon to the App Store.";
+}
+$("phoneOn2").onchange = async () => { await window.buddy.phoneSet($("phoneOn2").checked); renderPhoneApp(); renderPhone(); };
+$("phoneStore").onclick = () => { if (APP_STORE_URL) window.buddy.openExternal(APP_STORE_URL); };
+document.querySelector('[data-nav="phoneapp"]').addEventListener("click", renderPhoneApp);
+function closePhoneAd() { $("phoneAd").hidden = true; for (const el of document.querySelectorAll("body > nav, body > main")) el.inert = false; }
+$("phoneAdLater").onclick = closePhoneAd;
+$("phoneAdGo").onclick = () => { closePhoneAd(); showView("phoneapp"); renderPhoneApp(); };
+$("phoneAd").addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { e.preventDefault(); closePhoneAd(); }
+  else if (e.key === "Tab") { e.preventDefault(); (document.activeElement === $("phoneAdGo") ? $("phoneAdLater") : $("phoneAdGo")).focus(); }
+});
+// Starts are counted once each; the pop-up shows on the second one only - never on the first, never twice.
+(async () => {
+  const s = await window.buddy.getSettings(), launches = (s.launches || 0) + 1;
+  await window.buddy.setSettings({ launches });
+  if (launches !== 2 || !APP_STORE_URL || s.phoneAdShown || s.whatsNewPending) return; // never on top of What's New
+  await window.buddy.setSettings({ phoneAdShown: true });
+  for (const el of document.querySelectorAll("body > nav, body > main")) el.inert = true;
+  $("phoneAd").hidden = false; $("phoneAdGo").focus();
+})();
 $("phoneForget").onclick = async () => { await window.buddy.phoneForget(); renderPhone(); $("phoneInfo").textContent = "Paired phones were forgotten. Scan the new code to pair again."; };
 document.querySelector('nav.side button[data-nav="settings"]')?.addEventListener("click", renderPhone);
 // The phone's Install goes through the normal Set Up flow: add, read its install steps, use your game-file library.

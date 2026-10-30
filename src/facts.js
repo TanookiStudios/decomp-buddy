@@ -34,8 +34,10 @@ export function renderFactsContext(ctx) {
   return [`# ${ctx.fullName}`, ctx.description && `Description: ${ctx.description}`, "## README", ctx.readme || "(none)", docs].filter(Boolean).join("\n\n").slice(0, 60_000);
 }
 
-// Repo health straight from the host: archived, last push, takedown language.
-const DMCA = /\b(DMCA|takedown|take-down|cease[- ]and[- ]desist|removed (at|by) the request|legal notice)\b/i;
+// Repo health straight from the host: archived, last push, and whether the project says it RECEIVED a takedown.
+// Only a statement that it happened counts. A "Legal notice" heading, "DMCA notices go to this email", "allowed under
+// the DMCA" and the game "Burnout 3: Takedown" are not takedowns (the old word match flagged 74 projects, all wrong).
+const DMCA = /\b(?:received|got|was (?:hit|served) with|been (?:hit|served) with|were sent|was sent)\b[^.\n]{0,50}\b(?:dmca|takedown|take-down|cease[- ]and[- ]desist)\b|\b(?:was|were|has been|have been|got) (?:taken down|removed|struck|disabled)\b[^.\n]{0,60}\b(?:dmca|takedown|request of|legal|nintendo|sony|microsoft|sega|capcom|square enix|konami|publisher|rights holder)\b|\bdmca[- ]?(?:ed|'d)\b|\bremoved (?:at|by) the request of\b/i;
 export function healthOf(ctx) {
   return { archived: !!ctx.archived, pushedAt: ctx.pushedAt || "", dmca: DMCA.test(`${ctx.description || ""}\n${ctx.readme || ""}`) };
 }

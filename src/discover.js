@@ -192,7 +192,11 @@ export async function scanAwesomeLists({ fetch = globalThis.fetch } = {}) {
   for (const g of adg.games || []) if (g.repo && !["tool", "browser-port"].includes(g.type)) out.push({ repo: g.repo, title: g.title, via: "awesome-decomp-games" });
   const pcp = await get(`${RAW}/Sebastrion/awesome-unofficial-pc-ports/main/README.md`);
   for (const [, repo] of reposIn(pcp)) out.push({ repo, title: "", via: "awesome-unofficial-pc-ports" });
-  return out.filter((c) => !/^(sebastrion\/awesome|submitgame\/awesome|tanookistudios\/)/i.test(c.repo));
+  const gd = await get(`${RAW}/SamidyFR/Game-Decompilations/main/README.md`);
+  for (const [, repo] of reposIn(gd)) out.push({ repo, title: "", via: "game-decompilations" });
+  for (const m of gd.matchAll(/https?:\/\/gitlab\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)/g)) out.push({ repo: `gitlab:${m[1]}`, title: "", via: "game-decompilations" });
+  const seen = new Set();
+  return out.filter((c) => !/^(sebastrion\/awesome|submitgame\/awesome|samidyfr\/game-decompilations|tanookistudios\/)/i.test(c.repo) && !seen.has(c.repo.toLowerCase()) && seen.add(c.repo.toLowerCase()));
 }
 
 // ---- recomp.fyi: a big tracker of recomps, decomps and ports; every project's repo is linked from its front page.

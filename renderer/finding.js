@@ -10,12 +10,18 @@ const groupedCards = (groups) => groups.filter(([, list]) => list.length).map(([
 // the first time this computer saw it - never on the very first load, when everything is "new").
 // The newest 100 from the last 30 days; nothing that recent, the newest 40 whenever they were added.
 const addedOn = (g) => g.addedAt || (Date.parse(g.firstSeen || 0) > DAY ? g.firstSeen : "");
+// Trending This Week (main process, from the site): loaded once per session, then the page redraws with it.
+let trendingIds = null;
+async function loadTrending() { trendingIds = await window.buddy.trendingGet().catch(() => []); if (catalog.games.length) renderNewGames(); }
 function renderNewGames() {
+  if (catalogLoading && !catalog.games.length) { $("newList").innerHTML = loadingGames(); return; }
+  if (trendingIds === null) { trendingIds = []; loadTrending(); }
+  const trending = trendingIds.map((id) => catalog.games.find((g) => g.id === id)).filter(Boolean);
   const all = catalog.games.filter(addedOn).sort((a, b) => addedOn(b).localeCompare(addedOn(a)) || a.title.localeCompare(b.title));
   const age = (g) => (Date.now() - Date.parse(addedOn(g))) / DAY;
   const recent = all.filter((g) => age(g) <= 30).slice(0, 100); // a big batch (60 games in a day) shouldn't turn this into the whole catalog
   $("newList").innerHTML = recent.length
-    ? groupedCards([["This Week", recent.filter((g) => age(g) <= 7)], ["Last Week", recent.filter((g) => age(g) > 7 && age(g) <= 14)], ["Earlier This Month", recent.filter((g) => age(g) > 14)]])
+    ? groupedCards([["Trending This Week", trending], ["This Week", recent.filter((g) => age(g) <= 7)], ["Last Week", recent.filter((g) => age(g) > 7 && age(g) <= 14)], ["Earlier This Month", recent.filter((g) => age(g) > 14)]])
     : all.length ? groupedCards([["Most Recent", all.slice(0, 40)]])
     : `<p class="muted">${catalog.games.length ? "Nothing new has been added lately." : "Loading the catalog…"}</p>`;
 }
@@ -47,6 +53,7 @@ function becausePicks() {
   return scored.slice(0, 60);
 }
 function renderForYou() {
+  if (catalogLoading && !catalog.games.length) { $("forYouList").innerHTML = loadingGames(); return; }
   const picks = becausePicks();
   if (picks.length) {
     const bySeed = new Map();
@@ -114,11 +121,57 @@ function renderSoon() {
   const q = $("soonSearch").value.trim().toLowerCase(), con = $("soonConsole").value;
   const list = soon.games.filter((g) => (!con || (g.console || "Unknown") === con) && (!q || `${g.title} ${g.repo}`.toLowerCase().includes(q)));
   $("soonMeta").textContent = `${list.length} of ${soon.games.length} game(s)${soon.stale ? " - offline, showing the last copy" : ""}.`;
-  $("soonList").innerHTML = list.map((g) => `<div class="srcRow">${g.boxartUrl ? `<img class="soonArt" src="${esc(g.boxartUrl)}" alt="${esc(`${g.title} box art`)}" loading="lazy" width="40" height="40">` : "<span></span>"}<div><div class="lab" translate="no">${esc(g.title)}</div><div class="u wrap"><span translate="no">${esc(g.console || "Unknown")} · ${esc(g.repo)}</span>${g.notes ? ` - <span translate="no">${esc(g.notes)}</span>` : ""}</div></div><button class="small" type="button" data-soon="${esc(repoPage(g))}" aria-label="${esc(`Open ${g.title} on GitHub`)}">Open</button></div>`).join("")
+  $("soonList").innerHTML = list.map((g) => `<div class="srcRow two">${g.boxartUrl ? `<img class="soonArt" src="${esc(g.boxartUrl)}" alt="${esc(`${g.title} box art`)}" loading="lazy" width="40" height="40">` : "<span></span>"}<div><div class="lab" translate="no">${esc(g.title)}</div><div class="u wrap"><span translate="no">${esc(g.console || "Unknown")} · ${esc(g.repo)}</span>${g.notes ? ` - <span translate="no">${esc(g.notes)}</span>` : ""}</div></div>${(() => { const k = soonKey(g), on = watching.has(k); return `<button class="small${on ? " primary" : ""}" type="button" data-watch="${esc(k)}" data-title="${esc(g.title)}" aria-pressed="${on}" aria-label="${esc(on ? `Stop notifying me about ${g.title}` : `Notify me when ${g.title} is playable`)}">${on ? "Notifying You" : "Notify Me"}</button>`; })()}<button class="small" type="button" data-soon="${esc(repoPage(g))}" aria-label="${esc(`Open ${g.title} on GitHub`)}">Open</button></div>`).join("")
     || `<p class="sub">Nothing matches.</p>`;
   $("soonList").querySelectorAll("[data-soon]").forEach((b) => (b.onclick = () => window.buddy.openExternal(b.dataset.soon)));
+  $("soonList").querySelectorAll("[data-watch]").forEach((b) => (b.onclick = async () => { showWatch(await window.buddy.watchToggle(b.dataset.watch, b.dataset.title)); const again = $("soonList").querySelector(`[data-watch="${CSS.escape(b.dataset.watch)}"]`); again?.focus(); }));
 }
+
+// ---- Tell Me When It's Playable (src/watch.js): the bell, and Now Playable once a watched game can be played.
+const soonKey = (g) => `${g.host || "github"}:${g.repo}`.toLowerCase();
+let watching = new Set();
+function showWatch(st) {
+  watching = new Set(st.watching);
+  $("soonBadge").hidden = !st.ready.length; $("soonBadge").textContent = st.ready.length;
+  $("nowPlayable").hidden = !st.ready.length;
+  $("nowPlayableList").innerHTML = st.ready.map((r) => `<div class="srcRow two"><span></span><div><div class="lab" translate="no">${esc(r.title)}</div></div><button class="small primary" type="button" data-ready="${esc(r.id)}">Set It Up</button><button class="small" type="button" data-done="${esc(r.key)}" aria-label="${esc(`Dismiss ${r.title}`)}">Dismiss</button></div>`).join("");
+  $("nowPlayableList").querySelectorAll("[data-ready]").forEach((b) => (b.onclick = () => openPlayable(b.dataset.ready)));
+  $("nowPlayableList").querySelectorAll("[data-done]").forEach((b) => (b.onclick = async () => showWatch(await window.buddy.watchDismiss(b.dataset.done))));
+  if (soon) renderSoon();
+}
+async function openPlayable(id) {
+  // The check that found it just refreshed the catalog on disk, so the cached copy already has it.
+  if (!catalog.games.some((g) => g.id === id)) await loadCatalog({ refresh: false }).catch(() => {});
+  const g = catalog.games.find((x) => x.id === id); if (g) showDetail(g);
+}
+window.buddy.onWatchChanged(showWatch);
+window.buddy.onWatchOpen(openPlayable);
+window.buddy.watchGet().then(showWatch);
 $("soonSearch").oninput = renderSoon;
 $("soonConsole").onchange = renderSoon;
 $("soonRefresh").onclick = () => loadSoon(true);
 document.querySelector('nav.side button[data-nav="soon"]')?.addEventListener("click", () => { if (!soon) loadSoon(); });
+
+// ---- What Should I Play? Three answers, three games (src/pick.js in the main process); Pick Again shuffles.
+function openPick() {
+  const counts = new Map(); for (const g of catalog.games) counts.set(g.console, (counts.get(g.console) || 0) + 1);
+  const top = [...counts].sort((a, b) => b[1] - a[1]).slice(0, 14).map(([c]) => c).sort((a, b) => a.localeCompare(b));
+  const keep = $("pickConsole").value;
+  $("pickConsole").innerHTML = `<option value="">Any Console</option>` + top.map((c) => `<option value="${esc(c)}"${c === keep ? " selected" : ""}>${esc(c)}</option>`).join("");
+  for (const el of document.querySelectorAll("body > nav, body > main")) el.inert = true;
+  $("pickDlg").hidden = false; $("pickConsole").focus();
+}
+async function runPick() {
+  if (!catalog.games.length) await loadCatalog({ refresh: false }).catch(() => {});
+  const r = await window.buddy.pickGames({ console: $("pickConsole").value, how: $("pickHow").value, matters: $("pickMatters").value });
+  const picks = r.ids.map((id) => catalog.games.find((g) => g.id === id)).filter(Boolean);
+  $("pickNote").textContent = !picks.length ? "Nothing fits yet. Try another console." : r.relaxed ? "Nothing fits all three, so these fit most of it." : "";
+  $("pickOut").innerHTML = picks.map((g) => `<div class="srcRow"><span></span><div><div class="lab" translate="no">${esc(g.title)}</div><div class="u">${g.console === "Unknown" ? "" : esc(g.console)}</div></div><button class="small" type="button" data-pick="${esc(g.id)}">See It</button></div>`).join("");
+  $("pickOut").querySelectorAll("[data-pick]").forEach((b) => (b.onclick = () => { closePick(); showDetail(catalog.games.find((g) => g.id === b.dataset.pick)); }));
+  $("pickGo").textContent = picks.length ? "Pick Again" : "Show Me";
+}
+function closePick() { $("pickDlg").hidden = true; for (const el of document.querySelectorAll("body > nav, body > main")) el.inert = false; $("pickBtn").focus(); }
+$("pickBtn").onclick = openPick;
+$("pickGo").onclick = runPick;
+$("pickClose").onclick = closePick;
+$("pickDlg").addEventListener("keydown", (e) => { if (e.key === "Escape") { e.preventDefault(); closePick(); } });

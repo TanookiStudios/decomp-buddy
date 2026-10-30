@@ -90,6 +90,10 @@ export async function analyzeBatch(entries, { provider, log = () => {}, planner,
 // so interleaved progress stays readable. ctrl pauses/resumes/cancels every download in the run.
 export async function setupBatch(items, { outDir = defaultOutDir(), mode = "move", log = () => {}, keep = [], ctrl = null, parallel = 3 } = {}) {
   const results = new Array(items.length);
+  // Two games in one batch picking the same file (two ports of one game) copy it: a move would leave the other nothing.
+  const uses = new Map();
+  for (const it of items) for (const p of new Set(Object.values(it.picks || {}).map((p) => path.resolve(p)))) uses.set(p, (uses.get(p) || 0) + 1);
+  const shared = (it) => Object.values(it.picks || {}).some((p) => uses.get(path.resolve(p)) > 1);
   let next = 0;
   const worker = async () => {
     for (;;) {
@@ -99,7 +103,7 @@ export async function setupBatch(items, { outDir = defaultOutDir(), mode = "move
       const glog = (m) => log(`${tag}${m}`);
       try {
         if (ctrl?.cancelled) throw new Error("Cancelled.");
-        results[i] = { url: item.url, ok: true, manifest: await setupGame({ plan: item.plan, ctx: item.ctx, outDir, picks: item.picks, verifications: item.verifications, artworkPath: item.artworkPath, target: item.target || "windows", mode, log: glog, keep, ctrl }) };
+        results[i] = { url: item.url, ok: true, manifest: await setupGame({ plan: item.plan, ctx: item.ctx, outDir, picks: item.picks, verifications: item.verifications, artworkPath: item.artworkPath, target: item.target || "windows", mode: shared(item) ? "copy" : mode, log: glog, keep, ctrl }) };
       } catch (err) {
         glog(`✗ ${item.url}: ${err.message}`);
         results[i] = { url: item.url, ok: false, error: err.message };

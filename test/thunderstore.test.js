@@ -46,10 +46,10 @@ test("search, adult packages hidden unless asked, version order", async () => {
   assert.equal(COMMUNITIES["zelda64recomp/zelda64recomp"], "zelda-64-recompiled");
 });
 
-test("a Thunderstore zip of mod files unpacks to the files, without its manifest and icon", () => {
+test("a Thunderstore zip of mod files unpacks to the files, without its manifest and icon", async () => {
   const game = fs.mkdtempSync(path.join(os.tmpdir(), "db-ts-")); const dl = path.join(modsDir(game), "downloads"); fs.mkdirSync(dl, { recursive: true });
   const z = new AdmZip(); for (const [n, c] of Object.entries({ "manifest.json": "{}", "icon.png": "png", "README.md": "# hi", "hd.o2r": "mod" })) z.addFile(n, Buffer.from(c));
   z.writeZip(path.join(dl, "Net64-Beta_Boost_Gauge.zip"));
-  unpackIntoMods(game, path.join(dl, "Net64-Beta_Boost_Gauge.zip"));
+  await unpackIntoMods(game, path.join(dl, "Net64-Beta_Boost_Gauge.zip"));
   assert.deepEqual(fs.readdirSync(modsDir(game)).sort(), ["downloads", "hd.o2r"]);
 });

@@ -1,5 +1,6 @@
 // The public catalog (the same list the desktop app and decompbuddy.com show), cached so Browse works offline.
-// No box art on the phone: games show a plain title card, so nothing here pictures someone else's game.
+// No commercial box art on the phone: a game shows its project's own artwork (the developers' icon or banner) or a
+// title tile, so nothing here pictures another company's cover.
 import Foundation
 import Observation
 
@@ -16,8 +17,18 @@ struct CatalogGame: Decodable, Identifiable, Hashable {
     let description: String?
     let facts: Facts?
     let scan: Scan?
+    var repo: String? = nil
+    var iconUrl: String? = nil
+    var boxartUrl: String? = nil
     struct Facts: Decodable, Hashable { let completeness: String?; let aiUse: String? }
     struct Scan: Decodable, Hashable { let at: String?; let files: Int? }
+
+    /// The project's own artwork, never a cover: box art comes from cover databases (libretro thumbnails,
+    /// SteamGridDB), and the catalog falls back to it as the icon when a project has none.
+    var projectArtURL: URL? {
+        guard let s = iconUrl, s != boxartUrl, s.hasPrefix("https://"), !s.contains("libretro-thumbnails"), !s.contains("steamgriddb.com") else { return nil }
+        return URL(string: s)
+    }
 
     var completeness: String {
         switch facts?.completeness { case "playable": "Complete"; case "mostly": "Mostly Playable"; case "partial": "Partly Playable"; case "wip": "Not Playable Yet"; default: "" }
@@ -51,6 +62,7 @@ final class CatalogStore {
     }
 
     func game(_ id: String) -> CatalogGame? { games.first { $0.id == id } }
+    func game(repo: String?) -> CatalogGame? { guard let repo else { return nil }; return games.first { $0.repo?.caseInsensitiveCompare(repo) == .orderedSame } }
 }
 
 /// The desktop's search rules: no accents or punctuation, any word order, Roman numerals as digits, best matches first.

@@ -19,6 +19,10 @@ BASE_URL="https://tanookistudios.com/decomp-buddy"
 V=$(node -p "require('./package.json').version")
 
 echo "→ Decomp Buddy $V"
+# No release without its changelog, in every app language (docs/releases/<version>[.<lang>].md).
+node scripts/changelog.mjs check "$V" || { echo "✗ write the changelog for $V first (see docs/releases)" >&2; exit 1; }
+# Stamped before the build, so the app's own What's New shows the date.
+if [ "$PUBLISH" = 1 ] && [ "$DRY" = 0 ] && [ "$REUSE" = 0 ]; then node scripts/changelog.mjs stamp "$V" "$(date +%F)"; fi
 DMG="Decomp Buddy-$V-arm64.dmg"; DMG_X64="Decomp Buddy-$V-x64.dmg"; EXE="Decomp Buddy Setup $V.exe"; PORTABLE="Decomp Buddy $V Portable.exe"; APPIMAGE="Decomp Buddy-$V.AppImage"
 DEB="decomp-buddy_${V}_amd64.deb"
 if { [ "$DRY" = 1 ] || [ "$REUSE" = 1 ]; } && [ -s "dist/$DMG" ] && [ -s "dist/$EXE" ] && [ -s "dist/$APPIMAGE" ]; then
@@ -56,10 +60,9 @@ echo "→ uploading ${#ASSETS[@]} files to github.com/$REL_REPO release v$V…"
 if GH_TOKEN=$GH_TOKEN_REL gh release view "v$V" --repo "$REL_REPO" >/dev/null 2>&1; then
   run env GH_TOKEN=$GH_TOKEN_REL gh release upload "v$V" "${ASSETS[@]}" --repo "$REL_REPO" --clobber
 else
-  # docs/releases/<version>.md, when there is one, is what the GitHub release page says (what's new).
-  NOTES="Download from https://decompbuddy.com/download - Mac (Apple Silicon + Intel, signed and notarized), Windows (installer or portable), Linux (AppImage or .deb)."
-  if [[ -f docs/releases/$V.md ]]; then run env GH_TOKEN=$GH_TOKEN_REL gh release create "v$V" "${ASSETS[@]}" --repo "$REL_REPO" --title "Decomp Buddy $V" --notes-file "docs/releases/$V.md"
-  else run env GH_TOKEN=$GH_TOKEN_REL gh release create "v$V" "${ASSETS[@]}" --repo "$REL_REPO" --title "Decomp Buddy $V" --notes "$NOTES"; fi
+  # The GitHub release page says what's new: the English changelog plus the download line.
+  GH_NOTES=$(mktemp); node scripts/changelog.mjs github "$V" > "$GH_NOTES"
+  run env GH_TOKEN=$GH_TOKEN_REL gh release create "v$V" "${ASSETS[@]}" --repo "$REL_REPO" --title "Decomp Buddy $V" --notes-file "$GH_NOTES"
 fi
 
 echo "→ writing $SITE_DIR/latest.json"
@@ -80,6 +83,8 @@ JSON
 )
 if [ "$DRY" = 1 ]; then echo "$LATEST"; else echo "$LATEST" > "$SITE_DIR/latest.json"; fi
 
+echo "→ writing $SITE_DIR/changelog.json (decompbuddy.com/changelog)"
+run node scripts/changelog.mjs site "$SITE_DIR/changelog.json"
 echo "→ deploying the site…"
 run npm --prefix "$SITE" run deploy
 
@@ -106,5 +111,7 @@ if [ "$DRY" != 1 ]; then
   done
 fi
 echo "✓ Decomp Buddy $V is live at $BASE_URL/"
+# The store listings for this version (written only; sending them is a separate step - packaging/README.md).
+[ "$DRY" = 1 ] || node scripts/packages.mjs "$V" || echo "⚠ store listings for $V weren't written - run node scripts/packages.mjs $V" >&2
 # The Steam Deck Flatpak follows every release (built on GitHub; the website links the newest one).
 [ "$DRY" = 1 ] || scripts/flatpak-release.sh "v$V" || echo "⚠ the Steam Deck Flatpak for $V didn't attach - run scripts/flatpak-release.sh v$V" >&2

@@ -1,7 +1,9 @@
 # The daily Decomp Buddy run
 
-A scheduled Claude Code task runs this once a day. It finds new games, sorts them, checks them, writes their install
-steps, follows new versions through the 48-hour hold and the malware scan, and publishes. Data only: never change the
+A scheduled Claude Code task runs this every hour (since 29 Oct 2026). Each run starts with `scripts/daily.sh lock`
+(one run at a time) and `find`; it only goes on to a full run when `find` made batches, a run stopped halfway, or it's
+the first run of the day (6 AM), which also follows new versions. It always ends with `scripts/daily.sh unlock`. It finds new games, sorts them, checks them, writes their install
+steps, follows new versions through the uploader check and the malware scan, and publishes. Data only: never change the
 app's code, never release the app, never touch Maddie's own app data.
 
 Work in `~/Documents/GitHub/DecompBuddy`. Write American English. Use Sonnet agents (`model: "sonnet"`), **at most two
@@ -20,7 +22,7 @@ Give each agent up to 5 batch ids:
 
 **Then check every "play" answer yourself** (in `~/.decomp-buddy-triage/out/*.json`, with its job text in `jobs/`):
 - Malware bait: a random account name plus "free download", password-protected zips, mediafire / mega / linkvertise
-  links, a README that's mostly a download button, or a brand-new account copying a known project.
+  links, or a README that's mostly a download button. How old the GitHub account is never counts (Maddie, 29 Oct 2026).
 - Copies: a fork or same-named repo of a project Decomp Buddy already lists (the job warns), unless the README shows
   it's a distinct, maintained port with its own downloads.
 - A release that bundles the game's own files (ROMs, ISOs, game data) - Decomp Buddy never lists those.
@@ -39,7 +41,7 @@ Up to 4 batch files per agent:
 > with only the per-id result lines.
 
 ## 5. Gates
-`scripts/daily.sh gates` - imports the steps, moves games onto new releases that passed the 48-hour hold, the
+`scripts/daily.sh gates` - imports the steps, moves games onto new releases that passed the uploader check, the
 same-uploader check and the scan, scans new files (skipped while a long scan is already running), and prepares AI
 labels. If it prints `FLAGGED`, look at that file the way docs say in scripts/scan.mjs and src/scan.js: a false alarm
 goes into `~/Documents/GitHub/TanookiStudios-Site/public/decomp-buddy/scans-reviewed.json` **by sha256 only**, with the
@@ -51,6 +53,18 @@ otherwise leave it held and say so in the final reply.
 ## 6. AI labels (agent, only if `ailabel prep` found READMEs to decide)
 > Read ~/.decomp-buddy-ailabel/RULES.md fully and follow it exactly. Do batch ~/.decomp-buddy-ailabel/batch.md ->
 > write ~/.decomp-buddy-ailabel/answers.json, then run the count check. No network. When unsure, null.
+
+## 6b. Feature badges (agent, only if `features prep` found READMEs to decide)
+> Read ~/.decomp-buddy-features/RULES.md fully and follow it exactly. Do every ~/.decomp-buddy-features/batch-N.md ->
+> write answers-N.json next to it, then run the count check for each. No network. When unsure, null.
+
+## 6c. Box art (agent, only if `boxart prep` made batches)
+Up to 4 batches per agent:
+> Follow ~/.decomp-buddy-boxart/AGENT.md exactly for each of these batches, in order: b-NN, ... Read each batch with the
+> Read tool. A missing cover beats a wrong one. Final reply: the AGENT.md line for each batch.
+
+Read every pick for a title you know is risky (sequels, remakes, same-name games) before publishing. Never use a
+Wikipedia cover.
 
 ## 7. Publish
 `scripts/daily.sh publish` - builds, deploys both sites, checks the live catalog, IndexNow, commits and pushes.

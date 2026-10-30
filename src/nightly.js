@@ -32,13 +32,13 @@ export async function fetchArtifact({ owner, repo, id, stageDir, log = () => {},
   const zip = path.join(stageDir, "artifact.zip");
   await download(`${API}/repos/${owner}/${repo}/actions/artifacts/${id}/zip`, zip, log, { ctrl, digest: undefined });
   const out = path.join(stageDir, "unpacked");
-  extractZip(zip, out); fs.rmSync(zip, { force: true });
+  await extractZip(zip, out); fs.rmSync(zip, { force: true });
   // CI artifacts often wrap the real build: one archive or .dmg, maybe beside a readme. Unwrap it and keep the readme.
   const inner = fs.readdirSync(out).filter((n) => n !== ".DS_Store");
   const archives = inner.filter((n) => /\.(zip|7z|tar|tgz|tar\.(gz|xz|bz2|zst)|dmg)$/i.test(n));
   if (archives.length === 1 && inner.every((n) => n === archives[0] || /\.(txt|md|pdf|html?)$/i.test(n) || /^(readme|license|licence|changelog)/i.test(n))) {
     const out2 = path.join(stageDir, "unpacked2");
-    extractZip(path.join(out, archives[0]), out2);
+    await extractZip(path.join(out, archives[0]), out2);
     for (const n of inner) if (n !== archives[0]) fs.renameSync(path.join(out, n), path.join(out2, n));
     return out2;
   }

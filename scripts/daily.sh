@@ -6,6 +6,7 @@
 #                              (new games + games whose new release changed shape) -> ~/.decomp-buddy-ccplans/batches/daily-*
 #   scripts/daily.sh gates     import the install steps; follow new releases; malware-scan; follow again; AI-label prep
 #   scripts/daily.sh publish   import AI labels, rebuild the catalog, deploy both sites, IndexNow, commit + push
+#   scripts/daily.sh lock      start of a run: refuses (exit 3) while another run holds the lock; unlock at the end
 # Each step stops at the first failure; publish never runs on a half-done day (it checks the earlier steps' marks).
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -22,7 +23,7 @@ need() { [[ -f ~/.decomp-buddy-scan/daily-$DAY.$1 ]] || { say "✗ run '$1' firs
 case "${1:-}" in
   find)
     say "== $DAY find"
-    node scripts/triage.mjs prep --scan 2>&1 | grep -E "^(queue|prep|reddit|bluesky|github|recomphaven|unbaked|awesome|recomp.fyi)" | tee -a "$LOG"
+    node scripts/triage.mjs prep --scan 2>&1 | grep -E "^(queue|prep|reddit|bluesky|github|recomphaven|unbaked|awesome|recomp.fyi|player suggestions|admin actions)" | tee -a "$LOG"
     ls ~/.decomp-buddy-triage/jobs/*.md 2>/dev/null | sed 's#.*/##;s#\.md$##' | tr '\n' ' ' | sed 's/^/batches: /' | tee -a "$LOG"; echo | tee -a "$LOG"
     mark find ;;
   steps)
@@ -44,15 +45,26 @@ PY
   gates)
     need steps; say "== $DAY gates"
     node scripts/ccplans.mjs import --site "$SITE" 2>&1 | grep -E "^import" | tee -a "$LOG"
-    node scripts/follow.mjs --site "$SITE" 2>&1 | grep -E "^follow" | tee -a "$LOG"
+    node scripts/trust.mjs --site "$SITE" 2>&1 | grep -E "^trust" | tee -a "$LOG"
+    node scripts/credits.mjs --site "$SITE" 2>&1 | grep -E "^credits" | tee -a "$LOG"
+    node scripts/follow.mjs --site "$SITE" 2>&1 | grep -E "^(follow|gone)" | tee -a "$LOG"
     node scripts/scan.mjs --site "$SITE" 2>&1 | grep -E "^(scan|another scan|FLAGGED|  FLAGGED|[0-9]+ published)" | tee -a "$LOG"
-    node scripts/follow.mjs --site "$SITE" 2>&1 | grep -E "^follow" | tee -a "$LOG"
+    node scripts/follow.mjs --site "$SITE" 2>&1 | grep -E "^(follow|gone)" | tee -a "$LOG"
     node scripts/ailabel.mjs prep --site "$SITE" 2>&1 | grep -E "^ailabel" | tee -a "$LOG"
+    node scripts/features.mjs prep --site "$SITE" 2>&1 | grep -E "^features" | tee -a "$LOG"
+    # Covers the strict matcher couldn't settle: wider searches, then batches for the cover-picking agent.
+    # A failed cover search must not hold new games back: say so and go on.
+    node scripts/boxart-picks.mjs widen --site "$SITE" 2>&1 | grep -E "^boxart" | tee -a "$LOG" || say "✗ box art search failed (covers wait for the next run)"
+    node scripts/boxart-picks.mjs prep --site "$SITE" 2>&1 | grep -E "^boxart" | tee -a "$LOG"
     mark gates ;;
   publish)
     need gates; say "== $DAY publish"
+    node scripts/bestversion.mjs --site "$SITE" 2>&1 | grep -E "^(bestversion|  github)" | tee -a "$LOG"
     [[ -f ~/.decomp-buddy-ailabel/answers.json ]] && node scripts/ailabel.mjs import --site "$SITE" 2>&1 | grep -E "^ailabel" | tee -a "$LOG"
+    f=(~/.decomp-buddy-features/answers-*.json(N)); (( ${#f} )) && node scripts/features.mjs import --site "$SITE" 2>&1 | grep -E "^features" | tee -a "$LOG"
+    f=(~/.decomp-buddy-boxart/answers/*.json(N)); (( ${#f} )) && { node scripts/boxart-picks.mjs import 2>&1 | grep -E "^boxart" | tee -a "$LOG"; mkdir -p ~/.decomp-buddy-boxart/answers-done; mv $f ~/.decomp-buddy-boxart/answers-done/; }
     node scripts/build-catalog.mjs --site "$SITE" 2>&1 | grep -E "^(catalog|waiting.json|steamgriddb|✗ steamgriddb)" | tee -a "$LOG"
+    node scripts/newgames-check.mjs --site "$SITE" 2>&1 | tee -a "$LOG"
     npm --prefix "$SITE" run deploy 2>&1 | grep -E "Deployment complete|✘|ERROR" | tee -a "$LOG"
     npm --prefix "$WEB" run deploy 2>&1 | grep -E "^built|Deployment complete|✘|ERROR" | tee -a "$LOG"
     python3 ~/Documents/Tanooki-Business/tools/indexnow.py decompbuddy.com 2>&1 | tail -1 | tee -a "$LOG"
@@ -61,6 +73,8 @@ PY
     got=$(curl -fsS https://tanookistudios.com/decomp-buddy/catalog.json | python3 -c "import json,sys;print(json.load(sys.stdin)['count'])")
     [[ "$want" == "$got" ]] || { say "✗ live catalog has $got games, built $want"; exit 1; }
     say "live catalog: $got games"
+    # Emails people who submitted a game that's now live or can't be listed (each once; the address is then deleted).
+    curl -fsS -X POST https://tanookistudios.com/api/decomp-notify | tee -a "$LOG"; echo >> "$LOG"
     # Only Decomp Buddy's files: the studio site can hold other projects' unfinished work.
     git -C "$SITE" add public/decomp-buddy; git -C "$WEB" add -A
     for r in "$SITE" "$WEB"; do git -C "$r" diff --cached --quiet || git -C "$r" commit -qm "Daily Decomp Buddy update $DAY
@@ -69,5 +83,11 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"; done
     # Everything lives on the Tanooki Studios account; push as it, whichever gh account is active.
     for r in "$SITE" "$WEB"; do git -C "$r" -c credential.helper= -c "credential.helper=!GH_TOKEN=$GITHUB_TOKEN gh auth git-credential" push -q 2>&1 | tail -1 || say "push failed: $r"; done
     mark publish; say "✓ $DAY published" ;;
-  *) echo "usage: scripts/daily.sh find|steps|gates|publish"; exit 2 ;;
+  lock)
+    # The run is hourly and a full one takes 2-3 hours: one at a time. A lock older than 6 hours is a crashed run.
+    L=~/.decomp-buddy-scan/run.lock
+    if [[ -f $L && -n $(find $L -mmin -360) ]]; then echo "busy: another run started $(date -r $L '+%-I:%M %p')"; exit 3; fi
+    touch $L; echo "locked" ;;
+  unlock) rm -f ~/.decomp-buddy-scan/run.lock; echo "unlocked" ;;
+  *) echo "usage: scripts/daily.sh find|steps|gates|publish|lock|unlock"; exit 2 ;;
 esac

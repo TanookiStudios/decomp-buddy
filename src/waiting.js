@@ -22,10 +22,13 @@ export const excludedKeys = (doc) => new Set([...(doc.games || []), ...(doc.hidd
 export const waitingKeys = (file) => excludedKeys(readWaiting(file));
 // Hidden entries can also name a catalog id ("project:nelumbo") for cards that have no repository at all.
 export const excludedIds = (doc) => new Set((doc?.hidden || []).map((h) => String(h.id || "").toLowerCase()).filter(Boolean));
+// Matched with the host: a GitHub mirror hidden as a duplicate must not take the GitLab original with it.
+// Entries without a host are GitHub repos; games say theirs in repoHost (list sources) or host.
 export const withoutExcluded = (games, doc) => {
-  const out = excludedKeys(doc || {}), ids = excludedIds(doc);
+  const out = new Set([...(doc?.games || []), ...(doc?.hidden || [])].filter((g) => g.repo).map((g) => `${g.host || "github"}:${repoKey(g.repo) || ""}`.toLowerCase()));
+  const ids = excludedIds(doc);
   if (!out.size && !ids.size) return games;
-  return games.filter((g) => !ids.has(String(g.id || "").toLowerCase()) && (!g.owner || !out.has(`${g.owner}/${g.repo}`.toLowerCase())));
+  return games.filter((g) => !ids.has(String(g.id || "").toLowerCase()) && (!g.owner || !out.has(`${g.repoHost || g.host || "github"}:${g.owner}/${g.repo}`.toLowerCase())));
 };
 
 // Ask GitHub about every waiting project; any with a desktop download moves into finds.json.

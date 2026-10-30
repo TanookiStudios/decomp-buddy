@@ -93,13 +93,13 @@ nav.side .brand { display:flex; align-items:center; gap:10px; font-weight:800; f
 nav.side button { white-space:nowrap; text-align:left; background:none; border:0; box-shadow:none; padding:9px 12px; border-radius:8px; font-weight:600; color:var(--windowfg); opacity:.82 }
 nav.side button:hover { opacity:1; background:rgba(255,255,255,.08); transform:none } nav.side button.active { opacity:1; background:var(--gold); color:#1d2140 }
 nav.side hr { border:0; border-top:1px solid rgba(255,247,230,.16); margin:8px 6px }
-nav.side .spacer { flex:1 } nav.side .ver { font:600 11px var(--mono); letter-spacing:.08em; color:var(--windowfg); opacity:.6; padding:6px 12px }
+nav.side .spacer { flex:1 } nav.side .verlink { background:none; border:0; text-align:left; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding-top:0 } .modal-box.wn { max-width:600px; text-align:left; max-height:84vh; display:flex; flex-direction:column } .modal-box.wn h2 { margin:0 0 10px; font-size:20px } .wnbody { overflow:auto; flex:1; padding-right:6px } .wnbody h3 { font-size:15px; margin:16px 0 4px } .wnbody h3:first-child { margin-top:0 } .wnbody h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; margin:10px 0 4px; opacity:.75 } .wnbody ul { margin:0 0 6px; padding-left:20px } .wnbody li { margin-bottom:4px; line-height:1.5 } .modal-box.wn .actions { margin-top:14px; justify-content:flex-end } nav.side .ver { font:600 11px var(--mono); letter-spacing:.08em; color:var(--windowfg); opacity:.6; padding:6px 12px }
 main { flex:1; min-width:0; display:flex; flex-direction:column; overflow:auto }
 .modal { position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:50 } .modal-box { background:var(--card); border:2px solid var(--line); border-radius:14px; padding:22px 24px; max-width:420px; width:calc(100% - 40px); text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.4) }
 #toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--fg); color:var(--bg); padding:8px 14px; border-radius:999px; font-size:13px; font-weight:600; opacity:0; transition:opacity .2s; pointer-events:none } #toast.show { opacity:1 }
 #updateBar { display:none; background:var(--gold); color:#1d2140; font-weight:600; padding:8px 22px; font-size:13px; align-items:center; gap:10px } #updateBar.show { display:flex } #updateBar button { padding:4px 10px; font-size:12px; color:#1d2140; border-color:#1d2140; background:transparent; box-shadow:none } #updateBar .grow { flex:1 }
 .srcList { display:flex; flex-direction:column; gap:6px } .srcRow { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; font-size:13px; background:var(--card); border:2px solid var(--line); border-radius:8px; padding:6px 10px }
-.srcRow > * { min-width:0 } .srcRow img.soonArt { width:40px; height:40px; object-fit:cover; border-radius:6px } .srcRow .lab { font-weight:600; overflow-wrap:anywhere }
+.srcRow > * { min-width:0 } .pickq { display:grid; grid-template-columns:auto 1fr; gap:8px 12px; align-items:center; margin-bottom:10px } .pickq select { width:100% } .emblem { vertical-align:-3px; margin-right:6px } .credits { display:flex; flex-wrap:wrap; gap:8px } .credits a { display:inline-flex; align-items:center; gap:6px; padding:3px 10px 3px 3px; border:2px solid var(--line); border-radius:999px; font-size:13px; text-decoration:none; color:inherit } .credits img { border-radius:50% } .srcRow.two { grid-template-columns:auto 1fr auto auto } .srcRow img.soonArt { width:40px; height:40px; object-fit:cover; border-radius:6px } .srcRow .lab { font-weight:600; overflow-wrap:anywhere }
 .srcRow .row-acts { display:flex; gap:6px; align-items:center; flex-shrink:0 } .srcRow .u.wrap { white-space:normal; overflow-wrap:anywhere; line-height:1.4 } .srcRow .row-state { font-size:12px; margin-top:2px } .srcRow .row-state:empty { display:none } .srcRow .u { color:var(--muted); font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
 .addGame { display:flex; flex-direction:column; gap:8px; background:var(--card); border:2px solid var(--line); border-radius:10px; padding:12px }
 .addSrc { display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center } .addSrc select { width:auto }
@@ -125,6 +125,10 @@ button.gold, button[aria-pressed="true"].pick { background:var(--gold); border-c
 button:disabled { opacity:.5; cursor:not-allowed; box-shadow:none }
 .actions { display:flex; gap:8px; flex-wrap:wrap }
 #log { flex:1; min-height:160px; margin:0; background:var(--log); color:var(--logfg); border-radius:10px; padding:12px 14px; font:12.5px/1.5 var(--mono); overflow:auto; white-space:pre-wrap }
+.loadingGames { text-align:center; padding:56px 16px } .loadingGames .sub { max-width:440px; margin:6px auto 0 }
+.spinner { display:inline-block; width:34px; height:34px; border:3px solid var(--line, #ccc); border-top-color:var(--gold, currentColor); border-radius:50%; animation:spin 0.9s linear infinite }
+@keyframes spin { to { transform:rotate(360deg) } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration:3s } }
 .status { font-size:13px; min-height:18px } #catalogStatus:empty { display:none } .ok { color:var(--ok) } .bad { color:var(--bad) }
 
 .check { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600 } .check input { width:16px; height:16px }
@@ -169,6 +173,8 @@ button.small { padding:4px 10px; font-size:12.5px; border-width:2px }
 .badge.unknown, .badge.src, .badge.none, .badge.ai { color:var(--muted) } .badge.latest, .badge.inst { color:var(--ok) } .badge.prerelease { color:#a15b00 } .badge.upd { color:var(--fg) }
 hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
 .view .foot { display:flex; gap:8px; align-items:center; flex-wrap:wrap; border-top:2px solid var(--line); padding-top:12px } .view .foot .n { flex:1; font:500 12.5px var(--mono); color:var(--muted) }
+.phoneShots { display:flex; gap:14px; overflow-x:auto; padding:6px 2px 12px } .phoneShots img { border-radius:18px; border:2px solid var(--line); flex:none; height:404px; width:auto }
+.phoneWhy { line-height:1.6; margin:6px 0 14px }
 </style>
 </head>
 <body>
@@ -177,10 +183,11 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   <button type="button" data-nav="browse" class="active">Browse Games</button>
   <button type="button" data-nav="new">New Games</button>
   <button type="button" data-nav="foryou">Games You May Like</button>
-  <button type="button" data-nav="soon">Coming Soon</button>
+  <button type="button" data-nav="soon">Coming Soon <span id="soonBadge" class="badge upd" hidden></span></button>
   <hr>
   <button type="button" data-nav="library">Installed Games</button>
   <button type="button" data-nav="devices">Phones And Headsets</button>
+  <button type="button" data-nav="phoneapp">iPhone App</button>
   <hr>
   <button type="button" data-nav="setup">Install From GitHub</button>
   <hr>
@@ -190,6 +197,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   <button type="button" data-nav="admin" id="adminNav" hidden>Admin <span id="adminBadge" class="badge upd" hidden></span></button>
   <div class="spacer"></div>
   <div class="ver" id="appVersion"></div>
+  <button type="button" class="ver verlink" id="whatsNewBtn">What's New</button>
 </nav>
 <main>
   <div id="offlineBanner" class="banner" role="status" hidden>You're offline. Browse shows the last catalog it saw; Installed Games, Play, Saves and Roll Back all work. Setting a game up needs the internet to download it.</div>
@@ -231,6 +239,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     <div id="packUpdates" class="addGame" hidden role="region" aria-label="Mod and texture pack updates"></div>
     <div id="launchFail" class="addGame" hidden role="alert"></div>
     <div id="continueHero"></div>
+    <div id="thankBanner" class="addGame" hidden role="region" aria-label="Thank the people who made a game"></div>
     <div id="txPanel" class="addGame" hidden>
       <div id="txReceive" hidden><strong>Receiving</strong> <span class="sub">into the Install Folder. On the other computer choose "Send To Another Computer…" and enter:</span><div class="row" style="margin-top:6px"><code id="txAddr" style="font-size:16px"></code><span class="sub">code</span><code id="txCode" style="font-size:20px;font-weight:700"></code><span style="flex:1"></span><button id="txStopRx" type="button">Stop</button></div></div>
       <div id="txSend" hidden><strong>Send</strong> <span class="sub">the selected games to a computer that's showing a receive code.</span>
@@ -307,6 +316,31 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     <div id="devCards"></div>
   </section>
 
+  <section id="phoneapp" class="view" data-view="phoneapp" aria-label="Decomp Buddy Remote, the iPhone app">
+    <div><h1>Decomp Buddy Remote</h1><p class="sub">The iPhone app for Decomp Buddy. Browse every game from the couch, install them on this computer, update them and start them, all from your phone.</p></div>
+    <div class="phoneShots" role="list" aria-label="Screenshots of the iPhone app">
+      <img role="listitem" src="phoneapp/01-browse.png" alt="Browse: every game in the catalog, with search and a console filter" width="186" height="404">
+      <img role="listitem" src="phoneapp/02-game.png" alt="A game's page with Install On Living Room PC and Add To Wishlist" width="186" height="404">
+      <img role="listitem" src="phoneapp/03-library.png" alt="Library: games installed on the computer, with Play, Update and Back Up Saves" width="186" height="404">
+      <img role="listitem" src="phoneapp/05-computers.png" alt="Computers: the paired computers to choose from" width="186" height="404">
+    </div>
+    <ul class="phoneWhy">
+      <li><strong>Install from the couch.</strong> Find a game on your phone and it sets up on this computer.</li>
+      <li><strong>Play, update and back up saves</strong> for anything installed here.</li>
+      <li><strong>Private.</strong> It only talks to your computers over your home Wi-Fi. No account, nothing through the internet.</li>
+    </ul>
+    <div class="addGame" role="region" aria-label="Get the iPhone app">
+      <strong>Get The App</strong>
+      <p class="sub" id="phoneStoreNote">Coming soon to the App Store.</p>
+      <button type="button" id="phoneStore" class="primary" hidden>Get It On The App Store</button>
+    </div>
+    <div class="addGame" role="region" aria-label="Connect your iPhone">
+      <strong>Connect Your iPhone</strong>
+      <p class="sub">Open Decomp Buddy Remote on your iPhone, go to Computers, tap Pair, and point it at this code.</p>
+      <label class="check"><input id="phoneOn2" type="checkbox"> Let My Phone Control Decomp Buddy</label>
+      <div id="phonePair2" hidden><img id="phoneQr2" alt="Pairing code for Decomp Buddy Remote" width="220" height="220"><p class="sub" id="phoneInfo2" role="status" aria-live="polite"></p></div>
+    </div>
+  </section>
   <section id="newgames" class="view" data-view="new" aria-label="New games">
     <div class="head">
       <div><h1>New Games</h1><p class="sub">The newest additions to the catalog, newest first.</p></div>
@@ -328,6 +362,8 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div><h1>Coming Soon</h1><p class="sub">Games people are decompiling or porting that don't have a Windows, Mac or Linux download yet. When one does, it moves to Browse Games by itself.</p></div>
       <div class="actions"><button id="soonRefresh" type="button">Refresh</button></div>
     </div>
+    <div id="nowPlayable" class="addGame" hidden aria-live="polite"><label>Now Playable</label><p class="sub">Games you asked to hear about. They can be played on a computer now.</p><div id="nowPlayableList" class="srcList"></div></div>
+    <p class="sub">Tap Notify Me on any game below and Decomp Buddy tells you the day it can be played. Nothing is sent anywhere: this computer just remembers.</p>
     <div class="toolbar">
       <input id="soonSearch" type="text" placeholder="Search title or project" autocomplete="off" spellcheck="false" aria-label="Search">
       <select id="soonConsole" aria-label="Console"></select>
@@ -362,7 +398,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   <section id="browse" class="view active" data-view="browse" aria-label="Game browser">
     <div class="head">
       <div><h1>Browse Games</h1><p class="sub"><span id="catalogMeta"></span></p></div>
-      <div class="actions"><button id="addGameBtn" type="button">Suggest A Decomp</button><button id="updatesBtn" type="button" title="Compare what's installed with the catalogs">Check For Updates</button><button id="catalogRefresh" type="button">Refresh</button></div>
+      <div class="actions"><button id="pickBtn" class="primary" type="button">What Should I Play?</button><button id="addGameBtn" type="button">Suggest A Decomp</button><button id="updatesBtn" type="button" title="Compare what's installed with the catalogs">Check For Updates</button><button id="catalogRefresh" type="button">Refresh</button></div>
     </div>
     <div class="toolbar">
       <input id="catSearch" type="text" placeholder="Search title or project" autocomplete="off" spellcheck="false" aria-label="Search">
@@ -372,10 +408,12 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     </div>
     <div id="moreFilters" class="filters" hidden>
       <select id="catStatus" aria-label="Status"><option value="">All Statuses</option><option value="latest">Latest</option><option value="prerelease">Pre-release</option></select>
-      <select id="catSource" aria-label="Source"><option value="">All Sources</option><option value="portsdr">portsdr.com</option><option value="alexbeav">alexbeav.github.io</option><option value="finds">Individual Finds</option><option value="local-finds">Added By You</option></select>
+      <select id="catSource" aria-label="Source"><option value="">All Sources</option><option value="local-finds">Added By You</option></select>
       <label class="check"><input id="catPlayable" type="checkbox"> Playable Only</label>
       <label class="check"><input id="catMine" type="checkbox"> Games I Have Files For</label>
       <label class="check"><input id="catRunsWell" type="checkbox"> Runs Well On Computers Like Mine</label>
+      <label for="catList">List</label><select id="catList" style="width:auto"><option value="">Any</option></select>
+      <label for="catFeature">What It Adds</label><select id="catFeature" style="width:auto"><option value="">Any</option><option value="fps60">60 FPS</option><option value="widescreen">Widescreen</option><option value="hd">HD</option><option value="raytracing">Ray Tracing</option><option value="mods">Mods</option><option value="online">Online Play</option><option value="coop">Local Multiplayer</option></select>
       <label for="catAI">AI Use</label><select id="catAI" style="width:auto"><option value="">Any</option><option value="none">No AI Used</option><option value="assisted">AI-Assisted</option><option value="generated">Made With AI</option><option value="unsaid">Doesn't Say</option></select>
       <label class="check"><input id="catInstalled" type="checkbox"> Installed Only</label>
       <label class="check"><input id="catWish" type="checkbox"> Wishlist</label>
@@ -549,7 +587,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       </div>
       <div>
         <label>Game Updates</label>
-        <p class="sub">Decomp Buddy checks your installed games for new versions. A new version only shows up after it's been out 48 hours and passed the malware scan.</p>
+        <p class="sub">Decomp Buddy checks your installed games for new versions. A new version shows up as soon as it has passed the malware scan.</p>
         <div class="row" style="flex-wrap:wrap;gap:12px">
           <div><label for="updSchedule">Check For Updates</label><select id="updSchedule" style="width:auto"><option value="off">Only When I Open Decomp Buddy</option><option value="15m">Every 15 Minutes</option><option value="1h">Every Hour</option><option value="6h">Every 6 Hours</option><option value="daily">Once A Day</option></select></div>
         </div>
@@ -631,6 +669,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <p><a class="support" href="#" id="supportLink">Support Maddie's Work</a></p>
       <p class="sub"><a href="#" data-ext="https://github.com/TanookiStudios/decomp-buddy">Star Decomp Buddy On GitHub</a></p>
       <p class="sub">It's free, and it helps other people find the app.</p>
+      <p class="sub"><a href="#" data-ext="https://www.reddit.com/r/DecompBuddy/">Join r/DecompBuddy On Reddit</a></p>
       <div class="sig" role="img" aria-label="Signed, Maddie">
           <svg viewBox="0 0 330 116" style="width:clamp(190px,34vw,270px); height:auto; overflow:visible; display:block; color:currentColor" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
             <g transform="rotate(-4 160 66) skewX(-8)">
@@ -747,6 +786,34 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   </div>
 </div>
 <audio id="lookMusic" loop preload="auto" hidden></audio>
+<div id="whatsNew" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="whatsNewTitle">
+  <div class="modal-box wn">
+    <h2 id="whatsNewTitle">What's New In Decomp Buddy</h2>
+    <div id="whatsNewBody" class="wnbody" tabindex="0"></div>
+    <div class="actions"><button id="whatsNewClose" class="primary" type="button">Got It</button></div>
+  </div>
+</div>
+<div id="phoneAd" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="phoneAdTitle">
+  <div class="modal-box">
+    <img src="phoneapp/01-browse.png" alt="" style="width:120px;border-radius:14px">
+    <h2 id="phoneAdTitle" style="margin:10px 0 6px;font-size:20px">Decomp Buddy On Your iPhone</h2>
+    <p class="sub" style="font-size:14px;line-height:1.55">Browse games from the couch, install them on this computer, and start them from your phone. Free, and it never leaves your home Wi-Fi.</p>
+    <div class="actions" style="margin-top:14px"><button id="phoneAdGo" class="primary" type="button">Take A Look</button><button id="phoneAdLater" type="button">Not Now</button></div>
+  </div>
+</div>
+<div id="pickDlg" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+  <div class="modal-box wn">
+    <h2 id="pickTitle">What Should I Play?</h2>
+    <div class="pickq">
+      <label for="pickConsole">Which console?</label><select id="pickConsole"></select>
+      <label for="pickHow">How do you want to play?</label><select id="pickHow"><option value="alone">On My Own</option><option value="together">With Friends On One Screen</option><option value="online">Online</option></select>
+      <label for="pickMatters">What matters most?</label><select id="pickMatters"><option value="">Surprise Me</option><option value="looks">Looks Great On My Screen</option><option value="complete">Plays Start To Finish</option><option value="deck">Works On Steam Deck</option></select>
+    </div>
+    <p class="sub" id="pickNote" role="status" aria-live="polite"></p>
+    <div id="pickOut" class="srcList"></div>
+    <div class="actions"><button id="pickGo" class="primary" type="button">Show Me</button><button id="pickClose" type="button">Close</button></div>
+  </div>
+</div>
 <div id="nudge" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="nudgeTitle">
   <div class="modal-box">
     <img src="icon.png" alt="" style="width:56px;height:56px;border-radius:14px">

@@ -17,7 +17,7 @@ RUN=$(gh run list -R "$BUILD_REPO" --workflow flatpak.yml --limit 5 --json datab
 [[ -n "$RUN" && "$RUN" != null ]] || { echo "✗ couldn't find the Flatpak build for $SHA"; exit 1; }
 gh run watch "$RUN" -R "$BUILD_REPO" --exit-status >/dev/null || { echo "✗ the Flatpak build failed: https://github.com/$BUILD_REPO/actions/runs/$RUN"; exit 1; }
 D=$(mktemp -d); gh run download "$RUN" -R "$BUILD_REPO" -D "$D"
-F=$(find "$D" -name "*.flatpak" | head -1); [[ -s "$F" ]] || { echo "✗ the build made no .flatpak"; exit 1; }
+F=$(find "$D" -type f -name "*.flatpak" | head -1); [[ -s "$F" ]] || { echo "✗ the build made no .flatpak"; exit 1; }
 [[ "$(head -c 7 "$F")" == "flatpak" ]] || { echo "✗ that file isn't a Flatpak bundle"; exit 1; }
 cp "$F" "$D/Decomp.Buddy-x86_64.flatpak"; cp "$F" "$D/Decomp.Buddy-${TAG#v}-x86_64.flatpak"
 gh release upload "$TAG" "$D/Decomp.Buddy-x86_64.flatpak" "$D/Decomp.Buddy-${TAG#v}-x86_64.flatpak" -R "$REL_REPO" --clobber

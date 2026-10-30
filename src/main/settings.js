@@ -32,7 +32,7 @@ ipcMain.handle("settings:get", async () => {
     moveFiles: s.moveFiles !== false, platform: process.platform,
     provider: id, model: saved.model || PRESETS[id]?.defaultModel || "", baseUrl: saved.baseUrl || PRESETS[id]?.baseUrl || "",
     hasKey: !!decrypt(saved), version: VERSION, hasGithubToken: !!githubToken(s), lang: s.lang || "system", langs: LANGS, osLang: app.getLocale(),
-    theme: s.theme || "system", preferBoxart: !!s.preferBoxart, showAdultMods: !!s.showAdultMods, sawLegal: !!s.sawLegal, sawWhere: !!s.sawWhere, setupCount: s.setupCount || 0, nudgedAt: s.nudgedAt || [], collapsedGroups: s.collapsedGroups || [], vault: readVault(vaultDir()),
+    theme: s.theme || "system", preferBoxart: !!s.preferBoxart, showAdultMods: !!s.showAdultMods, sawLegal: !!s.sawLegal, sawWhere: !!s.sawWhere, setupCount: s.setupCount || 0, nudgedAt: s.nudgedAt || [], launches: s.launches || 0, phoneAdShown: !!s.phoneAdShown, whatsNewPending: s.whatsNewSince !== undefined, collapsedGroups: s.collapsedGroups || [], vault: readVault(vaultDir()),
     wishlist: s.wishlist || {}, mine: s.mine || {}, digest: s.digest || null, startCouch: !!s.startCouch, countSetups: s.countSetups ?? null, libraryFolders: s.libraryFolders || [], steamAvailable: !!steamDir(),
     discoverSubs: s.discoverSubs || REDDIT_SUBS, discoverChannels: s.discoverChannels || [],
     githubRate: githubRate.limit ? { ...githubRate } : null, uiScale: s.uiScale || 1, shareStats: s.shareStats === true, padMap: s.padMap || {}, padNintendo: !!s.padNintendo, updateSchedule: s.updateSchedule || "off", autoUpdateAll: !!s.autoUpdateAll, runInBackground: !!s.runInBackground, startAtLogin: !!s.startAtLogin, look: cleanLook(s.look),
@@ -51,7 +51,7 @@ ipcMain.handle("settings:get", async () => {
     presets: Object.fromEntries(Object.entries(PRESETS).filter(([k]) => k !== "apple").map(([k, p]) => [k, { label: p.label, baseUrl: p.baseUrl, noKey: !!p.noKey, custom: k === "custom" }])),
   };
 });
-ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSchedule, autoUpdateAll, runInBackground, startAtLogin, uiScale, appleAI, apiKey, installDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, githubToken, lang, preferBoxart, showAdultMods, mine, digest, startCouch, look }) => {
+ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSchedule, autoUpdateAll, runInBackground, startAtLogin, uiScale, appleAI, apiKey, installDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, launches, phoneAdShown, githubToken, lang, preferBoxart, showAdultMods, mine, digest, startCouch, look }) => {
   const s = loadSettings();
   // Make It Yours: patch-merged; null resets it (and deletes the copied picture and music).
   if (look !== undefined) saveLook(s, look && { ...s.look, ...look });
@@ -69,6 +69,8 @@ ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSch
   if (lang !== undefined) s.lang = lang === "system" || LANGS[lang] ? lang : "system";
   if (githubToken !== undefined) { if (githubToken) s.github = encrypt(githubToken); else delete s.github; applyGitHubToken(githubToken); }
   if (nudgedAt) s.nudgedAt = nudgedAt;
+  if (Number.isInteger(launches) && launches >= 0) s.launches = launches;
+  if (phoneAdShown !== undefined) s.phoneAdShown = !!phoneAdShown;
   if (discoverSubs) s.discoverSubs = discoverSubs.map((x) => String(x).trim().replace(/^r\//, "")).filter(Boolean);
   if (discoverChannels) s.discoverChannels = discoverChannels.map((x) => String(x).trim()).filter(Boolean);
   if (wishlist) s.wishlist = wishlist;

@@ -43,3 +43,14 @@ test("triage: GitLab links become gitlab:owner/repo, GitHub links stay owner/rep
   assert.equal(queueKey("https://github.com/HarbourMasters/Shipwright.git"), "HarbourMasters/Shipwright");
   assert.equal(queueKey("mstan/SuperMarioRPGRecomp"), "mstan/SuperMarioRPGRecomp");
 });
+
+test("applyAdminActions: remove hides a game (keeping a Coming Soon entry to bring back); restore undoes it", async () => {
+  const { applyAdminActions } = await import("../scripts/triage.mjs");
+  const w = { games: [{ repo: "a/soon", title: "Soon" }], hidden: [{ repo: "a/tool", reason: "A tool" }] };
+  applyAdminActions(w, [{ action: "remove", repo_key: "github:a/soon", title: "Soon" }, { action: "remove", repo_key: "gitlab:b/live", title: "Live" }]);
+  assert.deepEqual(w.games, []);
+  assert.deepEqual(w.hidden.map((h) => [h.repo, h.host, h.reason, !!h.was]), [["a/tool", undefined, "A tool", false], ["a/soon", undefined, "Removed by Maddie", true], ["b/live", "gitlab", "Removed by Maddie", false]]);
+  applyAdminActions(w, [{ action: "restore", repo_key: "github:a/soon" }, { action: "restore", repo_key: "gitlab:b/live" }]);
+  assert.deepEqual(w.games, [{ repo: "a/soon", title: "Soon" }]);
+  assert.deepEqual(w.hidden, [{ repo: "a/tool", reason: "A tool" }]);   // someone else's "not listed" is never touched
+});

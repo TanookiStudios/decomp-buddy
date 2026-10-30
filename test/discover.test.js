@@ -63,11 +63,12 @@ test("unbaked.games: open-source PC originals are left out, ports of PC games st
   assert.equal(openSourceOriginal({ platform: "PS1", methods: ["Static recomp"] }), false);
 });
 
-test("awesome lists: games from the decomp list's data and the PC-ports README; tools, browser ports and the lists themselves left out", async () => {
+test("awesome lists: games from the decomp list's data and the two READMEs, once each; tools, browser ports and the lists themselves left out", async () => {
   const { scanAwesomeLists } = await import("../src/discover.js");
   const fetch = async (u) => ({ ok: true, json: async () => ({ games: [{ repo: "a/port", type: "source-port", title: "A" }, { repo: "b/tool", type: "tool" }, { repo: "c/web", type: "browser-port" }] }),
-    text: async () => "see https://github.com/d/recomp and https://github.com/Sebastrion/awesome-unofficial-pc-ports and https://github.com/TanookiStudios/decomp-buddy" });
-  assert.deepEqual((await scanAwesomeLists({ fetch })).map((c) => c.repo), ["a/port", "d/recomp"]);
+    text: async () => /Game-Decompilations/.test(u) ? "- [E](https://github.com/e/decomp) - [D](https://github.com/D/recomp) - [F](https://gitlab.com/f/port) [list](https://github.com/SamidyFR/Game-Decompilations)"
+      : "see https://github.com/d/recomp and https://github.com/Sebastrion/awesome-unofficial-pc-ports and https://github.com/TanookiStudios/decomp-buddy" });
+  assert.deepEqual((await scanAwesomeLists({ fetch })).map((c) => c.repo), ["a/port", "d/recomp", "e/decomp", "gitlab:f/port"]);
 });
 
 test("recomp.fyi: every GitHub and GitLab repo on the page, once; a near-empty page is an error", async () => {

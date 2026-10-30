@@ -8,9 +8,10 @@ import { hostOf } from "../src/hosts.js";
 const FILE = path.join(os.homedir(), ".decomp-buddy-scan", "releases-cache.json"), HOUR = 3600e3;
 let mem = null, dirty = false;
 const load = () => { if (!mem) { try { mem = JSON.parse(fs.readFileSync(FILE, "utf8")); } catch { mem = {}; } } return mem; };
-export async function releasesOf(host, owner, repo) {
+// fresh: skip the cache (a nightly rebuilt under the same name has a new checksum within the hour).
+export async function releasesOf(host, owner, repo, { fresh = false } = {}) {
   const c = load(), k = `${host}:${owner}/${repo}`.toLowerCase(), hit = c[k];
-  if (hit && Date.now() - hit.at < HOUR) return hit.releases;
+  if (hit && !fresh && Date.now() - hit.at < HOUR) return hit.releases;
   const releases = await hostOf(host).releases({ owner, repo });
   c[k] = { at: Date.now(), releases }; dirty = true;
   return releases;

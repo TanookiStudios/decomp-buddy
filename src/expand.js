@@ -52,12 +52,15 @@ export function attachFacts(games, pub) {
     const entry = g.owner && pub?.plans?.[planKey(g.repoHost || "github", g.owner, g.repo)];
     g.facts = entry?.facts || null;
     g.scan = entry ? scanSummary(entry) : null;
-    // The version Decomp Buddy installs is the published one; a newer release waits its 48 hours and scan
+    g.trust = entry?.trust || null;
+    g.recommended = entry?.recommended || null;
+    g.credits = entry?.credits?.people?.length ? entry.credits.people : null;
+    // The version Decomp Buddy installs is the published one; a newer release waits for its scan
     // (scripts/follow.mjs) before it shows as an update. Collections already carry their own per-game tag.
     const tag = !g.repoGames && publishedTag(entry);
     if (tag) g.publishedTag = tag;
     if (tag && tag !== g.version) { g.latestVersion = g.version; g.version = tag; }
-    const planned = Object.keys(entry?.targets || {}).map((t) => PLATFORM_OF_TARGET[t]).filter(Boolean);
+    const planned = Object.entries(entry?.targets || {}).filter(([, t]) => !(t?.games?.length && t.games.every((gm) => gm.build?.gone))).map(([t]) => PLATFORM_OF_TARGET[t]).filter(Boolean);
     if (planned.length) g.platforms = [...new Set([...(g.platforms || []), ...planned])];
   }
   return games;

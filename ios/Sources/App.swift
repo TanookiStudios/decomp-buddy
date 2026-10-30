@@ -6,6 +6,11 @@ struct DecompBuddyRemoteApp: App {
     @State private var remote = RemoteStore()
     @State private var pairError: String?
 
+    init() {
+        // Room for every game's artwork, so scrolling back up never reloads it.
+        URLCache.shared = URLCache(memoryCapacity: 64 << 20, diskCapacity: 512 << 20)
+    }
+
     var body: some Scene {
         WindowGroup {
             TabView {

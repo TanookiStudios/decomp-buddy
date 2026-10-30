@@ -4,7 +4,7 @@
 
 const AI = String.raw`(?:\bai\b|a\.i\.|artificial intelligence|claude(?: code)?|chat ?gpt|\bgpt-?\d|openai|codex|copilot|gemini|llms?\b|large language models?)`;
 // The README sentence that says it (trimmed to one sentence, up to 220 characters).
-function sentenceAround(text, index) {
+export function sentenceAround(text, index) {
   // A period only ends a sentence when a space or the end follows ("v0.9" and "claude.ai" don't).
   const stop = (from, back) => { const re = /\.(?=\s|$)|\n/g; let last = -1; if (back) { for (const m of text.slice(0, from).matchAll(re)) last = m.index; return last; } re.lastIndex = from; const m = re.exec(text); return m ? m.index : -1; };
   const start = stop(index, true) + 1;

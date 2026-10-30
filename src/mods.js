@@ -69,11 +69,11 @@ export async function downloadPack(gameFolder, url, { log = () => {}, name: give
 }
 // Archives: unpack, then hand the contents over as items - single mod files become files,
 // anything else (PNG packs, multi-file packs) becomes one folder item named after the archive.
-export function unpackIntoMods(gameFolder, dest, { log = () => {} } = {}) {
+export async function unpackIntoMods(gameFolder, dest, { log = () => {} } = {}) {
   const dir = path.dirname(dest), name = path.basename(dest);
   if (ARCHIVE.test(name)) {
     const unpacked = path.join(dir, name.replace(ARCHIVE, ""));
-    try { const n = extractZip(dest, unpacked); log(`Unpacked ${n} item(s).`); } catch (err) { log(`Left packed (${err.message}).`); return dest; }
+    try { const n = await extractZip(dest, unpacked); log(`Unpacked ${n} item(s).`); } catch (err) { log(`Left packed (${err.message}).`); return dest; }
     const all = walk(unpacked);
     const modFiles = all.filter((f) => MOD_EXT.test(f) && !ARCHIVE.test(f));
     // Readmes and Thunderstore's package metadata (manifest.json, icon.png) don't stop a pack of plain mod files being plain files.
