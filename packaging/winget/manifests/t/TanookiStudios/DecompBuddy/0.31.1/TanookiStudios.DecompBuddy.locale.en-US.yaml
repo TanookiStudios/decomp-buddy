@@ -1,0 +1,22 @@
+# Created by scripts/packages.mjs
+PackageIdentifier: TanookiStudios.DecompBuddy
+PackageVersion: 0.31.1
+PackageLocale: en-US
+Publisher: Tanooki Studios LLC
+PublisherUrl: https://tanookistudios.com/
+PackageName: Decomp Buddy
+PackageUrl: https://decompbuddy.com/
+License: GPL-3.0-or-later
+LicenseUrl: https://github.com/TanookiStudios/decomp-buddy/blob/HEAD/LICENSE
+ShortDescription: Finds, installs and updates fan-made PC ports of classic games, using your own game files.
+Description: Decomp Buddy is a free, open source launcher for decompilations, recompilations and fan-made PC ports. It downloads each project straight from its own releases, checks your own copy of the game is the right version, sets everything up, and keeps it updated with your saves backed up. It never downloads games.
+Tags:
+- games
+- game-launcher
+- decompilation
+- recompilation
+- pc-ports
+- steam-deck
+ReleaseNotesUrl: https://decompbuddy.com/changelog
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0
