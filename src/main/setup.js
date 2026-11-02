@@ -108,6 +108,60 @@ ipcMain.handle("analyze", async (e, { urls }) => {
   } finally { state.busy = false; }
 });
 
+// Install When Online: a set-up that failed only because there was no internet is kept here and runs again when the
+// connection is back (the renderer calls queue:run on its "online" event, and once at start). The game files you
+// picked stay where they are until then - a set-up places them only after its download arrives.
+const queueFile = () => path.join(app.getPath("userData"), "install-queue.json");
+export const readQueue = () => { try { return JSON.parse(fs.readFileSync(queueFile(), "utf8")); } catch { return []; } };
+const writeQueue = (q) => { fs.writeFileSync(`${queueFile()}.tmp`, JSON.stringify(q)); fs.renameSync(`${queueFile()}.tmp`, queueFile()); };
+const NET = /fetch failed|ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|ETIMEDOUT|ENETUNREACH|network|aborted due to timeout/i;
+const queueKey = (j) => `${j.url}|${gameFolderName(j.plan)}`.toLowerCase();
+
+async function runJobs(jobs, { s, mode, outDir, log }) {
+  // Updating a game that's already here? Back its saves up first (locations from the published facts).
+  const isNew = jobs.map((j) => !fs.existsSync(path.join(outDir, gameFolderName(j.plan), "decomp-buddy.json")));
+  for (const j of jobs) {
+    const folder = path.join(outDir, gameFolderName(j.plan));
+    if (!fs.existsSync(path.join(folder, "decomp-buddy.json"))) continue;
+    try { const sv = await savesOf(folder); if (sv.paths.length) await backupSaves(folder, sv.paths, { reason: "before-update", log }); } catch (err) { log(`  couldn't back up saves for ${j.plan.game_title}: ${err.message}`); }
+  }
+  setupCtrl = new DownloadCtrl();
+  const offline = () => new Error("No internet right now. This game installs by itself as soon as you're back online - Installed Games shows it waiting.");
+  const out = await setupBatch(jobs, { outDir, mode, log, keep: [...(s.romFolders || []), vaultDir(), ...storeDirs()], ctrl: setupCtrl }).finally(() => { setupCtrl = null; });
+  // No internet: the game waits in the queue instead of failing (only a download needs the connection).
+  // Out of the queue: set up, or failed for a reason more internet won't fix (that one says why in the results).
+  const q = readQueue().filter((e) => !jobs.some((j, i) => queueKey(j) === e.key && (out.results[i]?.ok || !NET.test(out.results[i]?.error || ""))));
+  out.results.forEach((r, i) => {
+    if (r.ok || !NET.test(r.error || "")) return;
+    const { readme: _r, docs: _d, tree: _t, ...ctx } = jobs[i].ctx || {}, key = queueKey(jobs[i]);
+    if (!q.some((e) => e.key === key)) q.push({ key, url: jobs[i].url, plan: jobs[i].plan, ctx, picks: jobs[i].picks || {}, verifications: jobs[i].verifications || {}, target: jobs[i].target, artworkPath: jobs[i].artworkPath || null, title: jobs[i].plan.game_title, console: jobs[i].plan.console, queuedAt: new Date().toISOString() });
+    r.queued = true; r.error = offline().message;
+  });
+  writeQueue(q);
+  out.results.forEach((r, i) => { if (r.ok) state.pending.delete(jobs[i].id); });
+  countSetups(jobs.filter((_j, i) => out.results[i]?.ok && isNew[i])); // new games only - an update isn't a new set-up
+  const okCount = out.results.filter((r) => r.ok).length;
+  if (okCount) { const st = loadSettings(); st.setupCount = (st.setupCount || 0) + okCount; saveSettings(st); out.setupCount = st.setupCount; out.nudgedAt = st.nudgedAt || []; }
+  return out;
+}
+
+ipcMain.handle("queue:list", () => readQueue().map(({ key, title, console: c, queuedAt }) => ({ key, title, console: c, queuedAt })));
+ipcMain.handle("queue:remove", (_e, { key }) => { writeQueue(readQueue().filter((e) => e.key !== key)); return true; });
+// Back online (or started with games waiting): set the waiting games up now. Nothing to do, or busy: null.
+ipcMain.handle("queue:run", async (e) => {
+  const q = readQueue(); if (!q.length || kiosk.locked) return null;
+  if (state.busy) return { busy: true }; // another set-up is running: the renderer asks again shortly
+  state.busy = true;
+  const log = (m) => logTo(e.sender, m);
+  log(`--- Back online: setting up ${q.length} waiting game(s)`);
+  try {
+    const s = loadSettings(), mode = s.moveFiles === false ? "copy" : "move";
+    const jobs = q.map((x) => ({ ...x, id: x.key }));
+    const out = await runJobs(jobs, { s, mode, outDir: outDirFor(s, currentTarget(s)), log });
+    return { done: out.results.filter((r) => r.ok).length, waiting: readQueue().length, results: out.results.map((r, i) => ({ title: q[i].title, ok: r.ok, error: r.ok ? null : r.error })) };
+  } finally { state.busy = false; }
+});
+
 ipcMain.handle("setup", async (e, { items }) => {
   if (kiosk.locked) throw new Error("That is switched off in Kiosk Mode.");
   if (state.busy) throw new Error("Already working.");
@@ -131,22 +185,7 @@ ipcMain.handle("setup", async (e, { items }) => {
       if (overrides?.folder && overrides.folder.trim() && overrides.folder.trim() !== gameFolderName(it.plan)) it.plan.folder_name = overrides.folder.trim();
       return { ...it, picks: picks || {}, verifications: verifications || {} };
     });
-    // Updating a game that's already here? Back its saves up first (locations from the published facts).
-    const isNew = jobs.map((j) => !fs.existsSync(path.join(outDir, gameFolderName(j.plan), "decomp-buddy.json")));
-    for (const j of jobs) {
-      const folder = path.join(outDir, gameFolderName(j.plan));
-      if (!fs.existsSync(path.join(folder, "decomp-buddy.json"))) continue;
-      try { const sv = await savesOf(folder); if (sv.paths.length) await backupSaves(folder, sv.paths, { reason: "before-update", log }); } catch (err) { log(`  couldn't back up saves for ${j.plan.game_title}: ${err.message}`); }
-    }
-    setupCtrl = new DownloadCtrl();
-    const offline = () => new Error("You're offline - setting a game up downloads its build, so it needs the internet. Everything else (Installed Games, Play, Saves, Roll Back, Browse from cache) works now.");
-    const out = await setupBatch(jobs, { outDir, mode, log, keep: [...(s.romFolders || []), vaultDir(), ...storeDirs()], ctrl: setupCtrl }).finally(() => { setupCtrl = null; });
-    for (const r of out.results) if (!r.ok && /fetch failed|ENOTFOUND|EAI_AGAIN|ECONNREFUSED/i.test(r.error || "")) r.error = offline().message;
-    out.results.forEach((r, i) => { if (r.ok) state.pending.delete(jobs[i].id); });
-    countSetups(jobs.filter((_j, i) => out.results[i]?.ok && isNew[i])); // new games only - an update isn't a new set-up
-    const okCount = out.results.filter((r) => r.ok).length;
-    if (okCount) { const st = loadSettings(); st.setupCount = (st.setupCount || 0) + okCount; saveSettings(st); out.setupCount = st.setupCount; out.nudgedAt = st.nudgedAt || []; }
-    return out;
+    return await runJobs(jobs, { s, mode, outDir, log });
   } finally { state.busy = false; }
 });
 

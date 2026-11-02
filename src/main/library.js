@@ -3,6 +3,7 @@ import { app, BrowserWindow, ipcMain, dialog, nativeImage } from "electron";
 import fs from "node:fs";
 import path from "node:path";
 import { iconFor } from "../catalog.js";
+import { shrinkCover } from "./catalog.js";
 import { targetIsHost, TARGETS } from "../targets.js";
 import { addToVault, removeFromVault } from "../vault.js";
 import { steamDir, steamRunning, userConfigDir, installShortcut, selfSteamLaunch } from "../steam.js";
@@ -37,7 +38,7 @@ export async function listLibrary() {
     if (onDevice && !ready) ready = await (await import("./devices.js")).readySerials();
     const folder = path.join(dir, m.folder);
     let art = ART_NAMES.map((n) => path.join(folder, n)).find((p) => fs.existsSync(p)) || null;
-    if (!art && m.repo) { const cg = state.catalogGames.find((g) => g.owner && `${g.owner}/${g.repo}`.toLowerCase() === String(m.repo).toLowerCase()); if (cg) art = await iconFor(cg, { cacheDir: app.getPath("userData"), preferBoxart: !!s.preferBoxart }); }
+    if (!art && m.repo) { const cg = state.catalogGames.find((g) => g.owner && `${g.owner}/${g.repo}`.toLowerCase() === String(m.repo).toLowerCase()); if (cg) art = await iconFor(cg, { cacheDir: app.getPath("userData"), preferBoxart: !!s.preferBoxart, shrink: shrinkCover }); }
     const runsHere = targetIsHost(m.target || "windows");
     // A Windows copy on a Mac can still play through Wine (experimental) once Wine is set up.
     const canWine = compatHost(m);

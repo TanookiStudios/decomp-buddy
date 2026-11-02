@@ -12,5 +12,5 @@ out.all = versions(); out.allHasDates = [...document.querySelectorAll("#whatsNew
 out.headings = [...document.querySelectorAll("#whatsNewBody h2")].slice(0, 3).map((h) => h.textContent);
 $("whatsNewClose").click(); await wait(300);
 const ver = (await window.buddy.getSettings()).version;
-const startOk = want === "upgrade" ? out.shownAtStart && out.navInert && out.atStart.length === 1 && out.atStart[0] === `Version ${ver}` : !out.shownAtStart;
+const startOk = want === "upgrade" ? out.shownAtStart && out.navInert && out.atStart[0] === `Version ${ver}` && !out.atStart.includes("Version 0.30.7") : !out.shownAtStart;
 return { ok: startOk && out.pendingAfterClose === false && out.all.length >= 21 && out.all[0] === `Version ${ver}` && out.all.at(-1) === "Version 0.29.0" && out.allHasDates && $("whatsNew").hidden, want, ver, ...out, all: out.all.length };

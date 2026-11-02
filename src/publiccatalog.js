@@ -14,6 +14,7 @@ import { promoteReady, readWaiting, waitingFileNextTo, withoutExcluded } from ".
 import { stampListed } from "./listed.js";
 
 export const SCHEMA_VERSION = 1;
+export const APP_CATALOG = "app-catalog.json";
 const projectArt = (entry, g) => { for (const t of Object.values(entry?.targets || {})) for (const pg of t?.games || []) { const u = pg.artwork_url && artworkUrl(pg.artwork_url, g); if (u) return u; } return null; };
 
 // A list that only knew the repo's code name ("MediEvilRecomp", "conker64 recompiled") gets the game's own name from
@@ -91,6 +92,14 @@ export async function buildCatalog({ site = path.join(os.homedir(), "Documents/G
   const doc = { schema: SCHEMA_VERSION, generatedAt: new Date().toISOString(), count: out.length, sources: Object.fromEntries(Object.entries(cat.perSource || {}).map(([k, v]) => [k, { label: v.label || k, url: v.url || null, count: v.count || 0 }])), games: out };
   const file = path.join(dir, "catalog.json");
   const tmp = `${file}.tmp`; fs.writeFileSync(tmp, JSON.stringify(doc)); fs.renameSync(tmp, file);
+  // The same games as the app holds them, covers and facts included: the app downloads this one file (and ships a
+  // copy) instead of rebuilding the catalog on every computer. Nov 2026: that rebuild took 5-10 minutes on a fresh PC
+  // and spent its GitHub lookups on cover searches.
+  const listed = new Map(out.map((o) => [o.id, o.listedAt]));
+  const appDoc = { schema: SCHEMA_VERSION, generatedAt: doc.generatedAt, sources: doc.sources,
+    games: games.filter((g) => listed.has(g.id)).map((g) => ({ ...g, firstSeen: listed.get(g.id) ? `${listed.get(g.id)}T00:00:00.000Z` : null })) };
+  const afile = path.join(dir, APP_CATALOG);
+  fs.writeFileSync(`${afile}.tmp`, JSON.stringify(appDoc)); fs.renameSync(`${afile}.tmp`, afile);
   // Coming Soon gets covers from the same matchers, kept on each waiting.json entry so the website and the app can show them.
   const wfile = waitingFileNextTo(findsFile);
   if (fs.existsSync(wfile)) {

@@ -67,7 +67,9 @@ Read every pick for a title you know is risky (sequels, remakes, same-name games
 Wikipedia cover.
 
 ## 7. Publish
-`scripts/daily.sh publish` - builds, deploys both sites, checks the live catalog, IndexNow, commits and pushes.
+`scripts/daily.sh publish` - builds, deploys both sites, checks the live catalog, IndexNow, commits and pushes. The build
+also writes `app-catalog.json`, the finished list the app downloads (and ships a copy of, via scripts/release.sh)
+instead of building its own - so covers and steps published here are what every player sees within the hour.
 
 ## Final reply (Maddie reads this; she isn't a developer)
 Three or four plain sentences: how many new games went live (name the best two or three), how many moved to a new

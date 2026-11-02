@@ -52,6 +52,7 @@ export function defaultFindsFile() {
   return fs.existsSync(site) ? path.join(site, "decomp-buddy", "finds.json") : "";
 }
 export const plansFileFor = (s) => { const f = s.findsFile || defaultFindsFile(); return f ? path.join(path.dirname(f), "plans.json") : ""; };
+export const appCatalogFileFor = (s) => { const f = s.findsFile || defaultFindsFile(); return f ? path.join(path.dirname(f), "app-catalog.json") : ""; };
 export const sourcesFileFor = (s) => { const f = s.findsFile || defaultFindsFile(); return f ? path.join(path.dirname(f), "sources.json") : ""; };
 export function currentTarget(s) { return TARGETS[s.target] ? s.target : "windows"; }
 export const libraryDirs = (s) => [...new Set([s.installDir || defaultInstallDir(), s.transferDir || s.outDir || defaultTransferDir(), ...(s.libraryFolders || [])])].filter((d) => fs.existsSync(d));
@@ -64,6 +65,10 @@ globalThis.fetch = (input, init = {}) => {
   const url = typeof input === "string" ? input : input?.url || String(input);
   // Test hook: behave exactly like a machine with no network.
   if (process.env.DECOMP_OFFLINE && /^https?:/.test(url)) return Promise.reject(Object.assign(new TypeError("fetch failed"), { cause: { code: "ENOTFOUND" } }));
+  // Test hooks: every address asked for, one per line (so a test can count GitHub lookups); and terrible Wi-Fi,
+  // where nothing ever answers - only a request's own time limit ends it.
+  if (process.env.DECOMP_NETLOG) try { fs.appendFileSync(process.env.DECOMP_NETLOG, url + "\n"); } catch {}
+  if (process.env.DECOMP_SLOW && /^https?:/.test(url)) return new Promise((_r, rej) => init.signal?.addEventListener("abort", () => rej(init.signal.reason)));
   if (process.env.GITHUB_TOKEN && url.startsWith("https://api.github.com/")) {
     const h = new Headers(init.headers || {});
     if (!h.has("authorization")) h.set("authorization", `Bearer ${process.env.GITHUB_TOKEN}`);

@@ -291,7 +291,24 @@ $("whereChange").onclick = async () => { const dir = await window.buddy.chooseFo
 
 // ---------- Library ----------
 let library = [];
+// Install When Online: games set up without internet wait here, and go as soon as the connection is back.
+async function renderInstallQueue() {
+  const q = await window.buddy.queueList().catch(() => []);
+  $("installQueue").hidden = !q.length; if (!q.length) return;
+  $("installQueue").innerHTML = `<strong>Waiting For The Internet (${q.length})</strong><p class="sub">These install by themselves as soon as you're back online. Your game files stay where they are until then.</p>`
+    + q.map((x) => `<div class="row"><span translate="no">${esc(x.title)} · ${esc(x.console)}</span><span class="grow"></span><button type="button" class="small" data-unqueue="${esc(x.key)}" aria-label="Don't install ${esc(x.title)}">Don't Install</button></div>`).join("");
+  $("installQueue").querySelectorAll("[data-unqueue]").forEach((b) => { b.onclick = async () => { await window.buddy.queueRemove(b.dataset.unqueue); renderInstallQueue(); }; });
+}
+async function runInstallQueue() {
+  const r = await window.buddy.queueRun().catch(() => null);
+  if (r?.busy) return setTimeout(runInstallQueue, 30000);
+  const failed = (r?.results || []).filter((x) => !x.ok && !/No internet/.test(x.error || ""));
+  if (r?.done || failed.length) { await renderLibrary(); toast([r.done && `${r.done} waiting game(s) set up now that you're back online.`, ...failed.map((x) => `${x.title} couldn't be set up: ${x.error}`)].filter(Boolean).join(" ")); }
+  if (r?.waiting && navigator.onLine) setTimeout(runInstallQueue, 120000); // the connection dropped again mid-way
+  renderInstallQueue();
+}
 async function renderLibrary() {
+  renderInstallQueue();
   library = await window.buddy.libraryList();
   const wished = catalog.games.filter(isWished);
   const shelfOf = (items, title, tile) => items.length ? `<div class="shelf"><div class="shelf-title">${esc(title)}</div><div class="books">${items.map(tile).join("")}</div></div>` : "";
@@ -474,6 +491,19 @@ window.addEventListener("gamepadconnected", renderPad); window.addEventListener(
 
 const padNotes = (g) => { const c = catalog.games.find((x) => x.owner && g.repo && `${x.owner}/${x.repo}`.toLowerCase() === g.repo.toLowerCase()); return (c?.facts?.controller_notes || []).join(" · "); };
 
+// ---- Covers For Offline (Settings)
+$("coversSave").onclick = async () => {
+  if (!catalog.games.length) await loadCatalog({ refresh: false }).catch(() => {});
+  $("coversCancel").hidden = false; $("coversStatus").textContent = `Saving covers for ${catalog.games.length} games…`;
+  try {
+    const r = await window.buddy.coversSaveAll();
+    $("coversStatus").textContent = r.running ? "Already saving covers." : `${r.cancelled ? "Stopped" : "Done"}: ${r.done - r.missing} covers saved (${r.mb} MB)${r.missing ? `, ${r.missing} games have no cover to save` : ""}.`;
+  } catch (err) { $("coversStatus").textContent = `Couldn't save the covers: ${err.message.replace(/^.*Error: /, "")}`; }
+  $("coversCancel").hidden = true;
+};
+$("coversCancel").onclick = () => window.buddy.coversCancel();
+window.buddy.onCoversProgress((p) => { $("coversStatus").textContent = `Saving covers: ${p.done} of ${p.total}…`; });
+
 // ---- Offline banner
 const setOnline = () => { $("offlineBanner").hidden = navigator.onLine; };
 // News from the site (news.json), dismissed for good once closed.
@@ -486,7 +516,10 @@ async function showNews() {
 $("newsMore").onclick = (e) => { e.preventDefault(); if (newsItem?.url) window.buddy.openExternal(newsItem.url); };
 $("newsClose").onclick = async () => { if (newsItem) await window.buddy.newsDismiss(newsItem.id); $("newsBar").hidden = true; };
 setTimeout(showNews, 4000);
-window.addEventListener("online", setOnline); window.addEventListener("offline", setOnline); setOnline();
+// Back online: a catalog that couldn't refresh tries again by itself.
+window.addEventListener("online", () => { setOnline(); if (catalog.stale) loadCatalog({ refresh: true }).catch(() => {}); runInstallQueue(); });
+setTimeout(() => { if (navigator.onLine) runInstallQueue(); }, 8000); // started with games waiting
+window.addEventListener("offline", setOnline); setOnline();
 
 // ---- Saves
 let savesGame = null;
@@ -1181,9 +1214,10 @@ const STATUS_TEXT = { ready: "Ready", needs_build: "Needs build on PC", needs_at
 
 function showResults(results, active, warn) {
   const tile = (cls, name, sub) => `<div class="tile ${cls}"><span translate="no">${esc(name)}</span>${sub ? `<small>${esc(sub)}</small>` : ""}</div>`;
-  const ok = [], bad = [], skip = [];
+  const ok = [], bad = [], skip = [], waitingNet = [];
   results.forEach((r, i) => {
     const g = active[i];
+    if (r.queued) return waitingNet.push(tile("skip", `${g.game_title} · ${g.console}`, "Waiting for the internet - installs by itself when you're back online"));
     if (!r.ok) return bad.push(tile("bad", g.game_title, r.error));
     const m = r.manifest;
     const flagged = m.plan.game_files.filter((f) => f.verification?.status === "mismatch").length;
@@ -1194,8 +1228,8 @@ function showResults(results, active, warn) {
   games.filter((g) => !g.ok).forEach((g) => bad.push(tile("bad", g.url, g.error)));
   $("colOk").innerHTML = ok.join("") || `<p class="none">None</p>`;
   $("colBad").innerHTML = bad.join("") || `<p class="none">None</p>`;
-  $("colSkip").innerHTML = skip.join("") || `<p class="none">None</p>`;
-  $("resultsSummary").textContent = `${ok.length} set up, ${bad.length} failed, ${skip.length} skipped${warn ? ` · ${warn} game file(s) flagged, see install.html` : ""}.`;
+  $("colSkip").innerHTML = [...waitingNet, ...skip].join("") || `<p class="none">None</p>`;
+  $("resultsSummary").textContent = `${ok.length} set up, ${waitingNet.length ? `${waitingNet.length} waiting for the internet, ` : ""}${bad.length} failed, ${skip.length} skipped${warn ? ` · ${warn} game file(s) flagged, see install.html` : ""}.`;
   showView("results");
 }
 $("resultsBack").onclick = () => showView("setup");
@@ -1240,7 +1274,7 @@ async function loadCatalogNow({ refresh = true, checkInstalled = false } = {}) {
 async function applyCatalog() {
   await loadLists();
   $("catalogMeta").textContent = `${catalog.games.length} projects · updated ${fmtDate(catalog.fetchedAt)}`;
-  $("catalogStatus").textContent = catalog.stale ? `Showing the last saved catalog - couldn't refresh: ${catalog.error}` : "";
+  $("catalogStatus").textContent = catalog.stale ? `Showing the catalog from ${fmtDate(catalog.fetchedAt)} - ${catalog.error}. It refreshes by itself when the website answers again.` : "";
   $("catalogStatus").className = `status ${catalog.stale ? "bad" : ""}`;
   const counts = {};
   catalog.games.forEach((g) => { counts[g.console] = (counts[g.console] || 0) + 1; });

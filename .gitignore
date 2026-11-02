@@ -3,3 +3,7 @@ dist/
 .DS_Store
 .lint/
 build/apple-ai/
+
+# Copied in from the site by scripts/release.sh, shipped inside the app (src/appcatalog.js)
+/app-catalog.json
+/waiting.json

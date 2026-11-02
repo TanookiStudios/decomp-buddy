@@ -21,7 +21,8 @@ export async function fetchPublished({ file, cacheDir } = {}) {
   const cache = cacheDir && path.join(cacheDir, "plans-cache.json");
   try { if (cache && Date.now() - fs.statSync(cache).mtimeMs < DAY) return JSON.parse(fs.readFileSync(cache, "utf8")); } catch {}
   try {
-    const res = await fetch(PLANS_URL, { headers: { "User-Agent": "decomp-buddy" }, signal: AbortSignal.timeout(20_000), cache: "no-store" });
+    // With a copy already on disk, bad internet gets 8 seconds before that copy is used, not 30.
+    const res = await fetch(PLANS_URL, { headers: { "User-Agent": "decomp-buddy" }, signal: AbortSignal.timeout(cache && fs.existsSync(cache) ? 8_000 : 30_000), cache: "no-store" });
     if (res.ok) { const data = await res.json(); if (cache) { try { fs.mkdirSync(cacheDir, { recursive: true }); fs.writeFileSync(cache, JSON.stringify(data)); } catch {} } return data; }
   } catch {}
   try { if (cache) return JSON.parse(fs.readFileSync(cache, "utf8")); } catch {}

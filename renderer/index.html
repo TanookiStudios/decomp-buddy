@@ -200,7 +200,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   <button type="button" class="ver verlink" id="whatsNewBtn">What's New</button>
 </nav>
 <main>
-  <div id="offlineBanner" class="banner" role="status" hidden>You're offline. Browse shows the last catalog it saw; Installed Games, Play, Saves and Roll Back all work. Setting a game up needs the internet to download it.</div>
+  <div id="offlineBanner" class="banner" role="status" hidden>You're offline. Browse and Coming Soon show their saved lists; Installed Games, Play, Saves and Roll Back all work. Games you set up now wait and install by themselves when you're back online.</div>
   <div id="newsBar" class="banner news" role="status" hidden><span id="newsText"></span> <a href="#" id="newsMore" hidden>Read More</a><button id="newsClose" type="button" class="small" aria-label="Dismiss this news">Dismiss</button></div>
   <div id="updateBar" role="status"><span id="updateText"></span><span class="grow"></span><button id="updateGet" type="button">Download</button><button id="updateLater" type="button">Later</button></div>
   <section id="setup-view" class="view" data-view="setup" aria-label="Install from GitHub">
@@ -237,6 +237,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     <div id="syncBanner" class="addGame" hidden role="region" aria-label="Newer saves from another computer"></div>
     <div id="digestPanel" class="addGame" hidden role="region" aria-label="What's new this week"></div>
     <div id="packUpdates" class="addGame" hidden role="region" aria-label="Mod and texture pack updates"></div>
+    <div id="installQueue" class="addGame" hidden role="region" aria-label="Games waiting for the internet"></div>
     <div id="launchFail" class="addGame" hidden role="alert"></div>
     <div id="continueHero"></div>
     <div id="thankBanner" class="addGame" hidden role="region" aria-label="Thank the people who made a game"></div>
@@ -555,6 +556,11 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
         <p class="sub">The Install and Transfer folders are always scanned. Add more here - on the PC, the folder you copied over from the Mac.</p>
         <div class="srcList" id="libFolders"></div>
         <div class="row" style="margin-top:8px"><span style="flex:1"></span><button id="libFolderAdd" type="button">Add Folder…</button></div>
+      </div>
+      <div>
+        <label>Covers For Offline</label>
+        <p class="sub">Covers are saved as you see them. Save them all now so Browse still has every picture when you're offline - about 200 MB for the whole catalog, kept in Decomp Buddy's own folder.</p>
+        <div class="row"><span id="coversStatus" class="sub" role="status" aria-live="polite"></span><button id="coversSave" type="button">Save All Covers For Offline</button><button id="coversCancel" type="button" hidden>Stop</button></div>
       </div>
       <div>
         <label class="check"><input id="countSetups" type="checkbox"> Count My Set-Ups</label>

@@ -1,16 +1,14 @@
 // Moved out of main.js unchanged (2026-09-23): catalog IPC handlers.
-import { app, ipcMain } from "electron";
+import { app, ipcMain, nativeImage } from "electron";
 import fs from "node:fs";
 import path from "node:path";
-import { fetchCatalog, iconFor, installedIndex } from "../catalog.js";
-import { enrichBoxart } from "../boxart.js";
+import { fetchCatalog, iconFor, installedIndex, BUILTIN } from "../catalog.js";
+import { savedAppCatalog, fetchAppCatalog } from "../appcatalog.js";
+import { dirSize } from "../gametools.js";
 import { fetchPublished, planKey } from "../plans.js";
-import { fetchSharedSources } from "../sources/shared-sources.js";
-import { loadSettings, saveSettings, defaultFindsFile, plansFileFor, sourcesFileFor, libraryDirs, state } from "./core.js";
+import { loadSettings, saveSettings, defaultFindsFile, plansFileFor, appCatalogFileFor, libraryDirs, state, isNetworkError } from "./core.js";
 import { expandMultiGame, attachFacts } from "../expand.js";
 import { sampleStat } from "./core.js";
-import { getWaiting } from "./finding.js";
-import { withoutExcluded } from "../waiting.js";
 import { pickGames } from "../pick.js";
 import { buildLists, LISTS } from "../lists.js";
 
@@ -46,21 +44,24 @@ ipcMain.handle("lists:get", () => { const l = buildLists(state.catalogGames); re
 ipcMain.handle("pick:games", (_e, answers = {}) => { const r = pickGames(state.catalogGames, answers); return { relaxed: r.relaxed, ids: r.picks.map((g) => g.id) }; });
 // The merged catalog as Browse shows it (also used by the background update check, with no window open).
 export async function loadCatalog({ refresh = true, checkInstalled = false, savedOnly = false } = {}) {
-  // savedOnly: the list saved last time, or nothing - never a first full load (Browse shows that while the real one runs).
-  if (savedOnly && !fs.existsSync(path.join(app.getPath("userData"), "catalog.json"))) return { games: [], installed: {} };
-  const st = loadSettings();
-  const cfg = { ...(st.sources || {}), shared: await fetchSharedSources({ file: sourcesFileFor(st) }), localFinds: st.localFinds || [], findsFile: st.findsFile || defaultFindsFile() };
-  const cat = await fetchCatalog({ cacheDir: app.getPath("userData"), refresh, config: cfg });
-  const pub = await fetchPublished({ file: plansFileFor(st), cacheDir: app.getPath("userData") }).catch(() => null);
-  const waiting = await getWaiting().catch(() => null); // no list (first run offline): nothing is held back
-  // The published waiting/hidden lists curate the catalog; they never hide a game you added yourself.
-  const yours = (g) => [g.source, ...(g.sources || [])].includes("local-finds");
-  const live = cat.games.filter((g) => !g.owner || !isDead(st, `${g.owner}/${g.repo}`));
-  cat.games = expandMultiGame([...withoutExcluded(live.filter((g) => !yours(g)), waiting), ...live.filter(yours)], pub);
-  attachFacts(cat.games, pub);
-  await enrichBoxart(cat.games, { cacheDir: app.getPath("userData") }); // collection cards, one per game
-  state.catalogGames = cat.games;
-  sampleStat("catalog", { games: cat.games.length, perSource: Object.fromEntries(Object.entries(cat.perSource || {}).map(([k, v]) => [k, v.count || 0])) });
+  // The published catalog: the copy on disk (or built into the app) at once; savedOnly never touches the network,
+  // and Browse shows that while the full load checks the website for a newer copy (src/appcatalog.js).
+  const st = loadSettings(), cacheDir = app.getPath("userData"), file = appCatalogFileFor(st);
+  let doc = savedAppCatalog({ cacheDir, file }), error = null;
+  if (refresh && !savedOnly) {
+    try { doc = await fetchAppCatalog({ cacheDir, file }); }
+    catch (err) { error = isNetworkError(err) ? (err.name === "TimeoutError" ? "the website didn't answer in time" : "you're offline") : err.message; }
+  }
+  if (!doc) { if (savedOnly) return { games: [], installed: {} }; throw new Error(`Couldn't load the catalog: ${error || "no copy on this computer yet"}.`); }
+  const off = st.sources?.builtin || {};
+  let games = doc.games.filter((g) => !(g.sources || [g.source]).filter(Boolean).every((id) => off[id] === false)); // sources switched off in Settings
+  // Your own additions (Settings → Sources) aren't on the published list: those are still read on this computer.
+  const listed = new Set(games.filter((g) => g.owner).map((g) => `${g.owner}/${g.repo}`.toLowerCase()));
+  const own = savedOnly ? [] : await ownSources(st, cacheDir, listed);
+  games = [...games, ...own].filter((g) => !g.owner || !isDead(st, `${g.owner}/${g.repo}`));
+  state.catalogGames = games;
+  sampleStat("catalog", { games: games.length, perSource: Object.fromEntries(Object.entries(doc.sources || {}).map(([k, v]) => [k, v.count || 0])) });
+  const cat = { games, fetchedAt: doc.generatedAt, perSource: doc.sources || {}, stale: !!error, error, from: doc.from };
   // Installed = anything in either folder.
   const s = loadSettings();
   const installed = {};
@@ -68,7 +69,8 @@ export async function loadCatalog({ refresh = true, checkInstalled = false, save
     for (const [k, v] of Object.entries(installedIndex(dir))) installed[k] = [...(installed[k] || []), ...v.map((x) => ({ ...x, dir }))];
   }
   if (checkInstalled) {
-    const live = await liveTagsFor(Object.keys(installed));
+    // Published games carry their newest version from the hourly build; only your own additions ask GitHub.
+    const live = await liveTagsFor(Object.keys(installed).filter((k) => !listed.has(k.toLowerCase())));
     for (const g of cat.games) {
       const l = g.owner && !g.gameOf && live[`${g.owner}/${g.repo}`.toLowerCase()]; // collection games keep their own tag
       // With published steps, the version that installs is theirs; GitHub's newest just waits beside it (follow.mjs moves it).
@@ -76,13 +78,54 @@ export async function loadCatalog({ refresh = true, checkInstalled = false, save
       else if (l) Object.assign(g, { version: l.tag, status: l.status, updatedAt: l.updatedAt || g.updatedAt, releaseUrl: l.url, liveChecked: true });
     }
   }
-  return { games: cat.games, fetchedAt: cat.fetchedAt, perSource: Object.fromEntries(Object.entries(cat.perSource || {}).map(([k, v]) => [k, { label: v.label || k, count: v.count, error: v.error || null }])), stale: !!cat.stale, error: cat.error || null, installed };
+  return { games: cat.games, fetchedAt: cat.fetchedAt, from: cat.from, perSource: Object.fromEntries(Object.entries(cat.perSource).map(([k, v]) => [k, { label: v.label || k, count: v.count, error: null }])), stale: cat.stale, error: cat.error, installed };
+}
+
+// Local finds and your own sources, merged the old way (they need their repos read), minus anything already listed.
+async function ownSources(st, cacheDir, listed) {
+  const cfg = { builtin: Object.fromEntries(BUILTIN.map((b) => [b.SOURCE.id, false])), localFinds: st.localFinds || [], custom: st.sources?.custom || [] };
+  if (!cfg.localFinds.length && !cfg.custom.length) return [];
+  try {
+    const cat = await fetchCatalog({ cacheDir: path.join(cacheDir, "own-sources"), refresh: true, config: cfg });
+    const pub = await fetchPublished({ file: plansFileFor(st), cacheDir }).catch(() => null);
+    const games = cat.games.filter((g) => !g.owner || !listed.has(`${g.owner}/${g.repo}`.toLowerCase()));
+    return attachFacts(expandMultiGame(games, pub), pub);
+  } catch { return []; } // offline with nothing saved: the published list still shows
 }
 
 const MIME = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp", ".ico": "image/x-icon", ".svg": "image/svg+xml" };
+// Covers are kept at tile size: the cover site serves full posters (~0.5 MB each, 946 MB for the whole catalog), and
+// every tile is sent to the window as text. A small or see-through picture stays as it is.
+const COVER_WIDTH = 512;
+export function shrinkCover(buf) {
+  const img = nativeImage.createFromBuffer(buf);
+  if (img.isEmpty() || (img.getSize().width <= COVER_WIDTH && buf.length < 200_000)) return null;
+  const small = img.getSize().width > COVER_WIDTH ? img.resize({ width: COVER_WIDTH, quality: "good" }) : img;
+  const bmp = small.toBitmap(); // BGRA: any see-through pixel keeps it a PNG
+  for (let i = 3; i < bmp.length; i += 4) if (bmp[i] < 255) return { buf: small.toPNG(), ext: ".png" };
+  return { buf: small.toJPEG(85), ext: ".jpg" };
+}
+
+// Save All Covers For Offline (Settings): every catalog cover onto this computer now, not only as each is first shown.
+// Our own picked covers only - the slow GitHub-page fallback is left to Browse.
+let coversRun = null;
+ipcMain.handle("covers:saveAll", async (e) => {
+  if (coversRun) return { running: true };
+  const games = [...state.catalogGames], cacheDir = app.getPath("userData"), preferBoxart = !!loadSettings().preferBoxart;
+  const run = coversRun = { cancelled: false }; let done = 0, missing = 0;
+  const worker = async () => {
+    while (games.length && !run.cancelled) {
+      if (!(await iconFor(games.shift(), { cacheDir, preferBoxart, lookOnGitHub: false, shrink: shrinkCover }).catch(() => null))) missing++;
+      if (++done % 20 === 0) e.sender.send("covers:progress", { done, total: done + games.length });
+    }
+  };
+  try { await Promise.all(Array.from({ length: 6 }, worker)); } finally { coversRun = null; }
+  return { done, missing, cancelled: run.cancelled, mb: Math.round(dirSize(path.join(cacheDir, "icons")) / 1e6) };
+});
+ipcMain.handle("covers:cancel", () => { if (coversRun) coversRun.cancelled = true; return true; });
 ipcMain.handle("catalog:icon", async (_e, { id }) => {
   const game = state.catalogGames.find((g) => g.id === id);
-  const file = game && (await iconFor(game, { cacheDir: app.getPath("userData"), preferBoxart: !!loadSettings().preferBoxart }));
+  const file = game && (await iconFor(game, { cacheDir: app.getPath("userData"), preferBoxart: !!loadSettings().preferBoxart, shrink: shrinkCover }));
   if (!file) return null;
   return { path: file, dataUrl: `data:${MIME[path.extname(file).toLowerCase()] || "image/png"};base64,${fs.readFileSync(file).toString("base64")}` };
 });

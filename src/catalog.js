@@ -130,8 +130,10 @@ export async function githubArtCandidates(game) {
   return out;
 }
 
+const ICON_EXTS = [".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".svg"];
 // Local path of the card's icon, downloaded once. Tries the catalog's URL, then GitHub fallbacks. null only if all fail.
-export async function iconFor(game, { cacheDir, preferBoxart = false }) {
+// shrink(buf) -> { buf, ext } | null: the app passes one (src/main/catalog.js) so covers are kept at tile size.
+export async function iconFor(game, { cacheDir, preferBoxart = false, lookOnGitHub = true, shrink = null }) {
   const dir = path.join(cacheDir, "icons");
   // Icons saved before 8 Oct 2026 may be profile photos, and can't be told apart: start the cache over once.
   const marker = path.join(dir, ".no-profile-photos");
@@ -140,19 +142,27 @@ export async function iconFor(game, { cacheDir, preferBoxart = false }) {
   const keyFor = (u) => path.join(dir, crypto.createHash("sha1").update(u).digest("hex"));
   const first = artUrl(game, preferBoxart);
   const primaryKey = keyFor(first || game.id);
-  const existing = fs.existsSync(dir) ? fs.readdirSync(dir).find((f) => f.startsWith(path.basename(primaryKey)) && fs.statSync(path.join(dir, f)).size > 300) : null;
-  if (existing) return path.join(dir, existing);
-  const PROFILE_PHOTO = /avatars\.githubusercontent\.com|^https:\/\/github\.com\/[^/]+\.png/i; // a catalog's "icon" is sometimes the owner's photo
-  const candidates = [...new Set([first, game.iconUrl, game.boxartUrl, ...(await githubArtCandidates(game))].filter((u) => u && !PROFILE_PHOTO.test(u)))];
-  for (const url of candidates) {
-    const got = await fetchImage(url);
-    if (!got) continue;
-    const ext = (path.extname(new URL(got.url).pathname).toLowerCase().match(/^\.(png|jpe?g|gif|webp|ico|svg)$/) || [".png"])[0];
-    const file = primaryKey + ext;
-    fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(file, got.buf);
-    return file;
+  const existing = ICON_EXTS.map((x) => primaryKey + x).find((f) => { try { return fs.statSync(f).size > 300; } catch { return false; } });
+  if (existing && shrink && fs.statSync(existing).size > 200_000) { // saved full size before covers were shrunk
+    const small = shrink(fs.readFileSync(existing));
+    if (small) { fs.rmSync(existing); fs.writeFileSync(primaryKey + small.ext, small.buf); return primaryKey + small.ext; }
   }
+  if (existing) return existing;
+  const PROFILE_PHOTO = /avatars\.githubusercontent\.com|^https:\/\/github\.com\/[^/]+\.png/i; // a catalog's "icon" is sometimes the owner's photo
+  const ok = (u) => u && !PROFILE_PHOTO.test(u);
+  // The project's GitHub page is read only when the catalog's own pictures fail (it was read first, for every tile).
+  const known = [...new Set([first, game.iconUrl, game.boxartUrl].filter(ok))];
+  const save = async (url) => {
+    const got = await fetchImage(url);
+    if (!got) return null;
+    const small = shrink?.(got.buf);
+    const ext = small?.ext || (path.extname(new URL(got.url).pathname).toLowerCase().match(/^\.(png|jpe?g|gif|webp|ico|svg)$/) || [".png"])[0];
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(primaryKey + ext, small?.buf || got.buf);
+    return primaryKey + ext;
+  };
+  for (const url of known) { const f = await save(url); if (f) return f; }
+  for (const url of lookOnGitHub ? await githubArtCandidates(game) : []) { if (!ok(url) || known.includes(url)) continue; const f = await save(url); if (f) return f; }
   return null;
 }
 

@@ -29,6 +29,9 @@ if { [ "$DRY" = 1 ] || [ "$REUSE" = 1 ]; } && [ -s "dist/$DMG" ] && [ -s "dist/$
   echo "→ using the existing dist/ build"
 else
   rm -rf dist
+  # The lists every copy ships with, so a computer that has never been online still has the whole catalog,
+  # Coming Soon and the install steps (src/appcatalog.js). Taken from the site as last published.
+  for f in app-catalog.json waiting.json plans.json finds.json; do [ -s "$SITE_DIR/$f" ] || { echo "✗ $SITE_DIR/$f is missing - run the daily publish first" >&2; exit 1; }; cp "$SITE_DIR/$f" "./$f"; done
   ./scripts/release-mac.sh
   # Windows code signing (Azure Artifact Signing) runs only when its details are set - see
   # docs/WINDOWS-SIGNING.md. It needs Windows' signtool, so it happens on a Windows machine / CI runner.
