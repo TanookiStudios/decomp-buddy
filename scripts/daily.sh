@@ -73,6 +73,11 @@ PY
     got=$(curl -fsS https://tanookistudios.com/decomp-buddy/catalog.json | python3 -c "import json,sys;print(json.load(sys.stdin)['count'])")
     [[ "$want" == "$got" ]] || { say "✗ live catalog has $got games, built $want"; exit 1; }
     say "live catalog: $got games"
+    # The app's own copy (app-catalog.json): same build, or every app shows yesterday's list.
+    want=$(python3 -c "import json;d=json.load(open('$SITE/public/decomp-buddy/app-catalog.json'));print(d['generatedAt'],len(d['games']))")
+    got=$(curl -fsS "https://tanookistudios.com/decomp-buddy/app-catalog.json?t=$(date +%s)" | python3 -c "import json,sys;d=json.load(sys.stdin);print(d['generatedAt'],len(d['games']))")
+    [[ "$want" == "$got" ]] || { say "✗ live app catalog is '$got', built '$want'"; exit 1; }
+    say "live app catalog: ${got#* } games"
     # Emails people who submitted a game that's now live or can't be listed (each once; the address is then deleted).
     curl -fsS -X POST https://tanookistudios.com/api/decomp-notify | tee -a "$LOG"; echo >> "$LOG"
     # Only Decomp Buddy's files: the studio site can hold other projects' unfinished work.

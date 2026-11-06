@@ -2,9 +2,10 @@
  "_meta": {
   "language": "English",
   "source": true,
-  "strings": 1296
+  "strings": 1297
  },
  "strings": {
+  "(Decomp Buddy gets this for you)": "(Decomp Buddy gets this for you)",
   "(a CI build)": "(a CI build)",
   "(a format Decomp Buddy doesn't edit)": "(a format Decomp Buddy doesn't edit)",
   "(a separate free install). Slower than a key, free and offline. It has to plan a sample repo correctly before it can be switched on.": "(a separate free install). Slower than a key, free and offline. It has to plan a sample repo correctly before it can be switched on.",

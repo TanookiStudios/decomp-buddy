@@ -1317,6 +1317,7 @@
     "{0} set up, {1}{2} failed, {3} skipped{4}.": "{0}本セットアップ、{1}{2}本失敗、{3}本スキップ{4}。",
     "{0} waiting for the internet,": "{0}本がインターネット待ち、",
     "{0} waiting game(s) set up now that you're back online.": "オンラインに戻ったので、待機中のゲーム{0}本をセットアップしました。",
-    "{0}: {1} covers saved ({2} MB){3}.": "{0}: カバー{1}枚を保存しました ({2} MB){3}。"
+    "{0}: {1} covers saved ({2} MB){3}.": "{0}: カバー{1}枚を保存しました ({2} MB){3}。",
+    "(Decomp Buddy gets this for you)": "(Decomp Buddyが自動で用意します)"
 }
 }

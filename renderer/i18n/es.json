@@ -1317,6 +1317,7 @@
     "{0} set up, {1}{2} failed, {3} skipped{4}.": "{0} configurados, {1}{2} fallidos, {3} omitidos{4}.",
     "{0} waiting for the internet,": "{0} esperando internet,",
     "{0} waiting game(s) set up now that you're back online.": "{0} juego(s) en espera configurados ahora que vuelves a tener conexión.",
-    "{0}: {1} covers saved ({2} MB){3}.": "{0}: {1} portadas guardadas ({2} MB){3}."
+    "{0}: {1} covers saved ({2} MB){3}.": "{0}: {1} portadas guardadas ({2} MB){3}.",
+    "(Decomp Buddy gets this for you)": "(Decomp Buddy lo consigue por ti)"
 }
 }

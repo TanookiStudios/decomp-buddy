@@ -14,7 +14,9 @@ git "${CRED[@]}" clone -q --depth 1 https://github.com/TanookiStudios/decomp-bud
 find "$PUB" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 git archive HEAD | tar -x -C "$PUB"
 for f in $PRIVATE; do rm -f "$PUB/$f"; done
-if grep -rliE "michael|ireland|madilyn|maddietendo|ISSUER *= *\"[0-9a-f]" "$PUB" --exclude-dir=.git --exclude=publish-source.sh >&2; then
+# plans.json credits strangers' GitHub accounts, and some of them are really called Michael: it skips that one word.
+if grep -rliE "michael|ireland|madilyn|maddietendo|ISSUER *= *\"[0-9a-f]" "$PUB" --exclude-dir=.git --exclude=publish-source.sh --exclude=plans.json >&2 \
+  || grep -liE "ireland|madilyn|maddietendo" "$PUB/plans.json" >&2; then
   echo "✗ a personal name or account id is in the files above - source not published" >&2; exit 1
 fi
 cd "$PUB"; git add -A

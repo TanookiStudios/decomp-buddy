@@ -67,3 +67,15 @@ test("download refuses a file that changed after it was scanned", async () => {
   } finally { s.close(); }
   assert.equal(fs.existsSync(dest), false); assert.equal(fs.existsSync(`${dest}.part`), false);
 });
+
+test("a file released by hand without proof can't claim a clean scan", () => {
+  const key = "github:a/b", b = build("x.exe");
+  const plans = { plans: { [key]: { tag: "v1", targets: { windows: { games: [{ build: b }] } } } } };
+  const scans = { files: { [scanKey(key, b)]: { sha256: "abc", size: 1, at: "2026-11-04", engine: "ClamAV 1.5.4", clean: false, signature: "Win.Trojan.Test" } } };
+  applyScans(plans, scans, {});
+  assert.deepEqual(scanSummary(plans.plans[key]), { flagged: true });
+  applyScans(plans, scans, { abc: { reason: "proven false alarm" } });
+  assert.equal(scanSummary(plans.plans[key]).at, "2026-11-04");
+  applyScans(plans, scans, { abc: { reason: "her call", unproven: true } });
+  assert.deepEqual(scanSummary(plans.plans[key]), { handChecked: true });
+});

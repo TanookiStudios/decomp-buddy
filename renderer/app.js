@@ -385,8 +385,8 @@ async function startBuild(g) {
   $("buildPanel").hidden = false; $("buildTitle").textContent = `Build From Source - ${g.title}`; $("buildLog").textContent = ""; $("buildState").textContent = "";
   $("buildSteps").innerHTML = (g.buildSteps || []).map((x) => `<li>${esc(x)}</li>`).join("") || "<li>None given.</li>";
   const tools = await window.buddy.buildTools();
-  $("buildTools").innerHTML = tools.map((t) => `<span class="${t.ok ? "ok" : t.optional ? "muted" : "bad"}">${t.ok ? "✓" : "✗"} ${esc(t.name)}${!t.ok ? ` <code>${esc(t.install)}</code>` : ""}</span>`).join(" · ");
-  if (tools.some((t) => !t.ok && !t.optional)) { $("buildState").textContent = "Install the missing tools first (commands above), then Build Here again."; $("buildState").className = "status bad"; return; }
+  $("buildTools").innerHTML = tools.map((t) => `<span class="${t.ok ? "ok" : t.optional || t.auto ? "muted" : "bad"}">${t.ok ? "✓" : t.auto ? "↓" : "✗"} ${esc(t.name)}${t.ok ? "" : t.auto ? ` (Decomp Buddy gets this for you)` : ` <code>${esc(t.install)}</code>`}</span>`).join(" · ");
+  if (tools.some((t) => !t.ok && !t.optional && !t.auto)) { $("buildState").textContent = "Install the missing tools first (commands above), then Build Here again."; $("buildState").className = "status bad"; return; }
   const onLog = (l) => { $("buildLog").textContent += l + "\n"; $("buildLog").scrollTop = $("buildLog").scrollHeight; };
   window.buddy.onLog(onLog);
   $("buildState").textContent = "Building… this can take a while."; $("buildState").className = "status";

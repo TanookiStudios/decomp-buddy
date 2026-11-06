@@ -4,6 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawn, execFileSync } from "node:child_process";
+import { TOOLCHAIN, ensureBuildTools } from "./buildtools.js";
 
 const TOOLS = [
   { name: "git", check: ["git", "--version"], mac: "brew install git", linux: "sudo apt install git" },
@@ -13,12 +14,15 @@ const TOOLS = [
   { name: "pkg-config", check: ["pkg-config", "--version"], mac: "brew install pkg-config", linux: "sudo apt install pkg-config", optional: true },
 ];
 const PATH_EXTRA = `${process.env.PATH}:/opt/homebrew/bin:/usr/local/bin`;
+const fetched = (bins) => [PATH_EXTRA, ...bins].join(path.delimiter); // the computer's own tools win
 
-export function checkTools() {
+// auto: Decomp Buddy downloads this one itself when it's missing (src/buildtools.js).
+export function checkTools(bins = []) {
+  const canFetch = !!TOOLCHAIN[`${process.platform}-${process.arch}`];
   return TOOLS.map((t) => {
     let ok = false;
-    try { execFileSync(t.check[0], t.check.slice(1), { stdio: "ignore", env: { ...process.env, PATH: PATH_EXTRA } }); ok = true; } catch {}
-    return { name: t.name, ok, optional: !!t.optional, install: process.platform === "darwin" ? t.mac : t.linux };
+    try { execFileSync(t.check[0], t.check.slice(1), { stdio: "ignore", env: { ...process.env, PATH: fetched(bins) } }); ok = true; } catch {}
+    return { name: t.name, ok, optional: !!t.optional, auto: canFetch && /^(cmake|ninja)$/.test(t.name), install: process.platform === "darwin" ? t.mac : t.linux };
   });
 }
 
@@ -49,7 +53,7 @@ export function findBuiltExecutable(root, hint) {
 function step(cmd, args, cwd, log, state) {
   return new Promise((resolve, reject) => {
     log(`$ ${cmd} ${args.join(" ")}`);
-    const child = spawn(cmd, args, { cwd, env: { ...process.env, PATH: PATH_EXTRA }, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(cmd, args, { cwd, env: { ...process.env, PATH: fetched(state.bins || []), CMAKE_POLICY_VERSION_MINIMUM: "3.5" }, stdio: ["ignore", "pipe", "pipe"] });
     state.child = child;
     const onData = (d) => d.toString().split(/\r?\n/).filter(Boolean).forEach((l) => log(l));
     child.stdout.on("data", onData); child.stderr.on("data", onData);
@@ -59,9 +63,14 @@ function step(cmd, args, cwd, log, state) {
 }
 
 // Full recipe. Returns { executable, log }. Throws with the failing step named.
-export async function buildFromSource({ repoUrl, dir, hint, log = () => {}, state = {} }) {
+export async function buildFromSource({ repoUrl, dir, hint, log = () => {}, state = {}, toolsDir = null }) {
   const src = path.join(dir, "Source");
-  const missing = checkTools().filter((t) => !t.ok && !t.optional);
+  if (toolsDir && checkTools().some((t) => t.auto && !t.ok)) {
+    try { state.bins = await ensureBuildTools(toolsDir, { log }); }
+    catch (err) { throw new Error(`Couldn't get CMake and Ninja: ${err.message}`); }
+    if (state.cancelled) throw new Error("Cancelled");
+  }
+  const missing = checkTools(state.bins).filter((t) => !t.ok && !t.optional);
   if (missing.length) throw new Error(`Missing tools: ${missing.map((t) => `${t.name} (${t.install})`).join("; ")}. Install them and try again.`);
   let where = "clone";
   try {
@@ -73,7 +82,7 @@ export async function buildFromSource({ repoUrl, dir, hint, log = () => {}, stat
     const build = path.join(proj, "build");
     if (sys === "cmake") {
       where = "configure";
-      const gen = checkTools().find((t) => t.name === "ninja")?.ok ? ["-G", "Ninja"] : [];
+      const gen = checkTools(state.bins).find((t) => t.name === "ninja")?.ok ? ["-G", "Ninja"] : [];
       await step("cmake", ["-S", proj, "-B", build, "-DCMAKE_BUILD_TYPE=Release", ...gen], proj, log, state);
       where = "build";
       await step("cmake", ["--build", build, "--config", "Release", "-j"], proj, log, state);

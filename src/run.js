@@ -14,6 +14,7 @@ import { writeInstallHtml } from "./installhtml.js";
 import { writeApplyIconsBat } from "./icons.js";
 import { cleanStaging } from "./archive.js";
 import { planKey, lookupPlan } from "./plans.js";
+import { targetOf } from "./targets.js";
 
 export function defaultOutDir() {
   return process.platform === "win32"
@@ -43,6 +44,10 @@ export async function analyzeOne(url, { provider, log, planner = planFromContext
   let ref = parseRepoUrl(url);
   // A published, scanned plan already names the release and its exact file: no need to re-read the project
   // (that spent a fresh PC's 60 GitHub lookups an hour before a single download). fullContext: picking another version.
+  // Published for other computers only: say that, not "no plan yet". An AI key can still try to plan it.
+  const listed = published?.plans?.[planKey(ref.host, ref.owner, ref.repo)];
+  const others = Object.keys(listed?.targets || {}).filter((t) => t !== target).map((t) => targetOf(t).label);
+  if (!provider && others.length && !lookupPlan(published, planKey(ref.host, ref.owner, ref.repo), target)) throw new Error(`${ref.owner}/${ref.repo} has no ${targetOf(target).label} version. It's available for: ${others.join(", ")}. Pick one under Build For to make a copy for that computer.`);
   let ctx = !fullContext && planContext(ref, published, target);
   if (!ctx) { log(`Reading ${ref.owner}/${ref.repo}…`); ctx = await fetchContext(ref); }
   let planSource = "ai";

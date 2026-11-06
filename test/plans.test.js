@@ -29,6 +29,8 @@ test("analyzeOne: a published plan means no AI and no key; without either it say
   const stale = await analyzeOne("https://github.com/mchughalex/skate3recomp", { log: () => {}, published, fetchContext: async () => ({ releases: [{ tag_name: "v3", assets: [{ name: "Skate3Recomp-Windows-v3.zip" }] }] }) });
   assert.equal(stale[0].planSource, "published-stale");
   await assert.rejects(analyzeOne("https://github.com/mchughalex/skate3recomp", { log: () => {}, published: { plans: {} }, fetchContext }), /No published plan/);
+  // Listed, but not for this computer: it says so and names the ones it does run on.
+  await assert.rejects(analyzeOne("https://github.com/mchughalex/skate3recomp", { log: () => {}, published, fetchContext, target: "macos-arm64" }), /no Mac \(Apple Silicon\) version.*Windows PC/);
 });
 
 test("analyzeOne: onlyGames keeps exactly the picked games; punctuation doesn't matter; no match is an error, not all games", async () => {

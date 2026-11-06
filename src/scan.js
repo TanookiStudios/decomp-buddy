@@ -37,7 +37,7 @@ export function applyScans(plans, scans, reviewed = {}) {
     // A scan that ran out of time or size limits isn't a verdict: the file counts as not scanned yet, unless checked by hand.
     if (!r || ((r.incomplete || /^Heuristics\.Limits\.Exceeded/.test(r.signature || "")) && !reviewed[r.sha256])) continue;
     build.scanned = r.clean || reviewed[r.sha256]
-      ? { sha256: r.sha256, size: r.size, at: r.at, engine: r.engine }
+      ? { sha256: r.sha256, size: r.size, at: r.at, engine: r.engine, ...(reviewed[r.sha256]?.unproven ? { handChecked: true } : {}) }
       : { flagged: true, signature: r.signature || "unknown", at: r.at, engine: r.engine };
     n++;
   }
@@ -52,6 +52,8 @@ export function scanSummary(entry) {
   if (!builds.length) return null;
   if (builds.some((b) => b.scanned?.flagged)) return { flagged: true };
   if (!builds.every((b) => b.scanned?.sha256)) return null;
+  // Released by hand without proof it's clean: no date, so neither the app nor the site can print "no known malware".
+  if (builds.some((b) => b.scanned.handChecked)) return { handChecked: true };
   const at = builds.map((b) => b.scanned.at).sort()[0];
   return { at, engine: builds[0].scanned.engine, files: new Set(builds.map((b) => b.scanned.sha256)).size };
 }

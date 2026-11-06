@@ -1317,6 +1317,7 @@
     "{0} set up, {1}{2} failed, {3} skipped{4}.": "{0} installés, {1}{2} échoués, {3} ignorés{4}.",
     "{0} waiting for the internet,": "{0} en attente d'internet,",
     "{0} waiting game(s) set up now that you're back online.": "{0} jeu(x) en attente installé(s) maintenant que vous êtes de nouveau en ligne.",
-    "{0}: {1} covers saved ({2} MB){3}.": "{0} : {1} jaquettes enregistrées ({2} Mo){3}."
+    "{0}: {1} covers saved ({2} MB){3}.": "{0} : {1} jaquettes enregistrées ({2} Mo){3}.",
+    "(Decomp Buddy gets this for you)": "(Decomp Buddy s’en occupe pour vous)"
 }
 }

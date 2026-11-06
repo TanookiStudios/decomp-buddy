@@ -85,6 +85,13 @@ const clamscan = (file) => new Promise((resolve) => {
   p.on("close", (code) => resolve({ code, out: out.trim() }));
 });
 
+// A scanner that can't spot the standard antivirus test file would call everything clean, so prove it catches one first.
+// The string is split so this source file doesn't set off a scanner itself.
+const selfTest = path.join(TMP, "scanner-self-test.txt");
+fs.writeFileSync(selfTest, "X5O!P%@AP[4\\PZX54(P^)7CC)7}$" + "EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
+const proof = await clamscan(selfTest); fs.rmSync(selfTest, { force: true });
+if (proof.code !== 1) { console.log(`scanner self-test failed: it did not catch the test virus (${proof.out || `exit ${proof.code}`})`); process.exit(1); }
+
 // A download too big or slow for one pass is unpacked (bsdtar, else 7-Zip for installers, AppImages and APKs) and every
 // file inside is scanned on its own. An inner file that is itself over the limits still leaves the download unscanned.
 async function scanUnpacked(file) {

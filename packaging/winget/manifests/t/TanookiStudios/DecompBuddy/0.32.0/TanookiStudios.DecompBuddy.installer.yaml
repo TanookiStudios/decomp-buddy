@@ -1,0 +1,17 @@
+# Created by scripts/packages.mjs
+PackageIdentifier: TanookiStudios.DecompBuddy
+PackageVersion: 0.32.0
+InstallerType: nullsoft
+Scope: user
+InstallModes:
+- interactive
+- silent
+- silentWithProgress
+UpgradeBehavior: install
+ReleaseDate: 2026-11-02
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/TanookiStudios/decomp-buddy/releases/download/v0.32.0/Decomp.Buddy.Setup.0.32.0.exe
+  InstallerSha256: 2AD773438192334A922FC999B902EDB311DC63B802318FF8DA5F2F7D8C255ADA
+ManifestType: installer
+ManifestVersion: 1.6.0
