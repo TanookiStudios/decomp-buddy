@@ -3,7 +3,7 @@
 // Read order: the admin's file on disk, the live feed (cached a day), the copy bundled with the app.
 
 import { canonOwner } from "./renames.js";
-import { PLAN_FALLBACK } from "./targets.js";
+import { PLAN_FALLBACK, CONSOLES } from "./targets.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -51,5 +51,15 @@ export function writePlans(file, entries) {
   return data;
 }
 
+// A game's facts (how playable it is, Steam Deck, saves...) are read again once it has a release newer than them:
+// a project's own status changes as it grows. At most every 3 days, so a project releasing nightly isn't re-read hourly.
+export const FACTS_REFRESH_MS = 3 * 86400e3;
+export function factsDue(entry, game, now = Date.now()) {
+  if (!entry?.facts) return true;
+  const at = Date.parse(entry.factsAt || ""), released = Date.parse(game?.updatedAt || "");
+  return released > at && now - at > FACTS_REFRESH_MS;
+}
+
 // Which plan targets ccplans writes for a platform a catalog card lists (ARM targets fall back to these).
-export const TARGET_OF_PLATFORM = { Windows: ["windows"], macOS: ["macos-arm64"], Linux: ["linux"], Android: ["android"], "Meta Quest": ["quest"] };
+export const TARGET_OF_PLATFORM = { Windows: ["windows"], macOS: ["macos-arm64"], Linux: ["linux"], Android: ["android"], "Meta Quest": ["quest"],
+  ...Object.fromEntries(Object.entries(CONSOLES).map(([id, c]) => [c.platform, [id]])) };

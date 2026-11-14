@@ -50,3 +50,14 @@ test("fetchPublished creates its cache folder (the CLI's ~/.decomp-buddy may not
   try { await fetchPublished({ cacheDir: dir }); } finally { globalThis.fetch = realFetch; }
   assert.ok(fs.existsSync(path.join(dir, "plans-cache.json")));
 });
+
+test("facts are read again after a newer release, at most every 3 days", async () => {
+  const { factsDue } = await import("../src/plans.js");
+  const now = Date.parse("2026-11-11T00:00:00Z");
+  const e = { facts: { completeness: "wip" }, factsAt: "2026-11-04T14:17:45Z" };
+  assert.equal(factsDue({}, { updatedAt: "2026-11-10T00:00:00Z" }, now), true);               // never read
+  assert.equal(factsDue(e, { updatedAt: "2026-11-10T17:05:30Z" }, now), true);                // 7 releases later (Metroid Prime 4)
+  assert.equal(factsDue(e, { updatedAt: "2026-11-01T00:00:00Z" }, now), false);               // nothing new since
+  assert.equal(factsDue({ ...e, factsAt: "2026-11-09T00:00:00Z" }, { updatedAt: "2026-11-10T00:00:00Z" }, now), false); // read 2 days ago
+  assert.equal(factsDue(e, {}, now), false);                                                  // release date unknown
+});

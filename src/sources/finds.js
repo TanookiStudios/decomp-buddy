@@ -7,6 +7,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { CONSOLES, consoleOfAsset, consoleNamedIn } from "../targets.js";
 
 export const FINDS_URL = "https://tanookistudios.com/decomp-buddy/finds.json";
 export const SOURCE = { id: "finds", label: "Individual Finds", url: FINDS_URL };
@@ -46,12 +47,18 @@ const NOT_A_RELEASE = /not[\s_-]*a[\s_-]*release|test[\s_-]*(file|build)?[\s_-]*
 function infoFrom(key, meta, releases) {
   const live = releases.filter((r) => !NOT_A_RELEASE.test(`${r.name || ""} ${r.tag_name} ${(r.assets || []).map((a) => a.name).join(" ")}`));
   const platforms = new Set();
-  for (const r of live) for (const a of r.assets || []) for (const [re, p] of PLATFORM_OF_ASSET) if (re.test(a.name)) platforms.add(p);
+  const named = new Set(); // consoles only named in file names: a hint the sorter checks against the README
+  for (const r of live) for (const a of r.assets || []) {
+    const c = consoleOfAsset(a.name);
+    if (c) { platforms.add(CONSOLES[c].platform); continue; } // a console-only file type isn't also a Mac .pkg or a Windows build
+    for (const [re, p] of PLATFORM_OF_ASSET) if (re.test(a.name) && !(p === "macOS" && /(^|[^a-z0-9])ps[34]([^a-z0-9]|$)/i.test(a.name))) platforms.add(p);
+    const n = consoleNamedIn(a.name); if (n) named.add(CONSOLES[n].platform);
+  }
   const text = `${meta.name || ""} ${meta.description || ""} ${(meta.topics || []).join(" ")}`;
   const consoleGuess = (CONSOLE_HINTS.find(([re]) => re.test(text)) || [])[1] || "";
   return {
     repo: meta.full_name || key, notes: meta.description || "", website: meta.homepage || "",
-    platforms: [...platforms], version: live[0]?.tag_name || null, status: live[0] ? (live[0].prerelease ? "prerelease" : "latest") : "none",
+    platforms: [...platforms], consolesNamed: [...named].filter((p) => !platforms.has(p)), version: live[0]?.tag_name || null, status: live[0] ? (live[0].prerelease ? "prerelease" : "latest") : "none",
     updatedAt: live[0]?.published_at || meta.pushed_at || "", consoleGuess, exists: !!meta.full_name,
     stars: meta.stargazers_count || 0, fork: !!meta.fork, releases: live.slice(0, 3).map((r) => ({ tag: r.tag_name, files: (r.assets || []).map((a) => a.name).slice(0, 12) })),
   };
@@ -79,10 +86,11 @@ export async function enrichFromGitLab(key) {
   return infoFrom(key, { full_name: meta.path_with_namespace, name: meta.path, description: meta.description, homepage: "", pushed_at: meta.last_activity_at, topics: meta.topics || [], stargazers_count: meta.star_count, fork: !!meta.forked_from_project },
     rel.filter((r) => !r.upcoming_release).map((r) => ({ name: r.name, tag_name: r.tag_name, prerelease: false, published_at: r.released_at, assets: (r.assets?.links || []).map((l) => ({ name: l.name })) })));
 }
-// And for a Codeberg repo, from its Forgejo API (Forgejo answers in GitHub's shape, mostly).
-export async function enrichFromCodeberg(key) {
-  const api = `https://codeberg.org/api/v1/repos/${key}`, h = { "User-Agent": "decomp-buddy", Accept: "application/json" };
-  const get = async (u) => { const r = await fetch(u, { headers: h, signal: AbortSignal.timeout(20_000) }); if (r.status === 429) throw new Error("Codeberg rate limit hit."); return r.ok ? r.json() : null; };
+// And for a Codeberg (or any Forgejo/Gitea) repo, from its API (Forgejo answers in GitHub's shape, mostly).
+export const enrichFromCodeberg = (key) => enrichFromForgejo("codeberg.org", key);
+export async function enrichFromForgejo(domain, key) {
+  const api = `https://${domain}/api/v1/repos/${key}`, h = { "User-Agent": "decomp-buddy", Accept: "application/json" };
+  const get = async (u) => { const r = await fetch(u, { headers: h, signal: AbortSignal.timeout(20_000) }); if (r.status === 429) throw new Error(`${domain} rate limit hit.`); return r.ok ? r.json() : null; };
   const meta = await get(api);
   if (!meta) return infoFrom(key, {}, []);
   const rel = (await get(`${api}/releases?limit=30`)) || [];

@@ -30,8 +30,21 @@ const clean = (planKey, b) => { const r = scans.files[scanKey(planKey, b)]; retu
 
 const repoGone = async (owner, repo) => {
   const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers: { "User-Agent": "decomp-buddy", ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}) } }).catch(() => null);
-  return res?.status === 404;
+  return res?.status === 404 || res?.status === 451; // 451: GitHub blocked it after a DMCA takedown
 };
+// Every listed GitHub project, not only the ones installed from a release (a game built from source has no release to
+// follow): GraphQL answers 80 a call, null for a missing or renamed repo, so only those get the one-by-one check.
+async function goneAmong(fulls) {
+  const out = [], token = process.env.GITHUB_TOKEN; if (!token) return out;
+  for (let i = 0; i < fulls.length; i += 80) {
+    const batch = fulls.slice(i, i + 80);
+    const query = `{${batch.map((f, j) => { const [o, r] = f.split("/"); return `r${j}:repository(owner:${JSON.stringify(o)},name:${JSON.stringify(r)}){id}`; }).join(" ")}}`;
+    const res = await fetch("https://api.github.com/graphql", { method: "POST", headers: { Authorization: `Bearer ${token}`, "User-Agent": "decomp-buddy", "Content-Type": "application/json" }, body: JSON.stringify({ query }) }).catch(() => null);
+    const data = res?.ok ? (await res.json()).data : null; if (!data) continue; // GitHub didn't answer: the next run looks again
+    for (const [j, f] of batch.entries()) if (!data[`r${j}`]) { const [o, r] = f.split("/"); if (await repoGone(o, r)) out.push(f); }
+  }
+  return out;
+}
 const gone = new Set(), emptied = new Map(), today = new Date().toISOString().slice(0, 10);
 const byRepo = new Map();
 for (const b of releaseBuilds(plans)) if (!only || b.planKey.endsWith(`:${only}`)) (byRepo.get(b.planKey) || byRepo.set(b.planKey, []).get(b.planKey)).push(b);
@@ -44,7 +57,11 @@ await Promise.all(Array.from({ length: 6 }, async () => {
   while (i < keys.length) {
     const key = keys[i++], [host, full] = key.split(":"), [owner, repo] = full.split("/");
     let releases;
-    try { releases = await releasesOf(host, owner, repo); } catch (err) { if (/rate limit/i.test(err.message)) { console.log(err.message); process.exit(1); } tally.unreachable += byRepo.get(key).length; continue; }
+    try { releases = await releasesOf(host, owner, repo); } catch (err) {
+      if (/rate limit/i.test(err.message)) { console.log(err.message); process.exit(1); }
+      if (host === "github" && / 451 /.test(err.message)) { gone.add(full); continue; } // taken down (DMCA)
+      tally.unreachable += byRepo.get(key).length; continue;
+    }
     // Everyone who uploaded an older release of this project counts as one of its usual uploaders.
     const knownUploaders = [...new Set([...releases.slice(1).flatMap((r) => r.assets.map((a) => a.uploader)), ...(cleared[full] || [])].filter(Boolean))];
     const collection = new Set(byRepo.get(key).map((b) => b.build.release_tag)).size > 1;
@@ -76,6 +93,8 @@ await Promise.all(Array.from({ length: 6 }, async () => {
   }
 }));
 
+if (!only) for (const full of await goneAmong(Object.keys(plans.plans).filter((k) => k.startsWith("github:") && !byRepo.has(k)).map((k) => k.slice(7)))) gone.add(full);
+if (gone.size) console.log(`gone from GitHub: ${[...gone].join(", ")}`);
 console.log(`follow: ${tally.current} current, ${tally.advanced} moved to a newer release, ${tally.waiting} waiting for their scan, ${tally.review} need a look, ${tally.replan} need new steps${tally.unreachable ? `, ${tally.unreachable} skipped (GitHub didn't answer)` : ""}`);
 fs.mkdirSync(OUT, { recursive: true });
 if (!only) {

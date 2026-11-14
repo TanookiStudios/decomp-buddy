@@ -4,6 +4,7 @@
 // platforms, icon and version. A page that draws its list with JavaScript (no links in the HTML)
 // is followed to the JSON file its script loads - same site only.
 import { hostOf, repoUrlOf } from "../hosts.js";
+import { refFromUrl, LINK_RE } from "../forges.js";
 
 const MAX_BYTES = 12 * 1024 * 1024;
 const PLATFORMS = new Set(["Windows", "macOS", "Linux"]);
@@ -16,10 +17,10 @@ const BAD_OWNER = /^(sponsors|orgs|topics|features|about|settings|marketplace|ex
 // github.com/owner/repo, gitlab.com/owner/repo, codeberg.org/owner/repo, or a bare "owner/repo" (only where a field says it's a repo)
 function repoRef(v, { bare = false } = {}) {
   const s = String(v || "").trim();
-  let m = s.match(/^https?:\/\/(?:www\.)?(github|gitlab)\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$/i) || s.match(/^https?:\/\/(?:www\.)?(codeberg)\.org\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$/i);
-  if (!m && bare) { const b = s.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/); if (b) m = [s, "github", b[1], b[2]]; }
-  if (!m || BAD_OWNER.test(m[2])) return null;
-  return { host: m[1].toLowerCase(), owner: m[2], repo: m[3] };
+  let r = /^https?:\/\//i.test(s) ? refFromUrl(s) : null;
+  if (!r && bare) { const b = s.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/); if (b) r = { host: "github", owner: b[1], repo: b[2] }; }
+  if (!r || BAD_OWNER.test(r.owner)) return null;
+  return r;
 }
 
 function card(id, ref, extra = {}) {
@@ -59,7 +60,7 @@ export function fromJson(data, id) {
 
 export function fromText(text, id) {
   const out = new Map();
-  for (const m of text.matchAll(/https?:\/\/(?:www\.)?(github\.com|gitlab\.com|codeberg\.org)\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?=[\/"'<>\s),\]#?]|$)/g)) {
+  for (const m of text.matchAll(LINK_RE)) {
     const ref = repoRef(`https://${m[1]}/${m[2]}/${m[3]}`); if (!ref) continue;
     const c = card(id, ref); if (!out.has(c.id)) out.set(c.id, c);
   }

@@ -2,7 +2,7 @@
 import { app, ipcMain } from "electron";
 import fs from "node:fs";
 import path from "node:path";
-import { fetchPublished, writePlans, planKey, TARGET_OF_PLATFORM, PLANS_URL } from "../plans.js";
+import { fetchPublished, writePlans, planKey, TARGET_OF_PLATFORM, PLANS_URL, factsDue } from "../plans.js";
 import { sampleStat, logTo, safeSend, loadSettings, activeProvider, plansFileFor, state } from "./core.js";
 import { markDead } from "./catalog.js";
 import { extractFacts, FACTS_VERSION } from "../facts.js";
@@ -22,7 +22,7 @@ function workFor(games, pub, only) {
     const targets = [...new Set((g.platforms || []).flatMap((p) => TARGET_OF_PLATFORM[p] || []))]; if (!targets.length) targets.push("windows");
     const key = planKey(g.repoHost, g.owner, g.repo); const entry = pub.plans?.[key] || {};
     const missing = targets.filter((t) => !entry.targets?.[t]);
-    const facts = !entry.facts || (entry.facts.version || 0) < FACTS_VERSION;
+    const facts = factsDue(entry, g) || (entry.facts.version || 0) < FACTS_VERSION;
     if (missing.length || facts) work.push({ g, key, targets: missing, facts });
   }
   const planJobs = work.reduce((n, w) => n + w.targets.length, 0), factsJobs = work.filter((w) => w.facts).length;

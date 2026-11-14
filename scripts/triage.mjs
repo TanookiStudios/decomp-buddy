@@ -17,8 +17,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { enrichMany, enrichFromGitLab, enrichFromCodeberg, publishFinds } from "../src/sources/finds.js";
+import { enrichMany, enrichFromGitLab, enrichFromForgejo, publishFinds } from "../src/sources/finds.js";
+import { FORGEJO, refFromUrl } from "../src/forges.js";
 import { readWaiting, excludedKeys } from "../src/waiting.js";
+import { CONSOLES as CONSOLE_TARGETS, CONSOLE_PLATFORMS } from "../src/targets.js";
 import { scanReddit, scanBluesky, scanGitHub, scanGitHubTopics, scanRecompHaven, scanUnbaked, scanAwesomeLists, scanRecompFyi } from "../src/discover.js";
 
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
@@ -29,8 +31,12 @@ const WORK = path.join(os.homedir(), ".decomp-buddy-triage");
 const J = (...p) => path.join(WORK, ...p);
 const readJSON = (f) => JSON.parse(fs.readFileSync(f, "utf8"));
 const idOf = (repo) => repo.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-// Where Decomp Buddy can install a game: computers, plus Android phones/handhelds and Meta Quest headsets (over USB).
+// Where Decomp Buddy can install a game: computers, plus Android phones/handhelds and Meta Quest headsets (over USB),
+// plus consoles running homebrew (downloaded and unpacked for you to copy over - src/targets.js CONSOLES).
 const DESKTOP = ["Windows", "macOS", "Linux", "Android", "Meta Quest"];
+const PLAYABLE = [...DESKTOP, ...CONSOLE_PLATFORMS];
+const SAID = { Windows: /windows/i, macOS: /mac ?os|macintosh|\bmac\b/i, Linux: /linux/i, Android: /android/i, "Meta Quest": /quest|oculus/i,
+  ...Object.fromEntries(Object.values(CONSOLE_TARGETS).map((c) => [c.platform, new RegExp(`${c.name.source}|${c.label.replace(/[^A-Za-z0-9 ]/g, ".")}`, "i")])) };
 export const VERDICTS = ["play", "soon", "hide", "unsure"];
 const CONSOLES = ["PlayStation", "PlayStation 2", "PlayStation 3", "PlayStation 4", "PlayStation Portable", "Xbox", "Xbox 360", "Nintendo 64", "GameCube", "Wii", "Wii U",
   "Nintendo Switch", "NES", "SNES", "Game Boy", "Game Boy Color", "Game Boy Advance", "Nintendo DS", "Nintendo 3DS", "Virtual Boy", "Mega Drive", "Master System", "Sega CD", "Saturn",
@@ -38,12 +44,12 @@ const CONSOLES = ["PlayStation", "PlayStation 2", "PlayStation 3", "PlayStation 
 
 const RULES = `# Sorting Decomp Buddy's Discover queue
 
-Decomp Buddy lists games people can PLAY from their own copy - on a computer, an Android phone or handheld, or a Meta Quest headset: decompilations, static recompilations, native ports and engine reimplementations. Each batch file lists repos found by automatic searches; most are noise. For EVERY repo in the batch decide one verdict:
+Decomp Buddy lists games people can PLAY from their own copy - on a computer, an Android phone or handheld, a Meta Quest headset, or a console running homebrew (${CONSOLE_PLATFORMS.join(", ")}): decompilations, static recompilations, native ports, engine reimplementations, and emulators built to run on a console. Each batch file lists repos found by automatic searches; most are noise. For EVERY repo in the batch decide one verdict:
 
-- "play": a game you can play on Windows, macOS, Linux, Android or Meta Quest, AND the job's "Desktop download" line names at least one of those (an .apk counts for Android / Meta Quest). Ports, recomps, decomp builds, engine reimplementations that run one specific game with the player's files, fan remakes and open-source releases of commercial games all count.
-- "soon": a decompilation, recompilation or PC port of one specific game that has no Windows/macOS/Linux/Android/Meta Quest download yet (including matching ROM decomps that rebuild the original cartridge or disc).
+- "play": a game you can play on one of those, AND the job's "Download" line names at least one of them (an .apk counts for Android / Meta Quest). Ports, recomps, decomp builds, engine reimplementations that run one specific game with the player's files, fan remakes, open-source releases of commercial games, homebrew ports of a game to a console (e.g. Balatro on a modded Xbox 360), emulators built to run ON a console (e.g. SwanStation for Xbox 360) and single-game emulation wrappers (one game packaged with its own emulator) all count.
+- "soon": a decompilation, recompilation or port of one specific game that has no download for any of those yet (including matching ROM decomps that rebuild the original cartridge or disc).
 - "hide": copies and copycats - forks, re-uploads, or a repo with the same name as a known project under an unrelated account (the job warns you when Decomp Buddy already lists that name), unless the README clearly says it's a distinct, maintained port with its own downloads. Also anything that looks like malware bait: a random-looking account name, a README pushing a download link, zip or archive password, "crack", "free download", or "full version". When in doubt about a copy, "hide".
-- "hide" also: tools, libraries, SDKs, emulators, launchers, mod managers, mods, ROM hacks, randomizers, texture or translation patches, save editors, ports that only run on a console or another VR headset (Switch, PS Vita, 3DS homebrew, PSVR...), homework and tutorials, empty or placeholder repos, forks with no changes, awesome-lists, piracy, and repos unrelated to games (search noise).
+- "hide" also: tools, libraries, SDKs, general emulators for computers or phones (RetroArch, Dolphin, PCSX2, DuckStation and the like - not one game, and not built for a console), launchers, mod managers, mods, ROM hacks, randomizers, texture or translation patches, save editors, ports that only run on another VR headset (PSVR...) or a console not in the list above, homework and tutorials, empty or placeholder repos, forks with no changes, awesome-lists, piracy, and repos unrelated to games (search noise).
 - Never judge a project by how old its GitHub account or organization is, or by its star count alone: a new account is not a reason to hide, hold or doubt anything. Maddie's own account is new.
 - AI-made projects are judged exactly like any other: never hide, doubt or mark a project "unsure" because AI wrote some or all of it (that only becomes a neutral label later).
 - "unsure": only when the text really doesn't let you tell. Maddie reviews these by hand.
@@ -55,11 +61,12 @@ Also give:
 
 Our own test: TanookiStudios/decomp-buddy-pipeline-test is Tanooki Test Run, Decomp Buddy's pipeline test game. When it has a desktop download it is always "play" (title "Tanooki Test Run", console "PC (Windows)").
 
-Use only what the job text says. Never guess a download exists: "play" requires the Desktop download line to name Windows, macOS, Linux, Android or Meta Quest.
+Use only what the job text says. Never guess a download exists: "play" requires the Download line to name one of those platforms.
 One exception: when the release has files but their names don't say the computer (e.g. "Game-v1.0.zip"), and the README clearly says which computer that download is for, you may answer "play" with "platforms": ["Windows"] (or macOS / Linux) and "platform_quote": the README sentence that says so, copied word for word (it must name that computer).
+Consoles: a file NAME that mentions a console proves nothing by itself - PC recomps of Xbox 360 or PSP games name the original console all the time ("Spider-Man.3.Xbox.360.Recomp.zip" is a Windows download). The job lists those under "File names also mention". Add such a console to "platforms" (e.g. ["Xbox 360"], beside any computer ones) only when the README says that download runs ON that console, with "platform_quote": that README sentence copied word for word. Use the platform names exactly as listed above.
 
 Answer file: out/<batch id>.json, raw JSON only:
-{ "results": [ { "repo": "owner/name", "verdict": "play|soon|hide|unsure", "title": "...", "console": "...", "reason": "..." }, ... one per repo in the batch ] }
+{ "results": [ { "repo": "owner/name", "verdict": "play|soon|hide|unsure", "title": "...", "console": "...", "reason": "...", "platforms": [...] and "platform_quote": "..." only when a rule above asks for them }, ... one per repo in the batch ] }
 
 Then run: node ~/Documents/GitHub/DecompBuddy/scripts/triage.mjs check <batch id>   and fix anything it reports.
 `;
@@ -68,10 +75,11 @@ Then run: node ~/Documents/GitHub/DecompBuddy/scripts/triage.mjs check <batch id
 // Their playable finds go into their own list file on the site (a shared "list" source), not finds.json.
 const FORGES = {
   gitlab: { site: "https://gitlab.com", raw: (key, f) => `https://gitlab.com/${key}/-/raw/HEAD/${f}`, enrich: enrichFromGitLab, list: "gitlab.json", label: "GitLab" },
-  codeberg: { site: "https://codeberg.org", raw: (key, f) => `https://codeberg.org/${key}/raw/HEAD/${f}`, enrich: enrichFromCodeberg, list: "codeberg.json", label: "Codeberg" },
+  // Codeberg and every other Forgejo/Gitea site in src/forges.js.
+  ...Object.fromEntries(Object.entries(FORGEJO).map(([id, f]) => [id, { site: `https://${f.domain}`, raw: (key, file) => `https://${f.domain}/${key}/raw/HEAD/${file}`, enrich: (key) => enrichFromForgejo(f.domain, key), list: `${id}.json`, label: f.label }])),
 };
 const forgeOf = (r) => Object.keys(FORGES).find((f) => String(r).startsWith(`${f}:`)) || null;
-export const queueKey = (s) => { const m = String(s).match(/(gitlab\.com|codeberg\.org)\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+?)(?:\.git)?(?:[/#?].*)?$/i); return m ? `${m[1].split(".")[0].toLowerCase()}:${m[2]}` : String(s).replace(/^https?:\/\/github\.com\//i, "").replace(/\.git$/, ""); };
+export const queueKey = (s) => { const r = refFromUrl(s); return r && r.host !== "github" ? `${r.host}:${r.owner}/${r.repo}` : String(s).replace(/^https?:\/\/github\.com\//i, "").replace(/\.git$/, ""); };
 function known() {
   const k = new Set();
   for (const g of readJSON(path.join(DIR, "catalog.json")).games) if (g.repo) k.add((FORGES[g.host] ? `${g.host}:${g.repo}` : g.repo).toLowerCase());
@@ -113,11 +121,13 @@ async function readme(repo) {
 const d1 = (sql) => JSON.parse(execFileSync("npx", ["--yes", "wrangler", "d1", "execute", "tanooki-site", "--remote", "--json", "--command", sql],
   { cwd: SITE, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }))[0].results;
 function suggestions(have) {
-  const rows = d1("SELECT id, repo_url FROM decomp_suggestions WHERE status = 'pending'").map((r) => ({ id: Number(r.id), repo: queueKey(r.repo_url) }));
+  const rows = d1("SELECT id, repo_url FROM decomp_suggestions WHERE status = 'pending' ORDER BY created_at, id").map((r) => ({ id: Number(r.id), repo: queueKey(r.repo_url) }));
   const filed = rows.filter((r) => have.has(r.repo.toLowerCase())).map((r) => r.id).filter(Number.isInteger);
   if (filed.length) d1(`UPDATE decomp_suggestions SET status = 'have', updated_at = datetime('now') WHERE id IN (${filed.join(",")})`);
-  console.log(`player suggestions: ${rows.length} pending, ${filed.length} already filed and closed`);
-  return rows.filter((r) => !have.has(r.repo.toLowerCase()));
+  // Oldest first (created_at: one Maddie moves to the front gets an early date), 150 a run: a big batch (a re-sort of hundreds) spreads over a few hourly runs instead of one huge one.
+  const todo = rows.filter((r) => !have.has(r.repo.toLowerCase()));
+  console.log(`player suggestions: ${rows.length} pending, ${filed.length} already filed and closed, ${Math.min(todo.length, 150)} sorted this run${todo.length > 150 ? `, ${todo.length - 150} wait for the next` : ""}`);
+  return todo.slice(0, 150);
 }
 
 // Remove / Restore from the admin page (tanookistudios.com/admin/decomp-buddy). A removed game goes on the hidden list,
@@ -202,11 +212,12 @@ async function prep() {
     const body = ready.slice(b, b + size).map((r, k) => {
       const c = readJSON(J("ctx", `${idOf(r)}.json`));
       if (!c.exists) return `=== REPO ${k + 1}: ${r} ===\nThe repo no longer exists.\n`;
-      const desk = c.platforms.filter((p) => DESKTOP.includes(p));
+      const desk = c.platforms.filter((p) => PLAYABLE.includes(p));
       const twin = listed.get(c.repo.split("/")[1].toLowerCase());
       return [`=== REPO ${k + 1}: ${c.repo} ===`, `Description: ${c.notes || "(none)"}`, `Stars: ${c.stars} · Fork: ${c.fork ? "yes" : "no"} · Last update: ${c.updatedAt || "?"} · Website: ${c.website || "-"}`,
         ...(twin ? [`WARNING: Decomp Buddy already lists a project with this exact name: ${twin}. A same-named repo under another account is usually a fork or a copycat.`] : []),
-        `Desktop download: ${desk.length ? desk.join(", ") : "none"}${c.platforms.length > desk.length ? ` (also: ${c.platforms.filter((p) => !DESKTOP.includes(p)).join(", ")})` : ""}`,
+        `Download: ${desk.length ? desk.join(", ") : "none"}${c.platforms.length > desk.length ? ` (also: ${c.platforms.filter((p) => !PLAYABLE.includes(p)).join(", ")})` : ""}`,
+        ...((c.consolesNamed || []).length ? [`File names also mention: ${c.consolesNamed.join(", ")} (only a hint - see the Consoles rule)`] : []),
         `Release files: ${c.releases.map((x) => `${x.tag}: ${x.files.join(", ") || "(no files)"}`).join(" | ") || "no releases"}`,
         "README (start):", "```", c.readme.replace(/```/g, "'''") || "(no README)", "```", ""].join("\n");
     }).join("\n");
@@ -221,13 +232,15 @@ const batchRepos = (id) => readJSON(J("jobs", `${id}.repos.json`));
 
 // Which computers a "play" answer installs on: what the release file names say, or - when the files don't
 // name one (e.g. "Game-v1.0.zip") - the agent's "platforms", backed by a README sentence copied word for word.
+// A console a file name only mentions counts once the README quote names it (a PC recomp's zip names the original console).
 export function desktopOf(r, c) {
-  const named = (c?.platforms || []).filter((p) => DESKTOP.includes(p));
-  if (named.length) return named;
+  const named = (c?.platforms || []).filter((p) => PLAYABLE.includes(p));
   const hasFiles = (c?.releases || []).some((x) => x.files.length), q = String(r.platform_quote || "").trim();
-  if (!hasFiles || q.length < 8 || !String(c?.readme || "").includes(q)) return [];
-  const said = { Windows: /windows/i, macOS: /mac ?os|macintosh|\bmac\b/i, Linux: /linux/i, Android: /android/i, "Meta Quest": /quest|oculus/i };
-  return (Array.isArray(r.platforms) ? r.platforms : []).filter((p) => DESKTOP.includes(p) && said[p].test(q));
+  const quoted = hasFiles && q.length >= 8 && String(c?.readme || "").includes(q);
+  const asked = (Array.isArray(r.platforms) ? r.platforms : []).filter((p) => quoted && SAID[p]?.test(q) && !named.includes(p));
+  const consoles = asked.filter((p) => CONSOLE_PLATFORMS.includes(p) && (c?.consolesNamed || []).includes(p));
+  const computers = named.length ? [] : asked.filter((p) => DESKTOP.includes(p));
+  return [...named, ...computers, ...consoles];
 }
 
 // The same checks import makes; agents run it on their own answer.
@@ -237,7 +250,7 @@ export function problems(answer, repos, ctxOf) {
     if (!VERDICTS.includes(r.verdict)) out.push(`${r.repo}: verdict must be one of ${VERDICTS.join("/")}`);
     if (r.verdict !== "hide" && !CONSOLES.includes(r.console)) out.push(`${r.repo}: console "${r.console}" isn't in the list`);
     if (!String(r.title || "").trim()) out.push(`${r.repo}: title is empty`);
-    if (r.verdict === "play" && !desktopOf(r, ctxOf(r.repo)).length) out.push(`${r.repo}: "play" needs a Windows/macOS/Linux/Android/Meta Quest download: the job lists none, and no "platforms" + verbatim "platform_quote" from the README backs one - use "soon" or "unsure"`);
+    if (r.verdict === "play" && !desktopOf(r, ctxOf(r.repo)).length) out.push(`${r.repo}: "play" needs a download for a computer, Android, Meta Quest or a listed console: the job lists none, and no "platforms" + verbatim "platform_quote" from the README backs one - use "soon" or "unsure"`);
     got.set(String(r.repo).toLowerCase(), r);
   }
   for (const r of repos) if (!got.has(r.toLowerCase())) out.push(`${r}: missing from results`);

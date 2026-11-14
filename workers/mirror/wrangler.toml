@@ -1,0 +1,13 @@
+# Copies a game's release file from its host (GitHub/GitLab/Codeberg) into our own storage, server to server, so
+# nothing passes through the admin Mac's connection. Called by scripts/mirror.mjs. Files are served to players from
+# files.decompbuddy.com (the decomp-files bucket's own domain), not through this Worker.
+name = "decomp-mirror"
+main = "index.js"
+compatibility_date = "2026-11-01"
+workers_dev = true
+
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "decomp-files"
+
+# Secrets (wrangler secret put): TOKEN (what scripts/mirror.mjs sends), GITHUB_TOKEN (asset downloads through the API).

@@ -20,9 +20,10 @@ import { findExecutable } from "./library.js";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { logHint, lacksExecBit } from "../doctor.js";
+import { moveRomsOut } from "../uninstall.js";
 import { reportBody, issueUrl } from "../bugreport.js";
 import { savesOf } from "./files.js";
-import { logTo, loadSettings, saveSettings, libraryDirs, state } from "./core.js";
+import { logTo, loadSettings, saveSettings, libraryDirs, state, romKeepDir } from "./core.js";
 
 const MANIFEST = "decomp-buddy.json";
 export const readM = (folder) => upgradeManifest(JSON.parse(fs.readFileSync(path.join(folder, MANIFEST), "utf8")));
@@ -52,15 +53,17 @@ ipcMain.handle("game:setUser", (_e, { folder, displayName, tags, hidden, autoUpd
 });
 
 // ---- Remove A Game: the whole folder to the Trash (you can still get it back), never a hard delete.
-ipcMain.handle("game:remove", async (e, { folder }) => {
+// rom: "move" takes the game files you supplied out first (Uninstall Game → Move Rom Out Safely, src/uninstall.js).
+ipcMain.handle("game:remove", async (e, { folder, rom = "delete" }) => {
   if (kiosk.locked) throw new Error("That is switched off in Kiosk Mode.");
   const f = libraryFolder(folder), m = readM(f);
+  const kept = rom === "move" ? moveRomsOut(f, m, romKeepDir(loadSettings())) : { dir: null, files: [] };
   // Test harness only: a throwaway "Trash" so a smoke run never puts anything in the real one.
   if (process.env.DECOMP_HEADLESS && process.env.DECOMP_TRASH_DIR) { fs.mkdirSync(process.env.DECOMP_TRASH_DIR, { recursive: true }); fs.renameSync(f, path.join(process.env.DECOMP_TRASH_DIR, path.basename(f))); }
   else await shell.trashItem(f);
   try { writeInstallHtml(path.dirname(f)); } catch {}
-  logTo(e.sender, `Removed ${m.displayName || m.plan?.game_title || path.basename(f)}: moved ${f} to the Trash.${m.steamAppId ? " Its Steam shortcut is still in Steam - remove it there." : ""}`);
-  return { steam: !!m.steamAppId };
+  logTo(e.sender, `Removed ${m.displayName || m.plan?.game_title || path.basename(f)}: moved ${f} to the Trash.${kept.files.length ? ` Kept ${kept.files.length} game file(s) in ${kept.dir}.` : ""}${m.steamAppId ? " Its Steam shortcut is still in Steam - remove it there." : ""}`);
+  return { steam: !!m.steamAppId, kept: kept.files.length, keptDir: kept.dir };
 });
 
 // Thank The Developer: shown once per game, after an hour of play (src/thanks.js); either button marks it done.

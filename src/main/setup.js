@@ -55,7 +55,8 @@ ipcMain.handle("verify", async (e, { path: file, gameFile, outDir }) => {
   return { ...result, resolvedPath: resolved, extractedFrom, convertedFrom, summary: `${path.basename(resolved)} (${via}) - ${result.summary}` };
 });
 
-ipcMain.handle("analyze", async (e, { urls }) => {
+// target: the Download Selected Games flow passes this computer's own; the Install From GitHub page uses Build For.
+ipcMain.handle("analyze", async (e, { urls, target: forTarget }) => {
   if (state.busy) throw new Error("Already working.");
   state.busy = true;
   const log = (m) => logTo(e.sender, m);
@@ -70,7 +71,7 @@ ipcMain.handle("analyze", async (e, { urls }) => {
       else if (settings.appleAI !== false && (await appleStatus()).available) { provider = resolveProvider("apple"); log("No AI key - repos without a published plan use Apple Intelligence on this Mac (free, on-device)."); }
       else log(`No AI key set - published plans only (${err.message})`);
     }
-    const target = TARGETS[settings.target] ? settings.target : "windows";
+    const target = TARGETS[forTarget] ? forTarget : TARGETS[settings.target] ? settings.target : "windows";
     const published = await fetchPublished({ file: plansFileFor(settings), cacheDir: app.getPath("userData") });
     const ctxCache = diskCache("repo");
     const fetchContext = async (ref) => {
@@ -92,7 +93,7 @@ ipcMain.handle("analyze", async (e, { urls }) => {
       const review = {
         tag: rel?.tag || build.release_tag || null, asset: build.release_asset || null,
         assets: (rel?.assets || []).map((a) => ({ name: a.name, size: a.size })),
-        folder: gameFolderName(it.plan), outDir: outDirFor(settings, target), executable: build.executable || null,
+        folder: gameFolderName(it.plan), outDir: outDirFor(settings, it.target || target), executable: build.executable || null,
       };
       return {
         id: it.id, url: it.url, ok: true, game_title, console: platform, method: build.method, planSource: it.planSource, review, rip: dumpKind(platform || ""),
@@ -156,9 +157,14 @@ ipcMain.handle("queue:run", async (e) => {
   log(`--- Back online: setting up ${q.length} waiting game(s)`);
   try {
     const s = loadSettings(), mode = s.moveFiles === false ? "copy" : "move";
-    const jobs = q.map((x) => ({ ...x, id: x.key }));
-    const out = await runJobs(jobs, { s, mode, outDir: outDirFor(s, currentTarget(s)), log });
-    return { done: out.results.filter((r) => r.ok).length, waiting: readQueue().length, results: out.results.map((r, i) => ({ title: q[i].title, ok: r.ok, error: r.ok ? null : r.error })) };
+    const results = [];
+    // Games wait with the computer they were read for; each goes into that computer's folder.
+    for (const t of new Set(q.map((x) => x.target || currentTarget(s)))) {
+      const group = q.filter((x) => (x.target || currentTarget(s)) === t);
+      const out = await runJobs(group.map((x) => ({ ...x, id: x.key })), { s, mode, outDir: outDirFor(s, t), log });
+      out.results.forEach((r, i) => results.push({ title: group[i].title, ok: r.ok, error: r.ok ? null : r.error }));
+    }
+    return { done: results.filter((r) => r.ok).length, waiting: readQueue().length, results };
   } finally { state.busy = false; }
 });
 
@@ -171,7 +177,6 @@ ipcMain.handle("setup", async (e, { items }) => {
   try {
     const s = loadSettings();
     const mode = s.moveFiles === false ? "copy" : "move";
-    const outDir = outDirFor(s, currentTarget(s));
     const jobs = items.map(({ id, picks, verifications, overrides }) => {
       const it = state.pending.get(id);
       if (!it) throw new Error("Read the repos again - the analysis is stale.");
@@ -185,7 +190,18 @@ ipcMain.handle("setup", async (e, { items }) => {
       if (overrides?.folder && overrides.folder.trim() && overrides.folder.trim() !== gameFolderName(it.plan)) it.plan.folder_name = overrides.folder.trim();
       return { ...it, picks: picks || {}, verifications: verifications || {} };
     });
-    return await runJobs(jobs, { s, mode, outDir, log });
+    // Each game goes into the folder for what it was read for: this computer, another one, or a console.
+    const groups = [...new Set(jobs.map((j) => j.target || currentTarget(s)))];
+    if (groups.length === 1) return await runJobs(jobs, { s, mode, outDir: outDirFor(s, groups[0]), log });
+    const results = new Array(jobs.length); let last = {};
+    for (const t of groups) {
+      const idx = jobs.map((j, i) => ((j.target || currentTarget(s)) === t ? i : -1)).filter((i) => i >= 0);
+      const out = await runJobs(idx.map((i) => jobs[i]), { s, mode, outDir: outDirFor(s, t), log });
+      // Each result carries its own folder: the renderer joins outDir + manifest.folder.
+      out.results.forEach((r, k) => { results[idx[k]] = { ...r, outDir: out.outDir }; });
+      last = out;
+    }
+    return { ...last, results, outDir: outDirFor(s, groups[0]) };
   } finally { state.busy = false; }
 });
 

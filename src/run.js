@@ -47,7 +47,7 @@ export async function analyzeOne(url, { provider, log, planner = planFromContext
   // Published for other computers only: say that, not "no plan yet". An AI key can still try to plan it.
   const listed = published?.plans?.[planKey(ref.host, ref.owner, ref.repo)];
   const others = Object.keys(listed?.targets || {}).filter((t) => t !== target).map((t) => targetOf(t).label);
-  if (!provider && others.length && !lookupPlan(published, planKey(ref.host, ref.owner, ref.repo), target)) throw new Error(`${ref.owner}/${ref.repo} has no ${targetOf(target).label} version. It's available for: ${others.join(", ")}. Pick one under Build For to make a copy for that computer.`);
+  if (!provider && others.length && !lookupPlan(published, planKey(ref.host, ref.owner, ref.repo), target)) throw new Error(`${ref.owner}/${ref.repo} has no ${targetOf(target).label} version. It's available for: ${others.join(", ")}. To make a copy for one of those, use Install From GitHub and pick it under Build For.`);
   let ctx = !fullContext && planContext(ref, published, target);
   if (!ctx) { log(`Reading ${ref.owner}/${ref.repo}…`); ctx = await fetchContext(ref); }
   let planSource = "ai";

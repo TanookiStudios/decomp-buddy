@@ -19,10 +19,10 @@ out.hiddenShownAfter = document.querySelector("#shelves").innerText.includes("Sp
 await openMore(library.find((g) => g.originalTitle === "Ocarina Of Time")); await wait(500);
 await $("moreShortcut").onclick(); await wait(500);
 out.shortcutMsg = $("gamePanelState").textContent;
-// Remove: two presses, then gone from the list and in the throwaway trash.
+// Uninstall from the Manage panel: the same Uninstall Game question, then gone from the list and in the throwaway trash.
 await openMore(library.find((g) => g.originalTitle === "Spare Game")); await wait(500);
-$("moreRemove").click(); out.confirmShown = !$("moreRemoveYes").hidden;
-await $("moreRemoveYes").onclick(); await wait(1200);
+$("moreRemove").click(); out.confirmShown = !$("uninstallDlg").hidden && !$("uninstallAsk").hidden;
+$("libStatus").textContent = ""; $("uninstallYes").click(); for (let i = 0; i < 40 && !$("libStatus").textContent; i++) await wait(250);
 out.afterRemove = library.map((g) => g.originalTitle);
 out.removeMsg = $("libStatus").textContent;
 // News banner from news.json (expired item skipped), then dismissed for good.

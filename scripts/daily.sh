@@ -29,6 +29,10 @@ case "${1:-}" in
   steps)
     need find; say "== $DAY steps"
     node scripts/triage.mjs import --site "$SITE" 2>&1 | grep -E "^import" | tee -a "$LOG"
+    # Our own copy of every download and its source code (scripts/mirror.mjs): new files this hour, then mark what we hold.
+    node scripts/mirror.mjs --site "$SITE" --limit-gb 30 2>&1 | grep -E "^mirror|^failures" | tee -a "$LOG"
+    node scripts/mirror.mjs --site "$SITE" --source --limit-gb 5 2>&1 | grep -E "^mirror|^failures" | tee -a "$LOG"
+    node scripts/mirror.mjs --site "$SITE" --apply 2>&1 | grep -E "^mirror" | tee -a "$LOG"
     node scripts/build-catalog.mjs --site "$SITE" 2>&1 | grep -E "^(catalog|waiting.json|steamgriddb|✗ steamgriddb)" | tee -a "$LOG"
     touch ~/.decomp-buddy-scan/follow-replan.txt
     node scripts/ccplans.mjs prep --site "$SITE" --replan ~/.decomp-buddy-scan/follow-replan.txt 2>&1 | grep -E "^prep" | tee -a "$LOG"

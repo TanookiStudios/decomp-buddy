@@ -41,3 +41,18 @@ test("the renderer's copies of the target tables match src/targets.js", () => {
   assert.deepEqual(Object.keys(obj("TARGET_LABEL")).sort(), Object.keys(TARGETS).sort());
   assert.deepEqual(obj("TARGET_LABEL"), Object.fromEntries(Object.entries(TARGETS).map(([k, t]) => [k, t.label])));
 });
+
+test("consoles: a console-only file type settles it, a name is only a hint, and computer downloads aren't refused for naming one", async () => {
+  const { consoleOfAsset, consoleNamedIn, assetMismatch, targetIsHost, isConsoleTarget } = await import("../src/targets.js");
+  assert.equal(consoleOfAsset("UnleashedRecomp.nro"), "switch");
+  assert.equal(consoleOfAsset("zelda3-3ds-v4.1.cia"), "3ds");
+  assert.equal(consoleOfAsset("Spider-Man.3.Xbox.360.Recomp.v0.2.1.zip"), null);
+  assert.equal(consoleNamedIn("Spider-Man.3.Xbox.360.Recomp.v0.2.1.zip"), "xbox360");
+  assert.equal(assetMismatch("Spider-Man.3.Xbox.360.Recomp.v0.2.1.zip", "windows"), null, "a PC recomp naming the original console is still a Windows download");
+  assert.equal(assetMismatch("GoW_PSP_Launcher-v1.5.0.zip", "windows"), null);
+  assert.equal(assetMismatch("UnleashedRecomp.nro", "windows"), "a Nintendo Switch build");
+  assert.equal(assetMismatch("Balatro360-Xbox360-1.0.2.0.zip", "xbox360"), null);
+  assert.equal(assetMismatch("XboxSX-SegaRally1.0.0c.zip", "xbox360"), "an Xbox Series X|S build");
+  assert.equal(assetMismatch("game-setup.exe", "xbox360"), "a computer or phone build");
+  assert.equal(isConsoleTarget("xbox360"), true); assert.equal(targetIsHost("xbox360"), false);
+});

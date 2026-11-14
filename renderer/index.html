@@ -30,8 +30,16 @@
 .book .cover .nocover { width:calc(var(--cs) * .73); height:var(--cs); background:var(--window); border-radius:3px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; padding:8px; font-size:13px; color:var(--windowfg) }
 .book .title { font-size:13px; font-weight:600; text-align:center; line-height:1.25; max-height:2.5em; overflow:hidden }
 .book .chips { font-size:11px; color:var(--muted); text-align:center }
+/* Download Selected Games: the same Set Up screen with the links, Build For and folder hidden */
+.view:not(.simple) .simpleOnly, .view.simple .adv { display:none !important }
+.game .head .art { width:56px; height:56px; object-fit:contain; flex:none; border-radius:4px } .game .head .who { display:flex; gap:12px; align-items:center; min-width:0 }
+.tile .tacts { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px } .tile .tacts button { font-size:12px; padding:4px 10px }
+.tile.ok.withart { display:flex; gap:10px; align-items:flex-start } .tile .tart { width:48px; height:48px; object-fit:contain; flex:none }
+/* Installed Games: three buttons on every tile, the rest under More… */
+.book .main3 { display:flex; flex-direction:column; gap:4px; width:100% } .book .main3 button { font-size:12px; padding:4px 8px; width:100% }
+.layout-list .book .main3 { flex-direction:row; width:auto; margin-left:auto; align-self:center } .layout-list .book .main3 button { width:auto }
 .book .acts { display:none; position:absolute; inset:0 0 auto 0; top:0; background:rgba(0,0,0,.72); border-radius:6px; padding:8px; flex-direction:column; gap:6px; height:var(--cs); justify-content:flex-start; overflow-y:auto }
-.book:hover .acts, .book:focus-within .acts { display:flex }
+.book.open .acts { display:flex }
 .book .acts button { font-size:12px; padding:5px 8px; color:#fff; border-color:rgba(255,255,255,.5); background:rgba(0,0,0,.3) } .book .acts button.primary { background:var(--gold); border-color:var(--gold); color:#1d2140 }
 .book .acts button:disabled { opacity:.7 }
 /* Library Layout: Compact is smaller tiles without the chips; List is one row per game, its buttons on the right */
@@ -124,6 +132,7 @@ button.danger { border-color:var(--bad); color:var(--bad) } button.danger:hover 
 button.gold, button[aria-pressed="true"].pick { background:var(--gold); border-color:var(--gold); color:#1d2140 }
 button:disabled { opacity:.5; cursor:not-allowed; box-shadow:none }
 .actions { display:flex; gap:8px; flex-wrap:wrap }
+#logBox[open] { flex:1; display:flex; flex-direction:column; min-height:0 } #logBox summary { cursor:pointer; color:var(--muted); font-size:12.5px; margin-bottom:6px }
 #log { flex:1; min-height:160px; margin:0; background:var(--log); color:var(--logfg); border-radius:10px; padding:12px 14px; font:12.5px/1.5 var(--mono); overflow:auto; white-space:pre-wrap }
 .loadingGames { text-align:center; padding:56px 16px } .loadingGames .sub { max-width:440px; margin:6px auto 0 }
 .spinner { display:inline-block; width:34px; height:34px; border:3px solid var(--line, #ccc); border-top-color:var(--gold, currentColor); border-radius:50%; animation:spin 0.9s linear infinite }
@@ -205,30 +214,31 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   <div id="updateBar" role="status"><span id="updateText"></span><span class="grow"></span><button id="updateGet" type="button">Download</button><button id="updateLater" type="button">Later</button></div>
   <section id="setup-view" class="view" data-view="setup" aria-label="Install from GitHub">
     <div>
-      <h1>Install From GitHub</h1>
-      <p class="sub">Paste decomp / recomp GitHub links, or pick them in <strong>Browse Games</strong>. <strong>Read Repos</strong> finds out what each game needs, you choose your own game files (archives are fine), <strong>Set Up Games</strong> builds a ready-to-go folder per game and writes <strong>install.html</strong>.</p>
+      <h1 class="adv">Install From GitHub</h1><h1 class="simpleOnly">Your Games</h1>
+      <p class="sub simpleOnly">Choose your own copy of each game below, then press Prepare Games. Your files are checked and everything is set up for this computer.</p>
+      <p class="sub adv">Paste decomp / recomp GitHub links, or pick them in <strong>Browse Games</strong>. <strong>Read Repos</strong> finds out what each game needs, you choose your own game files (archives are fine), <strong>Set Up Games</strong> builds a ready-to-go folder per game and writes <strong>install.html</strong>.</p>
     </div>
     <div class="legal" id="legal" hidden><span>Decomp Buddy never downloads games. You supply your own copies; verification checks they're the ones the project needs.</span><button id="legalOk" type="button">Got It</button></div>
-    <div>
+    <div class="adv">
       <label for="urls">GitHub Links (One Per Line)</label>
       <textarea id="urls" placeholder="https://github.com/mchughalex/skate3recomp&#10;https://github.com/new-coke/strikers" spellcheck="false"></textarea>
     </div>
-    <div class="row">
+    <div class="row adv">
       <div style="flex:0 0 220px"><label for="target">Build For</label><select id="target"></select></div>
       <div style="flex:0 0 220px" id="setupDeviceRow" hidden><label for="setupDevice">Install On</label><select id="setupDevice"></select></div>
       <div><label for="outDir">Goes Into</label><div class="row"><input id="outDir" type="text" readonly title="Change the folders in Settings"><button id="openFolder" type="button">Open</button></div><p class="sub" id="outDirWhy"></p></div>
     </div>
     <div class="actions">
-      <button id="analyze" class="primary" type="button">Read Repos</button>
-      <button id="setup" type="button" disabled>Set Up Games</button>
+      <button id="analyze" class="primary adv" type="button">Read Repos</button>
+      <button id="setup" type="button" disabled><span class="adv">Set Up Games</span><span class="simpleOnly">Prepare Games</span></button>
       <button id="setupPause" type="button" hidden>Pause Downloads</button>
       <button id="setupCancel" type="button" hidden>Cancel</button>
-      <button id="clean" type="button" title="Deletes .DS_Store and friends in the output folder">Clean Mac Junk</button>
-      <button id="openHtml" type="button">Open install.html</button>
+      <button id="clean" class="adv" type="button" title="Deletes .DS_Store and friends in the output folder">Clean Mac Junk</button>
+      <button id="openHtml" class="adv" type="button">Open install.html</button>
     </div>
     <div class="status" id="status" role="status" aria-live="polite"></div>
     <div id="games" aria-label="Games found"></div>
-    <pre id="log" aria-label="Log"></pre>
+    <details id="logBox" open><summary>Log</summary><pre id="log" aria-label="Log"></pre></details>
   </section>
 
   <section id="library" class="view" data-view="library" aria-label="Installed games">
@@ -347,7 +357,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div><h1>New Games</h1><p class="sub">The newest additions to the catalog, newest first.</p></div>
     </div>
     <div id="newList" class="cardList"></div>
-    <div class="foot"><span class="n pickCount"></span><button class="primary pickAdd" type="button" disabled>Add To Links</button></div>
+    <div class="foot"><span class="n pickCount"></span><button class="primary pickAdd" type="button" disabled>Download Selected Games</button></div>
   </section>
 
   <section id="foryou" class="view" data-view="foryou" aria-label="Games you may like">
@@ -355,7 +365,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div><h1>Games You May Like</h1><p class="sub" id="forYouMeta">Picked from the games you've set up and the ones on your wishlist: same makers, same consoles.</p></div>
     </div>
     <div id="forYouList" class="cardList"></div>
-    <div class="foot"><span class="n pickCount"></span><button class="primary pickAdd" type="button" disabled>Add To Links</button></div>
+    <div class="foot"><span class="n pickCount"></span><button class="primary pickAdd" type="button" disabled>Download Selected Games</button></div>
   </section>
 
   <section id="soon" class="view" data-view="soon" aria-label="Coming Soon">
@@ -403,7 +413,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     </div>
     <div class="toolbar">
       <input id="catSearch" type="text" placeholder="Search title or project" autocomplete="off" spellcheck="false" aria-label="Search">
-      <select id="catRunsOn" aria-label="Runs on"><option value="">Runs On: Any</option><option value="Windows">Runs On: Windows</option><option value="macOS">Runs On: macOS</option><option value="Linux">Runs On: Linux</option><option value="Android">Runs On: Android</option><option value="Meta Quest">Runs On: Meta Quest</option><option value="Steam Deck">Runs On: Steam Deck</option></select>
+      <select id="catRunsOn" aria-label="Runs on"><option value="">Runs On: Any</option><option value="Windows">Runs On: Windows</option><option value="macOS">Runs On: macOS</option><option value="Linux">Runs On: Linux</option><option value="Android">Runs On: Android</option><option value="Meta Quest">Runs On: Meta Quest</option><option value="Steam Deck">Runs On: Steam Deck</option><option value="Xbox 360">Runs On: Xbox 360</option><option value="Xbox">Runs On: Xbox</option><option value="Xbox Series">Runs On: Xbox Series</option><option value="Switch">Runs On: Switch</option><option value="Wii U">Runs On: Wii U</option><option value="Wii">Runs On: Wii</option><option value="GameCube">Runs On: GameCube</option><option value="3DS">Runs On: 3DS</option><option value="DS">Runs On: DS</option><option value="PS Vita">Runs On: PS Vita</option><option value="PSP">Runs On: PSP</option><option value="PS2">Runs On: PS2</option><option value="PS3">Runs On: PS3</option><option value="PS4">Runs On: PS4</option><option value="Dreamcast">Runs On: Dreamcast</option></select>
       <select id="catSort" aria-label="Sort"><option value="console">Console, Then Title</option><option value="platforms">Runs On, Then Console</option><option value="updated">Recently Updated</option><option value="title">Title</option></select>
       <button id="moreFiltersBtn" type="button" aria-expanded="false" aria-controls="moreFilters">More Filters</button>
     </div>
@@ -421,7 +431,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <button id="clearFilters" type="button" class="small">Clear</button>
     </div>
     <div id="conBar" class="conbar" role="group" aria-label="Console"></div>
-    <div class="legal" id="where" role="region" aria-label="Where games go" hidden><span><span>Games you set up go into this folder:</span> <strong id="whereDir" translate="no"></strong><br><span>Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.</span></span><button id="whereChange" type="button">Change…</button><button id="whereOk" type="button">Keep It</button></div>
+    <div class="legal" id="where" role="region" aria-label="Where games go" hidden><span><span>Games you set up go into this folder:</span> <strong id="whereDir" translate="no"></strong><br><span>Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.</span><br><span>When you uninstall a game and keep your game files, they go here:</span> <strong id="whereRomDir" translate="no"></strong> <button id="whereRomChange" type="button" class="small">Change…</button></span><button id="whereChange" type="button">Change…</button><button id="whereOk" type="button">Keep It</button></div>
     <div class="legal" id="countAsk" role="region" aria-label="Count your set-ups" hidden><span><span>Help count how many games Decomp Buddy has set up?</span><br><span>When a new game finishes setting up, the app tells tanookistudios.com "+1 for this game" - just the game's name. Nothing about you or your computer is sent. You can change this any time in Settings.</span></span><button id="countYes" type="button">Count Mine</button><button id="countNo" type="button">No Thanks</button></div>
     <div class="status" id="catalogStatus" role="status" aria-live="polite"></div>
     <div id="addGame" class="addGame" hidden>
@@ -433,7 +443,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     <div class="foot">
       <span class="n" id="catCount"></span>
       <button id="catUpdateAll" type="button" hidden>Update All</button>
-      <button id="catAdd" class="primary pickAdd" type="button" disabled>Add To Links</button>
+      <button id="catAdd" class="primary pickAdd" type="button" disabled>Download Selected Games</button>
     </div>
   </section>
 
@@ -443,6 +453,11 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div>
         <label for="installDir">Install Folder (games built for this computer)</label>
         <div class="row"><input id="installDir" type="text"><button id="chooseInstall" type="button">Choose…</button></div>
+      </div>
+      <div>
+        <label for="romKeepDir">Kept Game Files (when you uninstall a game)</label>
+        <div class="row"><input id="romKeepDir" type="text" readonly><button id="chooseRomKeep" type="button">Choose…</button></div>
+        <p class="sub">Uninstall Game asks every time. If you pick Move Rom Out Safely, your game files go into this folder.</p>
       </div>
       <div>
         <label for="transferDir">Transfer Folder (games built for another OS)</label>
@@ -676,6 +691,14 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <p class="sub"><a href="#" data-ext="https://github.com/TanookiStudios/decomp-buddy">Star Decomp Buddy On GitHub</a></p>
       <p class="sub">It's free, and it helps other people find the app.</p>
       <p class="sub"><a href="#" data-ext="https://www.reddit.com/r/DecompBuddy/">Join r/DecompBuddy On Reddit</a></p>
+      <h2 style="font-size:15px;margin:28px 0 6px">Elsewhere</h2>
+      <p class="sub">
+        <a href="#" data-ext="https://tanookistudios.com">Tanooki Studios</a> &middot;
+        <a href="#" data-ext="https://maddietendo.com">Maddie</a> &middot;
+        <a href="#" data-ext="https://instagram.com/maddierabbles">Instagram</a> &middot;
+        <a href="#" data-ext="https://www.linkedin.com/in/maddie-lumen/">LinkedIn</a> &middot;
+        <a href="#" data-ext="https://www.tiktok.com/@maddietendo">TikTok</a>
+      </p>
       <div class="sig" role="img" aria-label="Signed, Maddie">
           <svg viewBox="0 0 330 116" style="width:clamp(190px,34vw,270px); height:auto; overflow:visible; display:block; color:currentColor" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
             <g transform="rotate(-4 160 66) skewX(-8)">
@@ -762,7 +785,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
 
   <section id="results" class="view" data-view="results" aria-label="Results">
     <div>
-      <h1>Done</h1>
+      <h1 class="adv">Done</h1><h1 class="simpleOnly">Your Games Are Ready</h1>
       <p class="sub" id="resultsSummary"></p>
     </div>
     <div class="cols">
@@ -771,9 +794,10 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div class="col"><h3>Skipped</h3><div id="colSkip"></div></div>
     </div>
     <div class="actions">
-      <button id="resultsHtml" class="primary" type="button">Open install.html</button>
-      <button id="resultsFolder" type="button">Open Folder</button>
-      <button id="resultsBack" type="button">Back</button>
+      <button id="resultsLibrary" class="primary simpleOnly" type="button">Go To Installed Games</button>
+      <button id="resultsHtml" class="primary adv" type="button">Open install.html</button>
+      <button id="resultsFolder" class="adv" type="button">Open Folder</button>
+      <button id="resultsBack" type="button"><span class="adv">Back</span><span class="simpleOnly">Back To Browse</span></button>
     </div>
   </section>
 </main>
@@ -827,6 +851,24 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     <h2 id="nudgeTitle" style="margin:6px 0 6px;font-size:20px">Three games in.</h2>
     <p id="nudgeBody" class="sub" style="font-size:14px;line-height:1.55"></p>
     <div class="actions" style="margin-top:14px"><button id="nudgeTip" class="primary" type="button">Leave A Tip</button><button id="nudgeLater" type="button">Maybe Later</button></div>
+  </div>
+</div>
+<div id="uninstallDlg" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="uninstallTitle">
+  <div class="modal-box">
+    <h2 id="uninstallTitle" style="margin:0 0 8px;font-size:20px">Uninstall <span id="uninstallName" translate="no"></span>?</h2>
+    <div id="uninstallAsk">
+      <p class="sub" style="font-size:14px;line-height:1.55">Its folder goes to the Trash, so you can still get it back until you empty the Trash.</p>
+      <p class="sub" id="uninstallDevice" hidden style="font-size:14px;line-height:1.55">The copy on your phone or headset stays there. This removes the copy on this computer.</p>
+      <div class="actions" style="margin-top:14px"><button id="uninstallYes" class="primary" type="button">Uninstall Game</button><button id="uninstallNo" type="button">Cancel</button></div>
+    </div>
+    <div id="uninstallRom" hidden>
+      <p class="sub" style="font-size:14px;line-height:1.55">What should happen to your game file? <strong id="uninstallFiles" translate="no"></strong></p>
+      <p class="sub">Move Rom Out Safely puts it in this folder (you can change it in Settings):</p>
+      <p><strong id="uninstallKeepDir" translate="no"></strong></p>
+      <p class="sub">Delete Rom sends it to the Trash with the game.</p>
+      <div class="actions" style="margin-top:14px"><button id="uninstallMove" class="primary" type="button">Move Rom Out Safely</button><button id="uninstallDelete" type="button">Delete Rom</button><button id="uninstallBack" type="button">Cancel</button></div>
+    </div>
+    <p class="status" id="uninstallState" role="status" aria-live="polite"></p>
   </div>
 </div>
 <script src="i18n.js"></script>

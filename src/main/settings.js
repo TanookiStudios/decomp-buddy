@@ -7,14 +7,14 @@ import { writeInstallHtml } from "../installhtml.js";
 import { PRESETS, resolveProvider } from "../providers.js";
 import { listModels } from "../plan.js";
 import { cleanStaging } from "../archive.js";
-import { TARGETS, targetIsHost, defaultInstallDir, defaultTransferDir, inGamingMode } from "../targets.js";
+import { TARGETS, targetIsHost, hostTarget, defaultInstallDir, defaultTransferDir, inGamingMode } from "../targets.js";
 import { BUILTIN } from "../catalog.js";
 import { UPDATE_URL } from "../updates.js";
 import { FINDS_URL } from "../sources/finds.js";
 import { readVault } from "../vault.js";
 import { steamDir } from "../steam.js";
 import { fetchSharedSources, sourceKey, validateSourceEntry, normalizeUser, SOURCES_URL } from "../sources/shared-sources.js";
-import { VERSION, vaultDir, logFile, encrypt, decrypt, loadSettings, saveSettings, outDirFor, defaultFindsFile, sourcesFileFor, currentTarget, githubToken, applyGitHubToken, here, githubRate, canAdmin } from "./core.js";
+import { VERSION, vaultDir, romKeepDir, logFile, encrypt, decrypt, loadSettings, saveSettings, outDirFor, defaultFindsFile, sourcesFileFor, currentTarget, githubToken, applyGitHubToken, here, githubRate, canAdmin } from "./core.js";
 import { REDDIT_SUBS } from "../discover.js";
 import { cleanLook } from "../look.js";
 import { saveLook } from "./look.js";
@@ -27,7 +27,7 @@ ipcMain.handle("settings:get", async () => {
   const saved = s.providers?.[id] || {};
   const target = currentTarget(s);
   return {
-    installDir: s.installDir || defaultInstallDir(), transferDir: s.transferDir || s.outDir || defaultTransferDir(),
+    installDir: s.installDir || defaultInstallDir(), romKeepDir: romKeepDir(s), hostTarget: hostTarget(), transferDir: s.transferDir || s.outDir || defaultTransferDir(),
     outDir: outDirFor(s, target), targetIsHost: targetIsHost(target), targetKind: TARGETS[target].kind,
     moveFiles: s.moveFiles !== false, platform: process.platform,
     provider: id, model: saved.model || PRESETS[id]?.defaultModel || "", baseUrl: saved.baseUrl || PRESETS[id]?.baseUrl || "",
@@ -51,7 +51,7 @@ ipcMain.handle("settings:get", async () => {
     presets: Object.fromEntries(Object.entries(PRESETS).filter(([k]) => k !== "apple").map(([k, p]) => [k, { label: p.label, baseUrl: p.baseUrl, noKey: !!p.noKey, custom: k === "custom" }])),
   };
 });
-ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSchedule, autoUpdateAll, runInBackground, startAtLogin, uiScale, appleAI, apiKey, installDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, launches, phoneAdShown, githubToken, lang, preferBoxart, showAdultMods, mine, digest, startCouch, look }) => {
+ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSchedule, autoUpdateAll, runInBackground, startAtLogin, uiScale, appleAI, apiKey, installDir, romKeepDir: keepDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, launches, phoneAdShown, githubToken, lang, preferBoxart, showAdultMods, mine, digest, startCouch, look }) => {
   const s = loadSettings();
   // Make It Yours: patch-merged; null resets it (and deletes the copied picture and music).
   if (look !== undefined) saveLook(s, look && { ...s.look, ...look });
@@ -93,6 +93,7 @@ ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSch
     s.sources = { builtin: sources.builtin || {}, disabledShared: sources.disabledShared || {}, custom: (sources.custom || []).filter((c) => c.value).map((c) => ({ type: c.type === "list" ? "list" : "github-user", value: c.type === "list" ? String(c.value).trim() : normalizeUser(c.value), enabled: c.enabled !== false })) };
   }
   if (installDir) s.installDir = installDir;
+  if (keepDir) s.romKeepDir = String(keepDir);
   if (transferDir) s.transferDir = transferDir;
   if (target && TARGETS[target]) s.target = target;
   if (moveFiles !== undefined) s.moveFiles = !!moveFiles;

@@ -1,0 +1,18 @@
+# Saves every listed project's source code zip into Decomp Buddy's own storage (files.decompbuddy.com).
+# Started by hand (or by the admin Mac with `gh workflow run mirror-source.yml`); see scripts/mirror-runner.mjs.
+name: Save source code
+on:
+  workflow_dispatch:
+    inputs:
+      limit: { description: "At most this many zips (blank = all)", required: false, default: "" }
+jobs:
+  save:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node scripts/mirror-runner.mjs ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }}
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}

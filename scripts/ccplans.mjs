@@ -19,8 +19,8 @@ import { z } from "zod";
 import { SYSTEM as PLAN_SYSTEM, Analysis, renderContext } from "../src/plan.js";
 import { SYSTEM as FACTS_SYSTEM, Facts, extractFacts } from "../src/facts.js";
 import { analyzeOne } from "../src/run.js";
-import { writePlans, planKey, TARGET_OF_PLATFORM } from "../src/plans.js";
-import { targetOf } from "../src/targets.js";
+import { writePlans, planKey, TARGET_OF_PLATFORM, factsDue } from "../src/plans.js";
+import { targetOf, assetMismatch } from "../src/targets.js";
 import { fetchContextFor, repoUrlOf } from "../src/hosts.js";
 import { safeRemote } from "../src/adb.js";
 
@@ -48,7 +48,7 @@ function work() {
     const targets = [...new Set((g.platforms || []).flatMap((p) => TARGET_OF_PLATFORM[p] || []))]; if (!targets.length) targets.push("windows");
     // --replan <file>: repos whose newest release no longer fits their steps (scripts/follow.mjs lists them) are redone.
     const missing = REPLAN.has(`${owner}/${repo}`.toLowerCase()) ? [...new Set([...targets, ...Object.keys(entry.targets || {})])] : targets.filter((t) => !entry.targets?.[t]);
-    const facts = !entry.facts;
+    const facts = factsDue(entry, g);
     if (missing.length || facts) out.push({ key, id: idOf(key), host, owner, repo, title: g.title, version: g.version || null, targets: missing, facts, hasAnyPlan: !!entry.targets });
   }
   // Games nobody can install yet first, then extra platforms, then facts-only.
@@ -141,6 +141,11 @@ async function validate(w, ans, ctx) {
     if (targetOf(t).kind === "device") {
       const off = parsed.data.games.flatMap((g) => [...(g.build.method === "release" && !/\.apk$/i.test(g.build.release_asset || "") ? [`${g.build.release_asset} isn't an .apk`] : []),
         ...g.game_files.filter((f) => f.push_to != null).flatMap((f) => { try { safeRemote(f.push_to, "x"); return []; } catch { return [`push_to "${f.push_to}" leaves /sdcard`]; } })]);
+      if (off.length) { problems.push(`${t}: ${off.join("; ")}`); continue; }
+    }
+    // Consoles: that console's own download (never a computer, phone or other-console file), and never a source build.
+    if (targetOf(t).kind === "console") {
+      const off = parsed.data.games.flatMap((g) => g.build.method === "source" ? ["console homebrew isn't built from source here - use unsupported"] : g.build.method === "release" && assetMismatch(g.build.release_asset || "", t) ? [`${g.build.release_asset} is ${assetMismatch(g.build.release_asset || "", t)}`] : []);
       if (off.length) { problems.push(`${t}: ${off.join("; ")}`); continue; }
     }
     try {

@@ -159,7 +159,7 @@ contextBridge.exposeInMainWorld("buddy", {
   statsPreview: () => ipcRenderer.invoke("stats:preview"),
   deckKeyboard: () => ipcRenderer.invoke("deck:keyboard"),
   gameSetUser: (folder, patch) => ipcRenderer.invoke("game:setUser", { folder, ...patch }),
-  gameRemove: (folder) => ipcRenderer.invoke("game:remove", { folder }),
+  gameRemove: (folder, rom) => ipcRenderer.invoke("game:remove", { folder, rom }),
   gameShortcut: (folder) => ipcRenderer.invoke("game:shortcut", { folder }),
   onGameFailed: (cb) => ipcRenderer.on("game:failed", (_e, info) => cb(info)),
   gameAdoptPick: () => ipcRenderer.invoke("game:adoptPick"),

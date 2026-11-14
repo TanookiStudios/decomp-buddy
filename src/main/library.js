@@ -17,6 +17,7 @@ import { splitArgs, launchSpec, findExecutable } from "../gametools.js";
 export { findExecutable };
 import { wineStatus, wineLaunchSpec, prefixFor, installWine, rosettaReady } from "../wine.js";
 import { findRunners, compatLaunchSpec, pickRunner, umuPath } from "../proton.js";
+import { romsOf } from "../uninstall.js";
 export const wineDir = () => path.join(app.getPath("userData"), "tools", "wine");
 const prefixesDir = () => path.join(app.getPath("userData"), "wine", "prefixes");
 // Windows builds on a Mac (Decomp Buddy's own Wine) or on Linux (Proton from Steam, umu-run, or Wine). Looked up once a minute at most.
@@ -45,7 +46,8 @@ export async function listLibrary() {
     const exe = m.status === "ready" || m.status === "files_needed" ? findExecutable(folder, m.plan?.build?.executable, canWine ? "win32" : process.platform) : null;
     out.push({ key: `${dir}|${m.folder}`, folder, dir, modsSupported: !!m.plan?.mods?.supported, canBuild: m.plan?.build?.method === "source" && runsHere && process.platform !== "win32", buildSteps: m.plan?.build?.build_steps || [], title: m.displayName || m.plan?.game_title || m.folder, originalTitle: m.plan?.game_title || m.folder, tags: Array.isArray(m.tags) ? m.tags : [], hidden: !!m.hidden, autoUpdate: m.autoUpdate ?? null, skipTag: m.skipTag || null, console: m.plan?.console || "", repo: m.repo, repoUrl: m.repoUrl, target: m.target || "windows", tag: m.release?.tag || null, status: m.status, setUpAt: m.setUpAt, lastPlayed: m.lastPlayed || null, playMinutes: m.playMinutes || 0, thanked: !!m.thanked, steamAppId: m.steamAppId || null, adopted: !!m.adopted, launchArgs: m.launchArgs || "", exe, runsHere, canWine, wineReady: canWine && compatReady(), compatName: process.platform === "darwin" ? "Wine" : (pickRunner(linuxRunners(), m.runner)?.kind === "wine" ? "Wine" : "Proton"), runner: m.runner || null,
       art: art ? `data:${art.endsWith(".jpg") ? "image/jpeg" : art.endsWith(".ico") ? "image/x-icon" : "image/png"};base64,${fs.readFileSync(art).toString("base64")}` : null,
-      filesNeeded: (m.plan?.game_files || []).filter((f) => !f.placed).length,
+      filesNeeded: (m.plan?.game_files || []).filter((f) => !f.placed).length, roms: romsOf(folder, m).map((p) => path.basename(p)),
+      ...(TARGETS[m.target]?.kind === "console" ? { onConsole: true, consoleLabel: TARGETS[m.target].label } : {}),
       ...(onDevice ? { onDevice: true, device: m.device || null, packageId: m.package_id || null, deviceReady: !!m.device && ready.has(m.device.serial) } : {}) });
   }
   const sorted = out.sort((a, b) => (b.lastPlayed || b.setUpAt || "").localeCompare(a.lastPlayed || a.setUpAt || ""));
@@ -63,6 +65,8 @@ function stampManifest(folder, patch) {
 ipcMain.handle("game:play", async (e, { folder }) => {
   // A phone/headset game's Play starts it on the device.
   const t = (() => { try { return upgradeManifest(JSON.parse(fs.readFileSync(path.join(folder, "decomp-buddy.json"), "utf8"))).target; } catch { return null; } })();
+  // A console game can't start here: Play opens its how-to-copy-it-over file instead.
+  if (TARGETS[t]?.kind === "console") { const { shell } = await import("electron"); const howTo = path.join(folder, TARGETS[t].buildDoc); if (!fs.existsSync(howTo)) throw new Error(`${TARGETS[t].buildDoc} is missing from this game's folder - set it up again.`); if (!process.env.DECOMP_NO_LAUNCH) await shell.openPath(howTo); return { howTo }; }
   return TARGETS[t]?.kind === "device" ? (await import("./devices.js")).launchOnDevice(folder) : playGame(e.sender, folder);
 });
 // A desktop shortcut's decompbuddy://play link: only with this install's key, and only for a game in the Library.

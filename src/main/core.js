@@ -10,6 +10,8 @@ import { TARGETS, targetIsHost, defaultInstallDir, defaultTransferDir } from "..
 export const here = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const VERSION = JSON.parse(fs.readFileSync(path.join(here, "package.json"), "utf8")).version;
 export const vaultDir = () => path.join(app.getPath("userData"), "bios");
+// Uninstall Game → Move Rom Out Safely puts your game files here (chosen on first run and in Settings).
+export const romKeepDir = (s) => s.romKeepDir || path.join(app.getPath("documents"), "Decomp Buddy ROMs");
 export const settingsFile = () => path.join(app.getPath("userData"), "settings.json");
 export const logFile = () => path.join(app.getPath("userData"), "decomp-buddy.log");
 // Every line shown in the app also lands in a file, so "what happened?" has an answer later.
@@ -38,8 +40,11 @@ export function activeProvider(s) {
 }
 
 // Which folder a target lands in: games for this machine (or a phone/headset plugged into it) -> install folder; others -> transfer folder.
+// Console games wait in their own folder inside the Install Folder, ready to copy to a USB stick or SD card.
+export const consoleDir = (s) => path.join(s.installDir || defaultInstallDir(), "Console Games");
 export function outDirFor(s, target) {
   const id = TARGETS[target] ? target : "windows";
+  if (TARGETS[id].kind === "console") return consoleDir(s);
   return targetIsHost(id) || TARGETS[id].kind === "device" ? (s.installDir || defaultInstallDir()) : (s.transferDir || s.outDir || defaultTransferDir());
 }
 // On Maddie's Mac the site repo is right there; everyone else fills the path in by hand.
@@ -55,7 +60,7 @@ export const plansFileFor = (s) => { const f = s.findsFile || defaultFindsFile()
 export const appCatalogFileFor = (s) => { const f = s.findsFile || defaultFindsFile(); return f ? path.join(path.dirname(f), "app-catalog.json") : ""; };
 export const sourcesFileFor = (s) => { const f = s.findsFile || defaultFindsFile(); return f ? path.join(path.dirname(f), "sources.json") : ""; };
 export function currentTarget(s) { return TARGETS[s.target] ? s.target : "windows"; }
-export const libraryDirs = (s) => [...new Set([s.installDir || defaultInstallDir(), s.transferDir || s.outDir || defaultTransferDir(), ...(s.libraryFolders || [])])].filter((d) => fs.existsSync(d));
+export const libraryDirs = (s) => [...new Set([s.installDir || defaultInstallDir(), s.transferDir || s.outDir || defaultTransferDir(), consoleDir(s), ...(s.libraryFolders || [])])].filter((d) => fs.existsSync(d));
 
 // GitHub token (optional): one chokepoint so every api.github.com call in the main process carries it.
 export const githubToken = (s) => (s.github ? decrypt(s.github) : "");

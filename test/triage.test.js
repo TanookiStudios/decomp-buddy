@@ -54,3 +54,15 @@ test("applyAdminActions: remove hides a game (keeping a Coming Soon entry to bri
   assert.deepEqual(w.games, [{ repo: "a/soon", title: "Soon" }]);
   assert.deepEqual(w.hidden, [{ repo: "a/tool", reason: "A tool" }]);   // someone else's "not listed" is never touched
 });
+
+test("triage: a console named in a file name counts only with a README quote saying it runs there", async () => {
+  const { desktopOf } = await import("../scripts/triage.mjs");
+  const port = { platforms: [], consolesNamed: ["Xbox 360"], releases: [{ files: ["Balatro360-Xbox360-1.0.2.0.zip"] }], readme: "Balatro running natively on a modded Xbox 360 (RGH/JTAG)." };
+  assert.deepEqual(desktopOf({ verdict: "play" }, port), [], "the name alone proves nothing");
+  assert.deepEqual(desktopOf({ verdict: "play", platforms: ["Xbox 360"], platform_quote: "Balatro running natively on a modded Xbox 360 (RGH/JTAG)." }, port), ["Xbox 360"]);
+  // A PC recomp of an Xbox 360 game: its zip names the console, its README says it's for Windows - never an Xbox 360 game.
+  const recomp = { platforms: ["Windows"], consolesNamed: ["Xbox 360"], releases: [{ files: ["Spider-Man.3.Xbox.360.Recomp.v0.2.1-win.zip"] }], readme: "A static recompilation of the Xbox 360 game for Windows." };
+  assert.deepEqual(desktopOf({ verdict: "play", platforms: ["Xbox 360"], platform_quote: "Something about the Xbox 360 that isn't in the README." }, recomp), ["Windows"]);
+  // A file type only one console runs settles it on its own.
+  assert.deepEqual(desktopOf({ verdict: "play" }, { platforms: ["Switch"], releases: [{ files: ["game.nro"] }], readme: "" }), ["Switch"]);
+});

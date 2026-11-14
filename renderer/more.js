@@ -19,7 +19,7 @@ function playedText(minutes) { const m = Math.round(minutes || 0); if (m < 1) re
 async function renderThanks(list) {
   const el = $("thankBanner"), g = list.filter((x) => (x.playMinutes || 0) >= 60 && !x.thanked && x.repoUrl && !x.onDevice).sort((a, b) => (b.lastPlayed || "").localeCompare(a.lastPlayed || ""))[0];
   if (!g) { el.hidden = true; return; }
-  const [owner, repo] = String(g.repo || "").split("/"), host = /gitlab\.com/.test(g.repoUrl) ? "gitlab" : /codeberg\.org/.test(g.repoUrl) ? "codeberg" : "github";
+  const [owner, repo] = String(g.repo || "").split("/"), host = hostOfUrl(g.repoUrl);
   const fund = owner ? await window.buddy.gameFunding(owner, repo, host).catch(() => ({ links: [] })) : { links: [] };
   el.innerHTML = `<p style="margin:0 0 4px"><strong translate="no">${esc(g.title)}</strong> · <span>${esc(playedText(g.playMinutes))}</span></p><p style="margin:0 0 8px">The people who made it did it for free, in their spare time. A star on their project page or a kind word goes a long way.</p>
     <div class="row"><button type="button" class="primary" data-thx="star">${host === "github" ? "Star It On GitHub" : "Open Its Project Page"}</button>${fund.links.length ? `<button type="button" data-thx="support">Support Them</button>` : ""}<button type="button" data-thx="later">Not Now</button></div>`;
@@ -35,15 +35,16 @@ $("continueHero").onclick = async (e) => {
   const b = e.target.closest("[data-hero]"); if (!b) return;
   const g = library.find((x) => x.key === b.closest(".hero").dataset.key); if (!g) return;
   try {
-    if (b.dataset.hero === "play") { const r = await window.buddy.gamePlay(g.folder); $("libStatus").textContent = `Launched ${r.exe.split(/[\\/]/).pop()}.`; $("libStatus").className = "status ok"; }
+    if (b.dataset.hero === "play") { const r = await window.buddy.gamePlay(g.folder); $("libStatus").textContent = r.howTo ? "Opened the steps for putting it on your console." : `Launched ${r.exe.split(/[\\/]/).pop()}.`; $("libStatus").className = "status ok"; }
     else await openMore(g);
   } catch (err) { $("libStatus").textContent = err.message.replace(/^.*Error: /, ""); $("libStatus").className = "status bad"; }
 };
 
 // Play, Play With Wine (a Windows copy on a Mac, experimental), or a disabled button that says why.
 function playButton(g, attr) {
+  if (g.onConsole) return `<button class="primary" type="button" ${attr} title="Opens the steps for copying it to your ${esc(g.consoleLabel || "console")}">How To Install</button>`;
   if (g.onDevice) return `<button class="primary" type="button" ${attr} ${g.deviceReady && g.packageId ? "" : "disabled"} title="${!g.device ? "Install it from Phones And Headsets first" : !g.deviceReady ? `Plug in ${esc(g.device.model || "the device")} to start it` : !g.packageId ? "Start it on the device - Decomp Buddy doesn't know its app name" : `Starts it on ${esc(g.device.model || "the device")}`}">Launch</button>`;
-  if (g.runsHere) return `<button class="primary" type="button" ${attr} ${g.exe ? "" : "disabled"} title="${g.exe ? "" : "No executable found"}">Play</button>`;
+  if (g.runsHere) return `<button class="primary" type="button" ${attr} ${g.exe ? "" : "disabled"} title="${g.exe ? "" : g.canBuild ? "Build it first: More… → Build Here" : "No program to start was found in its folder - Go To Folder to look"}">Play Game</button>`;
   if (g.canWine && g.wineReady && g.exe) return `<button class="primary" type="button" ${attr} title="${g.compatName === "Proton" ? "Runs the Windows version through Proton, the way Steam plays Windows games." : "Experimental: runs the Windows version through Wine. DirectX 9/11 and OpenGL games often work; Vulkan and DirectX 12 ones usually don't."}">Play With ${esc(g.compatName || "Wine")}</button>`;
   if (g.canWine && settings.platform === "linux") return `<button class="primary" type="button" ${attr} disabled title="This is the Windows version. Install Proton in Steam (search your Library for Proton) or install Wine to play it here.">Play</button>`;
   if (g.canWine) return `<button class="primary" type="button" ${attr} disabled title="This is the Windows version. Set up Wine in Settings → Windows Games On This Mac to try it here, or transfer it to a PC.">Play</button>`;
@@ -82,8 +83,8 @@ async function openMore(g) {
       <div class="row"><button id="moreUserSave" type="button">Save</button></div></div>
     <div class="more-sec"><h4>Desktop Shortcut</h4><p class="sub">Puts an icon on your desktop that starts this game${g.runsHere ? "" : " (through Decomp Buddy, which starts it with Wine)"}.</p>
       <button id="moreShortcut" type="button">Add To Desktop</button></div>
-    <div class="more-sec"><h4>Remove Game</h4><p class="sub">Moves this game's whole folder, game files and saves inside it included, to the Trash. You can still get it back from there.</p>
-      <div class="row"><button id="moreRemove" type="button" class="danger">Remove Game…</button><button id="moreRemoveYes" type="button" class="danger" hidden>Yes, Move It To The Trash</button><button id="moreRemoveNo" type="button" hidden>Keep It</button></div></div>`;
+    <div class="more-sec"><h4>Uninstall Game</h4><p class="sub">Moves this game's folder, and any saves inside it, to the Trash. You can still get it back from there. You choose whether your game files go with it or move out safely.</p>
+      <div class="row"><button id="moreRemove" type="button" class="danger">Uninstall Game…</button></div></div>`;
   if ($("moreRunner")) {
     window.buddy.compatRunners().then((rs) => { $("moreRunner").insertAdjacentHTML("beforeend", rs.map((r) => `<option value="${esc(r.id)}" ${r.id === g.runner ? "selected" : ""}>${esc(r.label)}</option>`).join("")); });
     $("moreRunner").onchange = async () => { await window.buddy.compatSetRunner(g.folder, $("moreRunner").value); g.runner = $("moreRunner").value || null; panelState("Saved. It's used the next time you press Play.", "ok"); };
@@ -129,14 +130,7 @@ async function openMore(g) {
     } catch (err) { panelState(err.message.replace(/^.*Error: /, ""), "bad"); }
   };
   $("moreShortcut").onclick = async () => { try { const r = await window.buddy.gameShortcut(g.folder); panelState(`Shortcut added: ${r.file.split(/[\\/]/).pop()}`, "ok"); } catch (err) { panelState(err.message.replace(/^.*Error: /, ""), "bad"); } };
-  // Two presses, both on this page - no pop-up.
-  const confirmRemove = (on) => { $("moreRemove").hidden = on; $("moreRemoveYes").hidden = !on; $("moreRemoveNo").hidden = !on; (on ? $("moreRemoveNo") : $("moreRemove")).focus(); };
-  $("moreRemove").onclick = () => confirmRemove(true);
-  $("moreRemoveNo").onclick = () => confirmRemove(false);
-  $("moreRemoveYes").onclick = async () => {
-    try { const r = await window.buddy.gameRemove(g.folder); $("gamePanel").hidden = true; await renderLibrary(); $("libStatus").textContent = `${g.title} moved to the Trash.${r.steam ? " Its Steam shortcut is still in Steam - remove it there." : ""}`; $("libStatus").className = "status ok"; }
-    catch (err) { panelState(err.message.replace(/^.*Error: /, ""), "bad"); confirmRemove(false); }
-  };
+  $("moreRemove").onclick = () => openUninstall(g); // the same Uninstall Game questions as the tile
   $("moreArgsSave").onclick = async () => { try { await window.buddy.gameSetOptions(g.folder, $("moreArgs").value); g.launchArgs = $("moreArgs").value.trim(); panelState("Launch options saved.", "ok"); } catch (err) { panelState(err.message.replace(/^.*Error: /, ""), "bad"); } };
   $("moreCheck").onclick = () => runCheck(g);
   renderUsage(g); renderMoreSync(g);

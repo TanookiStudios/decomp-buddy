@@ -15,8 +15,10 @@ find "$PUB" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 git archive HEAD | tar -x -C "$PUB"
 for f in $PRIVATE; do rm -f "$PUB/$f"; done
 # plans.json credits strangers' GitHub accounts, and some of them are really called Michael: it skips that one word.
-if grep -rliE "michael|ireland|madilyn|maddietendo|ISSUER *= *\"[0-9a-f]" "$PUB" --exclude-dir=.git --exclude=publish-source.sh --exclude=plans.json >&2 \
-  || grep -liE "ireland|madilyn|maddietendo" "$PUB/plans.json" >&2; then
+# maddietendo.com and @maddietendo are her public site and TikTok (linked in About and on decompbuddy.com); only a
+# mailbox at that domain (name@maddietendo.com) is private.
+if grep -rliE "michael|ireland|madilyn|[a-z0-9._-]+@maddietendo|ISSUER *= *\"[0-9a-f]" "$PUB" --exclude-dir=.git --exclude=publish-source.sh --exclude=plans.json >&2 \
+  || grep -liE "ireland|madilyn|[a-z0-9._-]+@maddietendo" "$PUB/plans.json" >&2; then
   echo "✗ a personal name or account id is in the files above - source not published" >&2; exit 1
 fi
 cd "$PUB"; git add -A

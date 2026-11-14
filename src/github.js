@@ -1,6 +1,8 @@
 // Pulls everything Claude needs to understand a decomp/recomp repo:
 // README, build/install docs, the file tree, and the latest release assets.
 
+import { refFromUrl, FORGEJO } from "./forges.js";
+
 const API = "https://api.github.com";
 const DOC_PATTERN = /^(readme|build(ing)?|install(ation)?|setup|getting[-_ ]?started|usage|faq)[^/]*\.(md|txt|rst)$|^docs?\/[^/]+\.md$/i;
 const HASH_PATTERN = /(^|\/)([^/]*\.(sha1|md5|sha256|crc32)|checksums?\.txt|hashes?\.txt|baserom[^/]*\.txt|roms?\.txt)$/i;
@@ -9,12 +11,10 @@ const MAX_DOC_CHARS = 60_000;
 
 export function parseRepoUrl(input) {
   const t = String(input).trim();
-  const gl = t.match(/gitlab\.com[/:]([^/\s]+)\/([^/\s#?]+)/i);
-  if (gl) return { host: "gitlab", owner: gl[1], repo: gl[2].replace(/\.git$/, "") };
-  const cb = t.match(/codeberg\.org[/:]([^/\s]+)\/([^/\s#?]+)/i);
-  if (cb) return { host: "codeberg", owner: cb[1], repo: cb[2].replace(/\.git$/, "") };
+  const known = refFromUrl(t.replace(/^.*?(?=https?:\/\/)/, ""));
+  if (known && known.host !== "github") return known;
   const m = t.match(/github\.com[/:]([^/\s]+)\/([^/\s#?]+)/i) || t.match(/^([\w.-]+)\/([\w.-]+)$/);
-  if (!m) throw new Error(`Not a GitHub, GitLab or Codeberg repo link: ${input}`);
+  if (!m) throw new Error(`Not a repo link Decomp Buddy knows (GitHub, GitLab, ${Object.values(FORGEJO).map((f) => f.label).join(", ")}): ${input}`);
   return { host: "github", owner: m[1], repo: m[2].replace(/\.git$/, "") };
 }
 

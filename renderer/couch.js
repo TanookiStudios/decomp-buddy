@@ -34,7 +34,7 @@ function couchTile(g) {
 }
 function drawCouch() {
   const recent = library.filter((g) => g.lastPlayed).slice(0, 8);
-  const rows = [recent.length && ["Continue Playing", recent], ["All Games", [...library].sort((a, b) => a.title.localeCompare(b.title))]].filter(Boolean);
+  const rows = [recent.length && ["Continue Playing", recent], ["All Games", library.filter((g) => !g.onConsole).sort((a, b) => a.title.localeCompare(b.title))]].filter(Boolean);
   // Always a way to more games: Couch Mode is where Steam's shortcut lands, and a new library would otherwise be a dead end.
   const more = `<button class="ctile" type="button" data-couchbrowse="1" aria-label="Get More Games: browse the catalog and set games up"><span class="cnocover">+</span><span class="ctitle">Get More Games</span></button>`;
   $("couchRows").innerHTML = (library.length ? "" : `<p class="chint">Nothing set up yet. Choose Get More Games to pick some - the controller works everywhere.</p>`)

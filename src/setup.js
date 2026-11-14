@@ -12,8 +12,9 @@ import { pipeline } from "node:stream/promises";
 import { Readable } from "node:stream";
 import AdmZip from "adm-zip";
 import { applyFolderArtwork } from "./icons.js";
-import { targetOf, assetMismatch, armSibling } from "./targets.js";
+import { targetOf, assetMismatch, armSibling, CONSOLES } from "./targets.js";
 import { pickRelease } from "./scan.js";
+import { FILES, fileUrl } from "./mirror.js";
 import { upgradeManifest } from "./installhtml.js";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -95,6 +96,23 @@ export async function download(url, dest, log, { digest = null, fetchImpl = fetc
   fs.renameSync(part, dest);
   log(scanned ? "  matches the file Decomp Buddy scanned for malware" : `  checksum verified (${algo})`);
   return { verified: true };
+}
+
+// The same file from several places, in order: Decomp Buddy's own copy first (files.decompbuddy.com), then the
+// project's original download. Each one is held to the same checksum, so whichever answers installs the same bytes.
+export async function downloadFrom(urls, dest, log, opts = {}) {
+  let last;
+  for (const [i, url] of urls.entries()) {
+    const ours = url.startsWith(FILES);
+    if (ours) log("  from Decomp Buddy's copy");
+    else if (i) log("  from the project's own download instead");
+    try { return { ...(await download(url, dest, log, opts)), from: url }; }
+    catch (err) {
+      if (/^Cancelled/.test(err.message) || i === urls.length - 1) throw err;
+      last = err; log(`  ${ours ? "Decomp Buddy's copy" : new URL(url).hostname} didn't work (${err.message.slice(0, 80)})`);
+    }
+  }
+  throw last;
 }
 
 // Free bytes on the volume holding dir (stdlib). null when the platform can't say.
@@ -300,6 +318,8 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
     // Decomp Buddy's malware scan: a flagged file is never installed, and a scanned one must be that exact file.
     const scannedHere = w.scanned?.sha256 && !sibling;
     const digest = scannedHere ? `sha256:${w.scanned.sha256}` : asset?.digest;
+    // Our copy is offered only for the exact scanned file the hourly run confirmed it holds (build.mirror).
+    const from = asset ? (scannedHere && w.mirror && asset.name === w.release_asset ? [fileUrl(w.scanned.sha256, asset.name), asset.url] : [asset.url]) : [];
     if (w.scanned?.flagged) {
       status = "unsupported";
       statusDetail = `A virus scanner flagged ${w.release_asset} (${w.scanned.signature}), so Decomp Buddy won't install it until it has been reviewed.`;
@@ -315,7 +335,7 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
     } else if (T.kind === "device") {
       // A phone/headset game: the .apk waits in this folder until it's installed over USB (src/main/devices.js).
       log(`Downloading ${asset.name}…`);
-      downloadVerified = (await download(asset.url, path.join(dir, asset.name), log, { digest, ctrl, scanned: !!scannedHere })).verified;
+      downloadVerified = (await downloadFrom(from, path.join(dir, asset.name), log, { digest, ctrl, scanned: !!scannedHere })).verified;
       if (previous?.apk && previous.apk !== asset.name) fs.rmSync(path.join(dir, path.basename(previous.apk)), { force: true }); // the old version's app file
       apk = asset.name;
       status = "staged";
@@ -323,15 +343,16 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
     } else if (!unpackable(asset.name)) {
       const dest = path.join(dir, asset.name);
       log(`Downloading ${asset.name}…`);
-      downloadVerified = (await download(asset.url, dest, log, { digest, ctrl, scanned: !!scannedHere })).verified;
-      status = "needs_attention";
-      statusDetail = INSTALLER.test(asset.name)
+      downloadVerified = (await downloadFrom(from, dest, log, { digest, ctrl, scanned: !!scannedHere })).verified;
+      if (T.kind === "console") status = "console"; // an .nro, .vpk, .cia... goes onto the console as it is
+      else status = "needs_attention";
+      statusDetail = T.kind === "console" ? "" : INSTALLER.test(asset.name)
         ? `Downloaded ${asset.name}, an installer. Run it on ${T.where} to finish - Decomp Buddy doesn't run installers for you.`
         : `Downloaded ${asset.name} but that format isn't auto-extracted. Unpack it by hand on ${T.where}.`;
     } else {
       const dest = path.join(dir, asset.name);
       log(`Downloading ${asset.name}…`);
-      downloadVerified = (await download(asset.url, dest, log, { digest, ctrl, scanned: !!scannedHere })).verified;
+      downloadVerified = (await downloadFrom(from, dest, log, { digest, ctrl, scanned: !!scannedHere })).verified;
       // Updating: keep the old release for Roll Back, and keep your game files out of the swap.
       const placedBefore = (previous?.plan?.game_files || []).filter((f) => f.placed).map((f) => path.join(dir, f.drop_into || "Game Files", f.placed.name));
       const unstash = stashPlaced(dir, placedBefore);
@@ -344,10 +365,15 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
         const n = await extractZip(dest, dir, { entries: releaseEntries });
         log(`Extracted ${n} entries.`);
       } finally { unstash(); fs.rmSync(dest, { force: true }); }
+      if (T.kind === "console") status = "console";
     }
+    if (status === "console") statusDetail = `Ready to copy to ${T.where} - see ${T.buildDoc}.`;
   } else if (w.method === "source" && T.kind === "device") {
     status = "unsupported";
     statusDetail = `No ${T.label} app (.apk) in the releases - Decomp Buddy can't build one.`;
+  } else if (w.method === "source" && T.kind === "console") {
+    status = "unsupported";
+    statusDetail = `No ${T.label} download in the releases - Decomp Buddy can't build console homebrew.`;
   } else if (w.method === "source") {
     const srcDir = path.join(dir, "Source");
     const zipPath = path.join(dir, "source.zip");
@@ -401,6 +427,18 @@ export async function setupGame({ plan, ctx, outDir, picks = {}, verifications =
       }
     });
   }
+
+  // A console game: the project's own steps for getting it onto the console, beside the files.
+  if (status === "console") fs.writeFileSync(path.join(dir, T.buildDoc), [
+    `${plan.game_title} for ${T.label}`,
+    ``,
+    `This runs on ${CONSOLES[target].how}. Decomp Buddy downloaded and unpacked it here; it can't install onto a console for you.`,
+    ``,
+    ...(w.build_steps?.length ? ["How to put it on your console, from the project:", ...w.build_steps.map((x, i) => `${i + 1}. ${x}`)] : ["The project doesn't spell out how to copy it over - its page (below) says what goes where."]),
+    ...(plan.game_files.some((f) => f.kind !== "bios") ? ["", "Your game files are in the folders this game asked for (see Game Files) - copy them over with it."] : []),
+    ``,
+    `Project: ${ctx.url}`,
+  ].join("\n"));
 
   if (status !== "unsupported" && (artworkPath || plan.artwork_url)) {
     try {

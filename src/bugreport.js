@@ -2,6 +2,7 @@
 // start. Opened in the player's browser; they read it and submit it themselves. Nothing is sent by Decomp Buddy, and
 // the player's home folder (which usually holds their name) never appears: it becomes "~".
 const OS = { darwin: "macOS", win32: "Windows", linux: "Linux" };
+import { FORGEJO } from "./forges.js";
 
 // Any home-folder path (this user's, or a Windows/Mac/Linux one from a log) -> "~".
 export function scrub(text, home = "") {
@@ -23,7 +24,7 @@ export function issueUrl(repoUrl, title, body) {
   const repo = u.pathname.replace(/^\/|\.git$|\/$/g, ""); if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return null;
   const q = (o) => Object.entries(o).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&");
   if (u.hostname === "github.com") return `https://github.com/${repo}/issues/new?${q({ title, body })}`;
-  if (u.hostname === "codeberg.org") return `https://codeberg.org/${repo}/issues/new?${q({ title, body })}`;
+  if (Object.values(FORGEJO).some((f) => f.domain === u.hostname)) return `https://${u.hostname}/${repo}/issues/new?${q({ title, body })}`;
   if (u.hostname === "gitlab.com") return `https://gitlab.com/${repo}/-/issues/new?${q({ "issue[title]": title, "issue[description]": body })}`;
   return null;
 }
