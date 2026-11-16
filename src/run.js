@@ -8,6 +8,7 @@ import { parseRepoUrl } from "./github.js";
 import { fetchContextFor } from "./hosts.js";
 const fetchRepoContext = fetchContextFor;
 import { planFromContext } from "./plan.js";
+import { newSessionId } from "./aiheaders.js";
 import { setupGame } from "./setup.js";
 import { sweepMacJunk } from "./junk.js";
 import { writeInstallHtml } from "./installhtml.js";
@@ -40,7 +41,7 @@ export function planContext(ref, published, target) {
     rawBase: `https://raw.githubusercontent.com/${ref.owner}/${ref.repo}/HEAD/`, zipballUrl: `${base}/archive/HEAD.zip`, releases: [...releases.values()], fromPlan: true };
 }
 
-export async function analyzeOne(url, { provider, log, planner = planFromContext, preferredTag, preferredAsset, artworkPath, target = "windows", hints, published = null, fetchContext = fetchRepoContext, onlyGames = null, fullContext = false } = {}) {
+export async function analyzeOne(url, { provider, log, planner = planFromContext, preferredTag, preferredAsset, artworkPath, target = "windows", hints, published = null, fetchContext = fetchRepoContext, onlyGames = null, fullContext = false, sessionId = newSessionId() } = {}) {
   let ref = parseRepoUrl(url);
   // A published, scanned plan already names the release and its exact file: no need to re-read the project
   // (that spent a fresh PC's 60 GitHub lookups an hour before a single download). fullContext: picking another version.
@@ -62,7 +63,7 @@ export async function analyzeOne(url, { provider, log, planner = planFromContext
       if (!provider) { planSource = "published-stale"; return pub.analysis; }
     }
     if (!provider) throw new Error("No published plan for this repo yet. Suggest it from Browse so Maddie can add one, or add your own AI key in Settings.");
-    const out = await planner(ctx, { provider, log, preferredTag, preferredAsset, target, hints });
+    const out = await planner(ctx, { provider, log, preferredTag, preferredAsset, target, hints, sessionId });
     return out.games ? out : { redirect_repo: out.redirect_repo ?? null, games: [out] }; // canned single plans
   };
   let analysis = await analyze();

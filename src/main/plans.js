@@ -6,6 +6,7 @@ import { fetchPublished, writePlans, planKey, TARGET_OF_PLATFORM, PLANS_URL, fac
 import { sampleStat, logTo, safeSend, loadSettings, activeProvider, plansFileFor, state } from "./core.js";
 import { markDead } from "./catalog.js";
 import { extractFacts, FACTS_VERSION } from "../facts.js";
+import { newSessionId } from "../aiheaders.js";
 
 // ---------- Published plans (admin generates, everyone downloads) ----------
 // Each repo can need: a plan per Build For target it has builds for, and one facts pass
@@ -88,11 +89,13 @@ export async function generatePlans(sender, { limit, repos, confirmedJobs, trigg
   try {
     for (const { g, key, targets, facts } of plan.work) {
       let ctx = null;
+      // One repository analysis session: every target's plan and the facts pass share it.
+      const sessionId = newSessionId();
       for (const t of targets) {
         if (genState.cancelled || done + failed >= total) break;
         try {
           const asset = g.assets?.[t] ? g.assets[t].split("/").pop() : undefined;
-          const items = await analyzeOne(g.repoUrl, { provider, log: () => {}, target: t, preferredTag: g.version || undefined, preferredAsset: asset, hints: hintsFor(g) });
+          const items = await analyzeOne(g.repoUrl, { provider, log: () => {}, target: t, preferredTag: g.version || undefined, preferredAsset: asset, hints: hintsFor(g), sessionId });
           ctx ||= items[0]?.ctx;
           batch[key] = { ...(batch[key] || {}), tag: g.version || null, generatedAt: new Date().toISOString(), targets: { ...(batch[key]?.targets || {}), [t]: { redirect_repo: null, games: items.map((i) => i.plan) } } };
           done++; log(`✓ ${g.title} [${t}] ${items.map((i) => i.plan.game_title).join(", ")}`);
@@ -105,7 +108,7 @@ export async function generatePlans(sender, { limit, repos, confirmedJobs, trigg
       if (!facts || genState.cancelled || done + failed >= total) continue;
       try {
         if (!ctx) { const ref = parseRepoUrl(g.repoUrl); ctx = await fetchContextFor(ref); }
-        const f = await extractFacts(ctx, { provider });
+        const f = await extractFacts(ctx, { provider, sessionId });
         batch[key] = { ...(batch[key] || {}), facts: f, factsAt: new Date().toISOString() };
         done++; log(`✓ ${g.title} [facts] ${f.completeness}${f.steam_deck !== "none" ? `, Deck ${f.steam_deck}` : ""}${f.health.archived ? ", archived" : ""}`);
       } catch (err) {
