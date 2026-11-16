@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { PLAN_JSON_SCHEMA, extractJson, planViaOpenAICompatible } from "../src/plan.js";
+import { z } from "zod";
+import { PLAN_JSON_SCHEMA, extractJson, planViaOpenAICompatible, askStructured, listModels } from "../src/plan.js";
 import { resolveProvider, PRESETS } from "../src/providers.js";
 
 const goodPlan = {
@@ -42,6 +43,67 @@ test("compatible kind retries once with the validation errors, then gives up", a
   assert.match(calls[1].messages.at(-1).content, /did not validate/);
   assert.equal(calls[0].response_format, undefined);
   assert.match(calls[0].messages[0].content, /JSON Schema/);
+});
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UA = /^DecompBuddy(\/\d+\.\d+\.\d+)? \(\+https:\/\/decompbuddy\.com\)$/;
+
+test("every analysis request carries the DecompBuddy User-Agent and one session, retries included", async () => {
+  const calls = [];
+  const sessionId = "11111111-1111-4111-8111-111111111111";
+  let n = 0;
+  const fetchImpl = async (_url, init) => {
+    calls.push(init);
+    return reply(n++ === 0 ? '{"games": [{"game_title": 5}]}' : JSON.stringify({ redirect_repo: null, games: [goodPlan] }));
+  };
+  const provider = resolveProvider("groq", { apiKey: "k", model: "m" });
+  const analysis = await planViaOpenAICompatible(ctx, provider, () => {}, { fetchImpl, sessionId });
+  assert.equal(analysis.games[0].game_title, "Skate 3");
+  assert.equal(calls.length, 2);
+  for (const call of calls) {
+    assert.match(call.headers["User-Agent"], UA);
+    assert.equal(call.headers["x-opencode-session"], sessionId, "the retry keeps the analysis's session");
+  }
+});
+
+test("a plan made without a supplied session gets one UUID and keeps it for the retry", async () => {
+  const calls = [];
+  const fetchImpl = async (_url, init) => { calls.push(init); return reply('{"games": [{"game_title": 5}]}'); };
+  const provider = resolveProvider("groq", { apiKey: "k", model: "m" });
+  await assert.rejects(planViaOpenAICompatible(ctx, provider, () => {}, { fetchImpl }), /could not produce a valid plan/);
+  await assert.rejects(planViaOpenAICompatible(ctx, provider, () => {}, { fetchImpl }), /could not produce a valid plan/);
+  assert.match(calls[0].headers["x-opencode-session"], UUID);
+  assert.equal(calls[1].headers["x-opencode-session"], calls[0].headers["x-opencode-session"]);
+  assert.notEqual(calls[2].headers["x-opencode-session"], calls[0].headers["x-opencode-session"], "a different analysis gets its own session");
+  assert.equal(calls[3].headers["x-opencode-session"], calls[2].headers["x-opencode-session"]);
+});
+
+test("structured questions keep the same session on their second (secondary) request", async () => {
+  const calls = [];
+  const sessionId = "22222222-2222-4222-8222-222222222222";
+  let n = 0;
+  const fetchImpl = async (_url, init) => {
+    calls.push(init);
+    return reply(n++ === 0 ? '{"answer": 5}' : '{"answer": "ok"}');
+  };
+  const provider = resolveProvider("groq", { apiKey: "k", model: "m" });
+  const out = await askStructured(provider, { system: "s", user: "u", schema: z.object({ answer: z.string() }), fetchImpl, sessionId });
+  assert.equal(out.answer, "ok");
+  assert.equal(calls.length, 2);
+  for (const call of calls) {
+    assert.match(call.headers["User-Agent"], UA);
+    assert.equal(call.headers["x-opencode-session"], sessionId);
+  }
+});
+
+test("listing models (a non-analysis request) still sends the DecompBuddy User-Agent and a session", async () => {
+  const calls = [];
+  const fetchImpl = async (_url, init) => { calls.push(init); return new Response(JSON.stringify({ data: [{ id: "b" }, { id: "a" }] }), { status: 200 }); };
+  const ids = await listModels(resolveProvider("groq", { apiKey: "k", model: "m" }), { fetchImpl });
+  assert.deepEqual(ids, ["a", "b"]);
+  assert.match(calls[0].headers["User-Agent"], UA);
+  assert.match(calls[0].headers["x-opencode-session"], UUID);
+  assert.equal(calls[0].headers.Authorization, "Bearer k");
 });
 
 test("resolveProvider fills preset defaults and refuses missing key/model", () => {

@@ -5,6 +5,7 @@
 
 import { z } from "zod";
 import { askStructured } from "./plan.js";
+import { newSessionId } from "./aiheaders.js";
 
 export const FACTS_VERSION = 1;
 const Keys = z.object({
@@ -64,10 +65,11 @@ export function groundFacts(f, text) {
   return out;
 }
 
-export async function extractFacts(ctx, { provider, log = () => {}, ask = askStructured } = {}) {
+export async function extractFacts(ctx, { provider, log = () => {}, ask = askStructured, sessionId = newSessionId() } = {}) {
   const text = renderFactsContext(ctx);
   // Now and then the model's answer doesn't fit the schema; a second try almost always does.
-  const once = () => ask(provider, { system: SYSTEM, user: text, schema: Facts, name: "facts", maxTokens: 2000, log });
+  // Both tries belong to the same analysis, so they carry the same session id.
+  const once = () => ask(provider, { system: SYSTEM, user: text, schema: Facts, name: "facts", maxTokens: 2000, log, sessionId });
   let f;
   try { f = await once(); }
   catch (err) { if (!/Failed to parse structured output/i.test(err.message)) throw err; log("  facts: the answer didn't fit, asking once more"); f = await once(); }

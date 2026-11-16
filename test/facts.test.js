@@ -53,6 +53,23 @@ test("extractFacts asks once more when the answer doesn't fit the schema", async
   await assert.rejects(extractFacts({ readme: "" }, { provider: {}, ask: async () => { throw new Error("credit balance too low"); } }), /credit/);
 });
 
+test("extractFacts keeps one session id for both of its tries", async () => {
+  const seen = [];
+  let calls = 0;
+  const ask = async (_p, opts) => {
+    seen.push(opts.sessionId);
+    if (calls++ === 0) throw new Error("Failed to parse structured output: [zod]");
+    return { completeness: "unknown", completeness_quote: "", steam_deck: "none", deck_quote: "", save_paths: [], config: { file: null, format: "unknown", keys: { fullscreen: null, resolution: null, ultrawide: null, vsync: null } }, controller_notes: [] };
+  };
+  await extractFacts({ readme: "", docs: [], fullName: "a/b", archived: false }, { provider: {}, ask });
+  assert.equal(seen.length, 2);
+  assert.match(seen[0], /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+  assert.equal(seen[1], seen[0]);
+  calls = 0;
+  await extractFacts({ readme: "", docs: [], fullName: "a/b", archived: false }, { provider: {}, ask, sessionId: "fixed-session" });
+  assert.deepEqual(seen.slice(2), ["fixed-session", "fixed-session"]);
+});
+
 test("groundFacts accepts a quote copied out of a markdown quote block (the > marks aren't part of the sentence)", async () => {
   const { groundFacts } = await import("../src/facts.js");
   const text = "## README\n> As of 26 September 2026 the game is\n> playable into chapter 2 at a steady **60 fps** on Apple Silicon: story\n> missions work.";
