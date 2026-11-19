@@ -20,6 +20,8 @@ say() { echo "$*" | tee -a "$LOG"; }
 mark() { touch ~/.decomp-buddy-scan/daily-$DAY.$1; }
 need() { [[ -f ~/.decomp-buddy-scan/daily-$DAY.$1 ]] || { say "✗ run '$1' first today"; exit 1; }; }
 
+# A step refreshes the lock it runs under, so `lock` can tell a live run from a dead one.
+[[ "${1:-}" == (find|steps|gates|publish) && -f ~/.decomp-buddy-scan/run.lock ]] && touch ~/.decomp-buddy-scan/run.lock
 case "${1:-}" in
   find)
     say "== $DAY find"
@@ -31,7 +33,8 @@ case "${1:-}" in
     node scripts/triage.mjs import --site "$SITE" 2>&1 | grep -E "^import" | tee -a "$LOG"
     # Our own copy of every download and its source code (scripts/mirror.mjs): new files this hour, then mark what we hold.
     node scripts/mirror.mjs --site "$SITE" --limit-gb 30 2>&1 | grep -E "^mirror|^failures" | tee -a "$LOG"
-    node scripts/mirror.mjs --site "$SITE" --source --limit-gb 5 2>&1 | grep -E "^mirror|^failures" | tee -a "$LOG"
+    # Source zips: 40 a run; big ones the Worker can't take are saved by .github/workflows/mirror-source.yml instead.
+    node scripts/mirror.mjs --site "$SITE" --source --max 40 2>&1 | grep -E "^mirror|^failures" | tee -a "$LOG"
     node scripts/mirror.mjs --site "$SITE" --apply 2>&1 | grep -E "^mirror" | tee -a "$LOG"
     node scripts/build-catalog.mjs --site "$SITE" 2>&1 | grep -E "^(catalog|waiting.json|steamgriddb|✗ steamgriddb)" | tee -a "$LOG"
     touch ~/.decomp-buddy-scan/follow-replan.txt
@@ -56,6 +59,9 @@ PY
     node scripts/follow.mjs --site "$SITE" 2>&1 | grep -E "^(follow|gone)" | tee -a "$LOG"
     node scripts/ailabel.mjs prep --site "$SITE" 2>&1 | grep -E "^ailabel" | tee -a "$LOG"
     node scripts/features.mjs prep --site "$SITE" 2>&1 | grep -E "^features" | tee -a "$LOG"
+    # How It Runs: plain computer details show by themselves; every note waits for the reader (docs/DAILY.md 6d).
+    # A failure here must not hold new games back.
+    node scripts/reports-screen.mjs prep --site "$SITE" 2>&1 | grep -E "^reports" | tee -a "$LOG" || say "✗ report screening failed (reports wait for the next run)"
     # Covers the strict matcher couldn't settle: wider searches, then batches for the cover-picking agent.
     # A failed cover search must not hold new games back: say so and go on.
     node scripts/boxart-picks.mjs widen --site "$SITE" 2>&1 | grep -E "^boxart" | tee -a "$LOG" || say "✗ box art search failed (covers wait for the next run)"
@@ -63,8 +69,12 @@ PY
     mark gates ;;
   publish)
     need gates; say "== $DAY publish"
+    # Stars and download totals (Most GitHub Stars, Popular, the sitemap cut): once a day, about half an hour.
+    # A failed run keeps yesterday's numbers.
+    [[ -n $(find "$WEB/stars.json" -mmin -1200 2>/dev/null) ]] || (cd "$WEB" && GH_TOKEN=$GITHUB_TOKEN node stars.mjs 2>&1 | tail -1 | tee -a "$LOG") || say "✗ star run failed (yesterday's numbers stay)"
     node scripts/bestversion.mjs --site "$SITE" 2>&1 | grep -E "^(bestversion|  github)" | tee -a "$LOG"
     [[ -f ~/.decomp-buddy-ailabel/answers.json ]] && node scripts/ailabel.mjs import --site "$SITE" 2>&1 | grep -E "^ailabel" | tee -a "$LOG"
+    [[ -f ~/.decomp-buddy-reports/answers.json ]] && { node scripts/reports-screen.mjs import --site "$SITE" 2>&1 | grep -E "^reports" | tee -a "$LOG" || say "✗ report answers not applied (they wait for the next run)"; }
     f=(~/.decomp-buddy-features/answers-*.json(N)); (( ${#f} )) && node scripts/features.mjs import --site "$SITE" 2>&1 | grep -E "^features" | tee -a "$LOG"
     f=(~/.decomp-buddy-boxart/answers/*.json(N)); (( ${#f} )) && { node scripts/boxart-picks.mjs import 2>&1 | grep -E "^boxart" | tee -a "$LOG"; mkdir -p ~/.decomp-buddy-boxart/answers-done; mv $f ~/.decomp-buddy-boxart/answers-done/; }
     node scripts/build-catalog.mjs --site "$SITE" 2>&1 | grep -E "^(catalog|waiting.json|steamgriddb|✗ steamgriddb)" | tee -a "$LOG"
@@ -93,9 +103,17 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"; done
     for r in "$SITE" "$WEB"; do git -C "$r" -c credential.helper= -c "credential.helper=!GH_TOKEN=$GITHUB_TOKEN gh auth git-credential" push -q 2>&1 | tail -1 || say "push failed: $r"; done
     mark publish; say "✓ $DAY published" ;;
   lock)
-    # The run is hourly and a full one takes 2-3 hours: one at a time. A lock older than 6 hours is a crashed run.
+    # The run is hourly and a full one takes 2-3 hours: one at a time. Every step touches the lock (top of this
+    # file), so its age is how long ago a step last started. A dead run is one with no step started for 2 hours
+    # and none of the run's programs alive - 18 Nov 2026: a run killed by a full disk blocked every run for 3.5
+    # hours under the old flat 6-hour rule and nobody was told.
     L=~/.decomp-buddy-scan/run.lock
-    if [[ -f $L && -n $(find $L -mmin -360) ]]; then echo "busy: another run started $(date -r $L '+%-I:%M %p')"; exit 3; fi
+    if [[ -f $L ]]; then
+      if [[ -n $(find $L -mmin -120) ]] || pgrep -f "scripts/(daily\.sh (find|steps|gates|publish)|scan\.mjs|follow\.mjs|mirror\.mjs|triage\.mjs|credits\.mjs)|clamd|clamdscan|clamscan" >/dev/null; then
+        echo "busy: another run started $(date -r $L '+%-I:%M %p')"; exit 3
+      fi
+      echo "TOOK OVER A DEAD RUN: its last step started $(date -r $L '+%-I:%M %p') and nothing of it is running. Tell Maddie (docs/DAILY.md, Final reply)."
+    fi
     touch $L; echo "locked" ;;
   unlock) rm -f ~/.decomp-buddy-scan/run.lock; echo "unlocked" ;;
   *) echo "usage: scripts/daily.sh find|steps|gates|publish|lock|unlock"; exit 2 ;;

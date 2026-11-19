@@ -5,6 +5,7 @@ struct DecompBuddyRemoteApp: App {
     @State private var catalog = ProcessInfo.processInfo.environment["DB_DEMO"] != nil ? CatalogStore(preview: DemoData.catalog) : CatalogStore()
     @State private var remote = RemoteStore()
     @State private var pairError: String?
+    @State private var splash = true
 
     init() {
         // Room for every game's artwork, so scrolling back up never reloads it.
@@ -30,6 +31,23 @@ struct DecompBuddyRemoteApp: App {
             // The Camera app opens decompbuddy://pair links from the QR code straight into the app.
             .onOpenURL { url in Task { pairError = await remote.pair(url) } }
             .alert("Couldn't Pair", isPresented: .init(get: { pairError != nil }, set: { if !$0 { pairError = nil } })) { Button("OK") {} } message: { Text(pairError ?? "") }
+            // The logo for about a second and a half at startup, on the logo's own near-black. It never takes taps.
+            .overlay { if splash { SplashView().transition(.opacity) } }
+            .task { try? await Task.sleep(for: .seconds(1.4)); withAnimation(.easeOut(duration: 0.35)) { splash = false } }
         }
+    }
+}
+
+struct SplashView: View {
+    var body: some View {
+        ZStack {
+            Color(red: 14 / 255, green: 14 / 255, blue: 16 / 255).ignoresSafeArea()
+            VStack(spacing: 14) {
+                Image("Mascot").resizable().scaledToFit().frame(width: 200)
+                (Text("Decomp ").foregroundStyle(.white) + Text("Buddy").foregroundStyle(Color(red: 1, green: 107 / 255, blue: 157 / 255)))
+                    .font(.system(size: 38, weight: .heavy))
+            }
+        }
+        .allowsHitTesting(false).accessibilityHidden(true)
     }
 }

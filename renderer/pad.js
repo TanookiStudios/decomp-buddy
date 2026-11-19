@@ -1,6 +1,6 @@
 // Controllers everywhere: the D-pad or left stick moves between buttons on any screen, A presses, B goes back,
-// LB / RB switch screens, Start opens Couch Mode. Buttons can be remapped in Settings, and a Nintendo-style layout
-// swaps A/B and X/Y. Couch Mode uses the same mapping (padIndex).
+// LB / RB switch screens, Start opens Big Picture Mode. Buttons can be remapped in Settings, and a Nintendo-style layout
+// swaps A/B and X/Y. Big Picture Mode uses the same mapping (padIndex).
 // Shares app.js's globals ($, settings, toast, openCouch, couchOn).
 
 const PAD_DEFAULT = { A: 0, B: 1, X: 2, Y: 3, LB: 4, RB: 5, BACK: 8, START: 9 };
@@ -13,7 +13,7 @@ function padIndex(name) {
   return map[swap || name];
 }
 
-// The nearest focusable thing in a direction, preferring the same row / column (Couch Mode's tiles use it too).
+// The nearest focusable thing in a direction, preferring the same row / column (Big Picture Mode's tiles use it too).
 function moveFocus(items, dir) {
   if (!items.length) return;
   const cur = items.includes(document.activeElement) ? document.activeElement : null;
@@ -60,7 +60,7 @@ function padAction(a) {
   } else if (a === "start") openCouch();
 }
 
-// One loop for every screen: Couch Mode and Kiosk Mode have their own (couch.js), so this stays out of their way.
+// One loop for every screen: Big Picture Mode and Kiosk Mode have their own (couch.js), so this stays out of their way.
 let padPrev = [], padRepeat = { dir: null, next: 0 }, padRaf = 0, padCapture = null;
 function padLoop(t) {
   const pad = [...(navigator.getGamepads?.() || [])].find(Boolean);
@@ -81,7 +81,7 @@ window.addEventListener("gamepadconnected", () => { if (!padRaf) padRaf = reques
 if ([...(navigator.getGamepads?.() || [])].some(Boolean)) padRaf = requestAnimationFrame(padLoop);
 
 // ---- Settings → Controller: layout and remapping (press Change, then the button you want).
-const PAD_LABEL = { A: "A (Press)", B: "B (Back)", X: "X", Y: "Y (Details)", LB: "LB (Previous Screen)", RB: "RB (Next Screen)", BACK: "Back / Select", START: "Start (Couch Mode)" };
+const PAD_LABEL = { A: "A (Press)", B: "B (Back)", X: "X", Y: "Y (Details)", LB: "LB (Previous Screen)", RB: "RB (Next Screen)", BACK: "Back / Select", START: "Start (Big Picture Mode)" };
 function renderPadSettings() {
   $("padLayout").value = settings.padNintendo ? "nintendo" : "xbox";
   const map = { ...PAD_DEFAULT, ...(settings.padMap || {}) };

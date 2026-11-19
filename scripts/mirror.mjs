@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Keeps Decomp Buddy's own copy of every download (admin only). The decomp-mirror Worker does the copying, host to
 // storage, so nothing passes through this Mac's connection; this script decides what to copy and keeps the ledger.
-//   node scripts/mirror.mjs [--dry] [--source] [--apply] [--limit-gb N] [--remove <sha256>]
+//   node scripts/mirror.mjs [--dry] [--source] [--apply] [--limit-gb N] [--max N] [--remove <sha256>]
 //   (default)   every scanned-clean release file the app installs today, plus the version before it
 //   --source    the source code zip of every listed project, at its released version (source-built games first)
 //   Older versions: only the one before the current one (Maddie, 14 Nov 2026: every release ever was 1.8 TB).
@@ -15,18 +15,17 @@ import { execFileSync } from "node:child_process";
 import { releaseBuilds, pickRelease } from "../src/scan.js";
 import { releasesOf, saveReleases } from "./releases-cache.mjs";
 import { applyMirror, sourceJobs } from "../src/mirror.js";
-import { DOMAIN } from "../src/forges.js";
+import { siteOf } from "../src/forges.js";
 
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
 const has = (k) => process.argv.includes(k);
 const site = arg("--site") || path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site");
 const DIR = path.join(site, "public", "decomp-buddy"), LEDGER = path.join(DIR, "mirror.json");
 const WORKER = "https://decomp-mirror.kirbymail.workers.dev";
-const dry = has("--dry"), limitBytes = (Number(arg("--limit-gb")) || Infinity) * 1e9;
+const dry = has("--dry"), limitBytes = (Number(arg("--limit-gb")) || Infinity) * 1e9, maxJobs = Number(arg("--max")) || Infinity;
 const readJSON = (f, d) => { try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch { return d; } };
 const gb = (n) => `${(n / 1e9).toFixed(1)} GB`;
 const enc = encodeURIComponent;
-const SITES = Object.fromEntries(Object.entries(DOMAIN).map(([h, d]) => [h, `https://${d}`])); // src/forges.js
 
 const token = process.env.MIRROR_TOKEN || (() => { try { return execFileSync("security", ["find-generic-password", "-a", "decomp-buddy", "-s", "decomp-mirror-token", "-w"], { encoding: "utf8" }).trim(); } catch { return ""; } })();
 if (!token && !dry) { console.log("mirror: no Worker key (Keychain decomp-mirror-token) - nothing copied"); process.exit(1); }
@@ -38,7 +37,10 @@ const save = (force = false) => {
   if (dry || (!force && dirty < 20) || !dirty) return;
   const disk = readJSON(LEDGER, { files: {}, other: {} });
   ledger.files = { ...disk.files, ...ledger.files }; ledger.other = { ...disk.other, ...ledger.other };
-  for (const sha of removed) delete ledger.files[sha];
+  // Deletions are remembered (ledger.removed), so another copy job merging an older list can't bring them back.
+  ledger.removed = { ...(disk.removed || {}), ...(ledger.removed || {}) };
+  for (const sha of removed) ledger.removed[sha] = new Date().toISOString();
+  for (const k of Object.keys(ledger.removed)) { delete ledger.files[k]; delete ledger.other[k]; }
   ledger.updatedAt = new Date().toISOString(); const t = `${LEDGER}.${process.pid}.tmp`; fs.writeFileSync(t, JSON.stringify(ledger)); fs.renameSync(t, LEDGER); dirty = 0;
 };
 const removed = new Set();
@@ -47,7 +49,8 @@ const call = async (p, body) => {
     try {
       const r = await fetch(WORKER + p, { method: p === "/file" ? "DELETE" : "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(30 * 60e3) });
       const j = await r.json().catch(() => ({ ok: false, error: `Worker answered ${r.status}` }));
-      if (j.ok || attempt >= 3 || (r.status >= 400 && r.status < 500 && r.status !== 429)) return j;
+      // 503 is the Worker's CPU limit (a zip too big to piece together): trying again can't help, so don't wait on it.
+      if (j.ok || attempt >= 3 || r.status === 503 || (r.status >= 400 && r.status < 500 && r.status !== 429)) return j;
     } catch (err) { if (attempt >= 3) return { ok: false, error: err.message }; }
     await new Promise((res) => setTimeout(res, 20e3 * attempt));
   }
@@ -70,7 +73,7 @@ if (has("--apply")) {
   if (!dry) { const t = `${PLANS}.tmp`; fs.writeFileSync(t, JSON.stringify(plans)); fs.renameSync(t, PLANS); }
   console.log(`mirror: ${held} download(s) and ${Object.values(plans.plans).filter((e) => e.source).length} source zip(s) served from our copy`); process.exit(0);
 }
-const repoUrl = (planKey) => { const [host, full] = planKey.split(":"); return `${SITES[host] || SITES.github}/${full}`; };
+const repoUrl = (planKey) => { const [host, full] = planKey.split(":"); return `${siteOf(host)}/${full}`; };
 const safe = (s) => String(s).replace(/[^A-Za-z0-9._@+-]/g, "_");
 const jobs = [];
 
@@ -92,11 +95,12 @@ if (has("--source")) {
     let url = host === "github" ? `${repoUrl(it.planKey)}/releases/download/${enc(it.tag)}/${enc(it.name)}` : null;
     if (!url) { try { url = pickRelease(await releasesOf(host, owner, repo), { release_tag: it.tag, release_asset: it.name }).asset?.url; } catch {} }
     if (!url) continue;
-    jobs.push({ kind: "release", path: "/copy", body: { url, sha256: it.sha, name: it.name, size: it.size }, size: it.size, label: `${full} ${it.tag} ${it.name}`, record: () => { ledger.files[it.sha] = { key: `${it.sha}/${it.name}`, size: it.size, at: new Date().toISOString(), repo: it.planKey, tag: it.tag, scanned: true }; } });
+    jobs.push({ kind: "release", path: "/copy", body: { url, sha256: it.sha, name: it.name, ...(it.size ? { size: it.size } : {}) }, size: it.size || 0, label: `${full} ${it.tag} ${it.name}`, record: (r) => { ledger.files[it.sha] = { key: `${it.sha}/${it.name}`, size: r.size || it.size, at: new Date().toISOString(), repo: it.planKey, tag: it.tag, scanned: true }; } });
   }
   saveReleases();
 }
 
+jobs.splice(maxJobs); // --max: the hourly run takes a bounded slice, the rest waits for the next hour
 const total = jobs.reduce((n, j) => n + (j.size || 0), 0);
 console.log(`mirror: ${jobs.length} file(s) to copy${total ? ` (${gb(total)}${jobs.some((j) => !j.size) ? " + sizes unknown until copied" : ""})` : ""}`);
 if (dry) process.exit(0);

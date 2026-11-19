@@ -26,6 +26,7 @@ import "./src/main/finding.js";
 import "./src/main/look.js";
 import "./src/main/devices.js";
 import "./src/main/whatsnew.js";
+import "./src/main/kirby.js";
 import { startWatch } from "./src/main/watch.js";
 import { startPhoneLink } from "./src/main/phonelink.js";
 import { createWindow } from "./src/main/window.js";

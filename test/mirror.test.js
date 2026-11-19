@@ -19,3 +19,14 @@ test("mirror: the newest saved source zip is attached to its project", () => {
   assert.deepEqual(p.plans["github:o/r"].source, { url: "https://files.decompbuddy.com/source/github/o/r/v2.zip", tag: "v2", size: 4 });
   assert.equal(fileUrl(SHA, "g v2.zip"), `https://files.decompbuddy.com/${SHA}/g%20v2.zip`);
 });
+
+test("heldRepos: only projects whose current download we hold", async () => {
+  const { heldRepos } = await import("../src/mirror.js");
+  const g = (asset, mirror) => ({ games: [{ build: { method: "release", release_asset: asset, ...(mirror ? { mirror: true } : {}) } }] });
+  const plans = { plans: {
+    "github:a/kept": { targets: { linux: g("k.AppImage", true) } },
+    "github:b/notheld": { targets: { linux: g("n.AppImage", false) } },
+    "codeberg:c/held": { targets: { linux: g("c.zip", true) } },
+  } };
+  assert.deepEqual([...heldRepos(plans)], ["a/kept"]);
+});

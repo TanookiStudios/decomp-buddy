@@ -113,6 +113,8 @@ export function playGame(sender, folder) {
   child.on("exit", () => {
     const mins = Math.round((Date.now() - startedAt) / 60000); if (mins < 1) return;
     try { const mm = upgradeManifest(JSON.parse(fs.readFileSync(path.join(folder, "decomp-buddy.json"), "utf8"))); stampManifest(folder, { playMinutes: (mm.playMinutes || 0) + mins }); } catch {}
+    // A real session just ended: the app can ask how it ran (two minutes or more, so a quick look doesn't count).
+    if (mins >= 2 && !e.sender.isDestroyed()) e.sender.send("game:played", { folder, minutes: mins });
   });
   child.on("error", (err) => logTo(e.sender, `Couldn't start ${path.basename(exe)}: ${err.message}`));
   child.on("exit", (code, signal) => {
@@ -220,6 +222,6 @@ ipcMain.handle("steam:addSelf", async (e) => {
   if (!img.isEmpty()) fs.writeFileSync(icon, img.resize({ width: 256, height: 256 }).toPNG());
   const artwork = img.isEmpty() ? {} : { square: img.resize({ width: 512, height: 512 }).toPNG(), portrait: img.resize({ width: 600, height: 600 }).toPNG() };
   const r = installShortcut({ configDir: cfg, appName: "Decomp Buddy", ...launch, iconPath: img.isEmpty() ? "" : icon, tags: ["Decomp Buddy"], artwork, replaceName: true });
-  logTo(e.sender, `--- Steam: Decomp Buddy (Couch Mode) → ${r.file} (appid ${r.appid})`);
+  logTo(e.sender, `--- Steam: Decomp Buddy (Big Picture Mode) → ${r.file} (appid ${r.appid})`);
   return { updated: r.updated };
 });

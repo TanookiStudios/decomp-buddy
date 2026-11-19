@@ -6,9 +6,10 @@ const SHA = "a".repeat(64);
 const ok = { url: "https://github.com/o/r/releases/download/v1/game.zip", sha256: SHA, name: "game.zip", size: 10 };
 const req = (body, token = "s3cret", method = "POST", path = "/copy") => new Request(`https://m.example${path}`, { method, headers: { authorization: `Bearer ${token}` }, body: JSON.stringify(body) });
 
-test("mirror worker: only copies from the hosts we list, with a real hash, name and size", () => {
+test("mirror worker: only copies from public web addresses, with a real hash, name and size", () => {
   assert.equal(problemWith(ok), null);
-  assert.match(problemWith({ ...ok, url: "https://evil.example/game.zip" }), /not a host/);
+  assert.equal(problemWith({ ...ok, url: "https://my-ports.example.org/files/game.zip" }), null); // any site (the hash still has to match)
+  for (const u of ["https://localhost/game.zip", "https://127.0.0.1/game.zip", "https://[::1]/game.zip", "https://10.0.0.5:8080/game.zip"]) assert.match(problemWith({ ...ok, url: u }), /not a host/, u);
   assert.match(problemWith({ ...ok, url: "http://github.com/x" }), /not a host/);
   assert.match(problemWith({ ...ok, sha256: "abc" }), /sha256/);
   assert.match(problemWith({ ...ok, name: "../x" }), /name/);
@@ -43,4 +44,14 @@ test("mirror worker: archive keys stay inside source/ or byname/", async () => {
   assert.equal(archiveKeyOk("byname/github/o/r/v1/game.zip"), true);
   assert.equal(archiveKeyOk("source/../secret"), false);
   assert.equal(archiveKeyOk("abc123/game.zip"), false);
+});
+
+test("mirror worker: a scan record without a size uses the host's Content-Length", async (t) => {
+  const stored = new Map();
+  const env = { TOKEN: "s3cret", FILES: { head: async () => null, put: async (k) => { stored.set(k, true); } } };
+  const real = globalThis.fetch; t.after(() => { globalThis.fetch = real; });
+  globalThis.fetch = async () => new Response("0123456789", { headers: { "content-length": "10" } });
+  const { size, ...noSize } = ok;
+  const r = await (await worker.fetch(req(noSize), env)).json();
+  assert.deepEqual(r, { ok: true, size: 10 }); assert.equal(size, 10);
 });

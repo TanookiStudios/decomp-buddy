@@ -66,9 +66,8 @@ async function openMore(g) {
     <div class="more-sec"><h4>Save Sync</h4><div id="moreSync"></div></div>
     ${g.canWine && settings.platform === "linux" ? `<div class="more-sec"><h4>Runs With</h4><p class="sub">The Proton (or Wine) this Windows version starts with. If a game won't start, another Proton often fixes it.</p>
       <div class="row"><select id="moreRunner" aria-label="Proton or Wine for this game"><option value="">Newest Proton (recommended)</option></select></div></div>` : ""}
-    ${catalogOf(g) ? `<div class="more-sec"><h4>How Did It Run?</h4><p class="sub">Tell other players how it went on your computer. Only totals are shown, never who.</p>
-      <div class="row" role="group" aria-label="How did it run?">${[["runs", "Runs Well"], ["issues", "Has Issues"], ["no", "Doesn't Run"]].map(([v, l]) => `<button type="button" class="small" data-rep="${v}" aria-pressed="${reports.mine[catalogOf(g).id.toLowerCase()]?.verdict === v}">${l}</button>`).join("")}</div>
-      <div class="row" id="moreRepWhy" ${["issues", "no"].includes(reports.mine[catalogOf(g).id.toLowerCase()]?.verdict) ? "" : "hidden"}><label for="moreRepReason">What Went Wrong?</label><select id="moreRepReason" style="width:auto"><option value="">Pick One (Optional)</option><option value="crash">It Crashes</option><option value="graphics">Graphics Problems</option><option value="sound">Sound Problems</option><option value="controls">Controller Problems</option><option value="files">It Wants Files I Gave It</option><option value="other">Something Else</option></select></div>
+    ${catalogOf(g) ? `<div class="more-sec"><h4>How Did It Run?</h4><p class="sub">Tell other players how it went on your computer. They see your answer on the game's page, with your computer and note if you include them - never who you are.</p>
+      <div class="row" role="group" aria-label="How did it run?">${[["runs", "Plays Great"], ["issues", "Has Problems"], ["no", "Won't Run"]].map(([v, l]) => `<button type="button" class="small" data-rep="${v}" aria-pressed="${reports.mine[catalogOf(g).id.toLowerCase()]?.verdict === v}">${l}</button>`).join("")}</div>
       <p class="sub"><button type="button" class="small" id="moreBroken">Report Broken Download</button> <span id="moreRepState" role="status" aria-live="polite"></span></p></div>` : ""}
     <div class="more-sec"><h4>Updates</h4>
       <label for="moreAuto">Install Updates By Themselves</label>
@@ -90,18 +89,16 @@ async function openMore(g) {
     $("moreRunner").onchange = async () => { await window.buddy.compatSetRunner(g.folder, $("moreRunner").value); g.runner = $("moreRunner").value || null; panelState("Saved. It's used the next time you press Play.", "ok"); };
   }
   if (catalogOf(g)) {
-    const id = catalogOf(g).id.toLowerCase(), cur = reports.mine[id];
-    if (cur?.reason && $("moreRepReason")) $("moreRepReason").value = cur.reason === "download" ? "" : cur.reason;
+    const id = catalogOf(g).id.toLowerCase();
     const send = async (verdict, reason) => {
       try {
         const r = await window.buddy.reportSend(id, verdict, reason, g.tag); await loadReports();
         $("gamePanelBody").querySelectorAll("[data-rep]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.rep === verdict)));
-        $("moreRepWhy").hidden = !["issues", "no"].includes(verdict);
-        $("moreRepState").textContent = verdict === null ? "Report taken back." : r.counts ? `Thanks! On ${SYS_LABEL[r.sys] || "computers like yours"}: ${r.counts[0]} runs well, ${r.counts[1]} has issues, ${r.counts[2]} doesn't run.` : "Thanks!";
+        $("moreRepState").textContent = verdict === null ? "Report taken back." : "Thanks!";
       } catch (err) { $("moreRepState").textContent = err.message.replace(/^.*Error: /, ""); }
     };
-    $("gamePanelBody").querySelectorAll("[data-rep]").forEach((b) => (b.onclick = () => send(b.getAttribute("aria-pressed") === "true" ? null : b.dataset.rep, $("moreRepReason")?.value || null)));
-    $("moreRepReason")?.addEventListener("change", () => { const v = reports.mine[id]?.verdict; if (v) send(v, $("moreRepReason").value || null); });
+    // Pressing the one that's on takes the report back; any other opens the report card (a note, and what's sent with it).
+    $("gamePanelBody").querySelectorAll("[data-rep]").forEach((b) => (b.onclick = () => (b.getAttribute("aria-pressed") === "true" ? send(null, null) : askHowItRan(g, { preset: b.dataset.rep }))));
     $("moreBroken").onclick = () => send("no", "download");
   }
   $("moreAuto").value = g.autoUpdate === true ? "on" : g.autoUpdate === false ? "off" : "";

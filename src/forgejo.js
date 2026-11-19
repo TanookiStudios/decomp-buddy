@@ -1,6 +1,6 @@
 // Forgejo/Gitea twin of github.js/gitlab.js (Codeberg, and any site in src/forges.js): same context shape so
 // plan/setup/verify don't care where a repo lives.
-import { FORGEJO } from "./forges.js";
+import { forgejoOf, FORGEJO as FORGEJO_TABLE } from "./forges.js";
 const DOC_PATTERN = /^(readme|build(ing)?|install(ation)?|setup|getting[-_ ]?started|usage|faq)[^/]*\.(md|txt|rst)$|^docs?\/[^/]+\.md$/i;
 const HASH_PATTERN = /(^|\/)([^/]*\.(sha1|md5|sha256|crc32)|checksums?\.txt|hashes?\.txt|baserom[^/]*\.txt|roms?\.txt)$/i;
 
@@ -12,7 +12,7 @@ export const releasesOf = (list) => (list || []).filter((r) => !r.draft).map((r)
 }));
 
 export async function fetchRepoContext({ owner, repo, host = "codeberg" }) {
-  const f = FORGEJO[host]; if (!f) throw new Error(`Decomp Buddy doesn't know the repository host "${host}".`);
+  const f = forgejoOf(host); if (!f) throw new Error(`Decomp Buddy doesn't know the repository host "${host}".`);
   const SITE = `https://${f.domain}`, API = `${SITE}/api/v1`;
   const cb = async (pathname) => {
     const res = await fetch(`${API}${pathname}`, { headers: h, signal: AbortSignal.timeout(30_000) });
@@ -20,8 +20,9 @@ export async function fetchRepoContext({ owner, repo, host = "codeberg" }) {
     if (!res.ok) throw new Error(`${f.label} ${res.status} for ${pathname}`);
     return res.json();
   };
-  const meta = await cb(`/repos/${owner}/${repo}`);
-  if (!meta) throw new Error(`Repo not found on ${f.label}: ${owner}/${repo}`);
+  // A site we only know by its address might not be a Forgejo/Gitea site at all (its answer isn't the API's JSON).
+  const meta = await cb(`/repos/${owner}/${repo}`).catch((err) => { if (FORGEJO_TABLE[host]) throw err; return null; });
+  if (!meta) throw new Error(FORGEJO_TABLE[host] ? `Repo not found on ${f.label}: ${owner}/${repo}` : `Couldn't read ${owner}/${repo} on ${f.label}. Decomp Buddy reads projects on GitHub, GitLab and Forgejo/Gitea sites like Codeberg.`);
   const branch = meta.default_branch || "main";
   const rawBase = `${SITE}/${owner}/${repo}/raw/branch/${branch}/`;
   const raw = (p) => fetch(rawBase + p.split("/").map(encodeURIComponent).join("/"), { headers: h, signal: AbortSignal.timeout(30_000) }).then((r) => (r.ok ? r.text() : "")).catch(() => "");

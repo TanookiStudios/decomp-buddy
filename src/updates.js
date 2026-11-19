@@ -10,6 +10,9 @@ export function isNewer(candidate, current) {
   return false;
 }
 
+// An update was downloaded (recorded then) but this copy is still older: installing on quit or restart didn't happen.
+export const updateFailed = (downloaded, current) => !!downloaded && isNewer(downloaded, current);
+
 export async function checkForUpdate(currentVersion, { url = UPDATE_URL, target = "windows" } = {}) {
   const res = await fetch(url, { headers: { "User-Agent": `decomp-buddy/${currentVersion}` }, signal: AbortSignal.timeout(15_000), cache: "no-store" });
   if (!res.ok) throw new Error(`Update feed answered ${res.status}`);

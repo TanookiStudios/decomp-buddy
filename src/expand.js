@@ -60,7 +60,7 @@ export function attachFacts(games, pub) {
     const tag = !g.repoGames && publishedTag(entry);
     if (tag) g.publishedTag = tag;
     if (tag && tag !== g.version) { g.latestVersion = g.version; g.version = tag; }
-    const planned = Object.entries(entry?.targets || {}).filter(([, t]) => !(t?.games?.length && t.games.every((gm) => gm.build?.gone))).map(([t]) => PLATFORM_OF_TARGET[t]).filter(Boolean);
+    const planned = Object.entries(entry?.targets || {}).filter(([, t]) => !(t?.games?.length && t.games.every((gm) => gm.build?.gone && !gm.build.mirror))).map(([t]) => PLATFORM_OF_TARGET[t]).filter(Boolean);
     if (planned.length) g.platforms = [...new Set([...(g.platforms || []), ...planned])];
   }
   return games;

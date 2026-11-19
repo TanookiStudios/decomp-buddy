@@ -3,20 +3,24 @@
 import { fetchRepoContext as githubContext, fetchReleases as githubReleases } from "./github.js";
 import { fetchRepoContext as gitlabContext } from "./gitlab.js";
 import { fetchRepoContext as forgejoContext } from "./forgejo.js";
-import { FORGEJO } from "./forges.js";
+import { FORGEJO, forgejoOf } from "./forges.js";
 
 export const HOSTS = {
   github: { domain: "github.com", context: githubContext, releases: githubReleases, releasesPath: "releases",
     raw: (owner, repo, p) => `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${p}` },
   gitlab: { domain: "gitlab.com", context: gitlabContext, releases: async (ref) => (await gitlabContext(ref)).releases, releasesPath: "-/releases",
     raw: (owner, repo, p) => `https://gitlab.com/${owner}/${repo}/-/raw/HEAD/${p}` },
-  ...Object.fromEntries(Object.entries(FORGEJO).map(([id, f]) => [id, { domain: f.domain, context: (ref) => forgejoContext({ ...ref, host: id }),
-    releases: async (ref) => (await forgejoContext({ ...ref, host: id })).releases, releasesPath: "releases",
-    raw: (owner, repo, p) => `https://${f.domain}/${owner}/${repo}/raw/HEAD/${p}` }])),
+  ...Object.fromEntries(Object.entries(FORGEJO).map(([id, f]) => [id, forgejoHost(id, f)])),
 };
+function forgejoHost(id, f) {
+  return { domain: f.domain, context: (ref) => forgejoContext({ ...ref, host: id }),
+    releases: async (ref) => (await forgejoContext({ ...ref, host: id })).releases, releasesPath: "releases",
+    raw: (owner, repo, p) => `https://${f.domain}/${owner}/${repo}/raw/HEAD/${p}` };
+}
 
 export function hostOf(host) {
-  const h = HOSTS[host || "github"];
+  const f = !HOSTS[host || "github"] && forgejoOf(host); // a Forgejo/Gitea site known only by its address
+  const h = HOSTS[host || "github"] || (f && forgejoHost(host, f));
   if (!h) throw new Error(`Decomp Buddy doesn't know the repository host "${host}".`);
   return h;
 }

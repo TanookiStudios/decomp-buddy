@@ -17,7 +17,7 @@
 - **No AI key needed** - install steps are written ahead of time for every game. Bring your own key (or Apple Intelligence on a Mac, or a free local model) for anything new.
 - **Your saves are safe** - backed up before every update, restore any time, optional sync through your cloud folder.
 - **Updates and Roll Back** - see what changed, Update or Update All, go back if a release breaks.
-- **Steam and Steam Deck** - Install To Steam with full box art, and a controller-friendly Couch Mode.
+- **Steam and Steam Deck** - Install To Steam with full box art, and a controller-friendly Big Picture Mode.
 - **Windows games on a Mac** through Wine, an approved (notarized) Mac app, and six languages.
 - **Open source** (GPL-3.0), and nothing about you leaves your computer unless you say so.
 

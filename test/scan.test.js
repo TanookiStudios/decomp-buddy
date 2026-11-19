@@ -79,3 +79,10 @@ test("a file released by hand without proof can't claim a clean scan", () => {
   applyScans(plans, scans, { abc: { reason: "her call", unproven: true } });
   assert.deepEqual(scanSummary(plans.plans[key]), { handChecked: true });
 });
+
+test("scanSummary: a build the host lost still counts when we hold our scanned copy", () => {
+  const b = (extra) => ({ method: "release", release_asset: "g.zip", release_tag: "v1", scanned: { sha256: "a".repeat(64), at: "2026-11-05T00:00:00Z", engine: "ClamAV" }, gone: "2026-11-14", ...extra });
+  const entry = (build) => ({ targets: { windows: { games: [{ build }] } } });
+  assert.equal(scanSummary(entry(b({}))), null); // gone and not ours: nothing to offer
+  assert.equal(scanSummary(entry(b({ mirror: true }))).files, 1); // gone from the host, kept by us: still listed
+});

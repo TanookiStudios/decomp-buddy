@@ -14,6 +14,7 @@ import { releasesOf, saveReleases } from "./releases-cache.mjs";
 import { releaseBuilds, scanKey, applyScans, pickRelease } from "../src/scan.js";
 import { nextStep } from "../src/follow.js";
 import { uploadedBy } from "../src/trust.js";
+import { heldRepos } from "../src/mirror.js";
 
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
 const site = arg("--site") || path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site");
@@ -106,11 +107,13 @@ if (replan.length || review.length) console.log(`lists: ${path.join(OUT, "follow
 saveReleases();
 // Deleted projects leave the catalog (and the app) at the next build: onto the hidden list, marked gone. One that came
 // back since (its repo answers again) comes off the list, so discovery and the next publish pick it up again.
+// Except what we hold: a deleted project whose download is in our own copy stays listed (the archive's whole point).
 if (!dry && !only) {
   const wfile = path.join(DIR, "waiting.json"), w = readJSON(wfile, null);
   if (w) {
-    const back = [];
-    for (const h of w.hidden.filter((h) => h.gone && !(h.host && h.host !== "github"))) { const [o, r] = h.repo.split("/"); if (!(await repoGone(o, r))) back.push(h); }
+    const back = [], held = heldRepos(plans);
+    for (const full of [...gone]) if (held.has(full)) { gone.delete(full); console.log(`  ${full}: removed from GitHub, kept listed - we hold its download`); }
+    for (const h of w.hidden.filter((h) => h.gone && !(h.host && h.host !== "github"))) { const [o, r] = h.repo.split("/"); if (held.has(String(h.repo).toLowerCase()) || !(await repoGone(o, r))) back.push(h); }
     w.hidden = w.hidden.filter((h) => !back.includes(h));
     const hidden = new Set(w.hidden.map((h) => String(h.repo).toLowerCase()));
     for (const full of gone) if (!hidden.has(full)) w.hidden.push({ repo: full, title: full, reason: "The repo no longer exists.", gone: today });

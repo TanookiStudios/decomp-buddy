@@ -1,7 +1,10 @@
 // Moved out of main.js unchanged (2026-09-23): updater IPC handlers.
 import { app, ipcMain } from "electron";
-import { checkForUpdate, UPDATE_URL } from "../updates.js";
-import { VERSION, logTo } from "./core.js";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { checkForUpdate, updateFailed, UPDATE_URL } from "../updates.js";
+import { VERSION, logTo, loadSettings, saveSettings } from "./core.js";
 import electronUpdater from "electron-updater";
 const { autoUpdater } = electronUpdater;
 
@@ -19,7 +22,20 @@ export function setupAutoUpdater(win) {
   autoUpdater.on("update-available", (i) => send({ status: "downloading", version: i.version }));
   autoUpdater.on("update-not-available", () => send({ status: "current" }));
   autoUpdater.on("download-progress", (p) => send({ status: "downloading", percent: Math.round(p.percent) }));
-  autoUpdater.on("update-downloaded", (i) => send({ status: "ready", version: i.version, notes: typeof i.releaseNotes === "string" ? i.releaseNotes : "" }));
+  // A downloaded update that didn't install last time won't install this time either: say so and point at the download,
+  // instead of "Restart To Update" forever (a player's report, 17 Nov 2026). The Mac installer's own log goes into ours.
+  const s0 = loadSettings(), failed = updateFailed(s0.updateDownloaded, VERSION) ? s0.updateDownloaded : null;
+  if (s0.updateDownloaded && !failed) { delete s0.updateDownloaded; saveSettings(s0); }
+  if (failed) {
+    logTo(null, `updater: ${failed} was downloaded but this copy is still ${VERSION} - it didn't install`);
+    try { logTo(null, `updater: Mac installer log: ${fs.readFileSync(path.join(os.homedir(), "Library/Caches/com.tanookistudios.decompbuddy.ShipIt/ShipIt_stderr.log"), "utf8").slice(-1500)}`); } catch {}
+    setTimeout(() => send({ status: "failed", version: failed }), 4000);
+  }
+  autoUpdater.on("update-downloaded", (i) => {
+    if (i.version === failed) return send({ status: "failed", version: i.version });
+    const s = loadSettings(); s.updateDownloaded = i.version; saveSettings(s);
+    send({ status: "ready", version: i.version, notes: typeof i.releaseNotes === "string" ? i.releaseNotes : "" });
+  });
   // The raw updater error is for the log; people get one plain line (the full text is in Open Log).
   autoUpdater.on("error", (err) => {
     const raw = String(err?.message || err);
@@ -41,4 +57,6 @@ ipcMain.handle("update:check", async () => {
   return inFlatpak() ? { ...r, url: "https://decompbuddy.com/download#steam-deck" } : r;
 });
 ipcMain.handle("update:state", () => updaterState);
-ipcMain.handle("update:install", () => { autoUpdater.quitAndInstall(false, true); return true; });
+// app.quitting first: with Run In Background on, closing the windows would otherwise just hide the app, and the
+// update never installs (window-all-closed fires before before-quit).
+ipcMain.handle("update:install", () => { app.quitting = true; autoUpdater.quitAndInstall(false, true); return true; });

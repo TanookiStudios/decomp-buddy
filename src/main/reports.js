@@ -5,6 +5,8 @@
 // with no id at all.
 import { ipcMain, app } from "electron";
 import crypto from "node:crypto";
+import os from "node:os";
+import { tidyCpu, tidyGpu, osName } from "../computer.js";
 import { loadSettings, saveSettings, libraryDirs, VERSION } from "./core.js";
 import { readManifests } from "../installhtml.js";
 
@@ -14,18 +16,36 @@ export const sysOf = (env = process.env, platform = process.platform, arch = pro
   : `${{ win32: "windows", darwin: "macos", linux: "linux" }[platform] || "linux"}-${arch === "arm64" ? "arm64" : "x64"}`;
 const voterId = () => { const s = loadSettings(); if (!/^[0-9a-f]{32}$/.test(s.voterId || "")) { s.voterId = crypto.randomBytes(16).toString("hex"); saveSettings(s); } return s.voterId; };
 
-ipcMain.handle("reports:send", async (_e, { game, verdict = null, reason = null, tag = null }) => {
+// ---- The computer a report is about (src/computer.js): exactly what the player is shown before sending.
+let computer = null;
+export async function computerInfo() {
+  if (computer) return computer;
+  const gpu = await app.getGPUInfo("complete").then((i) => tidyGpu(i)).catch(() => "");
+  return (computer = { os: osName(), cpu: tidyCpu(os.cpus()[0]?.model), gpu, ram: Math.round(os.totalmem() / 2 ** 30) });
+}
+ipcMain.handle("reports:computer", () => computerInfo());
+
+// One game's How It Runs (totals, by version, and the latest reports), or null if the site doesn't answer.
+ipcMain.handle("reports:game", async (_e, { game }) => {
+  if (process.env.DECOMP_HEADLESS && !process.env.DECOMP_REPORTS_LIVE) return null;
+  try {
+    const r = await fetch(`${BASE()}/api/decomp-reports?game=${encodeURIComponent(String(game).toLowerCase())}`, { headers: { "User-Agent": `decomp-buddy/${VERSION}` }, signal: AbortSignal.timeout(15_000) });
+    const d = r.ok ? await r.json() : null; return d?.ok && d.all ? d : null;
+  } catch { return null; }
+});
+
+ipcMain.handle("reports:send", async (_e, { game, verdict = null, reason = null, tag = null, note = "", withComputer = false }) => {
   if (verdict !== null && !VERDICTS.includes(verdict)) throw new Error("Unknown report.");
   if (reason && !REASONS.includes(reason)) reason = "other";
   const s = loadSettings(), mine = { ...(s.myReports || {}) };
-  const body = { game: String(game).toLowerCase(), voter: voterId(), verdict, reason, sys: sysOf(), tag };
+  const body = { game: String(game).toLowerCase(), voter: voterId(), verdict, reason, sys: sysOf(), tag, ...(withComputer && verdict !== null ? await computerInfo() : {}), ...(note && verdict !== null ? { note: String(note).slice(0, 500) } : {}) };
   let res = null;
   if (!process.env.DECOMP_HEADLESS || process.env.DECOMP_REPORTS_LIVE) {
     const r = await fetch(`${BASE()}/api/decomp-report`, { method: "POST", headers: { "content-type": "application/json", "User-Agent": `decomp-buddy/${VERSION}` }, body: JSON.stringify(body), signal: AbortSignal.timeout(15_000) });
     res = await r.json().catch(() => null);
     if (!r.ok || !res?.ok) throw new Error(r.status === 429 ? "That's a lot of reports in an hour - try again later." : "The report didn't go through. Check your internet and try again.");
   }
-  if (verdict === null) delete mine[body.game]; else mine[body.game] = { verdict, reason, at: new Date().toISOString() };
+  if (verdict === null) delete mine[body.game]; else mine[body.game] = { verdict, reason, tag, note: body.note || "", pc: !!withComputer, at: new Date().toISOString() };
   const st = loadSettings(); st.myReports = mine; saveSettings(st); countsAt = 0;
   return { sys: body.sys, counts: res?.counts || null };
 });

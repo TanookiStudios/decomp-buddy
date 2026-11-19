@@ -1,7 +1,7 @@
 // Decomp Buddy's own copy of each download (scripts/mirror.mjs keeps it; the ledger is public/decomp-buddy/mirror.json).
 // The app and the website only ever point at a file the ledger lists: files.decompbuddy.com caches a miss for hours.
 import { releaseBuilds } from "./scan.js";
-import { DOMAIN } from "./forges.js";
+import { domainOf } from "./forges.js";
 
 export const FILES = "https://files.decompbuddy.com";
 export const fileUrl = (sha256, name) => `${FILES}/${sha256}/${encodeURIComponent(name)}`;
@@ -30,8 +30,8 @@ export function sourceJobs(plans, ledger, now = new Date()) {
   const out = [];
   for (const k of keys) {
     const [host, full] = k.split(":"), [owner, repo] = full.split("/"), tag = plans.plans[k].tag;
-    if (!DOMAIN[host]) continue;
-    const ref = tag || "HEAD", base = `https://${DOMAIN[host]}/${full}`;
+    if (!domainOf(host)) continue;
+    const ref = tag || "HEAD", base = `https://${domainOf(host)}/${full}`;
     const url = host === "github" ? (tag ? `${base}/archive/refs/tags/${enc(tag)}.zip` : `${base}/archive/HEAD.zip`)
       : host === "gitlab" ? `${base}/-/archive/${enc(ref)}/${enc(repo)}-${enc(ref)}.zip` : `${base}/archive/${enc(ref)}.zip`;
     const key = `source/${host}/${safe(owner)}/${safe(repo)}/${tag ? safe(tag) : `HEAD-${today}`}.zip`;
@@ -39,5 +39,12 @@ export function sourceJobs(plans, ledger, now = new Date()) {
     if (Object.values(other).some((v) => v.kind === "source" && v.repo === k && (tag ? v.tag === tag : now - Date.parse(v.at) < 30 * 864e5))) continue;
     out.push({ planKey: k, url, key, name: `${repo}-${ref}-source.zip`, tag: tag || null });
   }
+  return out;
+}
+
+/** GitHub projects ("owner/repo", lowercase) whose current download we hold: these stay listed if GitHub removes them. */
+export function heldRepos(plans) {
+  const out = new Set();
+  for (const { planKey, build } of releaseBuilds(plans)) if (build.mirror && planKey.startsWith("github:")) out.add(planKey.slice(7).toLowerCase());
   return out;
 }

@@ -15,3 +15,18 @@ test("renameFromPlan: a code-named entry takes its plan's game name and keeps it
   const two = { title: "Collection", console: "PC", owner: "x", repo: "collection" };
   assert.equal(renameFromPlan(two, { targets: { windows: { games: [{ game_title: "A" }, { game_title: "B" }] } } }), null);
 });
+
+test("easySetup: a ready download, one picked file and three steps is easy; a folder drop, a BIOS or a source build is not", async () => {
+  const { easySetup } = await import("../src/publiccatalog.js");
+  const game = (over = {}) => ({ game_title: "Zelda", build: { method: "release" }, first_run: ["a", "b"], game_files: [{ kind: "game", how_provided: "in_app_picker" }], ...over });
+  const plan = (...gs) => ({ targets: { windows: { games: gs } } });
+  assert.equal(easySetup(plan(game())), true);
+  assert.equal(easySetup(plan(game({ game_files: [] }))), true);
+  assert.equal(easySetup(plan(game({ build: { method: "source" } }))), false);
+  assert.equal(easySetup(plan(game({ first_run: ["a", "b", "c", "d"] }))), false);
+  assert.equal(easySetup(plan(game({ game_files: [{ kind: "game", how_provided: "folder" }] }))), false);
+  assert.equal(easySetup(plan(game({ game_files: [{ kind: "bios", how_provided: "in_app_picker" }] }))), false);
+  assert.equal(easySetup(plan(game(), game({ game_title: "Hard", build: { method: "source" } })), "Zelda"), true);   // one card of a collection
+  assert.equal(easySetup(plan(game(), game({ game_title: "Hard", build: { method: "source" } }))), false);
+  assert.equal(easySetup(null), false);
+});

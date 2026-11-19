@@ -1,5 +1,5 @@
-// Kiosk Mode: Couch Mode that only the PIN can leave (arcade cabinets, shared PCs).
-// Leaving Couch Mode or closing the window shows an on-screen keypad: D-pad or arrows to move, A or
+// Kiosk Mode: Big Picture Mode that only the PIN can leave (arcade cabinets, shared PCs).
+// Leaving Big Picture Mode or closing the window shows an on-screen keypad: D-pad or arrows to move, A or
 // Enter to press, B or Escape to go back to the games. The main process checks the PIN and keeps
 // Settings-only actions, Remove Game, Set Up and web links shut while it's locked.
 // Shares app.js/couch.js globals ($, settings, refresh, openCouch, closeCouch, couchOn).
@@ -11,7 +11,7 @@ function kioskControls() {
   kioskLocked = !!k.locked;
   $("kioskOn").checked = !!k.on;
   $("kioskOff").hidden = !k.on && !k.hasPin;
-  kioskSay(k.on ? "On - Decomp Buddy starts locked in Couch Mode." : k.hasPin ? "A PIN is saved. Tick Start In Kiosk Mode to lock it." : "Save a PIN first.");
+  kioskSay(k.on ? "On - Decomp Buddy starts locked in Big Picture Mode." : k.hasPin ? "A PIN is saved. Tick Start In Kiosk Mode to lock it." : "Save a PIN first.");
 }
 const kioskSay = (m, cls = "") => { $("kioskState").textContent = m; $("kioskState").className = `sub ${cls}`; };
 $("kioskSave").onclick = async () => {

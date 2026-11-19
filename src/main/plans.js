@@ -3,7 +3,8 @@ import { app, ipcMain } from "electron";
 import fs from "node:fs";
 import path from "node:path";
 import { fetchPublished, writePlans, planKey, TARGET_OF_PLATFORM, PLANS_URL, factsDue } from "../plans.js";
-import { sampleStat, logTo, safeSend, loadSettings, activeProvider, plansFileFor, state } from "./core.js";
+import { sampleStat, logTo, safeSend, loadSettings, activeProvider, plansFileFor, currentTarget, state } from "./core.js";
+import { setupCard } from "../setupcard.js";
 import { markDead } from "./catalog.js";
 import { extractFacts, FACTS_VERSION } from "../facts.js";
 
@@ -131,4 +132,9 @@ export function planNewFinds(sender, repos) {
     .then((r) => { if (r.needsConfirm) logTo(sender, `${r.needsConfirm} plans for the new finds are waiting - Admin → Published Plans → Generate Missing.`); })
     .catch((err) => logTo(sender, `plans for new finds skipped: ${err.message}`));
 }
+// How To Set Up on a game's page: what you bring and the first start, for the computer this copy builds for.
+ipcMain.handle("plans:setup", async (_e, { owner, repo, host = "github", gameTitle = "" }) => {
+  const s = loadSettings(), pub = await fetchPublished({ file: plansFileFor(s), cacheDir: app.getPath("userData") }).catch(() => null);
+  return setupCard(pub?.plans?.[planKey(host || "github", owner, repo)], { gameTitle, target: currentTarget(s) });
+});
 ipcMain.handle("plans:cancel", () => { if (genState) genState.cancelled = true; return true; });

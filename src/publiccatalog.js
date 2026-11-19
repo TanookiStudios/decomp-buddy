@@ -30,6 +30,17 @@ export function renameFromPlan(g, entry) {
   return [old, `${old}-${slug(g.owner || g.project)}`];
 }
 
+// Easy Setup: a ready-made download, at most one file of your own that the app's picker takes, and three steps or
+// fewer the first time it starts - on at least one kind of computer, for every game the card covers.
+export function easySetup(entry, gameTitle) {
+  const want = compact(gameTitle);
+  return Object.values(entry?.targets || {}).some((t) => {
+    const gs = (t?.games || []).filter((x) => !want || compact(x.game_title) === want);
+    return gs.length > 0 && gs.every((x) => x.build?.method === "release" && (x.first_run || []).length <= 3 && (x.game_files || []).length <= 1
+      && (x.game_files || []).every((f) => f.kind === "game" && f.how_provided === "in_app_picker"));
+  });
+}
+
 export async function buildCatalog({ site = path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site"), log = console.log, recheck = false, steamGridKey = null } = {}) {
   const dir = path.join(site, "public", "decomp-buddy");
   const findsFile = path.join(dir, "finds.json");
@@ -42,6 +53,17 @@ export async function buildCatalog({ site = path.join(os.homedir(), "Documents/G
   const games = attachFacts(expandMultiGame(withoutExcluded(cat.games, readWaiting(waitingFileNextTo(findsFile))), pub), pub); // waiting + hidden stay out, whichever source lists them
   // Real names before any cover lookup: "MediEvil" finds a cover, "MediEvilRecomp" doesn't.
   for (const g of games) g.formerSlugs = renameFromPlan(g, g.owner && pub.plans?.[planKey(g.repoHost || "github", g.owner, g.repo)]);
+  // Stars and download totals from the star run (DecompBuddy-Site/stars.mjs, GitHub only); no file just leaves them out.
+  let pop = {}; try { pop = JSON.parse(fs.readFileSync(path.join(site, "..", "DecompBuddy-Site", "stars.json"), "utf8")); } catch {}
+  // Other names a game goes by (another language's title, a regional name), so a search for any of them finds its
+  // page: aka.json next to the catalog, { names: { "<catalog id>": ["Pokémon Edición Roja", ...] } }, kept by hand.
+  let aka = {}; try { aka = JSON.parse(fs.readFileSync(path.join(dir, "aka.json"), "utf8")).names || {}; } catch {}
+  for (const g of games) {
+    const names = aka[String(g.id).toLowerCase()]; g.aka = Array.isArray(names) && names.length ? names.map(String) : null;
+    const p = g.owner && (g.repoHost || "github") === "github" ? pop[`${g.owner}/${g.repo}`.toLowerCase()] : null;
+    g.stars = p?.stars ?? null; g.downloads = p?.downloads ?? null;
+    g.easySetup = easySetup(g.owner && pub.plans?.[planKey(g.repoHost || "github", g.owner, g.repo)], g.gameTitle);
+  }
   await enrichBoxart(games, { cacheDir });
   // Covers picked by judgment for titles the matcher can't settle (scripts/boxart-picks.mjs).
   let picks = {}; try { picks = JSON.parse(fs.readFileSync(path.join(os.homedir(), ".decomp-buddy-boxart", "picks.json"), "utf8")); } catch {}
@@ -66,6 +88,7 @@ export async function buildCatalog({ site = path.join(os.homedir(), "Documents/G
       plan: entry ? { targets: Object.keys(entry.targets || {}), generatedAt: entry.generatedAt || null } : null,
       scan: g.scan || null,
       listedAt: null,
+      stars: g.stars, downloads: g.downloads, easySetup: g.easySetup, aka: g.aka,
       size: entry ? sizeOf(entry, planKey(g.repoHost || "github", g.owner, g.repo)) : null,
       credits: g.credits ? g.credits.map(({ login, avatar }) => ({ login, avatar })) : null,
       recommended: g.recommended ? { tag: g.recommended.tag, badTag: g.recommended.badTag } : null,

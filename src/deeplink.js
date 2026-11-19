@@ -1,4 +1,4 @@
-// decompbuddy://add?repo=owner/name[&game=Title][&host=gitlab|codeberg|notrexed (src/forges.js)] - the website's "Install With Decomp Buddy".
+// decompbuddy://add?repo=owner/name[&game=Title][&host=gitlab|codeberg|notrexed|magicbean (src/forges.js)] - the website's "Install With Decomp Buddy".
 // A catalog game opens at "pick your game file" (its published plan, no AI key); anything else only fills in the links
 // box. Nothing is downloaded or run until the user presses Set Up.
 // decompbuddy://play?folder=<installed game folder>&k=<this install's shortcut key> - a desktop shortcut for a game that

@@ -1,7 +1,7 @@
 // Pulls everything Claude needs to understand a decomp/recomp repo:
 // README, build/install docs, the file tree, and the latest release assets.
 
-import { refFromUrl, FORGEJO } from "./forges.js";
+import { anyRefFromUrl } from "./forges.js";
 
 const API = "https://api.github.com";
 const DOC_PATTERN = /^(readme|build(ing)?|install(ation)?|setup|getting[-_ ]?started|usage|faq)[^/]*\.(md|txt|rst)$|^docs?\/[^/]+\.md$/i;
@@ -11,10 +11,10 @@ const MAX_DOC_CHARS = 60_000;
 
 export function parseRepoUrl(input) {
   const t = String(input).trim();
-  const known = refFromUrl(t.replace(/^.*?(?=https?:\/\/)/, ""));
+  const known = anyRefFromUrl(t.replace(/^.*?(?=https?:\/\/)/, ""));
   if (known && known.host !== "github") return known;
   const m = t.match(/github\.com[/:]([^/\s]+)\/([^/\s#?]+)/i) || t.match(/^([\w.-]+)\/([\w.-]+)$/);
-  if (!m) throw new Error(`Not a repo link Decomp Buddy knows (GitHub, GitLab, ${Object.values(FORGEJO).map((f) => f.label).join(", ")}): ${input}`);
+  if (!m) throw new Error(`That isn't a link to a project (it should look like https://github.com/owner/name): ${input}`);
   return { host: "github", owner: m[1], repo: m[2].replace(/\.git$/, "") };
 }
 

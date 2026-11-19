@@ -3,10 +3,9 @@
 // R2 checks the sha256 itself as the file arrives, so a file that isn't byte-for-byte the one we scanned is refused.
 // DELETE /file {sha256, name} takes one file down again (scripts/mirror.mjs --remove).
 
-import { DOMAIN } from "../../src/forges.js";
-
-// Every project site Decomp Buddy knows (src/forges.js), plus the addresses GitHub hands its downloads off to.
-const HOSTS = new Set([...Object.values(DOMAIN), "api.github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com", "codeload.github.com"]);
+// Any public web address: a game can live on any project site or download page (Maddie approves those first).
+// Only the token holder can ask, the file must match the sha256 we scanned, and an IP address or "localhost" is refused.
+const PUBLIC_HOST = /^(?=.{4,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 
 export async function authorized(request, secret) {
@@ -23,9 +22,10 @@ export async function authorized(request, secret) {
 export function problemWith({ url, sha256, name, size } = {}) {
   if (!/^[0-9a-f]{64}$/.test(String(sha256))) return "sha256 must be 64 lowercase hex characters";
   if (!name || /[/\\]|^\.\.?$/.test(name) || name.length > 255) return "bad file name";
-  if (!Number.isSafeInteger(size) || size <= 0) return "size must be a positive whole number";
+  // Size is optional: some scan records predate it, and then the host's own Content-Length is used.
+  if (size != null && (!Number.isSafeInteger(size) || size <= 0)) return "size must be a positive whole number";
   let u; try { u = new URL(url); } catch { return "bad url"; }
-  if (u.protocol !== "https:" || !HOSTS.has(u.hostname)) return `not a host we copy from: ${u.hostname}`;
+  if (u.protocol !== "https:" || !PUBLIC_HOST.test(u.hostname)) return `not a host we copy from: ${u.hostname}`;
   return null;
 }
 export const keyOf = (sha256, name) => `${sha256}/${name}`;
@@ -39,14 +39,15 @@ async function copy(req, env) {
   const res = await fetch(req.url, { headers: { "user-agent": "decomp-buddy-mirror", ...(api ? { accept: "application/octet-stream", ...(env.GITHUB_TOKEN ? { authorization: `Bearer ${env.GITHUB_TOKEN}` } : {}) } : {}) } });
   if (!res.ok || !res.body) return json({ ok: false, error: `host answered ${res.status}`, status: res.status }, 502);
   const len = Number(res.headers.get("content-length"));
-  if (len && len !== req.size) return json({ ok: false, error: `host says ${len} bytes, expected ${req.size}` }, 409);
+  if (len && req.size && len !== req.size) return json({ ok: false, error: `host says ${len} bytes, expected ${req.size}` }, 409);
+  if (!len && !req.size) return json({ ok: false, error: "the host didn't say how big the file is" }, 502);
   // R2 needs a known length to stream; FixedLengthStream gives it one when the host didn't say.
   let body = res.body;
   if (!len) { const f = new FixedLengthStream(req.size); res.body.pipeTo(f.writable).catch(() => {}); body = f.readable; }
   try {
     await env.FILES.put(key, body, { sha256: req.sha256, httpMetadata: { contentType: "application/octet-stream", contentDisposition: `attachment; filename="${req.name.replace(/"/g, "")}"` } });
   } catch (err) { return json({ ok: false, error: `not stored: ${err.message}` }, 422); }
-  return json({ ok: true, size: req.size });
+  return json({ ok: true, size: len || req.size });
 }
 
 // A file with no published hash or length (source code zips, older release files without a digest): streamed into R2
@@ -56,7 +57,7 @@ const PART = 16 * 1024 * 1024;
 async function archive({ url, key, name } = {}, env) {
   if (!archiveKeyOk(key)) return json({ ok: false, error: "bad key" }, 400);
   let u; try { u = new URL(url); } catch { return json({ ok: false, error: "bad url" }, 400); }
-  if (u.protocol !== "https:" || !HOSTS.has(u.hostname)) return json({ ok: false, error: `not a host we copy from: ${u.hostname}` }, 400);
+  if (u.protocol !== "https:" || !PUBLIC_HOST.test(u.hostname)) return json({ ok: false, error: `not a host we copy from: ${u.hostname}` }, 400);
   const have = await env.FILES.head(key);
   if (have) return json({ ok: true, existed: true, size: have.size });
   const res = await fetch(url, { headers: { "user-agent": "decomp-buddy-mirror" } });

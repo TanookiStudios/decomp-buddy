@@ -48,7 +48,7 @@ export function applyScans(plans, scans, reviewed = {}) {
 // anything not scanned yet (or no downloads at all) -> null. A build whose file left every release (build.gone,
 // scripts/follow.mjs) can't be installed, so it doesn't count either way.
 export function scanSummary(entry) {
-  const builds = releaseBuilds({ plans: { x: entry || {} } }).map((b) => b.build).filter((b) => !b.gone);
+  const builds = releaseBuilds({ plans: { x: entry || {} } }).map((b) => b.build).filter((b) => !b.gone || b.mirror); // ours to serve even if the host lost it
   if (!builds.length) return null;
   if (builds.some((b) => b.scanned?.flagged)) return { flagged: true };
   if (!builds.every((b) => b.scanned?.sha256)) return null;

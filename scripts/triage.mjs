@@ -18,7 +18,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { enrichMany, enrichFromGitLab, enrichFromForgejo, publishFinds } from "../src/sources/finds.js";
-import { FORGEJO, refFromUrl } from "../src/forges.js";
+import { FORGEJO, forgejoOf, anyRefFromUrl } from "../src/forges.js";
 import { readWaiting, excludedKeys } from "../src/waiting.js";
 import { CONSOLES as CONSOLE_TARGETS, CONSOLE_PLATFORMS } from "../src/targets.js";
 import { scanReddit, scanBluesky, scanGitHub, scanGitHubTopics, scanRecompHaven, scanUnbaked, scanAwesomeLists, scanRecompFyi } from "../src/discover.js";
@@ -76,18 +76,25 @@ Then run: node ~/Documents/GitHub/DecompBuddy/scripts/triage.mjs check <batch id
 const FORGES = {
   gitlab: { site: "https://gitlab.com", raw: (key, f) => `https://gitlab.com/${key}/-/raw/HEAD/${f}`, enrich: enrichFromGitLab, list: "gitlab.json", label: "GitLab" },
   // Codeberg and every other Forgejo/Gitea site in src/forges.js.
-  ...Object.fromEntries(Object.entries(FORGEJO).map(([id, f]) => [id, { site: `https://${f.domain}`, raw: (key, file) => `https://${f.domain}/${key}/raw/HEAD/${file}`, enrich: (key) => enrichFromForgejo(f.domain, key), list: `${id}.json`, label: f.label }])),
+  ...Object.fromEntries(Object.entries(FORGEJO).map(([id, f]) => [id, forgejoForge(id, f)])),
 };
-const forgeOf = (r) => Object.keys(FORGES).find((f) => String(r).startsWith(`${f}:`)) || null;
-export const queueKey = (s) => { const r = refFromUrl(s); return r && r.host !== "github" ? `${r.host}:${r.owner}/${r.repo}` : String(s).replace(/^https?:\/\/github\.com\//i, "").replace(/\.git$/, ""); };
+function forgejoForge(id, f) {
+  return { site: `https://${f.domain}`, raw: (key, file) => `https://${f.domain}/${key}/raw/HEAD/${file}`, enrich: (key) => enrichFromForgejo(f.domain, key), list: `${id}.json`, label: f.label };
+}
+// A Forgejo/Gitea site that isn't in the table is known by its address ("git.example.org:owner/repo").
+const forge = (host) => FORGES[host] || (forgejoOf(host) ? forgejoForge(host, forgejoOf(host)) : null);
+const forgeOf = (r) => { const s = String(r), h = s.slice(0, s.indexOf(":")); return s.includes(":") && forge(h) ? h : null; };
+// Every forge list file the site serves: the table's, plus any site known by address that sources.json names.
+const forgeLists = () => { const own = "https://tanookistudios.com/decomp-buddy/"; let named = []; try { named = readJSON(path.join(DIR, "sources.json")).sources.filter((x) => x.type === "list" && x.value.startsWith(own)).map((x) => x.value.slice(own.length)); } catch {} return [...new Set([...Object.values(FORGES).map((f) => f.list), ...named])]; };
+export const queueKey = (s) => { const r = anyRefFromUrl(s); return r && r.host !== "github" ? `${r.host}:${r.owner}/${r.repo}` : String(s).replace(/^https?:\/\/github\.com\//i, "").replace(/\.git$/, ""); };
 function known() {
   const k = new Set();
-  for (const g of readJSON(path.join(DIR, "catalog.json")).games) if (g.repo) k.add((FORGES[g.host] ? `${g.host}:${g.repo}` : g.repo).toLowerCase());
+  for (const g of readJSON(path.join(DIR, "catalog.json")).games) if (g.repo) k.add((forge(g.host) ? `${g.host}:${g.repo}` : g.repo).toLowerCase());
   for (const g of readJSON(path.join(DIR, "finds.json")).games) k.add(g.repo.toLowerCase());
-  for (const f of Object.values(FORGES)) try { for (const g of readJSON(path.join(DIR, f.list)).games) k.add(queueKey(g.repoUrl).toLowerCase()); } catch {}
+  for (const f of forgeLists()) try { for (const g of readJSON(path.join(DIR, f)).games) k.add(queueKey(g.repoUrl).toLowerCase()); } catch {}
   const w = readWaiting(path.join(DIR, "waiting.json"));
   for (const r of excludedKeys(w)) k.add(r);
-  for (const g of [...w.games, ...w.hidden]) if (FORGES[g.host]) k.add(`${g.host}:${g.repo}`.toLowerCase());
+  for (const g of [...w.games, ...w.hidden]) if (forge(g.host)) k.add(`${g.host}:${g.repo}`.toLowerCase());
   return k;
 }
 
@@ -107,9 +114,9 @@ async function titleLeads(posts) {
 }
 
 async function readme(repo) {
-  const forge = FORGES[forgeOf(repo)], key = forge ? repo.slice(repo.indexOf(":") + 1) : repo;
-  for (const f of ["README.md", "readme.md", "README.MD", "Readme.md", "README"]) {
-    const r = await fetch(forge ? forge.raw(key, f) : `https://raw.githubusercontent.com/${key}/HEAD/${f}`, { signal: AbortSignal.timeout(15_000) }).catch(() => null);
+  const fo = forge(forgeOf(repo)), key = fo ? repo.slice(repo.indexOf(":") + 1) : repo;
+  for (const name of ["README.md", "readme.md", "README.MD", "Readme.md", "README"]) {
+    const r = await fetch(fo ? fo.raw(key, name) : `https://raw.githubusercontent.com/${key}/HEAD/${name}`, { signal: AbortSignal.timeout(15_000) }).catch(() => null);
     if (r?.ok) return (await r.text()).slice(0, 2500);
   }
   return "";
@@ -120,14 +127,22 @@ async function readme(repo) {
 // that fails to sort today is fetched again tomorrow instead of being dropped.
 const d1 = (sql) => JSON.parse(execFileSync("npx", ["--yes", "wrangler", "d1", "execute", "tanooki-site", "--remote", "--json", "--command", sql],
   { cwd: SITE, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }))[0].results;
+// Repos already sorted (an answer file in done/), and the "unsure" ones waiting for Maddie (unsure.jsonl).
+// decided: only play/soon/hide answers - an "unsure" answer is still waiting for a decision.
+const answeredRepos = (decided = false) => new Set(fs.readdirSync(J("done")).flatMap((f) => readJSON(J("done", f)).results.filter((r) => !decided || r.verdict !== "unsure").map((r) => r.queued || r.repo).map((r) => r.toLowerCase())));
+const askedRepos = () => new Set(fs.existsSync(J("unsure.jsonl")) ? fs.readFileSync(J("unsure.jsonl"), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l).repo.toLowerCase()) : []);
 function suggestions(have) {
   const rows = d1("SELECT id, repo_url FROM decomp_suggestions WHERE status = 'pending' ORDER BY created_at, id").map((r) => ({ id: Number(r.id), repo: queueKey(r.repo_url) }));
-  const filed = rows.filter((r) => have.has(r.repo.toLowerCase())).map((r) => r.id).filter(Number.isInteger);
-  if (filed.length) d1(`UPDATE decomp_suggestions SET status = 'have', updated_at = datetime('now') WHERE id IN (${filed.join(",")})`);
-  // Oldest first (created_at: one Maddie moves to the front gets an early date), 150 a run: a big batch (a re-sort of hundreds) spreads over a few hourly runs instead of one huge one.
-  const todo = rows.filter((r) => !have.has(r.repo.toLowerCase()));
-  console.log(`player suggestions: ${rows.length} pending, ${filed.length} already filed and closed, ${Math.min(todo.length, 150)} sorted this run${todo.length > 150 ? `, ${todo.length - 150} wait for the next` : ""}`);
-  return todo.slice(0, 150);
+  const close = (list, status) => { const ids = list.map((r) => r.id).filter(Number.isInteger); if (ids.length) d1(`UPDATE decomp_suggestions SET status = '${status}', updated_at = datetime('now') WHERE id IN (${ids.join(",")})`); return ids.length; };
+  const answered = answeredRepos(true), asked = askedRepos(), key = (r) => r.repo.toLowerCase();
+  const filed = close(rows.filter((r) => have.has(key(r))), "have");
+  // Sorted but not listed (not a game, gone, a copy): closed, or the same rows would fill every hour's batch forever (17 Nov 2026: 148 of 150 were).
+  const turned = close(rows.filter((r) => !have.has(key(r)) && answered.has(key(r))), "rejected");
+  // Unsure ones stay pending (Maddie's admin queue shows them) but don't take a slot; they wait for her.
+  const todo = rows.filter((r) => !have.has(key(r)) && !answered.has(key(r)) && !asked.has(key(r)));
+  // Oldest first (created_at: one Maddie moves to the front gets an early date), 300 a run (raised from 150 on 17 Nov 2026 to clear the backlog): a big batch spreads over a few hourly runs instead of one huge one.
+  console.log(`player suggestions: ${rows.length} pending, ${filed} already filed and closed, ${turned} sorted earlier and closed, ${rows.length - filed - turned - todo.length} waiting for Maddie, ${Math.min(todo.length, 300)} sorted this run${todo.length > 300 ? `, ${todo.length - 300} wait for the next` : ""}`);
+  return todo.slice(0, 300);
 }
 
 // Remove / Restore from the admin page (tanookistudios.com/admin/decomp-buddy). A removed game goes on the hidden list,
@@ -180,7 +195,7 @@ async function prep() {
   const listed = new Map([...have].map((r) => [r.split("/")[1], r]));
   // Several sources often find the same repo; sort it once.
   // "unsure" ones wait for Maddie (unsure.jsonl); the hourly run must not re-sort them every hour. A --repos list still can.
-  const asked = new Set(list ? [] : fs.existsSync(J("unsure.jsonl")) ? fs.readFileSync(J("unsure.jsonl"), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l).repo.toLowerCase()) : []);
+  const asked = list ? new Set() : askedRepos();
   const todo = [...new Map(queue.map((c) => c.repo).filter((r) => r && !have.has(r.toLowerCase()) && !asked.has(r.toLowerCase())).map((r) => [r.toLowerCase(), r])).values()];
   console.log(`queue ${queue.length}, already filed ${queue.length - todo.length}, to sort ${todo.length}`);
   // GitHub facts 40 repos per request (GraphQL); READMEs come from raw.githubusercontent.com, which has no quota.
@@ -189,7 +204,7 @@ async function prep() {
   // GitLab / Codeberg: one project at a time from their public APIs (a handful per run, no key needed).
   for (const r of todo.filter((r) => forgeOf(r) && !fs.existsSync(J("ctx", `${idOf(r)}.json`)))) {
     const host = forgeOf(r);
-    try { const e = await FORGES[host].enrich(r.slice(host.length + 1)); fs.writeFileSync(J("ctx", `${idOf(r)}.json`), JSON.stringify({ queued: r, ...e, host, repo: `${host}:${e.repo}`, readme: e.exists ? await readme(`${host}:${e.repo}`) : "" })); }
+    try { const e = await forge(host).enrich(r.slice(host.length + 1)); fs.writeFileSync(J("ctx", `${idOf(r)}.json`), JSON.stringify({ queued: r, ...e, host, repo: `${host}:${e.repo}`, readme: e.exists ? await readme(`${host}:${e.repo}`) : "" })); }
     catch { failed++; }
   }
   for (let b = 0; b < need.length; b += 200) {
@@ -202,7 +217,7 @@ async function prep() {
     if (got.length < infos.size && [...infos.values()].some((e) => /rate limit/i.test(e?.message || ""))) { console.log("GitHub rate limit - run prep again after it resets"); break; }
   }
   // Batches are rebuilt from every fetched repo not yet answered, so a re-run after a rate limit picks up the rest.
-  const answered = new Set(fs.readdirSync(J("done")).flatMap((f) => readJSON(J("done", f)).results.map((r) => r.queued || r.repo).map((r) => r.toLowerCase())));
+  const answered = list ? new Set() : answeredRepos(); // a --repos list is sorted again even if answered before
   // Renamed repos: the queue may hold the old name of something we already list, so check GitHub's current one too.
   const ready = todo.filter((r) => fs.existsSync(J("ctx", `${idOf(r)}.json`)) && !answered.has(r.toLowerCase()) && !have.has(String(readJSON(J("ctx", `${idOf(r)}.json`)).repo).toLowerCase()));
   for (const f of fs.readdirSync(J("jobs"))) fs.rmSync(J("jobs", f));
@@ -270,7 +285,7 @@ function check(id) {
 
 function importAnswers() {
   const ctxOf = ctxByRepo(), now = new Date().toISOString(), via = "Discover queue (sorted by Claude Code)";
-  const have = known(), finds = [], soon = [], hide = [], unsure = [], rejected = [];
+  const have = known(), listed = new Set(have), finds = [], soon = [], hide = [], unsure = [], rejected = [];
   for (const f of fs.readdirSync(J("out")).filter((x) => x.endsWith(".json"))) {
     const id = f.replace(/\.json$/, ""); let a;
     try { a = readJSON(J("out", f)); } catch { rejected.push(id); continue; }
@@ -283,30 +298,33 @@ function importAnswers() {
       else if (r.verdict === "hide") hide.push({ repo, title: r.title, reason: r.reason });
       else unsure.push({ repo, title: r.title, reason: r.reason });
     }
-    fs.renameSync(J("out", f), J("done", f));
+    // Batch ids restart at t001 every run: keep each answer file, or the record of what was sorted shrinks to the last run.
+    fs.renameSync(J("out", f), J("done", fs.existsSync(J("done", f)) ? `${id}.${now.replace(/[:.]/g, "-")}.json` : f));
   }
   // GitLab / Codeberg games go into gitlab.json / codeberg.json (shared "list" sources every copy of the app reads), not finds.json.
-  for (const [host, forge] of Object.entries(FORGES)) {
-    const mine = finds.filter((g) => forgeOf(g.repo) === host);
-    if (!mine.length) continue;
-    const file = path.join(DIR, forge.list);
+  for (const host of new Set(finds.map((g) => forgeOf(g.repo)).filter(Boolean))) {
+    const fo = forge(host), mine = finds.filter((g) => forgeOf(g.repo) === host);
+    const file = path.join(DIR, fo.list);
     let doc = { games: [] }; try { doc = readJSON(file); } catch {}
     const byUrl = new Map(doc.games.map((g) => [g.repoUrl.toLowerCase(), g]));
-    for (const g of mine) { const url = `${forge.site}/${g.repo.slice(host.length + 1)}`; byUrl.set(url.toLowerCase(), { name: g.title, repoUrl: url, console: g.console, platforms: g.platforms, version: g.version, description: g.notes }); }
-    fs.writeFileSync(file, JSON.stringify({ updatedAt: now, note: `Decomp Buddy finds hosted on ${forge.label}`, games: [...byUrl.values()] }, null, 2) + "\n");
+    for (const g of mine) { const url = `${fo.site}/${g.repo.slice(host.length + 1)}`; byUrl.set(url.toLowerCase(), { name: g.title, repoUrl: url, console: g.console, platforms: g.platforms, version: g.version, description: g.notes }); }
+    fs.writeFileSync(file, JSON.stringify({ updatedAt: now, note: `Decomp Buddy finds hosted on ${fo.label}`, games: [...byUrl.values()] }, null, 2) + "\n");
     // The list only reaches the app once the site's sources.json names it.
-    const sf = path.join(DIR, "sources.json"), listUrl = `https://tanookistudios.com/decomp-buddy/${forge.list}`;
-    try { const s = readJSON(sf); if (!s.sources.some((x) => x.value === listUrl)) { s.sources.push({ type: "list", value: listUrl, label: `${forge.label} Finds` }); s.updatedAt = now; fs.writeFileSync(sf, JSON.stringify(s, null, 2) + "\n"); console.log(`sources.json: added ${forge.list}`); } } catch {}
-    console.log(`${forge.list}: +${mine.length} - deploy the site BEFORE rebuilding the catalog (the catalog reads the live list)`);
+    const sf = path.join(DIR, "sources.json"), listUrl = `https://tanookistudios.com/decomp-buddy/${fo.list}`;
+    try { const s = readJSON(sf); if (!s.sources.some((x) => x.value === listUrl)) { s.sources.push({ type: "list", value: listUrl, label: `${fo.label} Finds` }); s.updatedAt = now; fs.writeFileSync(sf, JSON.stringify(s, null, 2) + "\n"); console.log(`sources.json: added ${fo.list}`); } } catch {}
+    console.log(`${fo.list}: +${mine.length} - deploy the site BEFORE rebuilding the catalog (the catalog reads the live list)`);
   }
   const github = finds.filter((g) => !forgeOf(g.repo));
   if (github.length) publishFinds(path.join(DIR, "finds.json"), github);
+  const decided = new Set([...finds, ...soon, ...hide].map((g) => g.repo.toLowerCase())); // before forge prefixes are split off below
   for (const g of [...soon, ...hide]) { const host = forgeOf(g.repo); if (host) { g.repo = g.repo.slice(host.length + 1); g.host = host; } }
   const wf = path.join(DIR, "waiting.json"), w = readJSON(wf);
   w.games.push(...soon); w.hidden.push(...hide);
   w.games.sort((a, b) => a.title.localeCompare(b.title)); w.updatedAt = now;
   fs.writeFileSync(`${wf}.tmp`, JSON.stringify(w, null, 2) + "\n"); fs.renameSync(`${wf}.tmp`, wf);
-  fs.appendFileSync(J("unsure.jsonl"), unsure.map((u) => JSON.stringify(u) + "\n").join(""));
+  // A repo decided now (a second look), or filed since, leaves the waiting-for-Maddie list.
+  const kept = fs.existsSync(J("unsure.jsonl")) ? fs.readFileSync(J("unsure.jsonl"), "utf8").split("\n").filter(Boolean).filter((l) => { const r = JSON.parse(l).repo.toLowerCase(); return !decided.has(r) && !listed.has(r); }) : [];
+  fs.writeFileSync(J("unsure.jsonl"), [...kept, ...unsure.map((u) => JSON.stringify(u))].map((l) => l + "\n").join(""));
   console.log(`import: ${finds.length} playable, ${soon.length} Coming Soon, ${hide.length} hidden, ${unsure.length} unsure (left in the queue; listed in ${J("unsure.jsonl")})${rejected.length ? `; rejected batch(es): ${rejected.join(", ")}` : ""}`);
   for (const g of finds) console.log(`  + ${g.title} [${g.console}] ${g.repo}`);
 }

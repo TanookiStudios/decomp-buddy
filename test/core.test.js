@@ -19,7 +19,9 @@ test("parses repo links in the shapes people paste", () => {
   assert.deepEqual(parseRepoUrl("https://github.com/new-coke/strikers.git/"), { host: "github", owner: "new-coke", repo: "strikers" });
   assert.deepEqual(parseRepoUrl("akratch/goldenballoon"), { host: "github", owner: "akratch", repo: "goldenballoon" });
   assert.deepEqual(parseRepoUrl("https://gitlab.com/sonicdcer/MarioKart64Recomp"), { host: "gitlab", owner: "sonicdcer", repo: "MarioKart64Recomp" });
-  assert.throws(() => parseRepoUrl("https://bitbucket.org/x/y"));
+  // Any other site is tried as a Forgejo/Gitea site (reading it says plainly if it isn't one); a non-link still fails.
+  assert.deepEqual(parseRepoUrl("https://git.example.org/x/y"), { host: "git.example.org", owner: "x", repo: "y" });
+  assert.throws(() => parseRepoUrl("just some words"));
 });
 
 test("sweeps Mac junk and nothing else", () => {

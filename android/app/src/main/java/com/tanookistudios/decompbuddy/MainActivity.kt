@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
                 else -> lightColorScheme()
             }
             MaterialTheme(colorScheme = colors) {
-                Surface(Modifier.fillMaxSize()) { App(vm) }
+                Surface(Modifier.fillMaxSize()) { WithSplash { App(vm) } }
             }
         }
     }

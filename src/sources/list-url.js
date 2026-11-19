@@ -4,7 +4,7 @@
 // platforms, icon and version. A page that draws its list with JavaScript (no links in the HTML)
 // is followed to the JSON file its script loads - same site only.
 import { hostOf, repoUrlOf } from "../hosts.js";
-import { refFromUrl, LINK_RE } from "../forges.js";
+import { refFromUrl, anyRefFromUrl, LINK_RE } from "../forges.js";
 
 const MAX_BYTES = 12 * 1024 * 1024;
 const PLATFORMS = new Set(["Windows", "macOS", "Linux"]);
@@ -14,10 +14,11 @@ const CONSOLE = [[/^playstation\s*1$|^ps1$|^psx$/i, "PlayStation"], [/^super nin
 const consoleName = (c) => { const s = String(c || "").trim(); if (!s) return "Unknown"; const hit = CONSOLE.find(([re]) => re.test(s)); return hit ? hit[1] : s; };
 const BAD_OWNER = /^(sponsors|orgs|topics|features|about|settings|marketplace|explore|search|login|signup|site|apps|collections)$/i;
 
-// github.com/owner/repo, gitlab.com/owner/repo, codeberg.org/owner/repo, or a bare "owner/repo" (only where a field says it's a repo)
-function repoRef(v, { bare = false } = {}) {
+// github.com/owner/repo, gitlab.com/owner/repo, codeberg.org/owner/repo, or a bare "owner/repo" (only where a field says it's a repo).
+// any: a field that names the project itself (repoUrl) may be on any Forgejo/Gitea site.
+function repoRef(v, { bare = false, any = false } = {}) {
   const s = String(v || "").trim();
-  let r = /^https?:\/\//i.test(s) ? refFromUrl(s) : null;
+  let r = /^https?:\/\//i.test(s) ? (any ? anyRefFromUrl : refFromUrl)(s) : null;
   if (!r && bare) { const b = s.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/); if (b) r = { host: "github", owner: b[1], repo: b[2] }; }
   if (!r || BAD_OWNER.test(r.owner)) return null;
   return r;
@@ -40,7 +41,7 @@ export function fromJson(data, id) {
     if (Array.isArray(o)) return o.forEach(visit);
     if (!o || typeof o !== "object") return;
     const name = o.name || o.title || o.game || null;
-    const ref = name && (repoRef(o.repository, { bare: true }) || repoRef(o.repo, { bare: true }) || repoRef(o.repoUrl) || repoRef(o.projectUrl) || repoRef(o.github) || repoRef(o.url) || repoRef(o.source) || repoRef(o.homepage));
+    const ref = name && (repoRef(o.repository, { bare: true }) || repoRef(o.repo, { bare: true }) || repoRef(o.repoUrl, { any: true }) || repoRef(o.projectUrl) || repoRef(o.github) || repoRef(o.url) || repoRef(o.source) || repoRef(o.homepage));
     if (ref && o.enabled !== false && o.deprecated !== true) {
       const c = card(id, ref, {
         title: String(name).replace(/\s+/g, " ").trim(), project: ref.repo,

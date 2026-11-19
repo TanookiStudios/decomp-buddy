@@ -5,28 +5,25 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src blob:">
 <title>Decomp Buddy</title>
 <style>
-/* The look of decompbuddy.com: a cream cartridge shell, navy ink and label window, gold highlights.
-   Fonts are bundled (renderer/fonts, SIL Open Font License) so the app looks the same offline. */
-@font-face { font-family:"Bricolage Grotesque"; src:url(fonts/bricolage-grotesque.woff2) format("woff2"); font-weight:200 800; font-display:swap }
-@font-face { font-family:"IBM Plex Mono"; src:url(fonts/ibm-plex-mono-400.woff2) format("woff2"); font-weight:400; font-display:swap }
-@font-face { font-family:"IBM Plex Mono"; src:url(fonts/ibm-plex-mono-500.woff2) format("woff2"); font-weight:500; font-display:swap }
-@font-face { font-family:"IBM Plex Mono"; src:url(fonts/ibm-plex-mono-600.woff2) format("woff2"); font-weight:600; font-display:swap }
-:root { --bg:#f3ead6; --bg2:#e9dcc2; --fg:#1d2140; --ink2:#3a3f63; --muted:#5a5e7a; --line:#cdbf9c; --card:#fff8e8; --accent:#1d2140; --accentfg:#fff7e6; --gold:#e0a53a; --window:#1d2140; --windowfg:#fff7e6; --focus:#1d2140; --ok:#2b7a3e; --bad:#b3261e; --log:#11142a; --logfg:#fff7e6; --code:#e9dcc2; --shadow:rgba(0,0,0,.28); --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#2b2b31; --bg2:#232328; --fg:#f3ead6; --ink2:#d9d0bb; --muted:#a4a7b8; --line:#4a4a54; --card:#34343b; --accent:#f3ead6; --accentfg:#1d2140; --window:#11142a; --focus:#e0a53a; --ok:#6fcf8a; --bad:#ff8a80; --log:#0d0f1f; --code:#232328; --shadow:rgba(0,0,0,.5) } }
-:root[data-theme="dark"] { --bg:#2b2b31; --bg2:#232328; --fg:#f3ead6; --ink2:#d9d0bb; --muted:#a4a7b8; --line:#4a4a54; --card:#34343b; --accent:#f3ead6; --accentfg:#1d2140; --window:#11142a; --focus:#e0a53a; --ok:#6fcf8a; --bad:#ff8a80; --log:#0d0f1f; --code:#232328; --shadow:rgba(0,0,0,.5) }
+/* Tanooki UI, the house look of Tanooki Studios apps (TanookiVPN, Tanooki Drive): near-black ground, panels a step
+   lighter with a hairline edge, system type, color only where it means something. Dark is the signature; light is the
+   same design inverted. The old names (--card, --gold, --window...) stay so every screen picks the new look up. */
+:root { --bg:#0E0E10; --bg2:#2C2C2E; --raised:#2C2C2E; --fg:#EDEDED; --ink2:#C7C7CC; --muted:#8E8E93; --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.14); --card:#1C1C1E; --accent:#FF6B9D; --accentfg:#0E0E10; --gold:var(--accent); --window:#2C2C2E; --windowfg:#EDEDED; --focus:#7FB2E5; --ok:#30D158; --warn:#FFD60A; --bad:#FF453A; --log:#0A0A0C; --logfg:#EDEDED; --code:#2C2C2E; --shadow:rgba(0,0,0,.35); --mono:ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; --font:-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", sans-serif; color-scheme:dark }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --bg:#F5F5F7; --bg2:#EFEFF2; --raised:#EFEFF2; --fg:#15151A; --ink2:#3A3A40; --muted:#6B6B72; --line:rgba(0,0,0,.09); --line-strong:rgba(0,0,0,.16); --card:#FFFFFF; --accent:#C2457A; --accentfg:#FFFFFF; --window:#EFEFF2; --windowfg:#15151A; --focus:#1C64B5; --ok:#1B9E3E; --warn:#9A6A00; --bad:#C8372B; --log:#1C1C1E; --code:#EFEFF2; --shadow:rgba(0,0,0,.06); color-scheme:light } }
+:root[data-theme="light"] { --bg:#F5F5F7; --bg2:#EFEFF2; --raised:#EFEFF2; --fg:#15151A; --ink2:#3A3A40; --muted:#6B6B72; --line:rgba(0,0,0,.09); --line-strong:rgba(0,0,0,.16); --card:#FFFFFF; --accent:#C2457A; --accentfg:#FFFFFF; --window:#EFEFF2; --windowfg:#15151A; --focus:#1C64B5; --ok:#1B9E3E; --warn:#9A6A00; --bad:#C8372B; --log:#1C1C1E; --code:#EFEFF2; --shadow:rgba(0,0,0,.06); color-scheme:light }
 /* #42 focus + motion */
-:focus-visible { outline:3px solid var(--focus); outline-offset:2px } button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--focus); outline-offset:2px }
+:focus-visible { outline:2px solid var(--focus); outline-offset:2px } button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible { outline:2px solid var(--focus); outline-offset:2px }
 @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important } }
-.legal { background:var(--card); border:2px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13px; display:flex; gap:10px; align-items:center } .legal span { flex:1 }
+.legal { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13px; display:flex; gap:10px; align-items:center } .legal span { flex:1 }
 /* Library bookshelf */
 .shelf-wrap { display:flex; flex-direction:column; gap:26px }
-.shelf { position:relative; padding:0 8px 18px; border-bottom:14px solid #6b4a2b; box-shadow:0 8px 0 #4a3119, 0 12px 12px rgba(0,0,0,.35); background:linear-gradient(to bottom, transparent 0, transparent 80%, rgba(0,0,0,.12) 100%) }
-.shelf-title { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 10px }
+.shelf { position:relative; padding:0 0 18px; border-bottom:1px solid var(--line) }
+.shelf-title { font:600 11px/1.2 var(--font); text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:0 0 12px }
 .books { display:flex; gap:18px; flex-wrap:wrap; align-items:flex-end }
 .shelf-wrap { --cs:calc(var(--cardsize, 150px) * var(--cardk, 1)) }
 .book { width:var(--cs); display:flex; flex-direction:column; align-items:center; gap:6px; position:relative }
 .book .cover { width:var(--cs); height:var(--cs); display:flex; align-items:flex-end; justify-content:center }
-.book .cover img { max-width:var(--cs); max-height:var(--cs); box-shadow:2px 4px 10px rgba(0,0,0,.45); border-radius:3px; display:block }
+.book .cover img { max-width:var(--cs); max-height:var(--cs); box-shadow:0 2px 8px var(--shadow); border-radius:8px; display:block }
 .book .cover .nocover { width:calc(var(--cs) * .73); height:var(--cs); background:var(--window); border-radius:3px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; padding:8px; font-size:13px; color:var(--windowfg) }
 .book .title { font-size:13px; font-weight:600; text-align:center; line-height:1.25; max-height:2.5em; overflow:hidden }
 .book .chips { font-size:11px; color:var(--muted); text-align:center }
@@ -36,11 +33,11 @@
 .tile .tacts { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px } .tile .tacts button { font-size:12px; padding:4px 10px }
 .tile.ok.withart { display:flex; gap:10px; align-items:flex-start } .tile .tart { width:48px; height:48px; object-fit:contain; flex:none }
 /* Installed Games: three buttons on every tile, the rest under More… */
-.book .main3 { display:flex; flex-direction:column; gap:4px; width:100% } .book .main3 button { font-size:12px; padding:4px 8px; width:100% }
+.book .main3 { display:flex; flex-direction:column; gap:4px; width:100% } .book .main3 button { font-size:12px; padding:6px 8px; width:100% } .book .main3 button.primary { background:var(--pastel); border-color:transparent; color:var(--pastelfg) } /* hot pink stays for the hero's Play Game */
 .layout-list .book .main3 { flex-direction:row; width:auto; margin-left:auto; align-self:center } .layout-list .book .main3 button { width:auto }
 .book .acts { display:none; position:absolute; inset:0 0 auto 0; top:0; background:rgba(0,0,0,.72); border-radius:6px; padding:8px; flex-direction:column; gap:6px; height:var(--cs); justify-content:flex-start; overflow-y:auto }
 .book.open .acts { display:flex }
-.book .acts button { font-size:12px; padding:5px 8px; color:#fff; border-color:rgba(255,255,255,.5); background:rgba(0,0,0,.3) } .book .acts button.primary { background:var(--gold); border-color:var(--gold); color:#1d2140 }
+.book .acts button { font-size:12px; padding:5px 8px; color:#fff; border-color:rgba(255,255,255,.5); background:rgba(0,0,0,.3) } .book .acts button.primary { background:var(--accent); border-color:transparent; color:var(--accentfg) } button.primary:hover:not(:disabled) { border-color:transparent; filter:brightness(1.08) }
 .book .acts button:disabled { opacity:.7 }
 /* Library Layout: Compact is smaller tiles without the chips; List is one row per game, its buttons on the right */
 .shelf-wrap.layout-compact { --cardk:.7; gap:16px } .layout-compact .books { gap:10px } .layout-compact .book .chips { display:none } .layout-compact .book .title { font-size:12px }
@@ -50,158 +47,196 @@
 .layout-list .book .acts { inset:0 0 0 30%; height:auto; flex-direction:row; flex-wrap:wrap; align-content:center }
 /* Make It Yours: a background picture behind the main area, dimmed with the page color so text stays readable */
 main.lookbg { background:linear-gradient(color-mix(in srgb, var(--bg) var(--bgdim, 60%), transparent), color-mix(in srgb, var(--bg) var(--bgdim, 60%), transparent)), var(--lookimg) center / cover no-repeat }
-.swatches { display:flex; gap:8px; flex-wrap:wrap; align-items:center } .swatch { width:34px; height:34px; padding:0; border-radius:50%; border:2px solid var(--fg) } .swatch[aria-pressed="true"] { box-shadow:0 0 0 3px var(--bg), 0 0 0 6px var(--fg) }
-.swatches input[type=color] { width:44px; height:34px; padding:0 2px; border:2px solid var(--fg); border-radius:8px; background:var(--card); cursor:pointer }
+.swatches { display:flex; gap:8px; flex-wrap:wrap; align-items:center } .swatch { width:34px; height:34px; padding:0; border-radius:50%; border:1px solid var(--line-strong) } .swatch[aria-pressed="true"] { box-shadow:0 0 0 3px var(--bg), 0 0 0 6px var(--fg) }
+.swatches input[type=color] { width:44px; height:34px; padding:0 2px; border:1px solid var(--line-strong); border-radius:8px; background:var(--card); cursor:pointer }
 .lookPart { margin-top:12px } .lookPart > label { font-size:12.5px }
-/* Kiosk Mode keypad (inside Couch Mode) */
-#kioskPad { position:fixed; inset:0; z-index:5; background:rgba(13,14,18,.94); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px }
-#kioskPad h2 { margin:0; font-size:26px } #kioskPad .kdots { font-size:30px; letter-spacing:.3em; min-height:40px; color:#e0a53a } #kioskPad .kmsg { min-height:24px; margin:0; color:#ffb4ab; font-weight:600 }
+/* Kiosk Mode keypad (inside Big Picture Mode) */
+#kioskPad { position:fixed; inset:0; z-index:5; background:rgba(14,14,16,.94); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px }
+#kioskPad h2 { margin:0; font-size:26px } #kioskPad .kdots { font-size:30px; letter-spacing:.3em; min-height:40px; color:var(--accent) } #kioskPad .kmsg { min-height:24px; margin:0; color:#FF453A; font-weight:600 }
 #kioskPad .kkeys { display:grid; grid-template-columns:repeat(3, 96px); gap:12px }
-#kioskPad button { font-size:24px; height:72px; color:#f2f2ee; background:#1b1d24; border:3px solid #555; border-radius:12px; box-shadow:none } #kioskPad button.kword { font-size:17px }
-#kioskPad button:focus, #kioskPad button:focus-visible { outline:none; border-color:#e0a53a; background:#252834 } #kioskPad #kioskCancel { height:auto; font-size:16px; padding:10px 18px }
+#kioskPad button { font-size:24px; height:72px; color:#EDEDED; background:#1C1C1E; border:3px solid #555; border-radius:12px; box-shadow:none } #kioskPad button.kword { font-size:17px }
+#kioskPad button:focus, #kioskPad button:focus-visible { outline:none; border-color:var(--accent); background:#2C2C2E } #kioskPad #kioskCancel { height:auto; font-size:16px; padding:10px 18px }
 .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap }
 /* Continue Playing hero */
-.hero { display:flex; gap:18px; align-items:center; background:var(--card); border:2px solid var(--fg); box-shadow:0 3px 0 var(--shadow); border-radius:12px; padding:14px 16px }
-.hero img { width:120px; height:120px; object-fit:contain; border-radius:6px } .hero .nocover { width:90px; height:120px; background:var(--window); border-radius:6px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; padding:6px; color:var(--windowfg); font-size:12px }
+.hero { display:flex; gap:18px; align-items:center; background:var(--card); border:1px solid var(--line); box-shadow:0 1px 2px var(--shadow); border-radius:12px; padding:16px }
+.hero img { width:120px; height:120px; object-fit:contain; border-radius:6px } .hero .nocover { width:90px; height:120px; background:var(--raised); border-radius:8px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; padding:6px; color:var(--windowfg); font-size:12px }
 .hero h2 { margin:0 0 4px; font-size:20px } .hero .row { margin-top:10px }
 .more-sec { border-top:1px solid var(--line); padding:12px 0 4px } .more-sec h4 { margin:0 0 6px }
 /* GameBanana list */
-.gbmod { display:grid; grid-template-columns:110px 1fr auto; gap:10px; align-items:center; background:var(--card); border:2px solid var(--line); border-radius:8px; padding:6px 10px } .gbmod img { width:110px; height:62px; object-fit:cover; border-radius:4px } .gbmod .noimg { width:110px; height:62px; background:var(--line); border-radius:4px }
+.gbmod { display:grid; grid-template-columns:110px 1fr auto; gap:10px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:6px 10px } .gbmod img { width:110px; height:62px; object-fit:cover; border-radius:4px } .gbmod .noimg { width:110px; height:62px; background:var(--line); border-radius:4px }
 .gbmod.ts { grid-template-columns:62px 1fr auto } .gbmod.ts img, .gbmod.ts .noimg { width:62px }
-/* Couch Mode */
-#couch { position:fixed; inset:0; z-index:80; background:#0d0e12; color:#f2f2ee; overflow-y:auto; padding:18px 36px 60px; font-size:18px }
+/* Big Picture Mode */
+#couch { position:fixed; inset:0; z-index:80; background:#0E0E10; color:#EDEDED; overflow-y:auto; padding:18px 36px 60px; font-size:18px }
 #couch .cbar { display:flex; align-items:center; gap:12px; margin-bottom:10px } #couch .cbar img { width:36px; height:36px; border-radius:8px } #couch .grow { flex:1 }
-#couch .chint { color:#a9a9a2; font-size:15px } #couch button#couchExit { font-size:15px; color:#f2f2ee; background:transparent; border:1px solid #555 }
+#couch .chint { color:#8E8E93; font-size:15px } #couch button#couchExit { font-size:15px; color:#EDEDED; background:transparent; border:1px solid #555 }
 #couch .crow h2 { font-size:22px; margin:22px 0 10px; font-weight:700 }
 #couch .ctiles { display:flex; flex-wrap:wrap; gap:22px }
-#couch .ctile { width:210px; background:#1b1d24; border:3px solid transparent; border-radius:0; padding:12px; display:flex; flex-direction:column; align-items:center; gap:10px; color:inherit; cursor:pointer; transition:transform .12s }
-#couch .ctile img { width:180px; height:180px; object-fit:contain; border-radius:8px } #couch .cnocover { width:140px; height:180px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:700; background:linear-gradient(160deg, #e0a53a, #1b1d24); border-radius:8px; padding:8px }
+#couch .ctile { width:210px; background:#1C1C1E; border:3px solid transparent; border-radius:0; padding:12px; display:flex; flex-direction:column; align-items:center; gap:10px; color:inherit; cursor:pointer; transition:transform .12s }
+#couch .ctile img { width:180px; height:180px; object-fit:contain; border-radius:8px } #couch .cnocover { width:140px; height:180px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:700; background:#2C2C2E; border-radius:8px; padding:8px }
 #couch .ctitle { font-size:17px; font-weight:600; text-align:center; line-height:1.25 }
-#couch .ctile:focus, #couch .ctile:focus-visible { outline:none; border-color:#e0a53a; transform:scale(1.06); background:#252834 }
+#couch .ctile:focus, #couch .ctile:focus-visible { outline:none; border-color:var(--accent); transform:scale(1.06); background:#2C2C2E }
 #couch .ctile.dim { opacity:.55 }
-#couchDetail { position:fixed; right:36px; bottom:70px; width:min(520px, calc(100% - 72px)); background:#1b1d24; border:2px solid #e0a53a; border-radius:14px; padding:18px 22px } #couchDetail h2 { margin:0 0 6px }
-#couch .cstatus { position:fixed; left:36px; bottom:22px; font-size:17px; color:#cfd6ff }
+#couchDetail { position:fixed; right:36px; bottom:70px; width:min(520px, calc(100% - 72px)); background:#1C1C1E; border:2px solid var(--accent); border-radius:14px; padding:18px 22px } #couchDetail h2 { margin:0 0 6px }
+#couch .cstatus { position:fixed; left:36px; bottom:22px; font-size:17px; color:#C7C7CC }
 @media (prefers-reduced-motion: reduce) { #couch .ctile { transition:none } #couch .ctile:focus { transform:none } }
 /* New This Week shelf in Browse */
 /* Detail view */
-.detail { display:grid; grid-template-columns:260px minmax(0,1fr); gap:22px } .detail .cover img { width:260px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,.3) }
-.detail .readme { max-width:760px; line-height:1.55 } .detail .readme img { max-width:100%; border-radius:6px } .detail .readme pre { background:var(--code, var(--log)); color:var(--logfg); padding:10px; border-radius:6px; overflow:auto; font-size:12.5px } .detail .readme code { font-size:13px } .detail .readme table { border-collapse:collapse } .detail .readme td, .detail .readme th { border:2px solid var(--line); padding:4px 8px }
+.detail { display:grid; grid-template-columns:260px minmax(0,1fr); gap:22px } .detail .cover img { width:260px; border-radius:12px; border:1px solid var(--line); box-shadow:0 1px 2px var(--shadow) }
+.detail .readme { max-width:760px; line-height:1.55 } .detail .readme img { max-width:100%; border-radius:6px } .detail .readme pre { background:var(--code, var(--log)); color:var(--logfg); padding:10px; border-radius:6px; overflow:auto; font-size:12.5px } .detail .readme code { font-size:13px } .detail .readme table { border-collapse:collapse } .detail .readme td, .detail .readme th { border:1px solid var(--line); padding:4px 8px }
 .shots { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px } .shots img { height:140px; border-radius:6px }
-.banner { background:var(--card); border:2px solid var(--line); border-left:4px solid #b45309; border-radius:8px; padding:8px 12px; margin:0 0 12px; font-size:14px } .banner.news { border-left-color:var(--gold, #e0a53a); display:flex; gap:10px; align-items:center } .banner.news #newsText { flex:1 }
+.banner { background:var(--card); border:1px solid var(--line); border-left:3px solid var(--warn); border-radius:8px; padding:8px 12px; margin:0 0 12px; font-size:14px } .banner.news { border-left-color:var(--accent); display:flex; gap:10px; align-items:center } .banner.news #newsText { flex:1 }
 .cfgrow { display:grid; grid-template-columns:140px 1fr; gap:8px; align-items:center; margin:6px 0 }
 .review { border:1px dashed var(--line); border-radius:8px; padding:10px 12px; margin:8px 0; display:grid; gap:6px } .review select, .review input { flex:1; min-width:0 }
 .file.drop { outline:2px dashed var(--accent); outline-offset:2px }
 dl.facts { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; margin:0 0 6px; font-size:14px } dl.facts dt { font-weight:600 } dl.facts dd { margin:0; color:var(--muted) }
-.relnotes { border:2px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:8px; background:var(--card) } .relnotes h4 { margin:0 0 6px; font-size:14px }
+.relnotes { border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:8px; background:var(--card) } .relnotes h4 { margin:0 0 6px; font-size:14px }
 * { box-sizing:border-box } [hidden] { display:none !important } a { color:inherit }
-body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif; font-optical-sizing:auto; display:flex; height:100vh }
-/* the menu is the cartridge's label window */
-nav.side { min-width:200px; flex:0 0 auto; background:var(--window); color:var(--windowfg); display:flex; flex-direction:column; padding:16px 12px; gap:3px; --focus:#e0a53a }
-nav.side .brand { display:flex; align-items:center; gap:10px; font-weight:800; font-size:18px; letter-spacing:-.01em; padding:4px 10px 16px } nav.side .brand img { width:30px; height:30px; border-radius:7px }
-nav.side button { white-space:nowrap; text-align:left; background:none; border:0; box-shadow:none; padding:9px 12px; border-radius:8px; font-weight:600; color:var(--windowfg); opacity:.82 }
-nav.side button:hover { opacity:1; background:rgba(255,255,255,.08); transform:none } nav.side button.active { opacity:1; background:var(--gold); color:#1d2140 }
-nav.side hr { border:0; border-top:1px solid rgba(255,247,230,.16); margin:8px 6px }
-nav.side .spacer { flex:1 } nav.side .verlink { background:none; border:0; text-align:left; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding-top:0 } .modal-box.wn { max-width:600px; text-align:left; max-height:84vh; display:flex; flex-direction:column } .modal-box.wn h2 { margin:0 0 10px; font-size:20px } .wnbody { overflow:auto; flex:1; padding-right:6px } .wnbody h3 { font-size:15px; margin:16px 0 4px } .wnbody h3:first-child { margin-top:0 } .wnbody h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; margin:10px 0 4px; opacity:.75 } .wnbody ul { margin:0 0 6px; padding-left:20px } .wnbody li { margin-bottom:4px; line-height:1.5 } .modal-box.wn .actions { margin-top:14px; justify-content:flex-end } nav.side .ver { font:600 11px var(--mono); letter-spacing:.08em; color:var(--windowfg); opacity:.6; padding:6px 12px }
+body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.5 var(--font); -webkit-font-smoothing:antialiased; display:flex; height:100vh }
+/* the sidebar: same ground as the page, a hairline apart; the current section sits on a panel */
+nav.side { min-width:212px; flex:0 0 auto; background:var(--bg); color:var(--fg); border-right:1px solid var(--line); display:flex; flex-direction:column; padding:18px 12px; gap:2px; overflow-y:auto }
+nav.side .brand { display:flex; align-items:center; gap:10px; font:700 15px/1 var(--font); letter-spacing:-.01em; padding:4px 8px 18px } nav.side .brand img { width:34px; height:34px; object-fit:contain; margin-right:4px } nav.side .brand b { color:var(--accent); font-weight:800 }
+#splash { position:fixed; inset:0; z-index:9999; display:grid; place-content:center; justify-items:center; gap:14px; background:#0E0E10; pointer-events:none; transition:opacity .35s ease }
+#splash img { width:min(220px,40vmin); height:auto } #splash p { margin:0; font:800 clamp(28px,5vmin,44px)/1 var(--font); letter-spacing:-.02em; color:#FFFFFF } #splash p b { color:#FF6B9D }
+#splash.gone { opacity:0 }
+nav.side button { white-space:nowrap; text-align:left; background:none; border:1px solid transparent; box-shadow:none; padding:8px 10px; border-radius:8px; font:600 13px/1.2 var(--font); color:var(--muted); display:flex; align-items:center; gap:8px }
+nav.side button:hover:not(:disabled) { color:var(--fg); background:var(--card); border-color:transparent } nav.side button.active { color:var(--fg); background:var(--card); border-color:var(--line) } nav.side button .badge { margin-left:auto }
+nav.side hr { border:0; border-top:1px solid var(--line); margin:8px 6px } nav.side .grp { font:600 11px/1.2 var(--font); text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:16px 10px 6px }
+nav.side .spacer { flex:1 } nav.side .verlink { background:none; border:0; text-align:left; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding-top:0 } .modal-box.wn { max-width:600px; text-align:left; max-height:84vh; display:flex; flex-direction:column } .modal-box.wn h2 { margin:0 0 10px; font-size:20px } .wnbody { overflow:auto; flex:1; padding-right:6px } .wnbody h3 { font-size:15px; margin:16px 0 4px } .wnbody h3:first-child { margin-top:0 } .wnbody h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; margin:10px 0 4px; opacity:.75 } .wnbody ul { margin:0 0 6px; padding-left:20px } .wnbody li { margin-bottom:4px; line-height:1.5 } .modal-box.wn .actions { margin-top:14px; justify-content:flex-end } nav.side .ver { font:400 12px/1.4 var(--font); color:var(--muted); padding:4px 10px }
 main { flex:1; min-width:0; display:flex; flex-direction:column; overflow:auto }
-.modal { position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:50 } .modal-box { background:var(--card); border:2px solid var(--line); border-radius:14px; padding:22px 24px; max-width:420px; width:calc(100% - 40px); text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.4) }
-#toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--fg); color:var(--bg); padding:8px 14px; border-radius:999px; font-size:13px; font-weight:600; opacity:0; transition:opacity .2s; pointer-events:none } #toast.show { opacity:1 }
-#updateBar { display:none; background:var(--gold); color:#1d2140; font-weight:600; padding:8px 22px; font-size:13px; align-items:center; gap:10px } #updateBar.show { display:flex } #updateBar button { padding:4px 10px; font-size:12px; color:#1d2140; border-color:#1d2140; background:transparent; box-shadow:none } #updateBar .grow { flex:1 }
-.srcList { display:flex; flex-direction:column; gap:6px } .srcRow { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; font-size:13px; background:var(--card); border:2px solid var(--line); border-radius:8px; padding:6px 10px }
-.srcRow > * { min-width:0 } .pickq { display:grid; grid-template-columns:auto 1fr; gap:8px 12px; align-items:center; margin-bottom:10px } .pickq select { width:100% } .emblem { vertical-align:-3px; margin-right:6px } .credits { display:flex; flex-wrap:wrap; gap:8px } .credits a { display:inline-flex; align-items:center; gap:6px; padding:3px 10px 3px 3px; border:2px solid var(--line); border-radius:999px; font-size:13px; text-decoration:none; color:inherit } .credits img { border-radius:50% } .srcRow.two { grid-template-columns:auto 1fr auto auto } .srcRow img.soonArt { width:40px; height:40px; object-fit:cover; border-radius:6px } .srcRow .lab { font-weight:600; overflow-wrap:anywhere }
+.modal { position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:50 } .modal-box { background:var(--card); border:1px solid var(--line-strong); border-radius:16px; padding:22px 24px; max-width:420px; width:calc(100% - 40px); text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.4) }
+#toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--raised); color:var(--fg); border:1px solid var(--line-strong); box-shadow:0 8px 24px rgba(0,0,0,.3); padding:8px 14px; border-radius:999px; font-size:13px; font-weight:600; opacity:0; transition:opacity .2s; pointer-events:none } #toast.show { opacity:1 }
+#updateBar { display:none; background:var(--accent); color:var(--accentfg); font-weight:600; padding:8px 22px; font-size:13px; align-items:center; gap:10px } #updateBar.show { display:flex } #updateBar button { padding:5px 10px; font-size:12px; color:var(--accentfg); border-color:currentColor; background:transparent; box-shadow:none } #updateBar .grow { flex:1 }
+.srcList { display:flex; flex-direction:column; gap:6px } .srcRow { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; font-size:13px; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:6px 10px }
+.srcRow > * { min-width:0 } .pickq { display:grid; grid-template-columns:auto 1fr; gap:8px 12px; align-items:center; margin-bottom:10px } .pickq select { width:100% } .emblem { vertical-align:-3px; margin-right:6px } .credits { display:flex; flex-wrap:wrap; gap:8px } .credits a { display:inline-flex; align-items:center; gap:6px; padding:3px 10px 3px 3px; border:1px solid var(--line); border-radius:999px; font-size:13px; text-decoration:none; color:inherit; white-space:nowrap } .credits img { border-radius:50%; flex:none; width:28px; height:28px; object-fit:cover } .srcRow.two { grid-template-columns:auto 1fr auto auto } .srcRow img.soonArt { width:40px; height:40px; object-fit:cover; border-radius:6px } .srcRow .lab { font-weight:600; overflow-wrap:anywhere }
 .srcRow .row-acts { display:flex; gap:6px; align-items:center; flex-shrink:0 } .srcRow .u.wrap { white-space:normal; overflow-wrap:anywhere; line-height:1.4 } .srcRow .row-state { font-size:12px; margin-top:2px } .srcRow .row-state:empty { display:none } .srcRow .u { color:var(--muted); font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
-.addGame { display:flex; flex-direction:column; gap:8px; background:var(--card); border:2px solid var(--line); border-radius:10px; padding:12px }
+.addGame { display:flex; flex-direction:column; gap:8px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px }
 .addSrc { display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center } .addSrc select { width:auto }
-main > section.view { display:none; flex-direction:column; gap:14px; padding:18px 22px; flex:1; min-height:0 } main > section.view.active { display:flex }
+main > section.view { display:none; flex-direction:column; gap:14px; padding:46px 28px 24px; flex:1; min-height:0 }
+/* Big Picture Mode: pinned to the top right of every screen, in the strip the views' top padding leaves free */
+#bigPicture { position:fixed; top:8px; right:28px; z-index:5; font-size:12.5px; padding:4px 10px } main > section.view.active { display:flex }
 .settings-body { display:flex; flex-direction:column; gap:14px; max-width:640px }
-.about { max-width:640px } .about .eyebrow { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 } .about h1 { margin:2px 0 12px }
+.about { max-width:640px } .about .eyebrow { font:600 11px/1.2 var(--font); text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:0 } .about h1 { margin:2px 0 12px }
 .about p { margin:0 0 12px; line-height:1.6 } .about .sig { color:var(--fg); margin-top:10px }
 .about .support { display:inline-block; margin-top:6px } .about a { color:var(--accent) }
-h1 { font-size:30px; line-height:1.05; margin:0; font-weight:800; letter-spacing:-.025em } h2, h3 { font-weight:800; letter-spacing:-.01em } .sub { color:var(--muted); margin:4px 0 0; font-size:13.5px }
+h1 { font:700 26px/1.2 var(--font); margin:0; letter-spacing:-.02em } h2, h3 { font-weight:600; letter-spacing:-.01em } .sub { color:var(--muted); margin:4px 0 0; font-size:13.5px }
 label { display:block; font-size:13px; font-weight:600; margin-bottom:4px }
-textarea, input[type=text], input[type=password], select { width:100%; font:inherit; color:inherit; background:var(--card); border:2px solid var(--line); border-radius:8px; padding:8px 11px }
-textarea:focus, input[type=text]:focus, input[type=password]:focus, select:focus { border-color:var(--fg) }
+textarea, input[type=text], input[type=password], select { width:100%; font:inherit; color:inherit; background:var(--bg); border:1px solid var(--line-strong); border-radius:8px; padding:8px 11px }
+textarea:focus, input[type=text]:focus, input[type=password]:focus, select:focus { border-color:var(--muted) }
 textarea { min-height:110px; resize:vertical; font-family:var(--mono); font-size:13px }
 .row { display:flex; gap:8px; align-items:center } .row > * { flex:1 } .row > button { flex:0 0 auto }
-/* chunky cartridge buttons with a hard shadow, like the website's */
-button { font:inherit; font-weight:700; padding:8px 15px; border-radius:8px; border:2px solid var(--fg); background:var(--card); color:inherit; cursor:pointer; box-shadow:0 2px 0 var(--shadow); transition:transform .08s }
-button:hover:not(:disabled) { transform:translateY(-1px) } button:active:not(:disabled) { transform:translateY(2px); box-shadow:none }
+/* compact buttons raised a step off the panel; pink only for the one main action */
+button { font:600 13px/1.2 var(--font); padding:9px 14px; border-radius:8px; border:1px solid var(--line-strong); background:var(--raised); color:var(--fg); cursor:pointer; box-shadow:none }
+button:hover:not(:disabled) { border-color:var(--muted) } button:active:not(:disabled) { transform:translateY(.5px) }
 button.primary { background:var(--accent); border-color:var(--accent); color:var(--accentfg) }
 .logTail { max-height:180px; overflow:auto; font-size:12px; background:var(--shell2, rgba(0,0,0,.06)); padding:8px; border-radius:6px; white-space:pre-wrap }
 button.danger { border-color:var(--bad); color:var(--bad) } button.danger:hover { background:var(--bad); color:#fff }
 .tagBar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:10px 0 } .tagBar button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accentfg) } .tagBar label { display:flex; gap:6px; align-items:center; margin-left:8px }
-button.gold, button[aria-pressed="true"].pick { background:var(--gold); border-color:var(--gold); color:#1d2140 }
+button.gold, button[aria-pressed="true"].pick { background:var(--accent); border-color:transparent; color:var(--accentfg) }
 button:disabled { opacity:.5; cursor:not-allowed; box-shadow:none }
 .actions { display:flex; gap:8px; flex-wrap:wrap }
 #logBox[open] { flex:1; display:flex; flex-direction:column; min-height:0 } #logBox summary { cursor:pointer; color:var(--muted); font-size:12.5px; margin-bottom:6px }
 #log { flex:1; min-height:160px; margin:0; background:var(--log); color:var(--logfg); border-radius:10px; padding:12px 14px; font:12.5px/1.5 var(--mono); overflow:auto; white-space:pre-wrap }
 .loadingGames { text-align:center; padding:56px 16px } .loadingGames .sub { max-width:440px; margin:6px auto 0 }
-.spinner { display:inline-block; width:34px; height:34px; border:3px solid var(--line, #ccc); border-top-color:var(--gold, currentColor); border-radius:50%; animation:spin 0.9s linear infinite }
+.spinner { display:inline-block; width:34px; height:34px; border:3px solid var(--line, #ccc); border-top-color:var(--accent); border-radius:50%; animation:spin 0.9s linear infinite }
 @keyframes spin { to { transform:rotate(360deg) } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation-duration:3s } }
 .status { font-size:13px; min-height:18px } #catalogStatus:empty { display:none } .ok { color:var(--ok) } .bad { color:var(--bad) }
 
 .check { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600 } .check input { width:16px; height:16px }
 #games:empty { display:none } #games.stale { opacity:.45 }
-.game { background:var(--card); border:2px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:10px }
+.game { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:10px }
 .game h2 { font-size:15px; margin:0 0 2px } .game .console { font-weight:400; color:var(--muted) }
 .game .method { font-size:12px; color:var(--muted); margin-bottom:8px } .game .err { color:var(--bad); font-size:13px }
 .file { display:grid; grid-template-columns:1fr auto; gap:4px 10px; align-items:center; padding:8px 0; border-top:1px solid var(--line) }
 .file .what { font-size:13px } .file .what strong { display:block } .file .hint { color:var(--muted); font-size:12px }
 .file .pick { display:flex; gap:6px; align-items:center } .file .chosen { font-size:12px; color:var(--ok); max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
 .file .chosen:empty::before { content:"Not chosen"; color:var(--muted) }
-button.small { padding:4px 10px; font-size:12.5px; border-width:2px }
+button.small { padding:5px 10px; font-size:12px }
 .verify { font-size:12px; margin-top:3px; font-weight:600 } .verify.muted { font-weight:400 }
 .game.skipped { opacity:.45 } .game .head { display:flex; justify-content:space-between; align-items:center; gap:8px }
 .cols { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px } .col h3 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 8px }
-.tile { border:2px solid; border-radius:8px; padding:8px 10px; margin-bottom:8px; font-weight:600; font-size:14px } .tile small { display:block; font-weight:400; font-size:12px; margin-top:2px }
+.tile { border:1px solid; border-radius:8px; padding:8px 10px; margin-bottom:8px; font-weight:600; font-size:14px } .tile small { display:block; font-weight:400; font-size:12px; margin-top:2px }
 .tile.ok { color:var(--ok); border-color:var(--ok) } .tile.bad { color:var(--bad); border-color:var(--bad) } .tile.skip { color:var(--fg); border-color:var(--fg) }
 .col .none { color:var(--muted); font-size:13px }
 #browse, #newgames, #foryou { flex:1; min-height:0 }
 #browse .head, #newgames .head, #foryou .head { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap }
 #browse .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center } #browse .toolbar input[type=text] { flex:1; min-width:180px } #browse .toolbar select { width:auto }
-.filters { display:flex; gap:14px; flex-wrap:wrap; align-items:center; background:var(--card); border:2px dashed var(--line); border-radius:10px; padding:10px 14px } .filters select { width:auto }
+.filters { display:flex; gap:14px; flex-wrap:wrap; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 16px } .filters select { width:auto }
 /* console picker: one press shows one console */
 .conbar { display:flex; gap:6px; flex-wrap:wrap } .conbar button { white-space:nowrap }
-.conbar button { font:600 11.5px var(--mono); letter-spacing:.06em; text-transform:uppercase; padding:5px 10px; border-width:2px; border-color:var(--line); box-shadow:none; background:transparent }
-.conbar button .n { color:var(--muted); margin-left:4px } .conbar button[aria-pressed="true"] { background:var(--fg); border-color:var(--fg); color:var(--bg) } .conbar button[aria-pressed="true"] .n { color:inherit; opacity:.7 }
+.conbar button { font:600 13px/1 var(--font); padding:8px 12px; border:1px solid var(--line); box-shadow:none; background:transparent; color:var(--muted) } .conbar button:hover:not(:disabled) { color:var(--fg); background:var(--card) }
+.conbar button .n { color:var(--muted); margin-left:4px } .conbar button[aria-pressed="true"] { background:var(--card); border-color:var(--line-strong); color:var(--fg) } .conbar button[aria-pressed="true"] .n { color:inherit; opacity:.7 }
 #catalogList, .cardList { flex:1; overflow:auto; min-height:200px; padding:2px 4px 8px 2px }
-.group-head { font:600 12.5px var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:22px 0 10px; display:flex; gap:10px; align-items:center } .group-head:first-child { margin-top:4px } .group-head .n { color:var(--gold) } .group-head::after { content:""; flex:1; border-top:2px solid var(--line) }
+.group-head { font:600 11px/1.2 var(--font); letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin:24px 0 12px; display:flex; gap:10px; align-items:center } .group-head:first-child { margin-top:4px } .group-head .n { color:var(--fg) } .group-head::after { content:""; flex:1; border-top:1px solid var(--line) }
 /* game tiles: the box art, the title, one line about it, one button */
-.tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(168px, 1fr)); gap:16px }
-.gtile { display:flex; flex-direction:column; background:var(--card); border:2px solid var(--fg); border-radius:10px; overflow:hidden; box-shadow:0 3px 0 var(--shadow); min-width:0 }
-.gtile.picked { border-color:var(--gold); box-shadow:0 0 0 2px var(--gold), 0 3px 0 var(--shadow) }
-.gtile .cover { aspect-ratio:1; background:var(--bg2); position:relative; border-bottom:2px solid var(--fg); cursor:pointer } .gtile .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block }
-.gtile .nocover { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px; overflow-wrap:anywhere; background:var(--window); color:var(--windowfg); font-weight:800; font-size:16px; line-height:1.15 }
-.gtile .tag { position:absolute; left:8px; top:8px; font:600 10.5px var(--mono); letter-spacing:.1em; text-transform:uppercase; padding:3px 7px; border-radius:4px; background:var(--gold); color:#1d2140 } .gtile .tag.inst { background:#2b7a3e; color:#fff }
-.gtile .t { padding:10px 12px 0; min-width:0 }
-.gtile h4 { margin:0; font-size:15px; font-weight:700; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere } .gtile h4 a { color:inherit; text-decoration:none } .gtile h4 a:hover { text-decoration:underline }
-.gtile .line { font:600 11px/1.45 var(--mono); letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-top:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap } .gtile .line.good { color:var(--ok) } .gtile .line + .line { margin-top:0; font-weight:500 }
-.gtile .acts { display:flex; gap:6px; align-items:center; padding:10px 12px 12px; margin-top:auto } .gtile .acts button.pick, .gtile .acts button.upd { flex:1 } .gtile .acts .state { flex:1; font:600 11px var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ok) } .gtile .acts .state.muted { color:var(--muted) }
-.star { background:none; border:2px solid transparent; box-shadow:none; font-size:19px; cursor:pointer; color:var(--muted); padding:2px 6px; line-height:1 } .star.on { color:var(--gold) } .star:hover { border-color:var(--line) }
-.badge { font:600 10.5px var(--mono); letter-spacing:.05em; text-transform:uppercase; padding:2px 6px; border-radius:4px; border:1.5px solid currentColor }
-.badge.unknown, .badge.src, .badge.none, .badge.ai { color:var(--muted) } .badge.latest, .badge.inst { color:var(--ok) } .badge.prerelease { color:#a15b00 } .badge.upd { color:var(--fg) }
-hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
-.view .foot { display:flex; gap:8px; align-items:center; flex-wrap:wrap; border-top:2px solid var(--line); padding-top:12px } .view .foot .n { flex:1; font:500 12.5px var(--mono); color:var(--muted) }
-.phoneShots { display:flex; gap:14px; overflow-x:auto; padding:6px 2px 12px } .phoneShots img { border-radius:18px; border:2px solid var(--line); flex:none; height:404px; width:auto }
+.gstats { display:grid; grid-template-columns:repeat(auto-fit, minmax(112px, 1fr)); gap:10px; margin:10px 0 } .gstats:empty { display:none } .gstats > div { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 12px } .gstats .sub { display:block; margin:0 } .gstats b { font-size:16px } .gstats .badge { display:block; width:fit-content; margin-top:4px }
+/* How It Runs: the ask card (bottom right, over any screen) and the card on a game's page. Every color has its words beside it. */
+#ranAsk { position:fixed; right:22px; bottom:22px; z-index:6; width:min(420px, calc(100vw - 44px)); box-shadow:0 12px 40px rgba(0,0,0,.45); border-color:var(--line-strong) } #ranAsk h3 { margin:0 }
+.hir { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:10px 0; display:flex; flex-direction:column; gap:10px } .hir h3 { margin:0 } .hir .rtop { display:flex; justify-content:space-between; align-items:baseline }
+.hir .rbig { margin:0 } .hir .rbig b { font-size:30px; letter-spacing:-.02em } .rbig .runs, .rdot.runs, .rbar .runs { color:var(--ok) } .rbig .issues, .rdot.issues, .rbar .issues { color:var(--warn) } .rbig .no, .rdot.no, .rbar .no { color:var(--bad) }
+/* The answer that's picked: the accent color and a check mark, so it isn't color alone. */
+#ranAsk [aria-pressed="true"], .hir [aria-pressed="true"], [data-rep][aria-pressed="true"] { background:var(--accent); border-color:transparent; color:var(--accentfg) }
+#ranAsk [aria-pressed="true"]::before, .hir [aria-pressed="true"]::before, [data-rep][aria-pressed="true"]::before { content:"✓ " }
+.rbar { display:flex; gap:2px; height:8px; border-radius:4px; overflow:hidden } .rbar span { background:currentColor } .rdot { display:inline-block; width:8px; height:8px; border-radius:50%; background:currentColor; margin-right:6px }
+.rcounts { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px } .rcounts div { border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-size:13.5px } .rcounts b { float:right }
+/* Kirby AI: the question box. The mascot takes the right half; on a narrow window it sits small above the words. */
+.modal-box.kirby { max-width:900px; text-align:left; display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:center; max-height:calc(100vh - 60px) } .kirby .kmain { display:flex; flex-direction:column; gap:12px; min-width:0; max-height:calc(100vh - 110px) } .kirby h2 { margin:0 0 2px } .kirby .kmain > div > p { margin:0 }
+.kirby .kpic { width:100%; max-height:calc(100vh - 120px); object-fit:contain; filter:drop-shadow(0 12px 30px rgba(0,0,0,.5)) }
+@media (max-width:760px) { .modal-box.kirby { grid-template-columns:1fr } .kirby .kpic { order:-1; width:110px; justify-self:center } }
+.klog { overflow:auto; min-height:120px; max-height:44vh; display:flex; flex-direction:column; gap:10px; padding:2px } .klog:empty { display:none } .klog .kq { align-self:flex-end; background:var(--raised); border-radius:12px 12px 2px 12px; padding:8px 12px; max-width:85% }
+.klog .ka { background:var(--bg); border:1px solid var(--line); border-radius:12px 12px 12px 2px; padding:10px 12px; max-width:95%; white-space:pre-wrap } .klog .kgames { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px }
+.setupList { margin:0; padding-left:20px; display:flex; flex-direction:column; gap:4px }
+.rlist { list-style:none; margin:0; padding:0 } .rlist li { border-top:1px solid var(--line); padding:8px 0 } .rlist .rhead { display:flex; align-items:center; gap:8px } .rlist .rhead .sub { margin-left:auto } .rlist p { margin:4px 0 0 }
+.tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(176px, 1fr)); gap:14px }
+.gtile { display:flex; flex-direction:column; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 1px 2px var(--shadow); min-width:0 }
+.gtile.picked { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) }
+.gtile .cover { aspect-ratio:1; background:var(--raised); position:relative; overflow:hidden; border-bottom:1px solid var(--line); cursor:pointer } .gtile .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block }
+.gtile .nocover { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px; overflow-wrap:anywhere; background:var(--raised); color:var(--fg); font-weight:600; font-size:15px; line-height:1.2 }
+.gtile .tag { position:absolute; left:8px; top:8px; font:600 11px/1.2 var(--font); padding:3px 9px; border-radius:999px; background:var(--accent); color:var(--accentfg) } .gtile .tag.inst { background:var(--ok); color:var(--accentfg) }
+.gtile .t { padding:12px 12px 0; min-width:0 }
+.gtile h4 { margin:0; font-size:14px; font-weight:600; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere } .gtile h4 a { color:inherit; text-decoration:none } .gtile h4 a:hover { text-decoration:underline }
+.gtile .line { font:400 12.5px/1.45 var(--font); color:var(--muted); margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap } .gtile .line.good { color:var(--ok) } .gtile .line + .line { margin-top:0 }
+.gtile .acts { display:flex; gap:6px; align-items:center; padding:12px; margin-top:auto } .gtile .acts button.pick, .gtile .acts button.upd { flex:1 } .gtile .acts .state { flex:1; font:600 12px/1.2 var(--font); color:var(--ok) } .gtile .acts .state.muted { color:var(--muted) }
+.star { background:var(--raised); border:1px solid var(--line-strong); box-shadow:none; font-size:15px; cursor:pointer; color:var(--muted); width:32px; height:32px; padding:0; line-height:1; flex:none } .star.on { color:var(--accent) } .star:hover:not(:disabled) { border-color:var(--muted); color:var(--fg) }
+.badge { font:600 11.5px/1.2 var(--font); padding:2px 9px; border-radius:999px; border:1px solid color-mix(in srgb, currentColor 45%, transparent); white-space:nowrap }
+.badge.unknown, .badge.src, .badge.none, .badge.ai { color:var(--muted) } .badge.latest, .badge.inst { color:var(--ok) } .badge.prerelease { color:var(--warn) } .badge.upd { color:var(--fg) }
+hr.sep { border:0; border-top:1px solid var(--line); margin:18px 0 14px }
+.view .foot { display:flex; gap:8px; align-items:center; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:12px } .view .foot .n { flex:1; font:400 12.5px/1.4 var(--font); color:var(--muted) }
+.phoneShots { display:flex; gap:14px; overflow-x:auto; padding:6px 2px 12px } .phoneShots img { border-radius:18px; border:1px solid var(--line); flex:none; height:404px; width:auto }
 .phoneWhy { line-height:1.6; margin:6px 0 14px }
+/* Maddie, 16 Nov 2026: square corners everywhere (only true circles stay round), and pink is the house color: hot pink
+   for the main action, pastel pink for every other button and for feature chips. Status colors keep their meaning. */
+:root { --pastel:#FFB8CF; --pastelfg:#0E0E10 }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --pastel:#F9D0DE; --pastelfg:#15151A } }
+:root[data-theme="light"] { --pastel:#F9D0DE; --pastelfg:#15151A }
+*, *::before, *::after { border-radius:0 !important }
+.credits img, .swatch, .spinner { border-radius:50% !important }
+button { background:var(--pastel); color:var(--pastelfg); border-color:transparent }
+button:hover:not(:disabled) { border-color:var(--pastelfg) }
+button.primary:hover:not(:disabled) { border-color:transparent }
+button.danger { background:transparent; border-color:var(--bad); color:var(--bad) }
+.conbar button { background:var(--pastel); color:var(--pastelfg); border-color:transparent } .conbar button:hover:not(:disabled) { background:var(--pastel); color:var(--pastelfg); border-color:var(--pastelfg) }
+.conbar button .n { color:inherit; opacity:.65 } .conbar button[aria-pressed="true"] { background:var(--accent); border-color:transparent; color:var(--accentfg) }
+.star { background:var(--pastel); color:var(--pastelfg); border-color:transparent } .star.on { background:var(--accent); color:var(--accentfg) } .star:hover:not(:disabled) { color:var(--pastelfg); border-color:var(--pastelfg) }
+.gtile .line.feat { display:flex; flex-wrap:wrap; gap:4px; font-size:0; white-space:normal; margin-top:6px }
+dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
+.gtile .line.feat span, dl.facts dd > span { display:inline-block; font:600 11.5px/1.2 var(--font); padding:3px 7px; background:var(--pastel); color:var(--pastelfg) }
 </style>
 </head>
 <body>
 <nav class="side" aria-label="Sections" role="navigation">
-  <div class="brand"><img src="icon.png" alt="">Decomp Buddy</div>
+  <div class="brand"><img src="mascot.png" alt=""><span>Decomp <b>Buddy</b></span></div>
   <button type="button" data-nav="browse" class="active">Browse Games</button>
   <button type="button" data-nav="new">New Games</button>
   <button type="button" data-nav="foryou">Games You May Like</button>
   <button type="button" data-nav="soon">Coming Soon <span id="soonBadge" class="badge upd" hidden></span></button>
-  <hr>
+  <span class="grp">Your Library</span>
   <button type="button" data-nav="library">Installed Games</button>
   <button type="button" data-nav="devices">Phones And Headsets</button>
   <button type="button" data-nav="phoneapp">iPhone App</button>
-  <hr>
+  <span class="grp">More</span>
   <button type="button" data-nav="setup">Install From GitHub</button>
-  <hr>
   <button type="button" data-nav="settings">Settings</button>
-  <button type="button" data-nav="about">About Maddie</button>
   <hr id="adminSep" hidden>
   <button type="button" data-nav="admin" id="adminNav" hidden>Admin <span id="adminBadge" class="badge upd" hidden></span></button>
   <div class="spacer"></div>
@@ -243,7 +278,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
 
   <section id="library" class="view" data-view="library" aria-label="Installed games">
     <div><h1>Installed Games</h1><p class="sub" id="libMeta">Everything you've set up, ready to play.</p><p class="sub" id="padState" role="status" aria-live="polite" hidden></p></div>
-    <div class="actions"><button id="libUpdateAll" type="button" hidden>Update All</button><button id="libSend" type="button">Send To Another Computer…</button><button id="libReceive" type="button">Receive…</button><button id="libCouch" type="button" title="Full screen, big tiles, controller-friendly - for the TV or a Steam Deck">Couch Mode</button><button id="libAdopt" type="button">Adopt A Folder…</button><button id="libPack" type="button">Offline Pack…</button><button id="libPatch" type="button">Patch A ROM…</button><button id="libRefresh" type="button">Refresh</button></div>
+    <div class="actions"><button id="libUpdateAll" type="button" hidden>Update All</button><button id="libSend" type="button">Send To Another Computer…</button><button id="libReceive" type="button">Receive…</button><button id="libCouch" type="button" title="Full screen, big tiles, controller-friendly - for the TV or a Steam Deck">Big Picture Mode</button><button id="libAdopt" type="button">Adopt A Folder…</button><button id="libPack" type="button">Offline Pack…</button><button id="libPatch" type="button">Patch A ROM…</button><button id="libRefresh" type="button">Refresh</button></div>
     <div id="syncBanner" class="addGame" hidden role="region" aria-label="Newer saves from another computer"></div>
     <div id="digestPanel" class="addGame" hidden role="region" aria-label="What's new this week"></div>
     <div id="packUpdates" class="addGame" hidden role="region" aria-label="Mod and texture pack updates"></div>
@@ -390,8 +425,11 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
       <div>
         <h1 id="detailTitle" style="margin:0" translate="no"></h1>
         <p class="sub" id="detailMeta"></p>
+        <div id="detailStats" class="gstats"></div>
+        <div id="detailRuns"></div>
         <p class="sub" id="detailMore"></p>
         <p class="sub" id="detailDesc"></p>
+        <div id="detailSetup"></div>
         <div id="detailFacts"></div>
         <div id="detailSince"></div>
         <div id="detailPorts"></div>
@@ -409,23 +447,28 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   <section id="browse" class="view active" data-view="browse" aria-label="Game browser">
     <div class="head">
       <div><h1>Browse Games</h1><p class="sub"><span id="catalogMeta"></span></p></div>
-      <div class="actions"><button id="pickBtn" class="primary" type="button">What Should I Play?</button><button id="addGameBtn" type="button">Suggest A Decomp</button><button id="updatesBtn" type="button" title="Compare what's installed with the catalogs">Check For Updates</button><button id="catalogRefresh" type="button">Refresh</button></div>
+      <div class="actions"><button id="kirbyBtn" type="button" hidden>Ask Kirby</button><button id="pickBtn" class="primary" type="button">What Should I Play?</button><button id="addGameBtn" type="button">Suggest A Decomp</button><button id="updatesBtn" type="button" title="Compare what's installed with the catalogs">Check For Updates</button><button id="catalogRefresh" type="button">Refresh</button></div>
     </div>
     <div class="toolbar">
       <input id="catSearch" type="text" placeholder="Search title or project" autocomplete="off" spellcheck="false" aria-label="Search">
       <select id="catRunsOn" aria-label="Runs on"><option value="">Runs On: Any</option><option value="Windows">Runs On: Windows</option><option value="macOS">Runs On: macOS</option><option value="Linux">Runs On: Linux</option><option value="Android">Runs On: Android</option><option value="Meta Quest">Runs On: Meta Quest</option><option value="Steam Deck">Runs On: Steam Deck</option><option value="Xbox 360">Runs On: Xbox 360</option><option value="Xbox">Runs On: Xbox</option><option value="Xbox Series">Runs On: Xbox Series</option><option value="Switch">Runs On: Switch</option><option value="Wii U">Runs On: Wii U</option><option value="Wii">Runs On: Wii</option><option value="GameCube">Runs On: GameCube</option><option value="3DS">Runs On: 3DS</option><option value="DS">Runs On: DS</option><option value="PS Vita">Runs On: PS Vita</option><option value="PSP">Runs On: PSP</option><option value="PS2">Runs On: PS2</option><option value="PS3">Runs On: PS3</option><option value="PS4">Runs On: PS4</option><option value="Dreamcast">Runs On: Dreamcast</option></select>
-      <select id="catSort" aria-label="Sort"><option value="console">Console, Then Title</option><option value="platforms">Runs On, Then Console</option><option value="updated">Recently Updated</option><option value="title">Title</option></select>
+      <select id="catSort" aria-label="Sort"><option value="popular">Popular</option><option value="newest">Newest</option><option value="updated">Recently Updated</option><option value="stars">Most GitHub Stars</option><option value="title">A-Z</option><option value="console" selected>Console, Then Title</option><option value="platforms">Runs On, Then Console</option></select>
       <button id="moreFiltersBtn" type="button" aria-expanded="false" aria-controls="moreFilters">More Filters</button>
+    </div>
+    <div class="filters" role="group" aria-label="Quick filters">
+      <label class="check" title="A ready-made download, one file of your own at most, and three steps or fewer"><input id="catEasy" type="checkbox"> Easy Setup</label>
+      <label class="check" title="Local or online multiplayer"><input id="catMulti" type="checkbox"> Multiplayer</label>
+      <label class="check" title="Players with a computer like yours say it runs well"><input id="catRunsWell" type="checkbox"> Plays Great</label>
+      <label class="check" title="Hides games whose project says AI helped write it"><input id="catNoAI" type="checkbox"> Hide AI-Assisted</label>
     </div>
     <div id="moreFilters" class="filters" hidden>
       <select id="catStatus" aria-label="Status"><option value="">All Statuses</option><option value="latest">Latest</option><option value="prerelease">Pre-release</option></select>
       <select id="catSource" aria-label="Source"><option value="">All Sources</option><option value="local-finds">Added By You</option></select>
       <label class="check"><input id="catPlayable" type="checkbox"> Playable Only</label>
       <label class="check"><input id="catMine" type="checkbox"> Games I Have Files For</label>
-      <label class="check"><input id="catRunsWell" type="checkbox"> Runs Well On Computers Like Mine</label>
       <label for="catList">List</label><select id="catList" style="width:auto"><option value="">Any</option></select>
       <label for="catFeature">What It Adds</label><select id="catFeature" style="width:auto"><option value="">Any</option><option value="fps60">60 FPS</option><option value="widescreen">Widescreen</option><option value="hd">HD</option><option value="raytracing">Ray Tracing</option><option value="mods">Mods</option><option value="online">Online Play</option><option value="coop">Local Multiplayer</option></select>
-      <label for="catAI">AI Use</label><select id="catAI" style="width:auto"><option value="">Any</option><option value="none">No AI Used</option><option value="assisted">AI-Assisted</option><option value="generated">Made With AI</option><option value="unsaid">Doesn't Say</option></select>
+      <label for="catAI">AI Use</label><select id="catAI" style="width:auto"><option value="">Any</option><option value="assisted">AI-Assisted</option><option value="none">Not AI-Assisted</option><option value="unsaid">AI-Assistance Not Known</option></select>
       <label class="check"><input id="catInstalled" type="checkbox"> Installed Only</label>
       <label class="check"><input id="catWish" type="checkbox"> Wishlist</label>
       <button id="clearFilters" type="button" class="small">Clear</button>
@@ -527,7 +570,7 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
             <button type="button" class="swatch" data-accent="#6d28d9" aria-label="Purple" aria-pressed="false" style="background:#6d28d9"></button>
             <button type="button" class="swatch" data-accent="#1d4ed8" aria-label="Blue" aria-pressed="false" style="background:#1d4ed8"></button>
             <button type="button" class="swatch" data-accent="#2b7a3e" aria-label="Green" aria-pressed="false" style="background:#2b7a3e"></button>
-            <input id="accentCustom" type="color" value="#e0a53a" aria-label="Custom Accent Color" title="Custom Accent Color">
+            <input id="accentCustom" type="color" value="#ff6b9d" aria-label="Custom Accent Color" title="Custom Accent Color">
           </div>
         </div>
         <div class="lookPart">
@@ -583,20 +626,22 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
         <label class="check"><input id="shareStats" type="checkbox"> Share Anonymous Usage Stats</label>
         <p class="sub">Once a week, tell tanookistudios.com which version and kind of computer you use, roughly how many games you have, and which features you've turned on - so Maddie knows what to work on. No id, no game names, nothing about you; the site only adds 1 to a few totals. Off means nothing is sent. <a href="#" id="statsShow">See Exactly What's Sent</a></p>
         <pre id="statsPreview" class="logTail" hidden></pre>
-        <label class="check"><input id="startCouch" type="checkbox"> Start In Couch Mode</label>
+        <label class="check"><input id="askAfterPlay" type="checkbox"> Ask How It Ran After I Play</label>
+        <p class="sub">When you close a game you played for a couple of minutes, Decomp Buddy asks how it ran, once for each version. Nothing is sent unless you press Send Report, and it shows you exactly what goes with it.</p>
+        <label class="check"><input id="startCouch" type="checkbox"> Start In Big Picture Mode</label>
       </div>
       <div>
         <label>Controller</label>
-        <p class="sub">A controller works on every screen: the D-pad or left stick moves, A presses, B goes back, LB and RB switch screens, and Start opens Couch Mode. On a Steam Deck, pressing A on a text box opens the on-screen keyboard.</p>
+        <p class="sub">A controller works on every screen: the D-pad or left stick moves, A presses, B goes back, LB and RB switch screens, and Start opens Big Picture Mode. On a Steam Deck, pressing A on a text box opens the on-screen keyboard.</p>
         <div class="row"><label for="padLayout" style="margin:0">Button Layout</label><select id="padLayout" style="width:auto"><option value="xbox">Xbox Style (A Is The Bottom Button)</option><option value="nintendo">Nintendo Style (A And B Swapped, X And Y Swapped)</option></select></div>
         <div class="srcList" id="padMapList" role="group" aria-label="Controller buttons"></div>
         <div class="row"><span class="sub" id="padState" style="flex:1" role="status" aria-live="polite"></span><button id="padReset" type="button">Reset Buttons</button></div>
         <p class="sub">Opens straight into the full-screen, controller-friendly Installed Games - handy on a TV or a Steam Deck. Starting Decomp Buddy with --couch does the same, and on a Steam Deck in Gaming Mode it's automatic.</p>
-        <div class="row"><span class="sub" id="steamSelfState" style="flex:1" role="status" aria-live="polite">Put Decomp Buddy itself in Steam, opening in Couch Mode - on a Steam Deck it becomes a tile in Gaming Mode.</span><button id="steamSelf" type="button">Add Decomp Buddy To Steam</button></div>
+        <div class="row"><span class="sub" id="steamSelfState" style="flex:1" role="status" aria-live="polite">Put Decomp Buddy itself in Steam, opening in Big Picture Mode - on a Steam Deck it becomes a tile in Gaming Mode.</span><button id="steamSelf" type="button">Add Decomp Buddy To Steam</button></div>
       </div>
       <div id="kioskBox">
         <label>Kiosk Mode</label>
-        <p class="sub">For an arcade cabinet or a shared computer. Decomp Buddy opens straight into Couch Mode, full screen, and leaving it or closing the window needs your PIN. Until then there's no Settings, no Remove Game, no Set Up and no web links. Turning it on locks the app right away.</p>
+        <p class="sub">For an arcade cabinet or a shared computer. Decomp Buddy opens straight into Big Picture Mode, full screen, and leaving it or closing the window needs your PIN. Until then there's no Settings, no Remove Game, no Set Up and no web links. Turning it on locks the app right away.</p>
         <div class="row"><input id="kioskPin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="New PIN (4 to 8 digits)" aria-label="New PIN"><input id="kioskPin2" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="The same PIN again" aria-label="New PIN Again"><button id="kioskSave" type="button">Save PIN</button></div>
         <label class="check" style="margin-top:8px"><input id="kioskOn" type="checkbox"> Start In Kiosk Mode</label>
         <div class="row" style="margin-top:6px"><span class="sub" id="kioskState" style="flex:1" role="status" aria-live="polite"></span><button id="kioskOff" type="button" hidden>Turn Off Kiosk Mode</button></div>
@@ -679,40 +724,6 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
     </div>
   </section>
 
-  <section id="about" class="view" data-view="about" aria-label="About Maddie">
-    <article class="about">
-      <p class="eyebrow">The person behind it</p>
-      <h1>About Maddie</h1>
-      <p>Maddie is an autistic app developer who builds privacy-focused apps and websites for things she thinks should already exist. When the internet leaves an oddly specific hole in the world, she has a habit of falling into it and eventually climbing back out with a working product.</p>
-      <p>Decomp Buddy is one of those holes. The decomp and recomp scene is doing something remarkable - turning games that were locked to old consoles into real native PC programs - but every project ships with its own build, its own folder rules, its own idea of where your disc image goes. Maddie got tired of reading twenty READMEs to set up twenty games, so she built the thing that reads them for you, checks that the dump you picked is the one the project actually wants, and hands you a folder that just works.</p>
-      <p>Because autism and a few other life complications make traditional employment a particularly bad match, app development is Maddie's full-time job. It has been rewarding, unpredictable, occasionally ridiculous, and one heck of a ride.</p>
-      <p>Decomp Buddy is free. There is no paywall coming, no account to make, and no advertising. You bring your own legally owned games; nothing about you leaves this computer. If it saved you an evening of README archaeology, you can support Maddie's work, and that support is what keeps her building useful, privacy-respecting things the world forgot to make.</p>
-      <p><a class="support" href="#" id="supportLink">Support Maddie's Work</a></p>
-      <p class="sub"><a href="#" data-ext="https://github.com/TanookiStudios/decomp-buddy">Star Decomp Buddy On GitHub</a></p>
-      <p class="sub">It's free, and it helps other people find the app.</p>
-      <p class="sub"><a href="#" data-ext="https://www.reddit.com/r/DecompBuddy/">Join r/DecompBuddy On Reddit</a></p>
-      <h2 style="font-size:15px;margin:28px 0 6px">Elsewhere</h2>
-      <p class="sub">
-        <a href="#" data-ext="https://tanookistudios.com">Tanooki Studios</a> &middot;
-        <a href="#" data-ext="https://maddietendo.com">Maddie</a> &middot;
-        <a href="#" data-ext="https://instagram.com/maddierabbles">Instagram</a> &middot;
-        <a href="#" data-ext="https://www.linkedin.com/in/maddie-lumen/">LinkedIn</a> &middot;
-        <a href="#" data-ext="https://www.tiktok.com/@maddietendo">TikTok</a>
-      </p>
-      <div class="sig" role="img" aria-label="Signed, Maddie">
-          <svg viewBox="0 0 330 116" style="width:clamp(190px,34vw,270px); height:auto; overflow:visible; display:block; color:currentColor" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-            <g transform="rotate(-4 160 66) skewX(-8)">
-              <path d="M2 72 C 12 69 22 69 32 68" opacity="0.85"/>
-              <path d="M50 92 C 46 66 48 34 56 30 C 62 27 62 46 63 62 C 64 74 63 84 68 90 C 74 64 84 40 92 46 C 97 58 95 80 102 90 C 106 94 114 92 118 84 C 122 72 108 68 106 80 C 105 90 118 94 121 84 C 122 76 122 82 126 90 C 130 94 138 92 141 84 C 144 72 130 68 128 80 C 127 90 140 94 143 84 C 145 60 149 26 152 27 C 154 26 153 42 152 54 C 151 68 149 82 155 90 C 159 94 167 92 170 84 C 173 72 159 68 157 80 C 156 90 169 94 172 84 C 174 60 178 26 181 27 C 183 26 182 42 181 54 C 180 68 178 82 184 90 C 188 94 193 82 194 74 C 195 80 194 88 199 90 C 205 86 214 82 216 74 C 218 66 205 64 202 72 C 199 82 210 90 222 84 C 242 96 278 96 306 74 C 316 67 320 62 323 63"/>
-              <circle cx="196" cy="48" r="2.4" fill="currentColor" stroke="none"/>
-            </g>
-          </svg>
-        </div>
-      <h2 style="font-size:15px;margin:28px 0 6px">Where The Games Come From</h2>
-      <p class="sub" id="aboutSources"></p>
-      <p class="sub">Box art comes from the <a href="#" data-ext="https://github.com/libretro-thumbnails">libretro-thumbnails</a> packs, with a project's GitHub image as the fallback. Add your own sources in Settings.</p>
-    </article>
-  </section>
 
   <section id="admin" class="view" data-view="admin" aria-label="Admin">
     <div><h1>Admin</h1><p class="sub">The shared <strong>Individual Finds</strong> list: repos found by hand that no catalog lists yet. Add one, Publish writes <code>finds.json</code> into the site, Deploy pushes the site live - everyone gets it on their next Browse refresh. Duplicates are impossible: the GitHub repo is the key.</p></div>
@@ -802,8 +813,10 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   </section>
 </main>
 <div id="toast" role="status" aria-live="polite"></div>
-<div id="couch" hidden role="dialog" aria-modal="true" aria-label="Couch Mode">
-  <div class="cbar"><img src="icon.png" alt=""><strong>Decomp Buddy</strong><span class="grow"></span><span class="chint">A Play · Y Details · B Back · LB/RB Rows · Start Exit</span><button id="couchExit" type="button">Exit Couch Mode</button></div>
+<div id="ranAsk" class="addGame" hidden role="dialog" aria-labelledby="ranTitle"></div>
+<button id="bigPicture" type="button" title="Full screen, big tiles, controller-friendly - for the TV or a Steam Deck">Big Picture Mode</button>
+<div id="couch" hidden role="dialog" aria-modal="true" aria-label="Big Picture Mode">
+  <div class="cbar"><img src="mascot.png" alt=""><strong>Decomp Buddy</strong><span class="grow"></span><span class="chint">A Play · Y Details · B Back · LB/RB Rows · Start Exit</span><button id="couchExit" type="button">Exit Big Picture Mode</button></div>
   <div id="couchRows"></div>
   <div id="couchDetail" hidden role="region" aria-live="polite"></div>
   <div id="couchStatus" class="cstatus" role="status" aria-live="polite"></div>
@@ -816,6 +829,18 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
   </div>
 </div>
 <audio id="lookMusic" loop preload="auto" hidden></audio>
+<div id="kirbyDlg" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="kirbyTitle">
+  <div class="modal-box kirby">
+    <div class="kmain">
+      <div><h2 id="kirbyTitle">Kirby AI</h2><p class="sub">Ask about any game here: what to play, what it needs, how to set it up.</p></div>
+      <div id="kirbyLog" class="klog" role="log" aria-live="polite" tabindex="0"></div>
+      <form id="kirbyForm" class="row"><input id="kirbyQ" type="text" maxlength="500" aria-label="Your question" placeholder="Something like Zelda that runs on a Steam Deck?" autocomplete="off"><button id="kirbySend" class="primary" type="submit">Ask</button></form>
+      <p class="sub">Kirby is an AI and can get things wrong. Your question goes to Tanooki Studios and to Anthropic's Claude to be answered; we don't keep it.</p>
+      <div class="actions"><button id="kirbyClose" type="button">Close</button></div>
+    </div>
+    <img class="kpic" src="kirby.webp" alt="Decomp Buddy's raccoon mascot, taking notes on a clipboard">
+  </div>
+</div>
 <div id="whatsNew" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="whatsNewTitle">
   <div class="modal-box wn">
     <h2 id="whatsNewTitle">What's New In Decomp Buddy</h2>
@@ -874,6 +899,8 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
 <script src="i18n.js"></script>
 <script src="app.js"></script>
 <script src="more.js"></script>
+<script src="howitruns.js"></script>
+<script src="kirby.js"></script>
 <script src="finding.js"></script>
 <script src="modsplus.js"></script>
 <script src="couch.js"></script>
@@ -881,5 +908,6 @@ hr.sep { border:0; border-top:2px solid var(--line); margin:18px 0 14px }
 <script src="look.js"></script>
 <script src="devices.js"></script>
 <script src="pad.js"></script>
+<div id="splash" aria-hidden="true"><img src="mascot.png" alt=""><p>Decomp <b>Buddy</b></p></div>
 </body>
 </html>
