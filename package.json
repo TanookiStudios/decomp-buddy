@@ -109,6 +109,9 @@
       "artifactName": "decomp-buddy_${version}_amd64.deb",
       "maintainer": "Tanooki Studios <hello@tanookistudios.com>"
     },
+    "rpm": {
+      "maintainer": "Tanooki Studios <hello@tanookistudios.com>"
+    },
     "publish": [
       {
         "provider": "generic",
