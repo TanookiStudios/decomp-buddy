@@ -1,12 +1,12 @@
 {
-    "version": "0.32.1",
+    "version": "0.34.0",
     "description": "Finds, installs and updates fan-made PC ports of classic games, using your own game files.",
     "homepage": "https://decompbuddy.com/",
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/TanookiStudios/decomp-buddy/releases/download/v0.32.1/Decomp.Buddy.0.32.1.Portable.exe#/DecompBuddy.exe",
-            "hash": "ecf6f045711a87b0d160befb19c1c8ea8a37cea1c4a4fb424fc02607c88d9ad6"
+            "url": "https://github.com/TanookiStudios/decomp-buddy/releases/download/v0.34.0/Decomp.Buddy.0.34.0.Portable.exe#/DecompBuddy.exe",
+            "hash": "8bba31d6dd1854af3c3074aac17b39602011bd7a7284614c2a2bf748e8e31087"
         }
     },
     "shortcuts": [

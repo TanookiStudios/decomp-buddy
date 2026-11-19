@@ -39,7 +39,7 @@ const SAID = { Windows: /windows/i, macOS: /mac ?os|macintosh|\bmac\b/i, Linux: 
   ...Object.fromEntries(Object.values(CONSOLE_TARGETS).map((c) => [c.platform, new RegExp(`${c.name.source}|${c.label.replace(/[^A-Za-z0-9 ]/g, ".")}`, "i")])) };
 export const VERDICTS = ["play", "soon", "hide", "unsure"];
 const CONSOLES = ["PlayStation", "PlayStation 2", "PlayStation 3", "PlayStation 4", "PlayStation Portable", "Xbox", "Xbox 360", "Nintendo 64", "GameCube", "Wii", "Wii U",
-  "Nintendo Switch", "NES", "SNES", "Game Boy", "Game Boy Color", "Game Boy Advance", "Nintendo DS", "Nintendo 3DS", "Virtual Boy", "Mega Drive", "Master System", "Sega CD", "Saturn",
+  "Nintendo Switch", "Nintendo Switch 2", "NES", "SNES", "Game Boy", "Game Boy Color", "Game Boy Advance", "Nintendo DS", "Nintendo 3DS", "Virtual Boy", "Mega Drive", "Master System", "Sega CD", "Saturn",
   "Dreamcast", "Arcade", "IBM PC (MS-DOS)", "PC (Windows)", "Amiga", "Commodore 64", "Others"];
 
 const RULES = `# Sorting Decomp Buddy's Discover queue

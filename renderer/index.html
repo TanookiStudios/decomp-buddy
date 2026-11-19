@@ -163,9 +163,6 @@ button.small { padding:5px 10px; font-size:12px }
 #browse .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center } #browse .toolbar input[type=text] { flex:1; min-width:180px } #browse .toolbar select { width:auto }
 .filters { display:flex; gap:14px; flex-wrap:wrap; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 16px } .filters select { width:auto }
 /* console picker: one press shows one console */
-.conbar { display:flex; gap:6px; flex-wrap:wrap } .conbar button { white-space:nowrap }
-.conbar button { font:600 13px/1 var(--font); padding:8px 12px; border:1px solid var(--line); box-shadow:none; background:transparent; color:var(--muted) } .conbar button:hover:not(:disabled) { color:var(--fg); background:var(--card) }
-.conbar button .n { color:var(--muted); margin-left:4px } .conbar button[aria-pressed="true"] { background:var(--card); border-color:var(--line-strong); color:var(--fg) } .conbar button[aria-pressed="true"] .n { color:inherit; opacity:.7 }
 #catalogList, .cardList { flex:1; overflow:auto; min-height:200px; padding:2px 4px 8px 2px }
 .group-head { font:600 11px/1.2 var(--font); letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin:24px 0 12px; display:flex; gap:10px; align-items:center } .group-head:first-child { margin-top:4px } .group-head .n { color:var(--fg) } .group-head::after { content:""; flex:1; border-top:1px solid var(--line) }
 /* game tiles: the box art, the title, one line about it, one button */
@@ -196,7 +193,7 @@ button.small { padding:5px 10px; font-size:12px }
 .gtile .t { padding:12px 12px 0; min-width:0 }
 .gtile h4 { margin:0; font-size:14px; font-weight:600; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere } .gtile h4 a { color:inherit; text-decoration:none } .gtile h4 a:hover { text-decoration:underline }
 .gtile .line { font:400 12.5px/1.45 var(--font); color:var(--muted); margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap } .gtile .line.good { color:var(--ok) } .gtile .line + .line { margin-top:0 }
-.gtile .acts { display:flex; gap:6px; align-items:center; padding:12px; margin-top:auto } .gtile .acts button.pick, .gtile .acts button.upd { flex:1 } .gtile .acts .state { flex:1; font:600 12px/1.2 var(--font); color:var(--ok) } .gtile .acts .state.muted { color:var(--muted) }
+.gtile .acts { display:flex; gap:6px; align-items:center; padding:12px; margin-top:auto } .gtile .acts button.pick, .gtile .acts button.upd { flex:1; min-height:32px } .gtile .acts .state { flex:1; font:600 12px/1.2 var(--font); color:var(--ok) } .gtile .acts .state.muted { color:var(--muted) }
 .star { background:var(--raised); border:1px solid var(--line-strong); box-shadow:none; font-size:15px; cursor:pointer; color:var(--muted); width:32px; height:32px; padding:0; line-height:1; flex:none } .star.on { color:var(--accent) } .star:hover:not(:disabled) { border-color:var(--muted); color:var(--fg) }
 .badge { font:600 11.5px/1.2 var(--font); padding:2px 9px; border-radius:999px; border:1px solid color-mix(in srgb, currentColor 45%, transparent); white-space:nowrap }
 .badge.unknown, .badge.src, .badge.none, .badge.ai { color:var(--muted) } .badge.latest, .badge.inst { color:var(--ok) } .badge.prerelease { color:var(--warn) } .badge.upd { color:var(--fg) }
@@ -215,8 +212,6 @@ button { background:var(--pastel); color:var(--pastelfg); border-color:transpare
 button:hover:not(:disabled) { border-color:var(--pastelfg) }
 button.primary:hover:not(:disabled) { border-color:transparent }
 button.danger { background:transparent; border-color:var(--bad); color:var(--bad) }
-.conbar button { background:var(--pastel); color:var(--pastelfg); border-color:transparent } .conbar button:hover:not(:disabled) { background:var(--pastel); color:var(--pastelfg); border-color:var(--pastelfg) }
-.conbar button .n { color:inherit; opacity:.65 } .conbar button[aria-pressed="true"] { background:var(--accent); border-color:transparent; color:var(--accentfg) }
 .star { background:var(--pastel); color:var(--pastelfg); border-color:transparent } .star.on { background:var(--accent); color:var(--accentfg) } .star:hover:not(:disabled) { color:var(--pastelfg); border-color:var(--pastelfg) }
 .gtile .line.feat { display:flex; flex-wrap:wrap; gap:4px; font-size:0; white-space:normal; margin-top:6px }
 dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
@@ -451,6 +446,7 @@ dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
     </div>
     <div class="toolbar">
       <input id="catSearch" type="text" placeholder="Search title or project" autocomplete="off" spellcheck="false" aria-label="Search">
+      <select id="catCon" aria-label="Console"><option value="">All Consoles</option></select>
       <select id="catRunsOn" aria-label="Runs on"><option value="">Runs On: Any</option><option value="Windows">Runs On: Windows</option><option value="macOS">Runs On: macOS</option><option value="Linux">Runs On: Linux</option><option value="Android">Runs On: Android</option><option value="Meta Quest">Runs On: Meta Quest</option><option value="Steam Deck">Runs On: Steam Deck</option><option value="Xbox 360">Runs On: Xbox 360</option><option value="Xbox">Runs On: Xbox</option><option value="Xbox Series">Runs On: Xbox Series</option><option value="Switch">Runs On: Switch</option><option value="Wii U">Runs On: Wii U</option><option value="Wii">Runs On: Wii</option><option value="GameCube">Runs On: GameCube</option><option value="3DS">Runs On: 3DS</option><option value="DS">Runs On: DS</option><option value="PS Vita">Runs On: PS Vita</option><option value="PSP">Runs On: PSP</option><option value="PS2">Runs On: PS2</option><option value="PS3">Runs On: PS3</option><option value="PS4">Runs On: PS4</option><option value="Dreamcast">Runs On: Dreamcast</option></select>
       <select id="catSort" aria-label="Sort"><option value="popular">Popular</option><option value="newest">Newest</option><option value="updated">Recently Updated</option><option value="stars">Most GitHub Stars</option><option value="title">A-Z</option><option value="console" selected>Console, Then Title</option><option value="platforms">Runs On, Then Console</option></select>
       <button id="moreFiltersBtn" type="button" aria-expanded="false" aria-controls="moreFilters">More Filters</button>
@@ -473,7 +469,6 @@ dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
       <label class="check"><input id="catWish" type="checkbox"> Wishlist</label>
       <button id="clearFilters" type="button" class="small">Clear</button>
     </div>
-    <div id="conBar" class="conbar" role="group" aria-label="Console"></div>
     <div class="legal" id="where" role="region" aria-label="Where games go" hidden><span><span>Games you set up go into this folder:</span> <strong id="whereDir" translate="no"></strong><br><span>Keep your games on another drive? Pick a folder there - you can change it any time in Settings → Install Folder.</span><br><span>When you uninstall a game and keep your game files, they go here:</span> <strong id="whereRomDir" translate="no"></strong> <button id="whereRomChange" type="button" class="small">Change…</button></span><button id="whereChange" type="button">Change…</button><button id="whereOk" type="button">Keep It</button></div>
     <div class="legal" id="countAsk" role="region" aria-label="Count your set-ups" hidden><span><span>Help count how many games Decomp Buddy has set up?</span><br><span>When a new game finishes setting up, the app tells tanookistudios.com "+1 for this game" - just the game's name. Nothing about you or your computer is sent. You can change this any time in Settings.</span></span><button id="countYes" type="button">Count Mine</button><button id="countNo" type="button">No Thanks</button></div>
     <div class="status" id="catalogStatus" role="status" aria-live="polite"></div>

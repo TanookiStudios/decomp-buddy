@@ -31,7 +31,7 @@ JSON
 
 # name | what to do before the picture (renderer globals from app.js/finding.js; the catalog is live)
 SHOTS=(
-  'browse|await loadCatalog({ refresh: true }); showView("browse"); [...document.querySelectorAll("#conBar [data-con]")].find((b) => b.dataset.con === "Nintendo 64")?.click(); await wait(9000);'
+  'browse|await loadCatalog({ refresh: true }); showView("browse"); $("catCon").value = "Nintendo 64"; $("catCon").dispatchEvent(new Event("input")); await wait(9000);'
   'new-games|await loadCatalog({ refresh: false }); showView("new"); await wait(9000);'
   'games-you-may-like|await loadCatalog({ refresh: false }); showView("foryou"); await wait(9000);'
   'game-page|await loadCatalog({ refresh: false }); const g = catalog.games.find((x) => /zelda64recomp/i.test(x.repo || "")); const ic = await window.buddy.catalogIcon(g.id); if (ic) iconCache.set(g.id, ic.dataUrl); await showDetail(g); await wait(9000);'

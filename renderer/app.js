@@ -1325,7 +1325,6 @@ $("resultsFolder").onclick = () => window.buddy.open($("outDir").value.trim());
 // ---------- Browse (portsdr.com catalog) ----------
 let catalog = { games: [], installed: {}, fetchedAt: null, stale: false, error: null };
 const catSelected = new Set();          // game ids picked with Add, on any of the game pages
-let catCon = "";                        // the console button pressed in Browse ("" = All)
 const catalogPicks = new Map();         // repo url -> { preferredTag, artworkPath } handed to Read Repos
 const iconCache = new Map();            // id -> dataUrl | null | "pending"
 const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "");
@@ -1364,10 +1363,10 @@ async function applyCatalog() {
   $("catalogStatus").className = `status ${catalog.stale ? "bad" : ""}`;
   const counts = {};
   catalog.games.forEach((g) => { counts[g.console] = (counts[g.console] || 0) + 1; });
-  if (catCon && !counts[catCon]) catCon = "";
   const last = (c) => ["Others", "Unknown"].includes(c); // the catch-alls go at the end
-  $("conBar").innerHTML = [["", "All", catalog.games.length], ...Object.keys(counts).sort((a, b) => last(a) - last(b) || a.localeCompare(b)).map((c) => [c, c, counts[c]])]
-    .map(([v, label, n]) => `<button type="button" data-con="${esc(v)}" aria-pressed="${v === catCon}">${esc(label)}<span class="n">${n}</span></button>`).join("");
+  const was = $("catCon").value;
+  $("catCon").innerHTML = `<option value="">All Consoles</option>` + Object.keys(counts).sort((a, b) => last(a) - last(b) || a.localeCompare(b)).map((c) => `<option value="${esc(c)}">${esc(c)} (${counts[c]})</option>`).join("");
+  $("catCon").value = counts[was] ? was : "";
 }
 
 const isWished = (g) => !!(settings.wishlist || {})[g.id];
@@ -1405,7 +1404,7 @@ async function loadMine() { const r = await window.buddy.romPlayable($("target")
 function visibleGames() {
   const q = $("catSearch").value.trim().toLowerCase(), qw = searchWords(q), qs = qw.join(" ");
   const hay = new Map(), hayOf = (g) => hay.get(g) ?? hay.set(g, { t: searchWords(g.title).join(" "), all: ` ${searchWords(`${g.title} ${g.project} ${(g.aka || []).join(" ")}`).join(" ")} ` }).get(g);
-  const con = catCon, st = $("catStatus").value, srcF = $("catSource").value;
+  const con = $("catCon").value, st = $("catStatus").value, srcF = $("catSource").value;
   const plat = PLATFORM_OF_TARGET[$("target").value] || "Windows";
   const runsOn = $("catRunsOn").value, instOnly = $("catInstalled").checked, wishOnly = $("catWish").checked, playOnly = $("catPlayable").checked, mineOnly = $("catMine").checked, wellOnly = $("catRunsWell").checked, easyOnly = $("catEasy").checked, multiOnly = $("catMulti").checked, noAI = $("catNoAI").checked, aiWant = $("catAI").value, featWant = $("catFeature").value, listWant = $("catList").value;
   const runsOk = (g) => !runsOn || (runsOn === "Steam Deck" ? ["verified", "works"].includes(g.facts?.steam_deck) || g.platforms.includes("Linux") : g.platforms.includes(runsOn) || !g.platforms.length);
@@ -1544,12 +1543,7 @@ document.querySelectorAll("[data-ext]").forEach((a) => (a.onclick = (e) => { e.p
 for (const id of ["catSearch", "catStatus", "catSource", "catSort", "catRunsOn", "catPlayable", "catRunsWell", "catEasy", "catMulti", "catNoAI", "catAI", "catFeature", "catList", "catInstalled", "catWish"]) $(id).oninput = renderCatalog;
 $("catMine").oninput = async () => { if ($("catMine").checked) await loadMine(); renderCatalog(); };
 $("target").addEventListener("change", () => { mineIds = null; if ($("catMine").checked) loadMine().then(renderCatalog); });
-$("conBar").onclick = (e) => {
-  const b = e.target.closest("[data-con]"); if (!b) return;
-  catCon = b.dataset.con;
-  $("conBar").querySelectorAll("[data-con]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-  renderCatalog(); $("catalogList").scrollTop = 0;
-};
+$("catCon").oninput = () => { renderCatalog(); $("catalogList").scrollTop = 0; };
 $("moreFiltersBtn").onclick = () => { const open = $("moreFilters").hidden; $("moreFilters").hidden = !open; $("moreFiltersBtn").setAttribute("aria-expanded", String(open)); };
 $("clearFilters").onclick = () => { $("catStatus").value = ""; $("catSource").value = ""; $("catAI").value = ""; $("catFeature").value = ""; $("catList").value = ""; for (const id of ["catPlayable", "catMine", "catRunsWell", "catEasy", "catMulti", "catNoAI", "catInstalled", "catWish"]) $(id).checked = false; renderCatalog(); };
 $("catUpdateAll").onclick = () => updateAll(catalog.games.filter((g) => updateAvailable(g, installedFor(g))));
