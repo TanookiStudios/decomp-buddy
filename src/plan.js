@@ -6,6 +6,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { targetOf } from "./targets.js";
+import { aiHeaders, newSessionId } from "./aiheaders.js";
 
 export const GameFile = z.object({
   label: z.string().describe("Short name, e.g. 'Skate 3 disc image'"),
@@ -127,10 +128,14 @@ async function readError(res, label) {
 }
 
 // One chat completion against any OpenAI-compatible endpoint. Returns the assistant text.
-async function chatCompletion(provider, messages, { responseFormat, fetchImpl = fetch } = {}) {
+// sessionId is the analysis this request belongs to; the same one goes on every try.
+async function chatCompletion(provider, messages, { responseFormat, fetchImpl = fetch, sessionId } = {}) {
   const res = await fetchImpl(`${provider.baseUrl}/chat/completions`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...(provider.apiKey ? { Authorization: `Bearer ${provider.apiKey}` } : {}) },
+    headers: aiHeaders(sessionId, {
+      "Content-Type": "application/json",
+      ...(provider.apiKey ? { Authorization: `Bearer ${provider.apiKey}` } : {}),
+    }),
     body: JSON.stringify({ model: provider.model, messages, ...(responseFormat ? { response_format: responseFormat } : {}) }),
     signal: AbortSignal.timeout(300_000),
   });
@@ -171,9 +176,9 @@ async function planViaClaude(ctx, provider, log, opts) {
 }
 
 // OpenAI: strict JSON schema. Compatible: schema in the prompt, validate, retry once with the errors.
-export async function planViaOpenAICompatible(ctx, provider, log, { fetchImpl, ...opts } = {}) {
+export async function planViaOpenAICompatible(ctx, provider, log, { fetchImpl, sessionId = newSessionId(), ...opts } = {}) {
   const strict = provider.kind === "openai";
-  return planViaPromptedJSON(ctx, provider, log, { ...opts, strict, send: (messages) => chatCompletion(provider, messages, { responseFormat: strict ? { type: "json_schema", json_schema: { name: "plan", strict: true, schema: PLAN_JSON_SCHEMA } } : undefined, fetchImpl }) });
+  return planViaPromptedJSON(ctx, provider, log, { ...opts, strict, send: (messages) => chatCompletion(provider, messages, { responseFormat: strict ? { type: "json_schema", json_schema: { name: "plan", strict: true, schema: PLAN_JSON_SCHEMA } } : undefined, fetchImpl, sessionId }) });
 }
 // The plan as JSON text from any model (send(messages) -> text), validated with zod, one retry with the problems.
 export async function planViaPromptedJSON(ctx, provider, log, { send, strict = false, ...opts }) {
@@ -193,7 +198,7 @@ export async function planViaPromptedJSON(ctx, provider, log, { send, strict = f
 }
 
 // Any structured question, any provider: Claude via parse(), OpenAI strict schema, others schema-in-prompt + one retry.
-export async function askStructured(provider, { system, user, schema, name = "answer", maxTokens = 4000, log = () => {} }) {
+export async function askStructured(provider, { system, user, schema, name = "answer", maxTokens = 4000, log = () => {}, sessionId = newSessionId(), fetchImpl = fetch }) {
   let send = null;
   if (provider.kind === "claude") {
     const client = new Anthropic({ apiKey: provider.apiKey, baseURL: provider.baseUrl.replace(/\/v1$/, "") });
@@ -211,7 +216,7 @@ export async function askStructured(provider, { system, user, schema, name = "an
   const strict = !send && provider.kind === "openai";
   const messages = [{ role: "system", content: strict ? system : `${system}\n\nReply with ONLY a JSON object matching this JSON Schema, no prose, no code fences:\n${JSON.stringify(json)}` }, { role: "user", content: user }];
   for (let attempt = 0; attempt < 2; attempt++) {
-    const text = send ? await send(messages) : await chatCompletion(provider, messages, { responseFormat: strict ? { type: "json_schema", json_schema: { name, strict: true, schema: json } } : undefined });
+    const text = send ? await send(messages) : await chatCompletion(provider, messages, { responseFormat: strict ? { type: "json_schema", json_schema: { name, strict: true, schema: json } } : undefined, fetchImpl, sessionId });
     let parsed;
     try { parsed = schema.safeParse(extractJson(text)); } catch (err) { parsed = { success: false, error: { message: err.message } }; }
     if (parsed.success) return parsed.data;
@@ -222,21 +227,21 @@ export async function askStructured(provider, { system, user, schema, name = "an
   }
 }
 
-export async function planFromContext(ctx, { provider, log = () => {}, ...opts } = {}) {
+export async function planFromContext(ctx, { provider, log = () => {}, sessionId = newSessionId(), ...opts } = {}) {
   if (provider.kind === "apple") { const { planViaApple } = await import("./appleai.js"); return planViaApple(ctx, { target: opts.target, log }); }
   log(`Asking ${provider.label} (${provider.model}) to read the repo for ${targetOf(opts.target).label}…${opts.preferredTag ? ` (catalog says ${opts.preferredTag})` : ""}`);
-  return provider.kind === "claude" ? planViaClaude(ctx, provider, log, opts) : planViaOpenAICompatible(ctx, provider, log, opts);
+  return provider.kind === "claude" ? planViaClaude(ctx, provider, log, opts) : planViaOpenAICompatible(ctx, provider, log, { ...opts, sessionId });
 }
 
-export async function listModels(provider) {
+export async function listModels(provider, { fetchImpl = fetch, sessionId } = {}) {
   if (provider.kind === "claude") {
     const client = new Anthropic({ apiKey: provider.apiKey, baseURL: provider.baseUrl.replace(/\/v1$/, "") });
     const ids = [];
     for await (const m of client.models.list()) ids.push(m.id);
     return ids.sort();
   }
-  const res = await fetch(`${provider.baseUrl}/models`, {
-    headers: provider.apiKey ? { Authorization: `Bearer ${provider.apiKey}` } : {},
+  const res = await fetchImpl(`${provider.baseUrl}/models`, {
+    headers: aiHeaders(sessionId, provider.apiKey ? { Authorization: `Bearer ${provider.apiKey}` } : {}),
     signal: AbortSignal.timeout(30_000),
   });
   if (!res.ok) throw await readError(res, provider.label);

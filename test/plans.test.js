@@ -42,6 +42,27 @@ test("analyzeOne: onlyGames keeps exactly the picked games; punctuation doesn't 
   await assert.rejects(analyzeOne("https://github.com/GTTeancum/OpenSpideyPS1", { log: () => {}, published, fetchContext, onlyGames: ["Not A Game Here"] }), /no longer lists Not A Game Here/);
 });
 
+test("analyzeOne: one session UUID per analysis, reused when a redirect asks the model again", async () => {
+  const sessions = [];
+  let calls = 0;
+  const fetchContext = async () => ({ releases: [{ tag_name: "v2.0.2", assets: [{ name: "Skate3Recomp-Windows.zip" }] }] });
+  const planner = async (_ctx, opts) => {
+    sessions.push(opts.sessionId);
+    return calls++ === 0 ? { redirect_repo: "other/repo", games: [] } : structuredClone(analysis);
+  };
+  const first = await analyzeOne("https://github.com/mchughalex/skate3recomp", { log: () => {}, provider: {}, planner, fetchContext });
+  assert.equal(first[0].plan.game_title, "Skate 3");
+  assert.equal(sessions.length, 2);
+  assert.match(sessions[0], /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+  assert.equal(sessions[1], sessions[0], "the redirected repo stays in the same analysis session");
+  // A separate Read Repos run is a separate analysis.
+  const firstSession = sessions[0];
+  sessions.length = 0;
+  await analyzeOne("https://github.com/mchughalex/skate3recomp", { log: () => {}, provider: {}, planner, fetchContext });
+  assert.equal(sessions.length, 1);
+  assert.notEqual(sessions[0], firstSession);
+});
+
 test("fetchPublished creates its cache folder (the CLI's ~/.decomp-buddy may not exist yet)", async () => {
   const { fetchPublished } = await import("../src/plans.js");
   const dir = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "pc-")), "not", "yet");
