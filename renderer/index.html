@@ -113,7 +113,8 @@ main { flex:1; min-width:0; display:flex; flex-direction:column; overflow:auto }
 .addSrc { display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center } .addSrc select { width:auto }
 main > section.view { display:none; flex-direction:column; gap:14px; padding:46px 28px 24px; flex:1; min-height:0 }
 /* Big Picture Mode: pinned to the top right of every screen, in the strip the views' top padding leaves free */
-#bigPicture { position:fixed; top:8px; right:28px; z-index:5; font-size:12.5px; padding:4px 10px } main > section.view.active { display:flex }
+/* Sits at the top of the page and scrolls away with it, so it never covers a game card (it used to be pinned on top). */
+main { position:relative } #bigPicture { position:absolute; top:8px; right:28px; z-index:5; font-size:12.5px; padding:4px 10px } main > section.view.active { display:flex }
 .settings-body { display:flex; flex-direction:column; gap:14px; max-width:640px }
 .about { max-width:640px } .about .eyebrow { font:600 11px/1.2 var(--font); text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:0 } .about h1 { margin:2px 0 12px }
 .about p { margin:0 0 12px; line-height:1.6 } .about .sig { color:var(--fg); margin-top:10px }
@@ -244,6 +245,7 @@ dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
   <button type="button" class="ver verlink" id="whatsNewBtn">What's New</button>
 </nav>
 <main>
+  <button id="bigPicture" type="button" title="Full screen, big tiles, controller-friendly - for the TV or a Steam Deck">Big Picture Mode</button>
   <div id="offlineBanner" class="banner" role="status" hidden>You're offline. Browse and Coming Soon show their saved lists; Installed Games, Play, Saves and Roll Back all work. Games you set up now wait and install by themselves when you're back online.</div>
   <div id="newsBar" class="banner news" role="status" hidden><span id="newsText"></span> <a href="#" id="newsMore" hidden>Read More</a><button id="newsClose" type="button" class="small" aria-label="Dismiss this news">Dismiss</button></div>
   <div id="updateBar" role="status"><span id="updateText"></span><span class="grow"></span><button id="updateGet" type="button">Download</button><button id="updateLater" type="button">Later</button></div>
@@ -814,7 +816,6 @@ dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
 </main>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="ranAsk" class="addGame" hidden role="dialog" aria-labelledby="ranTitle"></div>
-<button id="bigPicture" type="button" title="Full screen, big tiles, controller-friendly - for the TV or a Steam Deck">Big Picture Mode</button>
 <div id="couch" hidden role="dialog" aria-modal="true" aria-label="Big Picture Mode">
   <div class="cbar"><img src="mascot.png" alt=""><strong>Decomp Buddy</strong><span class="grow"></span><span class="chint">A Play · Y Details · B Back · LB/RB Rows · Start Exit</span><button id="couchExit" type="button">Exit Big Picture Mode</button></div>
   <div id="couchRows"></div>
