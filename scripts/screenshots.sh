@@ -50,8 +50,21 @@ MM='const g = library.find((x) => /zelda64recomp/i.test(x.repo || ""));'
   'make-it-yours|await setLook({ accent: "#b8336a", cardSize: 190 }); document.querySelector("nav.side button[data-nav=settings]").click(); await wait(2500); [...document.querySelectorAll("label")].find((l) => l.textContent.trim() === "Make It Yours").scrollIntoView({ block: "start" }); await wait(1500);'
   'headsets-and-phones|document.querySelector("nav.side button[data-nav=devices]").click(); await wait(6000);'
 )
+# The Reddit set: one picture per feature the post sells. Ask Kirby asks one real question (a few cents).
+[ "${SET:-}" = reddit ] && SHOTS=(
+  'browse|await loadCatalog({ refresh: true }); showView("browse"); $("catRunsOn").value = ""; $("catRunsOn").dispatchEvent(new Event("input")); $("catSort").value = "popular"; $("catSort").dispatchEvent(new Event("input")); await wait(9000);'
+  'ask-kirby|await loadCatalog({ refresh: false }); showView("browse"); for (let i = 0; i < 20 && $("kirbyBtn").hidden; i++) await wait(500); openKirby(); $("kirbyQ").value = "Something like Zelda that runs on a Steam Deck?"; $("kirbyForm").requestSubmit(); for (let i = 0; i < 90 && (kirbyBusy || !$("kirbyLog").textContent.trim()); i++) await wait(1000); await wait(4000); $("kirbyLog").scrollTop = 0; await wait(500);'
+  'what-should-i-play|await loadCatalog({ refresh: false }); showView("browse"); openPick(); $("pickConsole").value = "Nintendo 64"; $("pickHow").value = "alone"; $("pickMatters").value = "complete"; await runPick(); await wait(3000);'
+  'runs-on-meta-quest|await loadCatalog({ refresh: false }); showView("browse"); $("catRunsOn").value = "Meta Quest"; $("catRunsOn").dispatchEvent(new Event("change")); $("catRunsOn").dispatchEvent(new Event("input")); await wait(9000);'
+  'runs-on-linux|await loadCatalog({ refresh: false }); showView("browse"); $("catRunsOn").value = "Linux"; $("catRunsOn").dispatchEvent(new Event("change")); $("catRunsOn").dispatchEvent(new Event("input")); $("catSort").value = "platforms"; $("catSort").dispatchEvent(new Event("input")); await wait(20000); document.querySelectorAll(".toast, #toast").forEach((t) => t.remove());'
+  'hide-ai-assisted|await loadCatalog({ refresh: false }); showView("browse"); $("catNoAI").checked = true; $("catNoAI").dispatchEvent(new Event("change")); $("catNoAI").dispatchEvent(new Event("input")); await wait(9000);'
+  'big-picture-mode|await loadCatalog({ refresh: false, checkInstalled: true }); await openCouch(); await wait(8000);'
+  'coming-soon|document.querySelector("nav.side button[data-nav=soon]").click(); for (let i = 0; i < 40 && !document.querySelector("#soonList .srcRow"); i++) await wait(500); await wait(1500); for (const b of [...document.querySelectorAll("#soonList [data-watch]")].slice(0, 2)) { b.click(); await wait(1500); } await wait(1500);'
+  'meta-quest-setup|document.querySelector("nav.side button[data-nav=devices]").click(); await wait(6000);'
+)
 for s in "${SHOTS[@]}"; do
   name=${s%%|*}; body=${s#*|}
+  [[ -n "${ONLY:-}" && " $ONLY " != *" $name "* ]] && continue   # ONLY="a b" retakes just those
   print -r -- "await refresh(); $body document.getElementById('toast')?.remove(); return { ok: true };" > $W/$name.js
   rm -f "$OUT/$name.png"
   SMOKE_SHOT="$OUT/$name.png" SMOKE_TIMEOUT=150000 scripts/smoke.sh $W/$name.js $P > $W/$name.log 2>&1 || true

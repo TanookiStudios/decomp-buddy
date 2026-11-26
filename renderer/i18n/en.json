@@ -2,7 +2,7 @@
  "_meta": {
   "language": "English",
   "source": true,
-  "strings": 1405
+  "strings": 1407
  },
  "strings": {
   "(Decomp Buddy gets this for you)": "(Decomp Buddy gets this for you)",
@@ -293,6 +293,8 @@
   "Download Platform-Tools": "Download Platform-Tools",
   "Download Platform-Tools First": "Download Platform-Tools First",
   "Download Selected Games": "Download Selected Games",
+  "Download Source": "Download Source",
+  "Download the source code of {0}: {1}": "Download the source code of {0}: {1}",
   "Download {0}": "Download {0}",
   "Downloaded into Decomp Buddy Mods/downloads.": "Downloaded into Decomp Buddy Mods/downloads.",
   "Downloading Decomp Buddy {0}{1}…": "Downloading Decomp Buddy {0}{1}…",

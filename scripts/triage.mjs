@@ -21,6 +21,7 @@ import { enrichMany, enrichFromGitLab, enrichFromForgejo, publishFinds } from ".
 import { FORGEJO, forgejoOf, anyRefFromUrl } from "../src/forges.js";
 import { readWaiting, excludedKeys } from "../src/waiting.js";
 import { CONSOLES as CONSOLE_TARGETS, CONSOLE_PLATFORMS } from "../src/targets.js";
+import { CONSOLE_NAMES as CONSOLES } from "../src/renames.js";
 import { scanReddit, scanBluesky, scanGitHub, scanGitHubTopics, scanRecompHaven, scanUnbaked, scanAwesomeLists, scanRecompFyi } from "../src/discover.js";
 
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
@@ -38,9 +39,6 @@ const PLAYABLE = [...DESKTOP, ...CONSOLE_PLATFORMS];
 const SAID = { Windows: /windows/i, macOS: /mac ?os|macintosh|\bmac\b/i, Linux: /linux/i, Android: /android/i, "Meta Quest": /quest|oculus/i,
   ...Object.fromEntries(Object.values(CONSOLE_TARGETS).map((c) => [c.platform, new RegExp(`${c.name.source}|${c.label.replace(/[^A-Za-z0-9 ]/g, ".")}`, "i")])) };
 export const VERDICTS = ["play", "soon", "hide", "unsure"];
-const CONSOLES = ["PlayStation", "PlayStation 2", "PlayStation 3", "PlayStation 4", "PlayStation Portable", "Xbox", "Xbox 360", "Nintendo 64", "GameCube", "Wii", "Wii U",
-  "Nintendo Switch", "Nintendo Switch 2", "NES", "SNES", "Game Boy", "Game Boy Color", "Game Boy Advance", "Nintendo DS", "Nintendo 3DS", "Virtual Boy", "Mega Drive", "Master System", "Sega CD", "Saturn",
-  "Dreamcast", "Arcade", "IBM PC (MS-DOS)", "PC (Windows)", "Amiga", "Commodore 64", "Others"];
 
 const RULES = `# Sorting Decomp Buddy's Discover queue
 
@@ -127,6 +125,9 @@ async function readme(repo) {
 // that fails to sort today is fetched again tomorrow instead of being dropped.
 const d1 = (sql) => JSON.parse(execFileSync("npx", ["--yes", "wrangler", "d1", "execute", "tanooki-site", "--remote", "--json", "--command", sql],
   { cwd: SITE, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }))[0].results;
+const d1File = (sql) => { const f = J("d1.sql"); fs.writeFileSync(f, sql);
+  execFileSync("npx", ["--yes", "wrangler", "d1", "execute", "tanooki-site", "--remote", "--file", f], { cwd: SITE, stdio: ["ignore", "pipe", "pipe"] }); };
+const sq = (v) => v == null ? "NULL" : typeof v === "number" ? String(v) : `'${String(v).replace(/'/g, "''")}'`;
 // Repos already sorted (an answer file in done/), and the "unsure" ones waiting for Maddie (unsure.jsonl).
 // decided: only play/soon/hide answers - an "unsure" answer is still waiting for a decision.
 const answeredRepos = (decided = false) => new Set(fs.readdirSync(J("done")).flatMap((f) => readJSON(J("done", f)).results.filter((r) => !decided || r.verdict !== "unsure").map((r) => r.queued || r.repo).map((r) => r.toLowerCase())));
@@ -134,12 +135,14 @@ const askedRepos = () => new Set(fs.existsSync(J("unsure.jsonl")) ? fs.readFileS
 function suggestions(have) {
   const rows = d1("SELECT id, repo_url FROM decomp_suggestions WHERE status = 'pending' ORDER BY created_at, id").map((r) => ({ id: Number(r.id), repo: queueKey(r.repo_url) }));
   const close = (list, status) => { const ids = list.map((r) => r.id).filter(Number.isInteger); if (ids.length) d1(`UPDATE decomp_suggestions SET status = '${status}', updated_at = datetime('now') WHERE id IN (${ids.join(",")})`); return ids.length; };
-  const answered = answeredRepos(true), asked = askedRepos(), key = (r) => r.repo.toLowerCase();
-  const filed = close(rows.filter((r) => have.has(key(r))), "have");
+  const answered = answeredRepos(true), asked = askedRepos();
+  // Listed under a new name counts as filed (a renamed repo's suggestion otherwise stayed pending forever: 44 did, 12-21 Nov).
+  const isHave = (r) => have.has(r.repo.toLowerCase()) || have.has(String(ctxOfRepo(r.repo)?.repo || "").toLowerCase()), key = (r) => r.repo.toLowerCase();
+  const filed = close(rows.filter(isHave), "have");
   // Sorted but not listed (not a game, gone, a copy): closed, or the same rows would fill every hour's batch forever (17 Nov 2026: 148 of 150 were).
-  const turned = close(rows.filter((r) => !have.has(key(r)) && answered.has(key(r))), "rejected");
+  const turned = close(rows.filter((r) => !isHave(r) && answered.has(key(r))), "rejected");
   // Unsure ones stay pending (Maddie's admin queue shows them) but don't take a slot; they wait for her.
-  const todo = rows.filter((r) => !have.has(key(r)) && !answered.has(key(r)) && !asked.has(key(r)));
+  const todo = rows.filter((r) => !isHave(r) && !answered.has(key(r)) && !asked.has(key(r)));
   // Oldest first (created_at: one Maddie moves to the front gets an early date), 300 a run (raised from 150 on 17 Nov 2026 to clear the backlog): a big batch spreads over a few hourly runs instead of one huge one.
   console.log(`player suggestions: ${rows.length} pending, ${filed} already filed and closed, ${turned} sorted earlier and closed, ${rows.length - filed - turned - todo.length} waiting for Maddie, ${Math.min(todo.length, 300)} sorted this run${todo.length > 300 ? `, ${todo.length - 300} wait for the next` : ""}`);
   return todo.slice(0, 300);
@@ -150,7 +153,7 @@ function suggestions(have) {
 // put it back. Each action is stamped done once applied.
 export function applyAdminActions(w, rows) {
   const same = (key) => (g) => `${g.host || "github"}:${g.repo}`.toLowerCase() === key;
-  for (const a of rows) {
+  for (const a of rows.filter((x) => x.action === "remove" || x.action === "restore")) {
     const is = same(a.repo_key), [host, repo] = a.repo_key.split(":");
     const removed = w.hidden.find((g) => is(g) && /^removed by maddie/i.test(g.reason || ""));
     w.hidden = w.hidden.filter((g) => g !== removed);
@@ -161,28 +164,129 @@ export function applyAdminActions(w, rows) {
   }
   return w;
 }
-function adminActions() {
-  const rows = d1("SELECT id, action, repo_key, title FROM decomp_admin_actions WHERE done_at IS NULL ORDER BY id");
+// The queue buttons (21 Nov 2026): Approve, Full Approval and Reject. Maddie's decision beats the robot's, whatever
+// it said before (unsure, hidden, or not sorted yet).
+const aKey = (r) => (forgeOf(r) ? r : `github:${r}`).toLowerCase(); // sorter key -> the admin page's key
+const qKey = (k) => (k.startsWith("github:") ? k.slice(7) : k); // the admin page's key -> sorter key
+const urlOf = (r) => { const h = forgeOf(r); return h ? `${forge(h).site}/${r.slice(h.length + 1)}` : `https://github.com/${r}`; };
+const ctxOfRepo = (r) => { const f = J("ctx", `${idOf(r)}.json`); return fs.existsSync(f) ? readJSON(f) : null; };
+async function ctxFor(r) {
+  const have = ctxOfRepo(r); if (have) return have;
+  const host = forgeOf(r);
+  try {
+    const e = host ? await forge(host).enrich(r.slice(host.length + 1)) : [...(await enrichMany([r])).values()][0];
+    if (!e || e instanceof Error) return null;
+    const c = { queued: r, ...e, ...(host ? { host, repo: `${host}:${e.repo}` } : {}) };
+    c.readme = e.exists ? await readme(c.repo) : "";
+    fs.writeFileSync(J("ctx", `${idOf(r)}.json`), JSON.stringify(c)); return c;
+  } catch { return null; }
+}
+// The robot's newest answer per repo (its title and console guess), oldest answer files first.
+function answersByRepo() {
+  const m = new Map();
+  for (const f of fs.readdirSync(J("done")).map((f) => [f, fs.statSync(J("done", f)).mtimeMs]).sort((a, b) => a[1] - b[1]))
+    for (const x of readJSON(J("done", f[0])).results) { const k = String(x.queued || x.repo).toLowerCase(); m.set(k, { ...x, at: f[1] }); const c = ctxOfRepo(k); if (c?.repo) m.set(String(c.repo).toLowerCase(), { ...x, at: f[1] }); }
+  return m;
+}
+// What the author is told when Maddie rejects with "tell the author" ticked (the site emails the same words).
+export const authorNote = (repo, reason) => `Hi! Decomp Buddy is a free launcher that lists decomps, recomps and PC ports so people can find and play them.
+
+We looked at ${repo} and decided not to list it for now.
+
+Reason: ${reason || "it isn't a fit for the catalog right now."}
+
+If we got that wrong, or things change later, just reply here or email hello@decompbuddy.com and we'll take another look. Thanks for making cool stuff!
+
+- Decomp Buddy`;
+function tellAuthor(repo, reason) {
+  if (forgeOf(repo)) return "The author couldn't be reached: no public email, and the project isn't on GitHub.";
+  try {
+    execFileSync("gh", ["issue", "create", "-R", repo, "--title", "About listing this project in Decomp Buddy", "--body", authorNote(repo, reason)], { stdio: ["ignore", "pipe", "pipe"] });
+    return "A note was left on the project's GitHub page.";
+  } catch (e) { return `The author couldn't be reached (${/disabled|not enabled/i.test(String(e.stderr)) ? "issues are turned off on that project" : "GitHub refused the note"}).`; }
+}
+// Full Approval: listed once its install steps exist, without waiting for the malware scan. The scan still runs
+// straight after, and a flagged file takes the game back out (src/publiccatalog.js, Maddie's call 21 Nov 2026).
+function fastTrack(repo) {
+  const f = path.join(DIR, "fast-track.json"); let m = {}; try { m = readJSON(f); } catch {}
+  m[aKey(repo)] = new Date().toISOString().slice(0, 10);
+  fs.writeFileSync(f, JSON.stringify(m, null, 2) + "\n");
+}
+async function adminActions() {
+  const rows = d1("SELECT id, action, repo_key, title, reason, notify FROM decomp_admin_actions WHERE done_at IS NULL ORDER BY id");
   if (!rows.length) return 0;
-  const file = path.join(SITE, "public", "decomp-buddy", "waiting.json");
-  fs.writeFileSync(file, JSON.stringify(applyAdminActions(readJSON(file), rows), null, 2) + "\n");
-  d1(`UPDATE decomp_admin_actions SET done_at = datetime('now') WHERE id IN (${rows.map((r) => Number(r.id)).filter(Number.isInteger).join(",")})`);
+  const wf = path.join(DIR, "waiting.json");
+  if (rows.some((a) => a.action === "remove" || a.action === "restore")) fs.writeFileSync(wf, JSON.stringify(applyAdminActions(readJSON(wf), rows), null, 2) + "\n");
+  const answers = answersByRepo(), now = new Date().toISOString(), via = "Approved by Maddie";
+  for (const a of rows.filter((x) => x.action !== "remove" && x.action !== "restore")) {
+    const r = qKey(String(a.repo_key)), c = await ctxFor(r), robot = answers.get(r.toLowerCase()) || {};
+    const repo = c?.repo || r, title = a.title || robot.title || repo.split("/").pop(), con = robot.console || "Unknown";
+    if (a.action === "approve" || a.action === "approve_full") {
+      if (!c?.exists) { a.result = "The project couldn't be read (deleted or private), so nothing was added."; continue; }
+      fs.appendFileSync(J("maddie-approves.jsonl"), JSON.stringify({ repo, title, at: now }) + "\n");
+      if (!(c.releases || []).some((x) => x.files.length)) {
+        fileDecisions({ soon: [{ repo, title, console: con, notes: c.notes || "", website: c.website || "", addedAt: now, via }] }, new Set([r.toLowerCase()]));
+        a.result = "Approved, but it has no download yet, so it's in Coming Soon until it does."; continue;
+      }
+      fileDecisions({ finds: [{ repo, title, console: con, platforms: (c.platforms || []).filter((p) => PLAYABLE.includes(p)), version: c.version, status: c.status, updatedAt: c.updatedAt, notes: c.notes || "", website: c.website || "", addedAt: now, via }] }, new Set([r.toLowerCase()]));
+      if (a.action === "approve_full") fastTrack(repo);
+      a.result = a.action === "approve_full" ? "Approved: it's listed as soon as its install steps are written; the malware scan runs straight after." : "Approved: install steps, then the malware scan, then it's backed up and listed.";
+    } else if (a.action === "reject") {
+      fileDecisions({ hide: [{ repo, title, reason: `Rejected by Maddie: ${a.reason || "not a fit"}` }] }, new Set([r.toLowerCase()]));
+      fs.appendFileSync(J("maddie-rejects.jsonl"), JSON.stringify({ repo, title, reason: a.reason || "", at: now }) + "\n");
+      a.result = `Rejected.${a.notify === "issue" ? ` ${tellAuthor(repo, a.reason)}` : a.notify === "emailed" ? " The author was emailed." : a.notify === "unreachable" ? " The author couldn't be reached." : ""}`;
+    } else a.result = `"${a.action}" isn't something this script knows, so nothing was done.`;
+  }
+  d1File(rows.map((a) => `UPDATE decomp_admin_actions SET done_at = datetime('now'), result = ${sq(a.result || "Done.")} WHERE id = ${Number(a.id)};`).join("\n"));
   console.log(`admin actions: ${rows.map((r) => `${r.action} ${r.title || r.repo_key}`).join(", ")}`);
   return rows.length;
+}
+
+// Teaching the robot: Maddie's own decisions go at the end of the sorting rules, so the same kind of repo gets the same answer.
+const lines = (f) => (fs.existsSync(J(f)) ? fs.readFileSync(J(f), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)) : []);
+function maddieRules() {
+  const no = lines("maddie-rejects.jsonl").slice(-60), yes = lines("maddie-approves.jsonl").slice(-40);
+  return (no.length ? `\n## Maddie turned these down by hand\nAnswer "hide" for anything like them, for the same reason:\n${no.map((x) => `- ${x.repo}: ${x.reason || "not a fit"}`).join("\n")}\n` : "")
+    + (yes.length ? `\n## Maddie approved these by hand\nThey are the kind of project she wants listed; don't answer "unsure" for ones like them:\n${yes.map((x) => `- ${x.repo} (${x.title})`).join("\n")}\n` : "");
+}
+
+// The admin page's queue (D1 decomp_queue): what waits for Maddie, what the robot sorts this hour, and what it hid in
+// the last 7 days (so she can overrule it). Rows that left the queue are deleted. Health: what broke this hour.
+function syncQueue(sorting = [], via = new Map(), broken = null) {
+  const answers = answersByRepo(), w = readWaiting(path.join(DIR, "waiting.json")), rows = new Map(), week = Date.now() - 7 * 864e5;
+  const add = (r, kind, reason, title) => {
+    const c = ctxOfRepo(r), a = answers.get(r.toLowerCase()), repo = c?.repo || r;
+    rows.set(aKey(repo), { key: aKey(repo), url: urlOf(repo), title: title || a?.title || repo.split("/").pop(), console: a?.console || "", platforms: (c?.platforms || []).filter((p) => PLAYABLE.includes(p)).join(", "), stars: Number.isFinite(c?.stars) ? c.stars : null, kind, reason: reason || "", via: via.get(r.toLowerCase()) || "" });
+  };
+  const robotHid = new Set(w.hidden.filter((g) => !/^(removed|rejected) by maddie/i.test(g.reason || "")).map((g) => `${g.host || "github"}:${g.repo}`.toLowerCase()));
+  for (const [k, a] of answers) if (a.verdict === "hide" && a.at > week && robotHid.has(aKey(ctxOfRepo(k)?.repo || k))) add(k, "hidden", a.reason, a.title);
+  for (const r of sorting) add(r, "sorting");
+  for (const u of lines("unsure.jsonl")) add(u.repo, "unsure", u.reason, u.title);
+  const at = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const cols = "repo_key, url, title, console, platforms, stars, kind, reason, via, first_seen, updated_at";
+  const sql = [...rows.values()].map((x) => `INSERT INTO decomp_queue (${cols}) VALUES (${[x.key, x.url, x.title, x.console, x.platforms, x.stars, x.kind, x.reason, x.via, at, at].map(sq).join(", ")})
+    ON CONFLICT(repo_key) DO UPDATE SET url = excluded.url, title = excluded.title, console = excluded.console, platforms = excluded.platforms, stars = excluded.stars, reason = excluded.reason,
+    via = CASE WHEN excluded.via <> '' THEN excluded.via ELSE decomp_queue.via END, first_seen = CASE WHEN decomp_queue.kind = excluded.kind THEN decomp_queue.first_seen ELSE excluded.first_seen END, kind = excluded.kind, updated_at = excluded.updated_at;`);
+  sql.push(`DELETE FROM decomp_queue WHERE updated_at <> ${sq(at)};`);
+  if (broken) sql.push("DELETE FROM decomp_health;", ...broken.map(([id, m]) => `INSERT INTO decomp_health (id, message) VALUES (${sq(id)}, ${sq(m)});`), `INSERT INTO decomp_health (id, message) VALUES ('heartbeat', 'The hourly run checked in.');`);
+  d1File(sql.join("\n"));
+  console.log(`admin queue: ${[...rows.values()].filter((x) => x.kind === "unsure").length} waiting for Maddie, ${sorting.length} being sorted, ${[...rows.values()].filter((x) => x.kind === "hidden").length} hidden this week${broken?.length ? `; broken: ${broken.map(([id]) => id).join(", ")}` : ""}`);
 }
 
 async function prep() {
   const size = Number(arg("--batch")) || 25;
   for (const d of ["jobs", "ctx", "out", "done"]) fs.mkdirSync(J(d), { recursive: true });
-  fs.writeFileSync(J("RULES.md"), RULES);
+  fs.writeFileSync(J("RULES.md"), RULES + maddieRules());
   // --repos <file>: sort a hand-picked list (one owner/repo per line, e.g. from browser tabs) instead of the app's queue.
   const list = arg("--repos");
+  if (!list) await adminActions(); // before known(), so a game approved or rejected on the admin page isn't sorted again
   const have = known(), queue = list ? fs.readFileSync(list, "utf8").split("\n").map((l) => l.trim()).filter(Boolean).map((l) => ({ repo: queueKey(l) })) : Object.values(readJSON(QUEUE).discovered || {});
   // --scan: run every Discover scanner right here (Bluesky, GitHub topics, GitHub search 3 pages deep, recomphaven.com, unbaked.games), so a full
   // scan doesn't wait for someone to press Discover in the app. Reddit is added just below.
-  if (arg("--scan") !== null || process.argv.includes("--scan")) {
-    for (const [name, fn] of [["Bluesky", () => scanBluesky()], ["GitHub topics", () => scanGitHubTopics({ pages: 3, log: console.log })], ["GitHub search", () => scanGitHub({ pages: 3, log: console.log })], ["recomphaven.com", () => scanRecompHaven()], ["unbaked.games", () => scanUnbaked({ cacheFile: J("unbaked-cache.json"), log: console.log })], ["awesome lists", () => scanAwesomeLists()], ["recomp.fyi", () => scanRecompFyi()], ["player suggestions", () => (adminActions(), suggestions(have))]]) {
-      try { const r = await fn(); console.log(`${name}: ${r.length} candidate(s)`); queue.push(...r); } catch (err) { console.log(`${name} failed: ${err.message}`); }
+  const scanning = arg("--scan") !== null || process.argv.includes("--scan"), broken = [];
+  if (scanning) {
+    for (const [name, fn] of [["Bluesky", () => scanBluesky()], ["GitHub topics", () => scanGitHubTopics({ pages: 3, log: console.log })], ["GitHub search", () => scanGitHub({ pages: 3, log: console.log })], ["recomphaven.com", () => scanRecompHaven()], ["unbaked.games", () => scanUnbaked({ cacheFile: J("unbaked-cache.json"), log: console.log })], ["awesome lists", () => scanAwesomeLists()], ["recomp.fyi", () => scanRecompFyi()], ["player suggestions", () => suggestions(have)]]) {
+      try { const r = await fn(); console.log(`${name}: ${r.length} candidate(s)`); queue.push(...r); } catch (err) { console.log(`${name} failed: ${err.message}`); broken.push([name, `${name} isn't working: ${err.message}`]); }
     }
   }
   // The queue sort also reads Reddit's newest posts itself (--no-reddit skips it; a --repos list never does).
@@ -190,6 +294,7 @@ async function prep() {
     const r = await scanReddit();
     const leads = await titleLeads(r.unlinked);
     console.log(`reddit: ${r.length} linked repo(s), ${r.unlinked.length} post(s) without a link -> ${leads.length} GitHub match(es)${r.errors.length ? ` (${r.errors.join("; ")})` : ""}`);
+    if (r.errors.length && !r.length && !r.unlinked.length) broken.push(["Reddit", `Reddit isn't answering, so no new games are found there (${r.errors.join("; ")}).`]);
     queue.push(...r, ...leads);
   }
   const listed = new Map([...have].map((r) => [r.split("/")[1], r]));
@@ -216,10 +321,17 @@ async function prep() {
       fs.writeFileSync(J("ctx", `${idOf(repo)}.json`), JSON.stringify({ queued: repo, ...e, readme: e.exists ? await readme(e.repo) : "" })); } }));
     if (got.length < infos.size && [...infos.values()].some((e) => /rate limit/i.test(e?.message || ""))) { console.log("GitHub rate limit - run prep again after it resets"); break; }
   }
-  // Batches are rebuilt from every fetched repo not yet answered, so a re-run after a rate limit picks up the rest.
-  const answered = list ? new Set() : answeredRepos(); // a --repos list is sorted again even if answered before
+  // Batches are rebuilt from every fetched repo not yet filed, so a re-run after a rate limit picks up the rest. An old
+  // answer doesn't count: import files every answer, so one still here was un-filed later (12 Nov 2026: 717 console
+  // ports taken off the hidden list to be sorted again sat here for 9 days because their old "hide" was counted).
   // Renamed repos: the queue may hold the old name of something we already list, so check GitHub's current one too.
-  const ready = todo.filter((r) => fs.existsSync(J("ctx", `${idOf(r)}.json`)) && !answered.has(r.toLowerCase()) && !have.has(String(readJSON(J("ctx", `${idOf(r)}.json`)).repo).toLowerCase()));
+  const ready = todo.filter((r) => fs.existsSync(J("ctx", `${idOf(r)}.json`)) && !have.has(String(readJSON(J("ctx", `${idOf(r)}.json`)).repo).toLowerCase()));
+  // queue.json: every repo still "to sort" and why it's there, so the queue can be looked at.
+  if (!list) {
+    const via = new Map(queue.filter((c) => c.repo).map((c) => [c.repo.toLowerCase(), c.via || c.source || c.title || ""]));
+    const state = (r) => ready.includes(r) ? "Sorting this hour" : !fs.existsSync(J("ctx", `${idOf(r)}.json`)) ? "Couldn't read it yet" : "Already listed under a new name";
+    fs.writeFileSync(J("queue.json"), JSON.stringify({ at: new Date().toISOString(), items: todo.map((r) => ({ repo: r, state: state(r), via: via.get(r.toLowerCase()) || "" })) }, null, 1));
+  }
   for (const f of fs.readdirSync(J("jobs"))) fs.rmSync(J("jobs", f));
   let n = 0;
   for (let b = 0; b < ready.length; b += size) {
@@ -240,6 +352,7 @@ async function prep() {
     fs.writeFileSync(J("jobs", `${id}.md`), `Batch id: ${id} · Answer file: ${J("out", `${id}.json`)}\nRead ${J("RULES.md")} first.\n\n${body}`);
   }
   console.log(`prep: ${ready.length} repo(s) in ${n} batch(es) of ${size} -> ${J("jobs")}${failed ? ` (${failed} not fetched yet)` : ""}`);
+  if (!list) { try { syncQueue(ready, new Map(queue.filter((c) => c.repo).map((c) => [c.repo.toLowerCase(), c.via || c.source || ""])), scanning ? broken : null); } catch (err) { console.log(`admin queue: not updated (${err.message})`); } }
 }
 
 // The batch's repos live in their own file: README text inside the job can look like anything.
@@ -283,24 +396,10 @@ function check(id) {
   process.exit(p.length ? 1 : 0);
 }
 
-function importAnswers() {
-  const ctxOf = ctxByRepo(), now = new Date().toISOString(), via = "Discover queue (sorted by Claude Code)";
-  const have = known(), listed = new Set(have), finds = [], soon = [], hide = [], unsure = [], rejected = [];
-  for (const f of fs.readdirSync(J("out")).filter((x) => x.endsWith(".json"))) {
-    const id = f.replace(/\.json$/, ""); let a;
-    try { a = readJSON(J("out", f)); } catch { rejected.push(id); continue; }
-    if (problems(a, batchRepos(id), ctxOf).length) { rejected.push(id); continue; }
-    for (const r of a.results) {
-      const c = ctxOf(r.repo), repo = c?.repo || r.repo;
-      if (have.has(repo.toLowerCase())) continue; have.add(repo.toLowerCase());
-      if (r.verdict === "play") finds.push({ repo, title: r.title, console: r.console, platforms: desktopOf(r, c), version: c.version, status: c.status, updatedAt: c.updatedAt, notes: c.notes || "", website: c.website || "", addedAt: now, via });
-      else if (r.verdict === "soon") soon.push({ repo, title: r.title, console: r.console, notes: c?.notes || "", website: c?.website || "", addedAt: now, via });
-      else if (r.verdict === "hide") hide.push({ repo, title: r.title, reason: r.reason });
-      else unsure.push({ repo, title: r.title, reason: r.reason });
-    }
-    // Batch ids restart at t001 every run: keep each answer file, or the record of what was sorted shrinks to the last run.
-    fs.renameSync(J("out", f), J("done", fs.existsSync(J("done", f)) ? `${id}.${now.replace(/[:.]/g, "-")}.json` : f));
-  }
+// Writes decisions where the catalog build reads them: playable -> finds.json (GitLab/Forgejo ones -> their list file),
+// Coming Soon / hidden -> waiting.json, unsure -> unsure.jsonl (a repo decided now leaves it).
+function fileDecisions({ finds = [], soon = [], hide = [], unsure = [] }, listed = new Set()) {
+  const now = new Date().toISOString();
   // GitLab / Codeberg games go into gitlab.json / codeberg.json (shared "list" sources every copy of the app reads), not finds.json.
   for (const host of new Set(finds.map((g) => forgeOf(g.repo)).filter(Boolean))) {
     const fo = forge(host), mine = finds.filter((g) => forgeOf(g.repo) === host);
@@ -319,12 +418,37 @@ function importAnswers() {
   const decided = new Set([...finds, ...soon, ...hide].map((g) => g.repo.toLowerCase())); // before forge prefixes are split off below
   for (const g of [...soon, ...hide]) { const host = forgeOf(g.repo); if (host) { g.repo = g.repo.slice(host.length + 1); g.host = host; } }
   const wf = path.join(DIR, "waiting.json"), w = readJSON(wf);
+  // A newer decision replaces an older entry for the same repo (Maddie approving something the robot hid, ...).
+  const old = (g) => g.repo && decided.has((forge(g.host) ? `${g.host}:${g.repo}` : g.repo).toLowerCase());
+  w.games = w.games.filter((g) => !old(g)); w.hidden = w.hidden.filter((g) => !old(g));
   w.games.push(...soon); w.hidden.push(...hide);
   w.games.sort((a, b) => a.title.localeCompare(b.title)); w.updatedAt = now;
   fs.writeFileSync(`${wf}.tmp`, JSON.stringify(w, null, 2) + "\n"); fs.renameSync(`${wf}.tmp`, wf);
   // A repo decided now (a second look), or filed since, leaves the waiting-for-Maddie list.
   const kept = fs.existsSync(J("unsure.jsonl")) ? fs.readFileSync(J("unsure.jsonl"), "utf8").split("\n").filter(Boolean).filter((l) => { const r = JSON.parse(l).repo.toLowerCase(); return !decided.has(r) && !listed.has(r); }) : [];
   fs.writeFileSync(J("unsure.jsonl"), [...kept, ...unsure.map((u) => JSON.stringify(u))].map((l) => l + "\n").join(""));
+}
+
+function importAnswers() {
+  const ctxOf = ctxByRepo(), now = new Date().toISOString(), via = "Discover queue (sorted by Claude Code)";
+  const have = known(), listed = new Set(have), finds = [], soon = [], hide = [], unsure = [], rejected = [];
+  for (const f of fs.readdirSync(J("out")).filter((x) => x.endsWith(".json"))) {
+    const id = f.replace(/\.json$/, ""); let a;
+    try { a = readJSON(J("out", f)); } catch { rejected.push(id); continue; }
+    if (problems(a, batchRepos(id), ctxOf).length) { rejected.push(id); continue; }
+    for (const r of a.results) {
+      const c = ctxOf(r.repo), repo = c?.repo || r.repo;
+      if (have.has(repo.toLowerCase())) continue; have.add(repo.toLowerCase());
+      if (r.verdict === "play") finds.push({ repo, title: r.title, console: r.console, platforms: desktopOf(r, c), version: c.version, status: c.status, updatedAt: c.updatedAt, notes: c.notes || "", website: c.website || "", addedAt: now, via });
+      else if (r.verdict === "soon") soon.push({ repo, title: r.title, console: r.console, notes: c?.notes || "", website: c?.website || "", addedAt: now, via });
+      else if (r.verdict === "hide") hide.push({ repo, title: r.title, reason: r.reason });
+      else unsure.push({ repo, title: r.title, reason: r.reason });
+    }
+    // Batch ids restart at t001 every run: keep each answer file, or the record of what was sorted shrinks to the last run.
+    fs.renameSync(J("out", f), J("done", fs.existsSync(J("done", f)) ? `${id}.${now.replace(/[:.]/g, "-")}.json` : f));
+  }
+  fileDecisions({ finds, soon, hide, unsure }, listed);
+  try { syncQueue(); } catch (err) { console.log(`admin queue: not updated (${err.message})`); }
   console.log(`import: ${finds.length} playable, ${soon.length} Coming Soon, ${hide.length} hidden, ${unsure.length} unsure (left in the queue; listed in ${J("unsure.jsonl")})${rejected.length ? `; rejected batch(es): ${rejected.join(", ")}` : ""}`);
   for (const g of finds) console.log(`  + ${g.title} [${g.console}] ${g.repo}`);
 }

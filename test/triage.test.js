@@ -55,6 +55,14 @@ test("applyAdminActions: remove hides a game (keeping a Coming Soon entry to bri
   assert.deepEqual(w.hidden, [{ repo: "a/tool", reason: "A tool" }]);   // someone else's "not listed" is never touched
 });
 
+test("applyAdminActions: the queue's approve / reject never act as a remove (the run would hide what Maddie approved)", async () => {
+  const { applyAdminActions, authorNote } = await import("../scripts/triage.mjs");
+  const w = { games: [{ repo: "a/soon", title: "Soon" }], hidden: [] };
+  applyAdminActions(w, [{ action: "approve", repo_key: "github:a/soon" }, { action: "approve_full", repo_key: "github:a/soon" }, { action: "reject", repo_key: "github:a/soon" }]);
+  assert.deepEqual(w, { games: [{ repo: "a/soon", title: "Soon" }], hidden: [] });
+  assert.match(authorNote("a/tool", "It's a tool, not a game."), /a\/tool[\s\S]*Reason: It's a tool, not a game\.[\s\S]*hello@decompbuddy\.com/);
+});
+
 test("triage: a console named in a file name counts only with a README quote saying it runs there", async () => {
   const { desktopOf } = await import("../scripts/triage.mjs");
   const port = { platforms: [], consolesNamed: ["Xbox 360"], releases: [{ files: ["Balatro360-Xbox360-1.0.2.0.zip"] }], readme: "Balatro running natively on a modded Xbox 360 (RGH/JTAG)." };

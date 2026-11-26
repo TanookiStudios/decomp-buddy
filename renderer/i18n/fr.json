@@ -1477,6 +1477,8 @@
   "Early days: not enough reports for a score yet": "C'est le début : pas encore assez de rapports pour une note",
   "More Reports": "Plus De Rapports",
   "Mostly {0}": "Surtout {0}",
-  "Played it? Decomp Buddy asks how it ran when you close the game.": "Vous y avez joué ? Decomp Buddy demande comment il a tourné quand vous fermez le jeu."
+  "Played it? Decomp Buddy asks how it ran when you close the game.": "Vous y avez joué ? Decomp Buddy demande comment il a tourné quand vous fermez le jeu.",
+  "Download Source": "Télécharger Le Code Source",
+  "Download the source code of {0}: {1}": "Télécharger le code source de {0} : {1}"
  }
 }

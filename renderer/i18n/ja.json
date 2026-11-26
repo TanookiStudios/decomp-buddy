@@ -1477,6 +1477,8 @@
   "Early days: not enough reports for a score yet": "まだ始まったばかり：スコアを出すにはレポートが足りません",
   "More Reports": "ほかのレポート",
   "Mostly {0}": "ほとんどが「{0}」",
-  "Played it? Decomp Buddy asks how it ran when you close the game.": "もう遊びましたか？ゲームを閉じると、Decomp Buddy が動作の様子を尋ねます。"
+  "Played it? Decomp Buddy asks how it ran when you close the game.": "もう遊びましたか？ゲームを閉じると、Decomp Buddy が動作の様子を尋ねます。",
+  "Download Source": "ソースコードをダウンロード",
+  "Download the source code of {0}: {1}": "{0}のソースコードをダウンロード：{1}"
  }
 }

@@ -1543,7 +1543,7 @@ document.querySelectorAll("[data-ext]").forEach((a) => (a.onclick = (e) => { e.p
 for (const id of ["catSearch", "catStatus", "catSource", "catSort", "catRunsOn", "catPlayable", "catRunsWell", "catEasy", "catMulti", "catNoAI", "catAI", "catFeature", "catList", "catInstalled", "catWish"]) $(id).oninput = renderCatalog;
 $("catMine").oninput = async () => { if ($("catMine").checked) await loadMine(); renderCatalog(); };
 $("target").addEventListener("change", () => { mineIds = null; if ($("catMine").checked) loadMine().then(renderCatalog); });
-$("catCon").oninput = () => { renderCatalog(); $("catalogList").scrollTop = 0; };
+$("catCon").oninput = () => { renderCatalog(); $("catalogList").scrollTop = 0; $("catalogList").closest("main").scrollTop = 0; };
 $("moreFiltersBtn").onclick = () => { const open = $("moreFilters").hidden; $("moreFilters").hidden = !open; $("moreFiltersBtn").setAttribute("aria-expanded", String(open)); };
 $("clearFilters").onclick = () => { $("catStatus").value = ""; $("catSource").value = ""; $("catAI").value = ""; $("catFeature").value = ""; $("catList").value = ""; for (const id of ["catPlayable", "catMine", "catRunsWell", "catEasy", "catMulti", "catNoAI", "catInstalled", "catWish"]) $(id).checked = false; renderCatalog(); };
 $("catUpdateAll").onclick = () => updateAll(catalog.games.filter((g) => updateAvailable(g, installedFor(g))));

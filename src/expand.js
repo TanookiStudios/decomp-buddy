@@ -23,13 +23,18 @@ export function artworkUrl(u, g) {
   return hostOf(g.repoHost).raw(g.owner, g.repo, p);
 }
 
+// A game filed under the catch-all (Others, or a hand-added "Unknown") takes the console its install steps name.
+function planConsole(entry) {
+  const named = Object.values(entry?.targets || {}).flatMap((t) => (t?.games || []).map((x) => canonConsole(x.console))).filter((c) => c && c !== "Others");
+  return named[0];
+}
 export function expandMultiGame(games, pub) {
   if (!pub?.plans) return games;
   return games.flatMap((g) => {
     if (!g.owner) return [g];
     const entry = pub.plans[planKey(g.repoHost || "github", g.owner, g.repo)];
     const plan = entry && Object.values(entry.targets || {}).find((t) => (t.games || []).length > 1);
-    if (!plan) return [g];
+    if (!plan) return [["Unknown", "Others"].includes(g.console) && planConsole(entry) ? { ...g, console: planConsole(entry) } : g];
     // The repo's box art is the wrong game for each card: boxartUrl is looked up again per title.
     // Ids come from the title, not the position, so wishlist stars survive a re-plan in another order.
     return plan.games.map((pg) => ({ ...g, id: `${g.id}#${slug(pg.game_title)}`, title: pg.game_title, console: canonConsole(pg.console) || g.console, gameTitle: pg.game_title, gameOf: g.id, repoGames: plan.games.length,

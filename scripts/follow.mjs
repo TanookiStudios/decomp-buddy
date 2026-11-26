@@ -15,6 +15,7 @@ import { releaseBuilds, scanKey, applyScans, pickRelease } from "../src/scan.js"
 import { nextStep } from "../src/follow.js";
 import { uploadedBy } from "../src/trust.js";
 import { heldRepos } from "../src/mirror.js";
+import { canonConsole } from "../src/renames.js";
 
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
 const site = arg("--site") || path.join(os.homedir(), "Documents/GitHub/TanookiStudios-Site");
@@ -122,7 +123,7 @@ if (!dry && !only) {
     for (const [full, { host, e }] of emptied) {
       if (soon.has(full) || hidden.has(full)) continue;
       const g = Object.values(e?.targets || {}).flatMap((t) => t?.games || [])[0] || {};
-      w.games.push({ repo: full, ...(host !== "github" ? { host } : {}), title: g.game_title || full, console: g.console || null, notes: "The project took its downloads down. It comes back the moment a new one is posted.", addedAt: new Date().toISOString(), via: "Downloads taken down" });
+      w.games.push({ repo: full, ...(host !== "github" ? { host } : {}), title: g.game_title || full, console: canonConsole(g.console) || null, notes: "The project took its downloads down. It comes back the moment a new one is posted.", addedAt: new Date().toISOString(), via: "Downloads taken down" });
       moved.push(g.game_title || full);
     }
     if (moved.length) console.log(`emptied: ${moved.length} project(s) with no downloads left moved to Coming Soon: ${moved.join(", ")}`);

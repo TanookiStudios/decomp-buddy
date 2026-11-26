@@ -164,6 +164,11 @@ button.small { padding:5px 10px; font-size:12px }
 .filters { display:flex; gap:14px; flex-wrap:wrap; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 16px } .filters select { width:auto }
 /* console picker: one press shows one console */
 #catalogList, .cardList { flex:1; overflow:auto; min-height:200px; padding:2px 4px 8px 2px }
+/* Short screens (Steam Deck, or a big text size): the whole page scrolls, so the search and filters scroll away with it
+   instead of squeezing the games into a strip at the bottom. A Deck player, Nov 2026: "2/3 of the space is filter options". */
+@media (max-height:820px) { main > section.view:is(#browse, #newgames, #foryou) { flex:none; padding-top:20px }
+  main > section.view:is(#browse, #newgames, #foryou) :is(#catalogList, .cardList) { flex:none; overflow:visible; min-height:0 }
+  main > section.view:is(#browse, #newgames, #foryou) .foot { position:sticky; bottom:0; z-index:2; background:var(--bg); padding-bottom:10px } }
 .group-head { font:600 11px/1.2 var(--font); letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin:24px 0 12px; display:flex; gap:10px; align-items:center } .group-head:first-child { margin-top:4px } .group-head .n { color:var(--fg) } .group-head::after { content:""; flex:1; border-top:1px solid var(--line) }
 /* game tiles: the box art, the title, one line about it, one button */
 .gstats { display:grid; grid-template-columns:repeat(auto-fit, minmax(112px, 1fr)); gap:10px; margin:10px 0 } .gstats:empty { display:none } .gstats > div { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 12px } .gstats .sub { display:block; margin:0 } .gstats b { font-size:16px } .gstats .badge { display:block; width:fit-content; margin-top:4px }

@@ -104,7 +104,10 @@ export async function buildCatalog({ site = path.join(os.homedir(), "Documents/G
   // has nothing to scan). Until then it waits on the Addition Queue - Maddie, 26 Oct 2026: "We go live when it's
   // safe. When our process is done."
   const scanless = (g) => { const [owner, repo] = String(g.repo || "").split("/"); const e = pub.plans?.[planKey(g.host || "github", owner, repo)]; return !e || !releaseBuilds({ plans: { x: e } }).length; };
-  const queued = out.filter((g) => !g.plan || (!g.scan && !scanless(g)));
+  // Full Approval on the admin page (fast-track.json, 21 Nov 2026): listed without waiting for the scan, which still
+  // runs straight after - a flagged file takes it back out above.
+  let fast = {}; try { fast = JSON.parse(fs.readFileSync(path.join(dir, "fast-track.json"), "utf8")); } catch {}
+  const queued = out.filter((g) => !g.plan || (!g.scan && !scanless(g) && !fast[`${g.host || "github"}:${g.repo}`.toLowerCase()]));
   out = out.filter((g) => !queued.includes(g));
   log(`queued: ${queued.length} game(s) wait for install steps or their scan`);
   // First-listed dates (New Ports feed): kept between builds; hand-found games keep the day they were found.
