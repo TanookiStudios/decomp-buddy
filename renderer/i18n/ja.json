@@ -876,7 +876,6 @@
   "Name": "名前",
   "Name And Tags": "名前とタグ",
   "Open The Full Log": "ログ全体を開く",
-  "Puts an icon on your desktop that starts this game{0}.": "このゲームを起動するアイコンをデスクトップに置きます{0}。",
   "Read More": "続きを読む",
   "Remove Game": "ゲームを削除",
   "Remove Game…": "ゲームを削除…",
@@ -1479,6 +1478,23 @@
   "Mostly {0}": "ほとんどが「{0}」",
   "Played it? Decomp Buddy asks how it ran when you close the game.": "もう遊びましたか？ゲームを閉じると、Decomp Buddy が動作の様子を尋ねます。",
   "Download Source": "ソースコードをダウンロード",
-  "Download the source code of {0}: {1}": "{0}のソースコードをダウンロード：{1}"
+  "Download the source code of {0}: {1}": "{0}のソースコードをダウンロード：{1}",
+  "Each kept version is a whole copy of the game, so a big game can use gigabytes. Your saves are still backed up before every update either way. Old copies you already have can go from a game's More… → Free Up Space.": "保存した各バージョンはゲーム全体のコピーなので、大きなゲームでは数GBになることがあります。どの設定でも、アップデートの前にセーブデータはバックアップされます。すでにある古いコピーは、ゲームの「その他…」→「空き容量を増やす」から削除できます。",
+  "Just The Last One": "直前の1つだけ",
+  "Keep Old Versions (for Roll Back)": "古いバージョンを残す(元に戻す用)",
+  "None (Saves The Most Space)": "残さない(最も容量を節約)",
+  "Open On": "起動時に開く画面",
+  "Project Page": "プロジェクトページ",
+  "Puts an icon on your desktop (or the Shortcut Folder you picked in Settings) that starts this game{0}.": "このゲームを起動するアイコンをデスクトップ(または設定で選んだショートカットフォルダ)に置きます{0}。",
+  "Shortcut Folder (where Desktop Shortcut puts a game's icon)": "ショートカットフォルダ(ゲームのアイコンを置く場所)",
+  "The Last 2 (Default)": "直前の2つ(標準)",
+  "Use Desktop": "デスクトップを使う",
+  "Your desktop": "デスクトップ",
+  "Add it to Steam again from Installed Games so Steam finds the new place.": "Steam が新しい場所を見つけられるよう、「インストール済みゲーム」からもう一度 Steam に追加してください。",
+  "Move To Another Folder": "別のフォルダに移動",
+  "Move To Another Folder…": "別のフォルダに移動…",
+  "Moved to {0}.{1}": "{0} に移動しました。{1}",
+  "Moves this game's whole folder, saves inside it included, to a folder you pick, even on another drive. It stays in Installed Games. A desktop or Steam shortcut you made before still points to the old place, so make it again after.": "このゲームのフォルダを、中のセーブデータごと、選んだフォルダ（別のドライブでも可）に移動します。「インストール済みゲーム」にはそのまま残ります。以前に作ったデスクトップや Steam のショートカットは古い場所を指したままなので、移動後に作り直してください。",
+  "Moving…": "移動中…"
  }
 }

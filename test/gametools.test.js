@@ -66,3 +66,26 @@ test("checkFolder finds missing release files and moved game files", () => {
   assert.deepEqual(r.placed.map((p) => [p.label, p.exists, p.sizeOk]), [["ROM", true, true], ["BIOS", false, false]]);
   assert.deepEqual(r.needed, ["Disc 2"]);
 });
+
+test("Move To Another Folder: same drive, another drive, and a failed copy never loses the game", async () => {
+  const { moveGame } = await import("../src/gametools.js");
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "db-move-"));
+  const make = (name) => { const f = path.join(root, "lib", name); fs.mkdirSync(path.join(f, "saves"), { recursive: true }); fs.writeFileSync(path.join(f, "decomp-buddy.json"), "{}"); fs.writeFileSync(path.join(f, "saves", "slot1.sav"), "x".repeat(5000)); return f; };
+  // Same drive: a plain rename.
+  const a = make("Game A"), to = await moveGame(a, path.join(root, "other"));
+  assert.equal(to, path.join(root, "other", "Game A"));
+  assert.ok(!fs.existsSync(a) && fs.readFileSync(path.join(to, "saves", "slot1.sav"), "utf8").length === 5000);
+  // Guards: same folder, inside itself, a folder of that name already there.
+  await assert.rejects(moveGame(to, path.join(root, "other")), /already in that folder/);
+  await assert.rejects(moveGame(to, path.join(to, "sub")), /inside its own folder/);
+  const b = make("Game A"); await assert.rejects(moveGame(b, path.join(root, "other")), /already a folder/); assert.ok(fs.existsSync(b));
+  // Another drive (rename says EXDEV): copied, checked, then the old copy goes.
+  const exdev = () => { const e = new Error("cross-device"); e.code = "EXDEV"; throw e; };
+  const to2 = await moveGame(b, path.join(root, "drive2"), () => {}, { rename: exdev });
+  assert.ok(!fs.existsSync(b) && fs.readFileSync(path.join(to2, "saves", "slot1.sav"), "utf8").length === 5000);
+  // A copy that fails partway: the original stays exactly where it was and no half copy is left behind.
+  const c = make("Game C"), realCp = fs.promises.cp;
+  fs.promises.cp = async (from, dest) => { fs.mkdirSync(dest, { recursive: true }); fs.writeFileSync(path.join(dest, "half"), "x"); throw new Error("disk unplugged"); };
+  try { await assert.rejects(moveGame(c, path.join(root, "drive3"), () => {}, { rename: exdev }), /Nothing was moved/); } finally { fs.promises.cp = realCp; }
+  assert.ok(fs.existsSync(path.join(c, "saves", "slot1.sav")) && !fs.existsSync(path.join(root, "drive3", "Game C")));
+});

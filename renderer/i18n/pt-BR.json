@@ -876,7 +876,6 @@
   "Name": "Nome",
   "Name And Tags": "Nome E Etiquetas",
   "Open The Full Log": "Abrir O Registro Completo",
-  "Puts an icon on your desktop that starts this game{0}.": "Coloca na sua área de trabalho um ícone que inicia este jogo{0}.",
   "Read More": "Saiba Mais",
   "Remove Game": "Remover Jogo",
   "Remove Game…": "Remover Jogo…",
@@ -1479,6 +1478,23 @@
   "Mostly {0}": "Na maioria {0}",
   "Played it? Decomp Buddy asks how it ran when you close the game.": "Já jogou? O Decomp Buddy pergunta como rodou quando você fecha o jogo.",
   "Download Source": "Baixar Código-Fonte",
-  "Download the source code of {0}: {1}": "Baixar o código-fonte de {0}: {1}"
+  "Download the source code of {0}: {1}": "Baixar o código-fonte de {0}: {1}",
+  "Each kept version is a whole copy of the game, so a big game can use gigabytes. Your saves are still backed up before every update either way. Old copies you already have can go from a game's More… → Free Up Space.": "Cada versão guardada é uma cópia inteira do jogo, então um jogo grande pode ocupar gigabytes. Seus saves continuam com backup antes de cada atualização. Cópias antigas que você já tem podem ser apagadas em Mais… → Liberar Espaço do jogo.",
+  "Just The Last One": "Só A Última",
+  "Keep Old Versions (for Roll Back)": "Guardar Versões Antigas (para voltar atrás)",
+  "None (Saves The Most Space)": "Nenhuma (Economiza Mais Espaço)",
+  "Open On": "Abrir Em",
+  "Project Page": "Página Do Projeto",
+  "Puts an icon on your desktop (or the Shortcut Folder you picked in Settings) that starts this game{0}.": "Coloca na sua área de trabalho (ou na Pasta De Atalhos que você escolheu nas Configurações) um ícone que abre este jogo{0}.",
+  "Shortcut Folder (where Desktop Shortcut puts a game's icon)": "Pasta De Atalhos (onde fica o ícone de cada jogo)",
+  "The Last 2 (Default)": "As Últimas 2 (Padrão)",
+  "Use Desktop": "Usar A Área De Trabalho",
+  "Your desktop": "Sua área de trabalho",
+  "Add it to Steam again from Installed Games so Steam finds the new place.": "Adicione-o de novo à Steam em Jogos Instalados para a Steam achar o novo lugar.",
+  "Move To Another Folder": "Mover Para Outra Pasta",
+  "Move To Another Folder…": "Mover Para Outra Pasta…",
+  "Moved to {0}.{1}": "Movido para {0}.{1}",
+  "Moves this game's whole folder, saves inside it included, to a folder you pick, even on another drive. It stays in Installed Games. A desktop or Steam shortcut you made before still points to the old place, so make it again after.": "Move a pasta inteira deste jogo, com os saves que estiverem dentro, para uma pasta que você escolher, até em outro disco. Ele continua em Jogos Instalados. Um atalho da área de trabalho ou da Steam que você fez antes ainda aponta para o lugar antigo, então crie de novo depois.",
+  "Moving…": "Movendo…"
  }
 }

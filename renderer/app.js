@@ -43,6 +43,9 @@ function providerUI() {
   if (!p.custom) $("baseUrl").value = p.baseUrl || "";
 }
 
+let refreshedOnce = false;
+$("startView").onchange = () => window.buddy.setSettings({ startView: $("startView").value });
+$("keepVersions").onchange = () => window.buddy.setSettings({ keepVersions: Number($("keepVersions").value) });
 async function refresh() {
   settings = await window.buddy.getSettings();
   presets = settings.presets;
@@ -50,7 +53,7 @@ async function refresh() {
   $("outDir").value = simpleFlow ? settings.installDir : settings.outDir;
   $("romKeepDir").value = settings.romKeepDir || ""; $("whereRomDir").textContent = settings.romKeepDir || "";
   $("outDirWhy").textContent = settings.targetKind === "device" ? "For a phone or headset - it waits in the Install Folder, then goes over USB." : settings.targetIsHost ? "Runs on this computer - Install Folder." : "For another OS - Transfer Folder.";
-  $("installDir").value = settings.installDir; $("transferDir").value = settings.transferDir;
+  $("installDir").value = settings.installDir; $("transferDir").value = settings.transferDir; $("shortcutDir").value = settings.shortcutDir || ""; $("resetShortcutDir").hidden = !settings.shortcutDir;
   $("moveFiles").checked = settings.moveFiles;
   $("provider").innerHTML = Object.entries(presets).map(([k, p]) => `<option value="${k}">${esc(p.label)}</option>`).join("");
   $("provider").value = settings.provider;
@@ -69,6 +72,9 @@ async function refresh() {
   $("uiScale").value = Math.round((settings.uiScale || 1) * 100); $("uiScaleVal").textContent = `${$("uiScale").value}%`;
   $("preferBoxart").checked = !!settings.preferBoxart;
   $("showAdultMods").checked = !!settings.showAdultMods;
+  $("startView").value = settings.startView === "library" ? "library" : "browse"; $("keepVersions").value = String(settings.keepVersions ?? 2);
+  if (!refreshedOnce && settings.startView === "library") showView("library"); // opened on your own games, not the shop window
+  refreshedOnce = true;
   $("startCouch").checked = !!settings.startCouch; $("askAfterPlay").checked = settings.askAfterPlay !== false;
   $("lang").innerHTML = `<option value="system">Follow The System</option>` + Object.entries(settings.langs || {}).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
   $("lang").value = settings.lang || "system";
@@ -247,6 +253,8 @@ $("games").onclick = async (e) => {
 $("urls").oninput = () => { if (games.length) { $("games").className = "stale"; $("setup").disabled = true; } };
 
 $("chooseInstall").onclick = async () => { const dir = await window.buddy.chooseFolder(); if (dir) { await window.buddy.setSettings({ installDir: dir }); await refresh(); } };
+$("chooseShortcutDir").onclick = async () => { const dir = await window.buddy.chooseFolder(); if (dir) { await window.buddy.setSettings({ shortcutDir: dir }); await refresh(); } };
+$("resetShortcutDir").onclick = async () => { await window.buddy.setSettings({ shortcutDir: null }); await refresh(); };
 $("chooseTransfer").onclick = async () => { const dir = await window.buddy.chooseFolder(); if (dir) { await window.buddy.setSettings({ transferDir: dir }); await refresh(); } };
 
 $("saveKey").onclick = async () => {
@@ -341,13 +349,15 @@ async function renderLibrary() {
           <button type="button" data-lib="versions">Versions</button>
           <button type="button" data-lib="config">Settings</button>
           ${g.repo ? `<button type="button" data-lib="detail">Details</button>` : ""}
+          ${g.repoUrl ? `<button type="button" data-lib="repo">Project Page</button><button type="button" data-lib="changes">What's New</button>` : ""}
+          ${g.device ? "" : `<button type="button" data-lib="shortcut">Desktop Shortcut</button>`}
         </div>
       </div>
       <div class="title" translate="no">${esc(g.title)}</div><div class="chips">${esc(chips)}${padNotes(g) ? ` · <a href="#" data-lib="detail" title="${esc(padNotes(g))}">Controller Notes</a>` : ""}</div>
       <div class="main3">${playButton(g, `data-lib="play"`)}<button type="button" data-lib="open">Go To Folder</button><button type="button" data-lib="uninstall">Uninstall Game</button><button type="button" data-lib="extras" aria-expanded="false">More…</button></div>
     </div>`;
   };
-  const wishTile = (g) => `<div class="book" data-wish="${esc(g.id)}"><div class="cover">${iconCache.get(g.id) && iconCache.get(g.id) !== "pending" ? `<img src="${iconCache.get(g.id)}" alt="">` : `<div class="nocover">${esc(g.title)}</div>`}</div><div class="title">★ ${esc(g.title)}</div><div class="chips">${esc([g.console, g.version].filter(Boolean).join(" · "))}</div><div class="main3"><button class="primary" type="button" data-lib="addwish">Download</button><button type="button" data-lib="detailwish">Details</button></div></div>`;
+  const wishTile = (g) => `<div class="book" data-wish="${esc(g.id)}"><div class="cover" data-icon="${esc(g.id)}">${iconCache.get(g.id) && iconCache.get(g.id) !== "pending" ? `<img src="${iconCache.get(g.id)}" alt="">` : `<div class="nocover">${esc(g.title)}</div>`}</div><div class="title">★ ${esc(g.title)}</div><div class="chips">${esc([g.console, g.version].filter(Boolean).join(" · "))}</div><div class="main3"><button class="primary" type="button" data-lib="addwish">Download</button><button type="button" data-lib="detailwish">Details</button></div></div>`;
   // Your tags and hidden games: the tag bar filters every shelf; hidden games stay out unless Show Hidden is on.
   const tags = [...new Set(library.flatMap((g) => g.tags))].sort((a, b) => a.localeCompare(b));
   if (libTag && !tags.includes(libTag)) libTag = "";
@@ -366,12 +376,18 @@ async function renderLibrary() {
   const upds = library.filter((g) => g.repo && libUpdate(g)).length;
   $("libUpdateAll").hidden = !upds; $("libUpdateAll").textContent = `Update All (${upds})`;
   $("libMeta").textContent = `${library.length} game(s) set up${upds ? ` · ${upds} with updates` : ""}.`;
-  for (const g of wished) if (iconCache.get(g.id) === undefined) portCard(g);
 }
 // An installed game's update: the catalog's version differs from yours, and you didn't skip that version.
 // The catalog card an installed game came from (collections match by title).
 const catalogOf = (g) => g?.repo && catalog.games.find((x) => x.owner && `${x.owner}/${x.repo}`.toLowerCase() === g.repo.toLowerCase() && (!x.gameTitle || x.gameTitle === g.originalTitle));
-function libUpdate(g) { const c = catalogOf(g); return !!c && c.version !== g.skipTag && updateAvailable(c, [{ tag: g.tag }]); }
+function libUpdate(g) { const c = catalogOf(g); return !!c && versionFor(c, g.target || "windows") !== g.skipTag && updateAvailable(c, [{ tag: g.tag, target: g.target }]); }
+// A project's releases page (the changelog), at one version when given. GitLab keeps it under /-/releases.
+const releasesUrl = (repoUrl, tag) => {
+  if (!repoUrl) return null;
+  const lab = /gitlab\.com\//.test(repoUrl), parts = lab ? [repoUrl, "-", "releases"] : [repoUrl, "releases"];
+  if (tag) parts.push(...(lab ? [] : ["tag"]), encodeURIComponent(tag));
+  return parts.join("/");
+};
 // Where each host id lives: same as src/forges.js (test/forges.test.js checks). Full addresses, so they're not UI text.
 const HOST_SITE = { github: "https://github.com", gitlab: "https://gitlab.com", codeberg: "https://codeberg.org", notrexed: "https://git.notrexed.dev", magicbean: "https://git.magicbean.dev" };
 // A Forgejo/Gitea site that isn't in the list is known by its own address ("git.example.org"), like src/forges.js.
@@ -682,6 +698,9 @@ $("shelves").onclick = async (e) => {
     if (b.dataset.lib === "play") { const r = await window.buddy.gamePlay(g.folder); $("libStatus").textContent = r.howTo ? "Opened the steps for putting it on your console." : `Launched ${r.exe.split(/[\\/]/).pop()}.`; $("libStatus").className = "status ok"; }
     else if (b.dataset.lib === "steam") { const r = await window.buddy.gameSteam(g.folder); $("libStatus").textContent = `${r.updated ? "Updated in" : "Added to"} Steam (restart Steam to see it).`; $("libStatus").className = "status ok"; renderLibrary(); }
     else if (b.dataset.lib === "open") window.buddy.open(g.folder);
+    else if (b.dataset.lib === "repo") window.buddy.openExternal(g.repoUrl);
+    else if (b.dataset.lib === "changes") { const c = catalogOf(g); window.buddy.openExternal(releasesUrl(g.repoUrl, c && libUpdate(g) ? versionFor(c, g.target || "windows") : null)); }
+    else if (b.dataset.lib === "shortcut") { const r = await window.buddy.gameShortcut(g.folder); $("libStatus").textContent = `Shortcut added: ${r.file}`; $("libStatus").className = "status ok"; }
     else if (b.dataset.lib === "saves") await openSaves(g);
     else if (b.dataset.lib === "versions") await openVersions(g);
     else if (b.dataset.lib === "config") await openConfig(g);
@@ -1392,7 +1411,11 @@ function installedFor(g) {
   if (list && g.gameTitle) list = list.filter((i) => normTitle(i.title) === normTitle(g.gameTitle));
   return list && list.length ? list : null;
 }
-const updateAvailable = (g, inst) => !!(inst && g.version && inst.some((i) => i.tag !== g.version));
+// The version this install would actually get: its platform's own plan can sit on another version than the one shown
+// (src/expand.js versionFor - keep the two the same).
+const PLAN_FALLBACK = { "macos-x64": "macos-arm64", "windows-arm64": "windows", "linux-arm64": "linux" };
+const versionFor = (g, target) => g?.targetTags?.[target] || g?.targetTags?.[PLAN_FALLBACK[target]] || g?.version || null;
+const updateAvailable = (g, inst) => !!(inst && inst.some((i) => { const v = versionFor(g, i.target || "windows"); return v && i.tag !== v; }));
 
 // Search words: no accents or punctuation, any order, and Roman numerals the same as digits ("God of War 3" finds "III").
 // shortcut: V and X stay letters (Mega Man X, Ultima V would collide), add them if people search that way.
@@ -1437,12 +1460,22 @@ function tileLine(g) {
   const rel = g.status === "latest" ? "Latest Release" : g.status === "prerelease" ? "Pre-release" : g.version ? "" : "No Release Yet";
   return { text: TILE_DONE[g.facts?.completeness] || rel || "Not Read Yet", plats: Object.keys(PLAT_SHORT).filter((p) => (g.platforms || []).includes(p)).map((p) => PLAT_SHORT[p]).join(" · "), good: g.facts?.completeness === "playable" };
 }
-// A game's box art (or its name on a plain tile until the art arrives); every slot showing that game fills in when it loads.
+// A game's box art (or its name on a plain tile until the art arrives). The art is asked for only when its slot comes
+// near the screen: asking for all ~4,600 at start-up held every picture in memory at once (a player's report, 27 Nov 2026).
 function coverArt(g) {
   const icon = iconCache.get(g.id);
-  if (icon === undefined) { iconCache.set(g.id, "pending"); window.buddy.catalogIcon(g.id).then((r) => { iconCache.set(g.id, r ? r.dataUrl : null); if (r) iconPaths.set(g.id, r.path); document.querySelectorAll(`[data-icon="${CSS.escape(g.id)}"]`).forEach((slot) => { if (r) slot.innerHTML = `<img src="${r.dataUrl}" alt="">`; }); }); }
   return typeof icon === "string" && icon !== "pending" ? `<img src="${icon}" alt="">` : `<div class="nocover" translate="no">${esc(g.title)}</div>`;
 }
+function loadCover(id) {
+  if (iconCache.get(id) !== undefined) return;
+  iconCache.set(id, "pending");
+  window.buddy.catalogIcon(id).then((r) => { iconCache.set(id, r ? r.dataUrl : null); if (r) { iconPaths.set(id, r.path); document.querySelectorAll(`[data-icon="${CSS.escape(id)}"]`).forEach((slot) => (slot.innerHTML = `<img src="${r.dataUrl}" alt="">`)); } });
+}
+const coverWatch = new IntersectionObserver((seen) => { for (const e of seen) if (e.isIntersecting) { coverWatch.unobserve(e.target); loadCover(e.target.dataset.icon); } }, { rootMargin: "100%", scrollMargin: "100%" }); // a screen ahead; scrollMargin because the games list scrolls inside the window
+// Every [data-icon] slot, wherever it is drawn, is watched as soon as it is added to the page.
+new MutationObserver((changes) => {
+  for (const c of changes) for (const n of c.addedNodes) if (n.nodeType === 1) for (const slot of [...(n.matches("[data-icon]") ? [n] : []), ...n.querySelectorAll("[data-icon]")]) if (iconCache.get(slot.dataset.icon) === undefined) coverWatch.observe(slot);
+}).observe(document.body, { childList: true, subtree: true });
 // A small box-art tile that opens the game's page (Other Ports Of This Game, More Like This).
 const miniCard = (g) => `<div class="gtile" data-portid="${esc(g.id)}"><div class="cover"><div data-icon="${esc(g.id)}">${coverArt(g)}</div></div><div class="t"><h4 translate="no"><a href="#" data-portid="${esc(g.id)}">${esc(g.title)}</a></h4><div class="line">${esc([g.project, g.platforms?.filter((p) => PLAT_SHORT[p]).map((p) => PLAT_SHORT[p]).join(" · ")].filter(Boolean).join(" · ") || g.console)}</div></div></div>`;
 // More Like This: the most downloaded other games from the same console, one port of each.
@@ -1453,17 +1486,19 @@ function moreLikeThis(g) {
 }
 function portCard(g) {
   const inst = installedFor(g), upd = updateAvailable(g, inst), picked = catSelected.has(g.id);
+  // The version the out-of-date install moves to (each platform can be on its own one).
+  const updTo = upd ? versionFor(g, inst.find((i) => i.tag !== versionFor(g, i.target || "windows")).target || "windows") : null;
   const art = coverArt(g);
   const tag = upd ? `<span class="tag">Update</span>` : inst ? `<span class="tag inst">Installed</span>` : isNew(g) ? `<span class="tag">New</span>` : "";
   const line = tileLine(g);
   const act = !g.repoUrl ? `<span class="state muted">No Repository Link</span>`
-    : upd ? `<button class="small primary upd" type="button" data-cat="update" data-id="${esc(g.id)}">Update To ${esc(g.version)}</button>`
+    : upd ? `<button class="small primary upd" type="button" data-cat="update" data-id="${esc(g.id)}">Update To ${esc(updTo)}</button>`
     : inst ? `<span class="state">Installed ${esc(inst.map((i) => i.tag || "").filter(Boolean).join(", "))}</span>`
     : `<button class="small pick" type="button" data-cat="pick" data-id="${esc(g.id)}" aria-pressed="${picked}" aria-label="${picked ? "Remove" : "Add"} ${esc(g.title)}">${picked ? "✓ Added" : "Add"}</button>`;
   return `<div class="gtile${picked ? " picked" : ""}" tabindex="0" data-card="${esc(g.id)}" aria-label="${esc(g.title)} - ${esc(g.console)}">
     <div class="cover" data-cat="detail" data-id="${esc(g.id)}"><div data-icon="${esc(g.id)}">${art}</div>${tag}</div>
     <div class="t"><h4 translate="no"><a href="#" data-cat="detail" data-id="${esc(g.id)}">${esc(g.title)}</a></h4>
-      <div class="line${line.good ? " good" : ""}">${esc(line.text)}</div>${line.plats ? `<div class="line">${esc(line.plats)}</div>` : ""}${g.facts?.features ? `<div class="line feat">${Object.keys(FEATURE_LABEL).filter((k) => g.facts.features[k]).slice(0, 3).map((k) => `<span>${FEATURE_LABEL[k]}</span>`).join(" · ")}</div>` : ""}</div>
+      <div class="line${line.good ? " good" : ""}">${esc(line.text)}</div>${line.plats ? `<div class="line">${esc(line.plats)}</div>` : ""}${g.facts?.features ? `<div class="line feat">${Object.keys(FEATURE_LABEL).filter((k) => g.facts.features[k]).slice(0, 3).map((k) => `<span>${FEATURE_LABEL[k]}</span>`).join(" · ")}</div>` : ""}${g.repoUrl ? `<div class="line links"><a href="#" data-cat="ext" data-url="${esc(g.repoUrl)}" aria-label="Project Page: ${esc(g.title)}">Project Page</a> · <a href="#" data-cat="ext" data-url="${esc(releasesUrl(g.repoUrl, updTo))}" aria-label="What's New: ${esc(g.title)}">What's New</a></div>` : ""}</div>
     <div class="acts">${act}<button class="star${isWished(g) ? " on" : ""}" type="button" data-cat="wish" data-id="${esc(g.id)}" aria-pressed="${isWished(g)}" aria-label="${isWished(g) ? "Remove from" : "Add to"} wishlist: ${esc(g.title)}" title="Wishlist">${isWished(g) ? "★" : "☆"}</button></div>
   </div>`;
 }

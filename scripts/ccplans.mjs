@@ -21,6 +21,7 @@ import { SYSTEM as FACTS_SYSTEM, Facts, extractFacts } from "../src/facts.js";
 import { analyzeOne } from "../src/run.js";
 import { writePlans, planKey, TARGET_OF_PLATFORM, factsDue } from "../src/plans.js";
 import { targetOf, assetMismatch } from "../src/targets.js";
+import { portableTwin } from "../src/follow.js";
 import { fetchContextFor, repoUrlOf } from "../src/hosts.js";
 import { safeRemote } from "../src/adb.js";
 
@@ -72,6 +73,7 @@ Facts are read from the README/docs sections of the job.
 
 ## Hard checks your answer must pass (import rejects it otherwise)
 - Valid against schema-plan.json (each target) and schema-facts.json. Every field present; use null / [] / "" where the docs say nothing.
+- Never pick an installer (Setup.exe, *-installer.exe, .msi, a bare "Game.Setup-linux") when the same release has a portable/plain download (.zip/.7z/AppImage) for that target: an installer puts the game outside Decomp Buddy's folder.
 - build.method "release": release_asset AND release_tag copied character-for-character from the job's release list, and that asset must be inside that tag, and must be for the target's OS/CPU (Windows x64 → a Windows/win64/x64 .zip/.exe/.7z; Linux x64 → linux/AppImage/.tar.*; macOS arm64 → mac/macos/darwin/universal/arm64 .dmg/.zip). No such asset for that target → "source" (if the docs explain building there), else "unsupported" (or "web_only" for browser builds).
 - Quotes (completeness_quote, deck_quote, controller_notes) copied verbatim from the README/docs text, max 200 chars.
 - Never invent hashes, filenames, or folders the docs don't state - put doubts in "unsure".
@@ -137,6 +139,12 @@ async function validate(w, ans, ctx) {
     if (!parsed.success) { problems.push(`${t}: ${parsed.error.issues.slice(0, 3).map((i) => `${i.path.join(".")} ${i.message}`).join("; ")}`); continue; }
     if (parsed.data.redirect_repo) { problems.push(`${t}: points at ${parsed.data.redirect_repo} - left for the paid planner`); continue; }
     const bad = assetProblems(parsed.data, ctx); if (bad.length) { problems.push(`${t}: ${bad.join("; ")}`); continue; }
+    // An installer picked when the release also has a portable download for this platform: the portable one wins.
+    for (const g of parsed.data.games) {
+      const rel = g.build.method === "release" && (ctx.releases || []).find((r) => r.tag === g.build.release_tag);
+      const twin = rel && portableTwin(g.build.release_asset, rel.assets, t);
+      if (twin) { warnings.push(`${t}: ${g.build.release_asset} is an installer - using ${twin.name}`); g.build.release_asset = twin.name; }
+    }
     // Phones and headsets: an .apk download, and every push_to folder stays under /sdcard (the app refuses it otherwise).
     if (targetOf(t).kind === "device") {
       const off = parsed.data.games.flatMap((g) => [...(g.build.method === "release" && !/\.apk$/i.test(g.build.release_asset || "") ? [`${g.build.release_asset} isn't an .apk`] : []),

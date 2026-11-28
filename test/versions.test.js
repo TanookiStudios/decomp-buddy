@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { keepVersion, listVersions, rollBack } from "../src/versions.js";
+import { keepVersion, listVersions, rollBack, setKeepVersions } from "../src/versions.js";
 import { extractZip } from "../src/setup.js";
 
 const mk = () => fs.mkdtempSync(path.join(os.tmpdir(), "ver-"));
@@ -49,4 +49,22 @@ test("a .dmg unpacks (the app inside is copied out)", { skip: process.platform !
   const dmg = path.join(mk(), "g.dmg"); execFileSync("hdiutil", ["create", "-quiet", "-fs", "HFS+", "-srcfolder", src, "-volname", "G", dmg]);
   const out = mk(); const files = []; await extractZip(dmg, out, { entries: files });
   assert.equal(r(out, "Game.app/Contents/MacOS/game"), "bin"); assert.ok(files.includes(path.join("Game.app", "Contents", "MacOS", "game")));
+});
+
+test("Keep Old Versions: 1 keeps one, 0 keeps none and still clears the old release out (her call, 27 Nov 2026)", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "kv-"));
+  const put = (f) => { fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true }); fs.writeFileSync(path.join(dir, f), f); };
+  fs.mkdirSync(path.join(dir, "Saves Backup")); fs.writeFileSync(path.join(dir, "Saves Backup", "s.zip"), "save");
+  try {
+    setKeepVersions(1);
+    put("game.exe"); keepVersion(dir, "v1", ["game.exe"]);
+    put("game.exe"); keepVersion(dir, "v2", ["game.exe"]);
+    assert.deepEqual(listVersions(dir).map((v) => v.tag), ["v2"]);
+    setKeepVersions(0);
+    put("game.exe"); assert.equal(keepVersion(dir, "v3", ["game.exe"]), null);
+    assert.deepEqual(listVersions(dir), []); assert.equal(fs.existsSync(path.join(dir, "game.exe")), false);
+    assert.equal(fs.readFileSync(path.join(dir, "Saves Backup", "s.zip"), "utf8"), "save"); // saves are never touched
+    setKeepVersions("junk"); put("game.exe"); keepVersion(dir, "v4", ["game.exe"]); put("game.exe"); keepVersion(dir, "v5", ["game.exe"]); put("game.exe"); keepVersion(dir, "v6", ["game.exe"]);
+    assert.equal(listVersions(dir).length, 2); // anything odd falls back to the default of 2
+  } finally { setKeepVersions(2); fs.rmSync(dir, { recursive: true, force: true }); }
 });

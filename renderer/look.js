@@ -11,7 +11,10 @@ function accentFg(hex) {
 }
 async function applyLook() {
   const l = settings.look || {}, root = document.documentElement.style, main = document.querySelector("body > main"), audio = $("lookMusic");
-  if (l.accent) { root.setProperty("--accent", l.accent); root.setProperty("--accentfg", accentFg(l.accent)); } else { root.removeProperty("--accent"); root.removeProperty("--accentfg"); }
+  // Every other button is a pale tint of the house pink (--pastel): a chosen accent gets its own pale tint, or most
+  // buttons stay pink and only the main one changes (a player's report, 27 Nov 2026).
+  const tint = l.accent && `#${[1, 3, 5].map((i) => Math.round(parseInt(l.accent.slice(i, i + 2), 16) * 0.4 + 255 * 0.6).toString(16).padStart(2, "0")).join("")}`;
+  for (const [k, v] of [["--accent", l.accent], ["--accentfg", l.accent && accentFg(l.accent)], ["--pastel", tint], ["--pastelfg", tint && accentFg(tint)]]) v ? root.setProperty(k, v) : root.removeProperty(k);
   $("shelves").className = `shelf-wrap layout-${l.layout || "grid"}`; $("shelves").style.setProperty("--cardsize", `${l.cardSize || 150}px`);
   main.style.setProperty("--bgdim", `${Math.round((l.bgDim ?? 0.6) * 100)}%`);
   audio.volume = l.musicVolume ?? 0.5;

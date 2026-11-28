@@ -176,3 +176,19 @@ test("attachFacts adds every computer the published plan installs on", async () 
   const [n] = attachFacts([{ owner: "x", repo: "y", platforms: ["Windows"] }], pub);
   assert.deepEqual(n.platforms, ["Windows"]);
 });
+
+test("a saved cover that is already tile size isn't shrunk again on every start", async () => {
+  const { iconFor } = await import("../src/catalog.js");
+  const crypto = await import("node:crypto");
+  const cache = fs.mkdtempSync(path.join(os.tmpdir(), "db-icons-")), dir = path.join(cache, "icons");
+  fs.mkdirSync(dir); fs.writeFileSync(path.join(dir, ".no-profile-photos"), "");
+  const png = (w) => { const b = Buffer.alloc(250_000); Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(b); b.write("IHDR", 12); b.writeUInt32BE(w, 16); return b; };
+  const key = (u) => path.join(dir, crypto.createHash("sha1").update(u).digest("hex"));
+  fs.writeFileSync(key("https://x/small.png") + ".png", png(512)); // see-through, already 512 wide: nothing to gain
+  fs.writeFileSync(key("https://x/big.png") + ".png", png(1500)); // saved full size: still shrunk once
+  let calls = 0; const shrink = () => { calls++; return null; };
+  assert.ok(await iconFor({ id: "a", iconUrl: "https://x/small.png" }, { cacheDir: cache, shrink }));
+  assert.equal(calls, 0);
+  assert.ok(await iconFor({ id: "b", iconUrl: "https://x/big.png" }, { cacheDir: cache, shrink }));
+  assert.equal(calls, 1);
+});

@@ -3,7 +3,7 @@
 import { planKey } from "./plans.js";
 import { canonConsole } from "./renames.js";
 import { scanSummary } from "./scan.js";
-import { PLATFORM_OF_TARGET } from "./targets.js";
+import { PLATFORM_OF_TARGET, PLAN_FALLBACK } from "./targets.js";
 import { hostOf } from "./hosts.js";
 
 export const slug = (t) => String(t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -52,6 +52,18 @@ export function publishedTag(entry) {
   for (const t of Object.values(entry?.targets || {})) for (const gm of t?.games || []) if (gm.build?.method === "release" && gm.build.release_tag) n.set(gm.build.release_tag, (n.get(gm.build.release_tag) || 0) + 1);
   return [...n].sort((a, b) => b[1] - a[1])[0]?.[0] || null;
 }
+// The release tag each platform's plan installs, when they don't all agree (a Windows build can sit a version behind
+// Linux). Without it "Update" kept offering the shown version and reinstalled the platform's older one, forever.
+export function targetTags(entry) {
+  const out = {};
+  for (const [t, T] of Object.entries(entry?.targets || {})) {
+    const tags = [...new Set((T?.games || []).filter((gm) => gm.build?.method === "release" && gm.build.release_tag).map((gm) => gm.build.release_tag))];
+    if (tags.length === 1) out[t] = tags[0];
+  }
+  return out;
+}
+// The version an install on this target would get: its own plan's tag, the plan it borrows (ARM -> x64), else the shown one.
+export const versionFor = (g, target) => g?.targetTags?.[target] || g?.targetTags?.[PLAN_FALLBACK[target]] || g?.version || null;
 export function attachFacts(games, pub) {
   for (const g of games) {
     const entry = g.owner && pub?.plans?.[planKey(g.repoHost || "github", g.owner, g.repo)];
@@ -65,6 +77,7 @@ export function attachFacts(games, pub) {
     const tag = !g.repoGames && publishedTag(entry);
     if (tag) g.publishedTag = tag;
     if (tag && tag !== g.version) { g.latestVersion = g.version; g.version = tag; }
+    if (tag) { const tt = targetTags(entry); if (Object.values(tt).some((x) => x !== tag)) g.targetTags = tt; }
     const planned = Object.entries(entry?.targets || {}).filter(([, t]) => !(t?.games?.length && t.games.every((gm) => gm.build?.gone && !gm.build.mirror))).map(([t]) => PLATFORM_OF_TARGET[t]).filter(Boolean);
     if (planned.length) g.platforms = [...new Set([...(g.platforms || []), ...planned])];
   }

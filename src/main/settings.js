@@ -19,6 +19,8 @@ import { REDDIT_SUBS } from "../discover.js";
 import { cleanLook } from "../look.js";
 import { saveLook } from "./look.js";
 import { kiosk } from "./window.js";
+import { setKeepVersions } from "../versions.js";
+setKeepVersions(loadSettings().keepVersions ?? 2);
 
 ipcMain.handle("settings:get", async () => {
   const s = loadSettings();
@@ -33,7 +35,7 @@ ipcMain.handle("settings:get", async () => {
     provider: id, model: saved.model || PRESETS[id]?.defaultModel || "", baseUrl: saved.baseUrl || PRESETS[id]?.baseUrl || "",
     hasKey: !!decrypt(saved), version: VERSION, hasGithubToken: !!githubToken(s), lang: s.lang || "system", langs: LANGS, osLang: app.getLocale(),
     theme: s.theme || "system", preferBoxart: !!s.preferBoxart, showAdultMods: !!s.showAdultMods, sawLegal: !!s.sawLegal, sawWhere: !!s.sawWhere, setupCount: s.setupCount || 0, nudgedAt: s.nudgedAt || [], launches: s.launches || 0, phoneAdShown: !!s.phoneAdShown, whatsNewPending: s.whatsNewSince !== undefined, collapsedGroups: s.collapsedGroups || [], vault: readVault(vaultDir()),
-    wishlist: s.wishlist || {}, mine: s.mine || {}, digest: s.digest || null, startCouch: !!s.startCouch, askAfterPlay: s.askAfterPlay !== false, countSetups: s.countSetups ?? null, libraryFolders: s.libraryFolders || [], steamAvailable: !!steamDir(),
+    wishlist: s.wishlist || {}, mine: s.mine || {}, digest: s.digest || null, startCouch: !!s.startCouch, startView: s.startView === "library" ? "library" : "browse", shortcutDir: s.shortcutDir || null, keepVersions: s.keepVersions ?? 2, askAfterPlay: s.askAfterPlay !== false, countSetups: s.countSetups ?? null, libraryFolders: s.libraryFolders || [], steamAvailable: !!steamDir(),
     discoverSubs: s.discoverSubs || REDDIT_SUBS, discoverChannels: s.discoverChannels || [],
     githubRate: githubRate.limit ? { ...githubRate } : null, uiScale: s.uiScale || 1, shareStats: s.shareStats === true, padMap: s.padMap || {}, padNintendo: !!s.padNintendo, updateSchedule: s.updateSchedule || "off", autoUpdateAll: !!s.autoUpdateAll, runInBackground: !!s.runInBackground, startAtLogin: !!s.startAtLogin, look: cleanLook(s.look),
     kiosk: { on: !!s.kiosk?.on, hasPin: !!s.kiosk?.hash, locked: kiosk.locked },
@@ -51,7 +53,7 @@ ipcMain.handle("settings:get", async () => {
     presets: Object.fromEntries(Object.entries(PRESETS).filter(([k]) => k !== "apple").map(([k, p]) => [k, { label: p.label, baseUrl: p.baseUrl, noKey: !!p.noKey, custom: k === "custom" }])),
   };
 });
-ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSchedule, autoUpdateAll, runInBackground, startAtLogin, uiScale, appleAI, apiKey, installDir, romKeepDir: keepDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, launches, phoneAdShown, githubToken, lang, preferBoxart, showAdultMods, mine, digest, startCouch, askAfterPlay, look }) => {
+ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSchedule, autoUpdateAll, runInBackground, startAtLogin, uiScale, appleAI, apiKey, installDir, romKeepDir: keepDir, transferDir, moveFiles, provider, model, baseUrl, target, sources, findsFile, admin, theme, sawLegal, sawWhere, countSetups, collapsedGroups, wishlist, libraryFolders, discoverSubs, discoverChannels, nudgedAt, launches, phoneAdShown, githubToken, lang, preferBoxart, showAdultMods, mine, digest, startCouch, startView, shortcutDir, keepVersions, askAfterPlay, look }) => {
   const s = loadSettings();
   // Make It Yours: patch-merged; null resets it (and deletes the copied picture and music).
   if (look !== undefined) saveLook(s, look && { ...s.look, ...look });
@@ -78,6 +80,9 @@ ipcMain.handle("settings:set", (_e, { padMap, padNintendo, shareStats, updateSch
   if (preferBoxart !== undefined) s.preferBoxart = !!preferBoxart;
   if (showAdultMods !== undefined) s.showAdultMods = !!showAdultMods;
   if (startCouch !== undefined) s.startCouch = !!startCouch;
+  if (shortcutDir !== undefined) { if (shortcutDir && !path.isAbsolute(String(shortcutDir))) throw new Error("Pick a folder for shortcuts."); s.shortcutDir = shortcutDir ? String(shortcutDir) : undefined; }
+  if (keepVersions !== undefined) { s.keepVersions = [0, 1, 2].includes(Number(keepVersions)) ? Number(keepVersions) : 2; setKeepVersions(s.keepVersions); }
+  if (startView !== undefined) s.startView = startView === "library" ? "library" : "browse";
   if (askAfterPlay !== undefined) s.askAfterPlay = !!askAfterPlay;
   if (countSetups !== undefined) s.countSetups = !!countSetups;
   if (digest) s.digest = digest; // weekly What's New: { at, seen: { [id]: version }, items: [...] }

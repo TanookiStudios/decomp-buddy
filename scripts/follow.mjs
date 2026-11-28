@@ -71,8 +71,8 @@ await Promise.all(Array.from({ length: 6 }, async () => {
     if (!releases.length && host === "github" && await repoGone(owner, repo)) { gone.add(full); continue; }
     // The project is there but took every download down: it waits on Coming Soon until one is posted again.
     if (!releases.some((r) => r.assets.length)) emptied.set(full, { host, e: plans.plans[key] });
-    for (const { build } of byRepo.get(key)) {
-      const step = nextStep(build, releases, { owner, knownUploaders, collection });
+    for (const { build, target } of byRepo.get(key)) {
+      const step = nextStep(build, releases, { owner, knownUploaders, collection, target });
       // Best Version For You: players said this release doesn't start, so it isn't installed (scripts/bestversion.mjs).
       if (step.release?.tag && step.release.tag === plans.plans[key].recommended?.badTag) { delete build.next; tally.current++; continue; }
       if (step.action === "current") { delete build.next; tally.current++; continue; }

@@ -6,6 +6,9 @@ import path from "node:path";
 
 export const VERSIONS = "Versions";
 export const KEEP_VERSIONS = 2;
+// Settings → Keep Old Versions (2, 1 or 0): a whole old copy of a big game is gigabytes, and not everyone wants Roll Back.
+let keepDefault = KEEP_VERSIONS;
+export const setKeepVersions = (n) => { keepDefault = [0, 1, 2].includes(n) ? n : KEEP_VERSIONS; };
 // Things in a game folder that are never part of a release.
 const OURS = new Set([VERSIONS, "Game Files", "Saves Backup", "Decomp Buddy Mods", "decomp-buddy.json", "artwork.png", "artwork.jpg", "folder.ico", "desktop.ini", "Icon\r", ".decomp-buddy-stash"]);
 
@@ -22,7 +25,7 @@ export function listVersions(dir) {
 // Move the current release's files into Versions/<tag>/, file by file: anything that didn't come
 // from the release (your game files, saves, mods, config you edited next to it) stays exactly where it is.
 const pruneEmpty = (dir, root) => { let d = dir; while (d.startsWith(root + path.sep) && d !== root) { try { if (fs.readdirSync(d).length) break; fs.rmdirSync(d); } catch { break; } d = path.dirname(d); } };
-export function keepVersion(dir, tag, files, { log = () => {}, keep = KEEP_VERSIONS } = {}) {
+export function keepVersion(dir, tag, files, { log = () => {}, keep = keepDefault } = {}) {
   const moving = (files || []).filter((f) => !OURS.has(f.split(/[\\/]/)[0]) && fs.existsSync(path.join(dir, f)));
   if (!moving.length) return null;
   const dest = path.join(dir, VERSIONS, safeTag(tag));
@@ -30,6 +33,7 @@ export function keepVersion(dir, tag, files, { log = () => {}, keep = KEEP_VERSI
   for (const f of moving) { fs.mkdirSync(path.dirname(path.join(dest, f)), { recursive: true }); fs.renameSync(path.join(dir, f), path.join(dest, f)); pruneEmpty(path.dirname(path.join(dir, f)), dir); }
   fs.writeFileSync(path.join(dest, ".version.json"), JSON.stringify({ tag, files: moving, keptAt: new Date().toISOString(), seq: String(process.hrtime.bigint()) }));
   for (const old of listVersions(dir).slice(keep)) fs.rmSync(old.dir, { recursive: true, force: true });
+  if (!keep) { fs.rmSync(path.join(dir, VERSIONS), { recursive: true, force: true }); log(`Removed ${tag}'s files (Keep Old Versions is off in Settings).`); return null; }
   log(`Kept ${tag} in ${VERSIONS}/ (roll back from Installed Games if the new one misbehaves).`);
   return dest;
 }

@@ -876,7 +876,6 @@
   "Name": "Name",
   "Name And Tags": "Name Und Tags",
   "Open The Full Log": "Ganzes Protokoll Öffnen",
-  "Puts an icon on your desktop that starts this game{0}.": "Legt ein Symbol auf deinen Schreibtisch, das dieses Spiel startet{0}.",
   "Read More": "Mehr Lesen",
   "Remove Game": "Spiel Entfernen",
   "Remove Game…": "Spiel Entfernen…",
@@ -1479,6 +1478,23 @@
   "Mostly {0}": "Überwiegend {0}",
   "Played it? Decomp Buddy asks how it ran when you close the game.": "Schon gespielt? Decomp Buddy fragt, wie es lief, wenn du das Spiel schließt.",
   "Download Source": "Quellcode Herunterladen",
-  "Download the source code of {0}: {1}": "Quellcode von {0} herunterladen: {1}"
+  "Download the source code of {0}: {1}": "Quellcode von {0} herunterladen: {1}",
+  "Each kept version is a whole copy of the game, so a big game can use gigabytes. Your saves are still backed up before every update either way. Old copies you already have can go from a game's More… → Free Up Space.": "Jede behaltene Version ist eine vollständige Kopie des Spiels – ein großes Spiel kann also Gigabytes belegen. Deine Spielstände werden vor jedem Update trotzdem gesichert. Alte Kopien, die du schon hast, kannst du über Mehr… → Speicher Freigeben des Spiels entfernen.",
+  "Just The Last One": "Nur Die Letzte",
+  "Keep Old Versions (for Roll Back)": "Alte Versionen Behalten (zum Zurücksetzen)",
+  "None (Saves The Most Space)": "Keine (Spart Am Meisten Platz)",
+  "Open On": "Öffnen Mit",
+  "Project Page": "Projektseite",
+  "Puts an icon on your desktop (or the Shortcut Folder you picked in Settings) that starts this game{0}.": "Legt ein Symbol auf deinen Schreibtisch (oder in den Verknüpfungsordner aus den Einstellungen), das dieses Spiel startet{0}.",
+  "Shortcut Folder (where Desktop Shortcut puts a game's icon)": "Verknüpfungsordner (wo das Symbol eines Spiels hinkommt)",
+  "The Last 2 (Default)": "Die Letzten 2 (Standard)",
+  "Use Desktop": "Schreibtisch Verwenden",
+  "Your desktop": "Dein Schreibtisch",
+  "Add it to Steam again from Installed Games so Steam finds the new place.": "Füge es unter „Installierte Spiele“ erneut zu Steam hinzu, damit Steam den neuen Ort findet.",
+  "Move To Another Folder": "In Einen Anderen Ordner Verschieben",
+  "Move To Another Folder…": "In Einen Anderen Ordner Verschieben…",
+  "Moved to {0}.{1}": "Verschoben nach {0}.{1}",
+  "Moves this game's whole folder, saves inside it included, to a folder you pick, even on another drive. It stays in Installed Games. A desktop or Steam shortcut you made before still points to the old place, so make it again after.": "Verschiebt den ganzen Ordner dieses Spiels samt Spielständen darin in einen Ordner deiner Wahl, auch auf ein anderes Laufwerk. Es bleibt unter „Installierte Spiele“. Eine Schreibtisch- oder Steam-Verknüpfung von vorher zeigt noch auf den alten Ort, also lege sie danach neu an.",
+  "Moving…": "Wird verschoben…"
  }
 }

@@ -1,5 +1,5 @@
 // Moved out of main.js unchanged (2026-09-23): window IPC handlers.
-import { BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "node:path";
 import { here, loadSettings, saveSettings } from "./core.js";
 import { setupAutoUpdater } from "./updater.js";
@@ -28,7 +28,12 @@ export function createWindow() {
   const remember = () => { clearTimeout(t); t = setTimeout(() => { const cur = loadSettings(); cur.window = { ...win.getNormalBounds(), maximized: win.isMaximized() }; saveSettings(cur); }, 400); };
   win.on("resize", remember); win.on("move", remember); win.on("maximize", remember); win.on("unmaximize", remember);
   // Closing a locked kiosk needs the PIN too: the page shows its keypad instead.
-  win.on("close", (e) => { if (kiosk.locked) { e.preventDefault(); win.webContents.send("kiosk:close"); } });
+  win.on("close", (e) => {
+    if (kiosk.locked) { e.preventDefault(); win.webContents.send("kiosk:close"); return; }
+    // Keep Running In The Background: hide the window instead of throwing it away, so opening it again from the tray is
+    // instant instead of a whole new start-up (a player's report, 27 Nov 2026). Quit still closes it for real.
+    if (loadSettings().runInBackground && !app.quitting) { e.preventDefault(); win.hide(); if (process.platform === "darwin") app.dock?.hide(); }
+  });
   win.loadFile(path.join(here, "renderer", "index.html"));
   setupAutoUpdater(win);
   return win;

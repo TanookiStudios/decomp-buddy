@@ -50,7 +50,7 @@ function deliver(url) {
 app.on("open-url", (e, url) => { e.preventDefault(); app.isReady() ? deliver(url) : (pendingLink = parseDeepLink(url)); }); // macOS
 if (app.isPackaged) {
   if (!app.requestSingleInstanceLock()) app.quit();
-  app.on("second-instance", (_e, argv) => { const u = argv.find((a) => a.startsWith("decompbuddy://")); if (u) deliver(u); else BrowserWindow.getAllWindows()[0]?.focus(); }); // Windows/Linux
+  app.on("second-instance", (_e, argv) => { const u = argv.find((a) => a.startsWith("decompbuddy://")); if (u) deliver(u); else { const w = BrowserWindow.getAllWindows()[0]; if (w) { w.show(); w.focus(); } else createWindow(); } }); // Windows/Linux: a second launch brings the (maybe hidden) window back
   app.setAsDefaultProtocolClient("decompbuddy");
   const first = process.argv.find((a) => a.startsWith("decompbuddy://")); if (first) pendingLink = parseDeepLink(first);
 }
@@ -58,5 +58,5 @@ if (app.isPackaged) {
 app.whenReady().then(() => { try { backupSettingsOnUpgrade(); } catch {} const s = loadSettings(); if (!process.env.GITHUB_TOKEN) applyGitHubToken(githubToken(s)); nativeTheme.themeSource = ["light", "dark"].includes(s.theme) ? s.theme : "system"; startBackground(); startWatch(); startPhoneLink(); setTimeout(() => sendStatsIfDue(), 60_000); if (process.argv.includes("--background") && keepRunning()) return; const win = createWindow(); if (pendingLink) { const l = pendingLink; pendingLink = null; win.webContents.once("did-finish-load", () => (l.play ? playFromShortcut(win, l) : win.webContents.send("deeplink", l))); } });
 // Keep Running In The Background (Settings → Updates): the window closes, the tray icon and Auto Update stay.
 app.on("window-all-closed", () => { if (keepRunning()) { if (process.platform === "darwin") app.dock?.hide(); } else app.quit(); });
-app.on("activate", () => { if (!BrowserWindow.getAllWindows().length) createWindow(); if (process.platform === "darwin") app.dock?.show(); });
+app.on("activate", () => { const w = BrowserWindow.getAllWindows()[0]; if (!w) createWindow(); else if (!w.isVisible()) w.show(); if (process.platform === "darwin") app.dock?.show(); });
 app.on("before-quit", () => { app.quitting = true; });

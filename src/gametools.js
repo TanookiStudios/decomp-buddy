@@ -134,3 +134,28 @@ export function checkFolder(folder, m) {
   });
   return { missing, placed, needed: (m.plan?.game_files || []).filter((f) => !f.placed).map((f) => f.label) };
 }
+
+// Move To Another Folder (More… menu): the whole game folder goes to dir. Another drive is copied, checked, then the
+// old copy removed - the old copy is never touched until the new one is complete.
+// rename is swappable so a test can act out another drive (EXDEV).
+export async function moveGame(f, dir, log = () => {}, { rename = fs.renameSync } = {}) {
+  const to = path.join(dir, path.basename(f));
+  if (path.resolve(dir) === path.dirname(f)) throw new Error("It's already in that folder.");
+  if ((dir + path.sep).startsWith(f + path.sep)) throw new Error("A game can't go inside its own folder.");
+  if (fs.existsSync(to)) throw new Error(`There's already a folder called "${path.basename(f)}" there.`);
+  fs.mkdirSync(dir, { recursive: true });
+  try { rename(f, to); }
+  catch (err) {
+    if (err.code !== "EXDEV") throw err; // another drive: rename can't, so copy
+    const want = dirSize(f);
+    const st = fs.statfsSync(dir);
+    if (st.bavail * st.bsize < want) throw new Error(`Not enough free space there: the game needs ${Math.ceil(want / 1e6)} MB.`);
+    log(`Copying ${Math.ceil(want / 1e6)} MB to the other drive…`);
+    try {
+      await fs.promises.cp(f, to, { recursive: true, preserveTimestamps: true, verbatimSymlinks: true, errorOnExist: true, force: false });
+      if (dirSize(to) !== want) throw new Error("the copy came out a different size");
+    } catch (e) { fs.rmSync(to, { recursive: true, force: true }); throw new Error(`Couldn't copy it there (${e.message}). Nothing was moved.`); }
+    fs.rmSync(f, { recursive: true, force: true });
+  }
+  return to;
+}

@@ -3,6 +3,7 @@
 // project's releases before (or its owner) and its file scanned clean. Until then everyone keeps getting the version
 // that already passed. No waiting period (removed 26 Oct 2026): it goes live when the checks are done.
 // scripts/follow.mjs runs this on the admin's machine.
+import { assetMismatch } from "./targets.js";
 
 // "Game-v0.3.0-win64.zip" in release v0.3.0 is "Game-v0.6.2-win64.zip" in release v0.6.2. Same name when it has no
 // version in it. Otherwise numbers are compared loosely; only a single match counts.
@@ -25,10 +26,23 @@ export function matchAsset(oldName, oldTag, assets) {
   return byEnds.length === 1 ? byEnds[0] : null;
 }
 
+// An installer ("Setup.exe", "Game-installer.msi", a bare "Game.Setup-linux") leaves the game outside Decomp Buddy's
+// folder, so it can't find or manage it. When the same release also has a plain download for that platform (a
+// portable .zip, an AppImage), that's the one to install. Only a single clear pick counts.
+const INSTALLERISH = /(setup|install(er)?)[^/\\]*\.(exe|msi)$|\.(pkg|flatpak|flatpakref)$|(^|[^a-z])(setup|installer)([^a-z][^.]*)?$/i;
+const PLAIN = /\.(zip|7z|tar\.gz|tgz|tar\.xz|tar\.bz2|tar\.zst|appimage)$/i;
+const NAMES_OS = { windows: /win/i, "windows-arm64": /win/i, linux: /linux|appimage/i, "linux-arm64": /linux|appimage/i, "macos-arm64": /mac|darwin|osx/i, "macos-x64": /mac|darwin|osx/i };
+export function portableTwin(name, assets, target) {
+  if (!target || !NAMES_OS[target] || !INSTALLERISH.test(String(name || ""))) return null;
+  const ok = (assets || []).filter((a) => PLAIN.test(a.name) && !INSTALLERISH.test(a.name) && !/source|symbols|debug|pdb|server|tool|builder|sdk|setup|install|recomplauncher/i.test(a.name) && !assetMismatch(a.name, target) && (/portable/i.test(a.name) || NAMES_OS[target].test(a.name)));
+  const pick = ok.length > 1 ? ok.filter((a) => /portable/i.test(a.name)) : ok;
+  return pick.length === 1 ? pick[0] : null;
+}
+
 // What to do with one published build, given the repo's releases (newest first, as GitHub lists them).
 // -> { action: "current" } | { action: "advance", release, asset } | { action: "wait", why, release } | { action: "replan", why }
 // collection: the repo ships several games, one release each - a newer release without this game's file is another game.
-export function nextStep(build, releases, { owner, knownUploaders = [], collection = false } = {}) {
+export function nextStep(build, releases, { owner, knownUploaders = [], collection = false, target = null } = {}) {
   const all = releases || [], at = all.findIndex((r) => r.tag === build.release_tag);
   // Only releases newer than the one installed now (GitHub lists newest first), stable, with files.
   const newer = (at < 0 ? all : all.slice(0, at)).filter((r) => !r.prerelease && !r.draft && (r.assets || []).length);
@@ -42,6 +56,9 @@ export function nextStep(build, releases, { owner, knownUploaders = [], collecti
     if (asset) newest = current;
     else if (!newer.length) return { action: "replan", why: `${build.release_tag} no longer has ${build.release_asset} or a renamed copy of it` };
   }
+  // An installer gets swapped for the release's portable download: in a newer release, or the one installed now.
+  if (newest && asset) asset = portableTwin(asset.name, newest.assets, target) || asset;
+  else if (!newest && current) { const twin = portableTwin(build.release_asset, current.assets, target); if (twin) { newest = current; asset = twin; } }
   if (!newest && !newer.length) return { action: "current" };
   if (!newest) {
     if (at < 0) return { action: "replan", why: `${build.release_tag} is gone and no release has a file matching ${build.release_asset}` };

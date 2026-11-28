@@ -1,0 +1,20 @@
+const out = {};
+await refresh(); await wait(2500);
+out.startView = document.querySelector("main > section.view.active")?.dataset.view;
+await loadCatalog({ refresh: false }).catch((e) => { out.catalogErr = e.message; });
+await renderLibrary(); await wait(800);
+const chips = (folder) => [...document.querySelectorAll(".book")].find((b) => b.dataset.key.endsWith(folder))?.querySelector(".chips")?.textContent || "";
+out.linuxChips = chips("SoH Linux"); out.winChips = chips("SoH Win");
+const ship = catalog.games.find((c) => /^shipwright$/i.test(c.repo || ""));
+out.targetTags = ship?.targetTags || null;
+out.overlay = [...document.querySelectorAll(".book .acts [data-lib]")].map((b) => b.dataset.lib).filter((x) => ["repo", "changes", "shortcut"].includes(x));
+// Desktop Shortcut lands in the Shortcut Folder from Settings.
+const win = library.find((x) => x.folder.endsWith("SoH Win"));
+out.shortcut = await window.buddy.gameShortcut(win.folder).then((r) => r.file).catch((e) => "ERR " + e.message);
+out.settings = { startView: $("startView").value, keepVersions: $("keepVersions").value, shortcutDir: $("shortcutDir").value };
+showView("browse"); $("catSearch") && ($("catSearch").value = "Ship of Harkinian"); renderCatalog(); await wait(1500);
+const card = document.querySelector(`#catalogList [data-card="${CSS.escape(ship?.id || "")}"]`);
+out.cardLinks = card ? [...card.querySelectorAll(".line.links a")].map((a) => `${a.textContent} -> ${a.dataset.url}`) : "card not shown";
+out.cardAct = card?.querySelector(".acts")?.textContent.trim();
+const T = "__T__";
+return { ok: out.startView === "library" && !/update available/.test(out.linuxChips) && /update available/.test(out.winChips) && out.overlay.length >= 3 && String(out.shortcut).startsWith(T + "/shortcuts/") && Array.isArray(out.cardLinks) && out.cardLinks.length === 2, ...out };

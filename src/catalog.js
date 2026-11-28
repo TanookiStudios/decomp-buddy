@@ -143,7 +143,10 @@ export async function iconFor(game, { cacheDir, preferBoxart = false, lookOnGitH
   const first = artUrl(game, preferBoxart);
   const primaryKey = keyFor(first || game.id);
   const existing = ICON_EXTS.map((x) => primaryKey + x).find((f) => { try { return fs.statSync(f).size > 300; } catch { return false; } });
-  if (existing && shrink && fs.statSync(existing).size > 200_000) { // saved full size before covers were shrunk
+  // A PNG already at tile size (or narrower) is a see-through cover that shrinking keeps as PNG: re-doing it
+  // every start was ~18 s of work for ~600 covers. Read its width from the header instead of decoding it.
+  const tileSizePng = (f) => { try { const h = Buffer.alloc(24); const fd = fs.openSync(f, "r"); fs.readSync(fd, h, 0, 24, 0); fs.closeSync(fd); return h.readUInt32BE(0) === 0x89504e47 && h.readUInt32BE(16) <= 512; } catch { return false; } };
+  if (existing && shrink && fs.statSync(existing).size > 200_000 && !tileSizePng(existing)) { // saved full size before covers were shrunk
     const small = shrink(fs.readFileSync(existing));
     if (small) { fs.rmSync(existing); fs.writeFileSync(primaryKey + small.ext, small.buf); return primaryKey + small.ext; }
   }

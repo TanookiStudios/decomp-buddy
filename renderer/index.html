@@ -192,6 +192,9 @@ button.small { padding:5px 10px; font-size:12px }
 .rlist { list-style:none; margin:0; padding:0 } .rlist li { border-top:1px solid var(--line); padding:8px 0 } .rlist .rhead { display:flex; align-items:center; gap:8px } .rlist .rhead .sub { margin-left:auto } .rlist p { margin:4px 0 0 }
 .tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(176px, 1fr)); gap:14px }
 .gtile { display:flex; flex-direction:column; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 1px 2px var(--shadow); min-width:0 }
+/* Cards far off screen are laid out but not drawn until scrolled near: ~4,600 cards made every redraw (each search
+   keystroke) cost about a third of a second. "auto" remembers each card's real height once it has been drawn. */
+#catalogList .gtile { content-visibility:auto; contain-intrinsic-size:auto 176px auto 330px }
 .gtile.picked { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) }
 .gtile .cover { aspect-ratio:1; background:var(--raised); position:relative; overflow:hidden; border-bottom:1px solid var(--line); cursor:pointer } .gtile .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block }
 .gtile .nocover { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px; overflow-wrap:anywhere; background:var(--raised); color:var(--fg); font-weight:600; font-size:15px; line-height:1.2 }
@@ -219,6 +222,7 @@ button:hover:not(:disabled) { border-color:var(--pastelfg) }
 button.primary:hover:not(:disabled) { border-color:transparent }
 button.danger { background:transparent; border-color:var(--bad); color:var(--bad) }
 .star { background:var(--pastel); color:var(--pastelfg); border-color:transparent } .star.on { background:var(--accent); color:var(--accentfg) } .star:hover:not(:disabled) { color:var(--pastelfg); border-color:var(--pastelfg) }
+.gtile .line.links a { color:var(--muted) } .gtile .line.links a:hover, .gtile .line.links a:focus-visible { color:var(--fg) }
 .gtile .line.feat { display:flex; flex-wrap:wrap; gap:4px; font-size:0; white-space:normal; margin-top:6px }
 dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
 .gtile .line.feat span, dl.facts dd > span { display:inline-block; font:600 11.5px/1.2 var(--font); padding:3px 7px; background:var(--pastel); color:var(--pastelfg) }
@@ -500,6 +504,10 @@ dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
         <div class="row"><input id="installDir" type="text"><button id="chooseInstall" type="button">Choose…</button></div>
       </div>
       <div>
+        <label for="shortcutDir">Shortcut Folder (where Desktop Shortcut puts a game's icon)</label>
+        <div class="row"><input id="shortcutDir" type="text" readonly placeholder="Your desktop"><button id="chooseShortcutDir" type="button">Choose…</button><button id="resetShortcutDir" type="button">Use Desktop</button></div>
+      </div>
+      <div>
         <label for="romKeepDir">Kept Game Files (when you uninstall a game)</label>
         <div class="row"><input id="romKeepDir" type="text" readonly><button id="chooseRomKeep" type="button">Choose…</button></div>
         <p class="sub">Uninstall Game asks every time. If you pick Move Rom Out Safely, your game files go into this folder.</p>
@@ -631,6 +639,7 @@ dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
         <label class="check"><input id="askAfterPlay" type="checkbox"> Ask How It Ran After I Play</label>
         <p class="sub">When you close a game you played for a couple of minutes, Decomp Buddy asks how it ran, once for each version. Nothing is sent unless you press Send Report, and it shows you exactly what goes with it.</p>
         <label class="check"><input id="startCouch" type="checkbox"> Start In Big Picture Mode</label>
+        <div><label for="startView">Open On</label><select id="startView" style="width:auto"><option value="browse">Browse Games</option><option value="library">Installed Games</option></select></div>
       </div>
       <div>
         <label>Controller</label>
@@ -659,6 +668,8 @@ dl.facts dd:has(> span) { font-size:0; display:flex; flex-wrap:wrap; gap:4px }
         <div class="row" style="flex-wrap:wrap;gap:12px">
           <div><label for="updSchedule">Check For Updates</label><select id="updSchedule" style="width:auto"><option value="off">Only When I Open Decomp Buddy</option><option value="15m">Every 15 Minutes</option><option value="1h">Every Hour</option><option value="6h">Every 6 Hours</option><option value="daily">Once A Day</option></select></div>
         </div>
+        <div><label for="keepVersions">Keep Old Versions (for Roll Back)</label><select id="keepVersions" style="width:auto"><option value="2">The Last 2 (Default)</option><option value="1">Just The Last One</option><option value="0">None (Saves The Most Space)</option></select></div>
+        <p class="sub">Each kept version is a whole copy of the game, so a big game can use gigabytes. Your saves are still backed up before every update either way. Old copies you already have can go from a game's More… → Free Up Space.</p>
         <label class="check"><input id="updAuto" type="checkbox"> Install updates by themselves (your saves are backed up first; you can switch this per game in its More… panel)</label>
         <label class="check"><input id="updBackground" type="checkbox"> Keep running in the background when I close the window (an icon stays in the menu bar or system tray)</label>
         <label class="check"><input id="updLogin" type="checkbox"> Start with my computer, hidden, so updates keep coming</label>

@@ -167,6 +167,7 @@ contextBridge.exposeInMainWorld("buddy", {
   gameSetUser: (folder, patch) => ipcRenderer.invoke("game:setUser", { folder, ...patch }),
   gameRemove: (folder, rom) => ipcRenderer.invoke("game:remove", { folder, rom }),
   gameShortcut: (folder) => ipcRenderer.invoke("game:shortcut", { folder }),
+  gameMove: (folder) => ipcRenderer.invoke("game:move", { folder }),
   onGameFailed: (cb) => ipcRenderer.on("game:failed", (_e, info) => cb(info)),
   gameAdoptPick: () => ipcRenderer.invoke("game:adoptPick"),
   gameAdopt: (x) => ipcRenderer.invoke("game:adopt", x),

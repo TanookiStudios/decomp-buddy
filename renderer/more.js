@@ -80,8 +80,10 @@ async function openMore(g) {
       <p class="sub">Separate tags with commas. They show as filters above your shelves.</p>
       <label class="row" style="gap:6px"><input id="moreHidden" type="checkbox" ${g.hidden ? "checked" : ""}> Hide this game from Installed Games</label>
       <div class="row"><button id="moreUserSave" type="button">Save</button></div></div>
-    <div class="more-sec"><h4>Desktop Shortcut</h4><p class="sub">Puts an icon on your desktop that starts this game${g.runsHere ? "" : " (through Decomp Buddy, which starts it with Wine)"}.</p>
+    <div class="more-sec"><h4>Desktop Shortcut</h4><p class="sub">Puts an icon on your desktop (or the Shortcut Folder you picked in Settings) that starts this game${g.runsHere ? "" : " (through Decomp Buddy, which starts it with Wine)"}.</p>
       <button id="moreShortcut" type="button">Add To Desktop</button></div>
+    <div class="more-sec"><h4>Move To Another Folder</h4><p class="sub">Moves this game's whole folder, saves inside it included, to a folder you pick, even on another drive. It stays in Installed Games. A desktop or Steam shortcut you made before still points to the old place, so make it again after.</p>
+      <button id="moreMove" type="button">Move To Another Folder…</button></div>
     <div class="more-sec"><h4>Uninstall Game</h4><p class="sub">Moves this game's folder, and any saves inside it, to the Trash. You can still get it back from there. You choose whether your game files go with it or move out safely.</p>
       <div class="row"><button id="moreRemove" type="button" class="danger">Uninstall Game…</button></div></div>`;
   if ($("moreRunner")) {
@@ -103,7 +105,7 @@ async function openMore(g) {
   }
   $("moreAuto").value = g.autoUpdate === true ? "on" : g.autoUpdate === false ? "off" : "";
   $("moreAuto").onchange = async () => { await window.buddy.gameSetUser(g.folder, { autoUpdate: { on: true, off: false }[$("moreAuto").value] ?? null }); g.autoUpdate = { on: true, off: false }[$("moreAuto").value] ?? null; panelState("Saved.", "ok"); };
-  const curVer = () => catalog.games.find((x) => x.owner && `${x.owner}/${x.repo}`.toLowerCase() === String(g.repo).toLowerCase())?.version;
+  const curVer = () => versionFor(catalogOf(g), g.target || "windows");
   $("moreSkip")?.addEventListener("click", async () => { await window.buddy.gameSetUser(g.folder, { skipTag: curVer() }); await renderLibrary(); openMore(library.find((x) => x.key === g.key) || g); });
   $("moreUnskip")?.addEventListener("click", async () => { await window.buddy.gameSetUser(g.folder, { skipTag: null }); await renderLibrary(); openMore(library.find((x) => x.key === g.key) || g); });
   $("morePick").onclick = async () => {
@@ -125,6 +127,11 @@ async function openMore(g) {
       await window.buddy.gameSetUser(g.folder, { displayName: $("moreName").value, tags: $("moreTags").value.split(","), hidden: $("moreHidden").checked });
       panelState("Saved.", "ok"); await renderLibrary(); moreGame = library.find((x) => x.key === g.key) || g;
     } catch (err) { panelState(err.message.replace(/^.*Error: /, ""), "bad"); }
+  };
+  $("moreMove").onclick = async () => {
+    $("moreMove").disabled = true; panelState("Moving…");
+    try { const r = await window.buddy.gameMove(g.folder); if (!r) { panelState(""); return; } panelState(`Moved to ${r.to}.${r.steam ? " Add it to Steam again from Installed Games so Steam finds the new place." : ""}`, "ok"); g.folder = r.to; await refresh(); }
+    catch (err) { panelState(err.message.replace(/^.*Error: /, ""), "bad"); } finally { $("moreMove").disabled = false; }
   };
   $("moreShortcut").onclick = async () => { try { const r = await window.buddy.gameShortcut(g.folder); panelState(`Shortcut added: ${r.file.split(/[\\/]/).pop()}`, "ok"); } catch (err) { panelState(err.message.replace(/^.*Error: /, ""), "bad"); } };
   $("moreRemove").onclick = () => openUninstall(g); // the same Uninstall Game questions as the tile

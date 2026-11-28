@@ -1,7 +1,7 @@
 // Browse: the Console pull-down filters to one console, Space/arrows/click pick and move, More Filters counts what's on.
 // Run: scripts/smoke.sh scripts/smoke/browse.js <throwaway profile dir with a cached catalog.json>
 const out = {};
-await refresh(); await wait(1500);
+await refresh(); await wait(1500); $("whatsNewClose")?.click(); // the What's New window after an update holds the keyboard
 out.active = document.querySelector("main > section.view.active").dataset.view;
 await loadCatalog({ refresh: false }); showView("browse"); await wait(1500);
 const gba = $("catCon"); gba.value = "Game Boy Advance"; gba.dispatchEvent(new Event("input")); await wait(300);

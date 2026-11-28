@@ -4,7 +4,7 @@ import { app, ipcMain, dialog, shell, BrowserWindow } from "electron";
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { folderUsage, detectTarget, adoptManifest, checkFolder, shortcutFor, splitArgs } from "../gametools.js";
+import { folderUsage, detectTarget, adoptManifest, checkFolder, shortcutFor, splitArgs, moveGame } from "../gametools.js";
 import { cloudCandidates, gameKey, listCloud, pushToCloud, newerFromElsewhere, mapSavePaths } from "../savesync.js";
 import { backupSaves, restoreSaves } from "../saves.js";
 import { verifyPick } from "../verify.js";
@@ -16,7 +16,7 @@ import { applyPatchFile, patchedName, describePatch } from "../patch.js";
 import { UPDATE_URL } from "../updates.js";
 import { readManifests, upgradeManifest, writeInstallHtml } from "../installhtml.js";
 import { targetIsHost } from "../targets.js";
-import { findExecutable } from "./library.js";
+import { findExecutable, runningGames } from "./library.js";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { logHint, lacksExecBit } from "../doctor.js";
@@ -78,16 +78,40 @@ ipcMain.handle("game:shortcut", async (e, { folder }) => {
   const icon = ["artwork.png", "artwork.jpg"].map((n) => path.join(f, n)).find((p) => fs.existsSync(p)) || null;
   if (compat && !s.shortcutKey) { s.shortcutKey = crypto.randomBytes(16).toString("hex"); saveSettings(s); }
   const link = compat ? `decompbuddy://play?folder=${encodeURIComponent(f)}&k=${s.shortcutKey}` : null;
-  const sc = shortcutFor({ desktop: (process.env.DECOMP_HEADLESS && process.env.DECOMP_DESKTOP) || app.getPath("desktop"), title: m.displayName || m.plan?.game_title || path.basename(f), exe, args: splitArgs(m.launchArgs), icon: process.platform === "win32" ? null : icon, link });
+  const sc = shortcutFor({ desktop: (process.env.DECOMP_HEADLESS && process.env.DECOMP_DESKTOP) || (s.shortcutDir && fs.existsSync(s.shortcutDir) ? s.shortcutDir : app.getPath("desktop")), title: m.displayName || m.plan?.game_title || path.basename(f), exe, args: splitArgs(m.launchArgs), icon: process.platform === "win32" ? null : icon, link });
   // Replace our own earlier shortcut; never anything else that happens to have the name.
   const had = (() => { try { return fs.lstatSync(sc.file); } catch { return null; } })();
-  if (had && had.isDirectory()) throw new Error(`There's already a folder called "${path.basename(sc.file)}" on your desktop.`);
+  if (had && had.isDirectory()) throw new Error(`There's already a folder called "${path.basename(sc.file)}" where the shortcut goes.`);
   if (had) fs.rmSync(sc.file);
   if (sc.kind === "lnk") { if (!shell.writeShortcutLink(sc.file, "create", { target: sc.target, cwd: sc.cwd, args: sc.args, icon: sc.icon, iconIndex: 0 })) throw new Error("Windows wouldn't make the shortcut."); }
   else if (sc.kind === "symlink") fs.symlinkSync(sc.target, sc.file);
   else fs.writeFileSync(sc.file, sc.text, { mode: sc.mode || 0o644 });
   logTo(e.sender, `Desktop shortcut: ${sc.file}`);
   return { file: sc.file };
+});
+
+// ---- Move To Another Folder: the whole game folder (saves inside it too) goes to a folder you pick, which joins
+// Settings → Library Folders so the game stays in Installed Games. Another drive is copied, checked, then the old copy
+// removed - the old copy is never touched until the new one is complete.
+ipcMain.handle("game:move", async (e, { folder }) => {
+  if (kiosk.locked) throw new Error("That is switched off in Kiosk Mode.");
+  const f = libraryFolder(folder), m = readM(f);
+  if (runningGames.has(f)) throw new Error("Close the game first, then move it.");
+  if (state.busy) throw new Error("Wait for the set-up that's running to finish, then move it.");
+  // Test harness: the folder comes from DECOMP_MOVE_TO instead of a dialog that would land on screen.
+  const pick = process.env.DECOMP_HEADLESS ? { canceled: !process.env.DECOMP_MOVE_TO, filePaths: [process.env.DECOMP_MOVE_TO] }
+    : await dialog.showOpenDialog(BrowserWindow.fromWebContents(e.sender), { title: "Move The Game To Which Folder?", buttonLabel: "Move Here", properties: ["openDirectory", "createDirectory"] });
+  if (pick.canceled || !pick.filePaths[0]) return null;
+  const dir = path.resolve(pick.filePaths[0]), name = m.displayName || m.plan?.game_title || path.basename(f);
+  state.busy = true;
+  try {
+    const to = await moveGame(f, dir, (x) => logTo(e.sender, x));
+    const s = loadSettings();
+    if (!libraryDirs(s).some((d) => path.resolve(d) === dir)) { s.libraryFolders = [...(s.libraryFolders || []), dir]; saveSettings(s); }
+    for (const d of [path.dirname(f), dir]) { try { writeInstallHtml(d); } catch {} }
+    logTo(e.sender, `Moved ${name} to ${to}.`);
+    return { to, steam: !!m.steamAppId };
+  } finally { state.busy = false; }
 });
 
 // ---- Pick A Version: every release of the game, and installing one of them (saves backed up first).

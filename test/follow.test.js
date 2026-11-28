@@ -54,6 +54,46 @@ test("updatesFor: real updates only, skipped versions stay quiet, per-game switc
   assert.equal(updatesFor([inst("a/soh", "9.2.0")], games, { autoDefault: true })[0].auto, true);
 });
 
+test("updates: a platform whose plan sits on an older version isn't offered the shown one forever", async () => {
+  const { updatesFor } = await import("../src/updates.js");
+  const { PLAN_FALLBACK } = await import("../src/targets.js");
+  const { attachFacts } = await import("../src/expand.js");
+  const fs = await import("node:fs");
+  const rel = (tag) => ({ games: [{ game_title: "G", build: { method: "release", release_tag: tag } }] });
+  const entry = { targets: { linux: rel("v1.1"), "macos-arm64": rel("v1.1"), windows: rel("v1.0") } };
+  const [g] = attachFacts([{ owner: "a", repo: "g", version: "v1.1" }], { plans: { "github:a/g": entry } });
+  assert.equal(g.version, "v1.1"); assert.deepEqual(g.targetTags, { linux: "v1.1", "macos-arm64": "v1.1", windows: "v1.0" });
+  const inst = (target, tag) => ({ folder: `/g/${target}`, manifest: { repo: "a/g", target, release: { tag }, plan: { game_title: "G" } } });
+  // Windows already has what its plan installs; Windows on ARM borrows that plan; Linux really is behind.
+  assert.deepEqual(updatesFor([inst("windows", "v1.0"), inst("windows-arm64", "v1.0"), inst("linux", "v1.0")], [g]).map((u) => [u.folder, u.to]), [["/g/linux", "v1.1"]]);
+  // All platforms on one version: nothing extra is stored.
+  const [h] = attachFacts([{ owner: "a", repo: "h", version: "v2" }], { plans: { "github:a/h": { targets: { windows: rel("v2"), linux: rel("v2") } } } });
+  assert.equal(h.targetTags, undefined);
+  // The renderer keeps its own copy of the fallback map (it can't import src/).
+  const app = fs.readFileSync(new URL("../renderer/app.js", import.meta.url), "utf8");
+  assert.deepEqual(JSON.parse(app.match(/const PLAN_FALLBACK = (\{[^}]*\});/)[1]), PLAN_FALLBACK);
+});
+
+test("an installer is swapped for the same release's portable download (P.T., 27 Nov 2026)", async () => {
+  const { portableTwin } = await import("../src/follow.js");
+  const assets = ["P.T.PC.Port-macOS-arm64.dmg", "P.T.PC.Port-macOS-arm64.zip", "P.T.PC.Port-portable-linux.zip", "P.T.PC.Port-portable-windows.zip", "P.T.PC.Port.Setup-linux", "P.T.PC.Port.Setup.exe"].map((name) => ({ name, uploader: "LoreanXavier" }));
+  const build = { release_tag: "v1.1.2", release_asset: "P.T.PC.Port.Setup.exe" };
+  const step = nextStep(build, [{ tag: "v1.1.2", assets }], { owner: "LoreanXavier", target: "windows" });
+  assert.equal(step.action, "advance"); assert.equal(step.asset.name, "P.T.PC.Port-portable-windows.zip");
+  assert.equal(nextStep({ ...build, release_asset: "P.T.PC.Port.Setup-linux" }, [{ tag: "v1.1.2", assets }], { owner: "LoreanXavier", target: "linux" }).asset.name, "P.T.PC.Port-portable-linux.zip");
+  // Already portable: nothing to do. No target given (older callers): unchanged behavior.
+  assert.equal(nextStep({ ...build, release_asset: "P.T.PC.Port-portable-windows.zip" }, [{ tag: "v1.1.2", assets }], { target: "windows" }).action, "current");
+  assert.equal(nextStep(build, [{ tag: "v1.1.2", assets }]).action, "current");
+  // A newer release: its portable file, not its installer.
+  assert.equal(nextStep(build, [{ tag: "v1.2", assets }, { tag: "v1.1.2", assets }], { owner: "LoreanXavier", target: "windows" }).asset.name, "P.T.PC.Port-portable-windows.zip");
+  // Tools, servers and zipped installers beside an installer are never the game.
+  assert.equal(portableTwin("ttt2_setup.exe", [{ name: "ttt2-server-0.2.0-windows-amd64.zip" }], "windows"), null);
+  assert.equal(portableTwin("Game-Setup-v1.exe", [{ name: "Game-Setup-v1-windows.x64.zip" }], "windows"), null);
+  assert.equal(portableTwin("Setup.exe", [{ name: "Game-src.zip" }], "windows"), null);
+  // Two candidates: only the one that says portable.
+  assert.equal(portableTwin("Setup.exe", [{ name: "Game-win64.zip" }, { name: "Game-win64-portable.zip" }], "windows").name, "Game-win64-portable.zip");
+});
+
 test("nextStep follows a rolling release that keeps its tag and renames its files", () => {
   const build = { release_tag: "rolling", release_asset: "3SX-17d47de-windows.zip" };
   const rolling = [{ tag: "rolling", prerelease: true, assets: [{ name: "3SX-6187364-windows.zip", uploader: "owner" }, { name: "3SX-6187364-macos.dmg", uploader: "owner" }] }];

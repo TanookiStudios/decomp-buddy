@@ -1,6 +1,8 @@
 // "A newer version is available" - reads a small JSON feed Maddie publishes:
 // { "version": "0.12.0", "notes": "...", "downloads": { "macos-arm64": url, "macos-x64": url, "windows": url, "linux": url } }
 
+import { versionFor } from "./expand.js";
+
 export const UPDATE_URL = "https://tanookistudios.com/decomp-buddy/latest.json";
 
 const parts = (v) => String(v).replace(/^v/, "").split(/[.-]/).map((x) => (/^\d+$/.test(x) ? Number(x) : 0));
@@ -49,8 +51,9 @@ export function updatesFor(installed, games, { autoDefault = false } = {}) {
     const cands = byRepo.get(String(m.repo || "").toLowerCase()) || [];
     const g = cands.length > 1 ? cands.find((c) => c.gameTitle === m.plan?.game_title) : cands[0];
     const have = m.release?.tag;
-    if (!g?.version || !have || g.version === have || m.skipTag === g.version) continue;
-    out.push({ folder, title: m.displayName || m.plan?.game_title || m.folder, from: have, to: g.version, repoUrl: g.repoUrl || m.repoUrl, target: m.target || "windows", auto: m.autoUpdate ?? autoDefault, scanned: !!g.scan?.at });
+    const to = versionFor(g, m.target || "windows");
+    if (!to || !have || to === have || m.skipTag === to) continue;
+    out.push({ folder, title: m.displayName || m.plan?.game_title || m.folder, from: have, to, repoUrl: g.repoUrl || m.repoUrl, target: m.target || "windows", auto: m.autoUpdate ?? autoDefault, scanned: !!g.scan?.at });
   }
   return out;
 }
